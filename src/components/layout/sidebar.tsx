@@ -2,8 +2,17 @@ import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
+import Link from "next/link";
+import { IconType } from "react-icons";
+import { Url } from "url";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
+  const sideLinks: { name: String; href: String; icon: IconType }[] = [
+    { name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
+    { name: "People", href: "/people", icon: MdPeopleAlt },
+  ];
+
   const [show, setShow] = useState(false);
   const [profile, setProfile] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -37,90 +46,26 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
               </svg>
             </div>
             <ul className=' py-6'>
-              <li className='pl-6 cursor-pointer text-white text-sm leading-3 tracking-normal pb-4 pt-5 text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                <div className='flex items-center'>
-                  <div>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='icon icon-tabler icon-tabler-grid'
-                      width={20}
-                      height={20}
-                      viewBox='0 0 24 24'
-                      strokeWidth='1.5'
-                      stroke='currentColor'
-                      fill='none'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'>
-                      <path stroke='none' d='M0 0h24v24H0z' />
-                      <rect x={4} y={4} width={6} height={6} rx={1} />
-                      <rect x={14} y={4} width={6} height={6} rx={1} />
-                      <rect x={4} y={14} width={6} height={6} rx={1} />
-                      <rect x={14} y={14} width={6} height={6} rx={1} />
-                    </svg>
-                  </div>
-                  <span className='ml-2'>Dashboard</span>
-                </div>
-              </li>
-              <li className='pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mt-4 mb-4 py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                <div className='flex items-center'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='icon icon-tabler icon-tabler-puzzle'
-                    width={20}
-                    height={20}
-                    viewBox='0 0 24 24'
-                    strokeWidth='1.5'
-                    stroke='currentColor'
-                    fill='none'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'>
-                    <path stroke='none' d='M0 0h24v24H0z' />
-                    <path d='M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1' />
-                  </svg>
-                  <span className='ml-2'>Products</span>
-                </div>
-              </li>
-              <li className='pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mb-4 py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                <div className='flex items-center'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='icon icon-tabler icon-tabler-compass'
-                    width={20}
-                    height={20}
-                    viewBox='0 0 24 24'
-                    strokeWidth='1.5'
-                    stroke='currentColor'
-                    fill='none'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'>
-                    <path stroke='none' d='M0 0h24v24H0z' />
-                    <polyline points='8 16 10 10 16 8 14 14 8 16' />
-                    <circle cx={12} cy={12} r={9} />
-                  </svg>
-                  <span className='ml-2'>Performance</span>
-                </div>
-              </li>
-              <li className='pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                <div className='flex items-center'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='icon icon-tabler icon-tabler-code'
-                    width={20}
-                    height={20}
-                    viewBox='0 0 24 24'
-                    strokeWidth='1.5'
-                    stroke='currentColor'
-                    fill='none'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'>
-                    <path stroke='none' d='M0 0h24v24H0z' />
-                    <polyline points='7 8 3 12 7 16' />
-                    <polyline points='17 8 21 12 17 16' />
-                    <line x1={14} y1={4} x2={10} y2={20} />
-                  </svg>
-                  <span className='ml-2'>Deliverables</span>
-                </div>
-              </li>
+              {sideLinks.map((link, index) => (
+                <Link key={index} href={link.href as any}>
+                  <a>
+                    <li
+                      key={index}
+                      className={`${
+                        router.asPath == link.href
+                          ? "text-indigo-700"
+                          : "text-gray-500"
+                      } pl-6 cursor-pointer  text-sm leading-3 tracking-normal pb-4 pt-5 focus:text-indigo-700 focus:outline-none`}>
+                      <div className='flex items-center'>
+                        <div>
+                          <link.icon size={20}></link.icon>
+                        </div>
+                        <span className='ml-2'>{link.name}</span>
+                      </div>
+                    </li>
+                  </a>
+                </Link>
+              ))}
             </ul>
           </div>
           {/*Mobile responsive sidebar*/}
@@ -173,100 +118,30 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                     </div>
                   </div>
                   <ul className=' py-6'>
-                    <li className='pl-6 cursor-pointer text-white text-sm leading-3 tracking-normal pb-4 pt-5 text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                      <div className='flex items-center'>
-                        <div className='w-6 h-6 md:w-8 md:h-8'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='icon icon-tabler icon-tabler-grid'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            fill='none'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'>
-                            <path stroke='none' d='M0 0h24v24H0z' />
-                            <rect x={4} y={4} width={6} height={6} rx={1} />
-                            <rect x={14} y={4} width={6} height={6} rx={1} />
-                            <rect x={4} y={14} width={6} height={6} rx={1} />
-                            <rect x={14} y={14} width={6} height={6} rx={1} />
-                          </svg>
-                        </div>
-                        <span className='ml-2 xl:text-base md:text-2xl text-base'>
-                          Dashboard
-                        </span>
-                      </div>
-                    </li>
-                    <li className='pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mt-4 mb-4 py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                      <div className='flex items-center'>
-                        <div className='w-6 h-6 md:w-8 md:h-8'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='icon icon-tabler icon-tabler-puzzle'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            fill='none'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'>
-                            <path stroke='none' d='M0 0h24v24H0z' />
-                            <path d='M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1' />
-                          </svg>
-                        </div>
-                        <span className='ml-2 xl:text-base md:text-2xl text-base'>
-                          Products
-                        </span>
-                      </div>
-                    </li>
-                    <li className='pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mb-4 py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                      <div className='flex items-center'>
-                        <div className='w-6 h-6 md:w-8 md:h-8'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='icon icon-tabler icon-tabler-compass'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            fill='none'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'>
-                            <path stroke='none' d='M0 0h24v24H0z' />
-                            <polyline points='8 16 10 10 16 8 14 14 8 16' />
-                            <circle cx={12} cy={12} r={9} />
-                          </svg>
-                        </div>
-                        <span className='ml-2 xl:text-base md:text-2xl text-base'>
-                          Performance
-                        </span>
-                      </div>
-                    </li>
-                    <li className='pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none'>
-                      <div className='flex items-center'>
-                        <div className='w-6 h-6 md:w-8 md:h-8'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='icon icon-tabler icon-tabler-code'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            fill='none'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'>
-                            <path stroke='none' d='M0 0h24v24H0z' />
-                            <polyline points='7 8 3 12 7 16' />
-                            <polyline points='17 8 21 12 17 16' />
-                            <line x1={14} y1={4} x2={10} y2={20} />
-                          </svg>
-                        </div>
-                        <span className='ml-2 xl:text-base md:text-2xl text-base'>
-                          Deliverables
-                        </span>
-                      </div>
-                    </li>
+                    {sideLinks.map((link, index) => (
+                      <Link key={index} href={link.href as any}>
+                        <a>
+                          <li
+                            className={`${
+                              router.asPath == link.href
+                                ? "text-indigo-700"
+                                : "text-gray-600"
+                            } pl-6 cursor-pointer  text-sm leading-3 tracking-normal pb-4 pt-5 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}>
+                            <div className='flex items-center'>
+                              <link.icon size={20}></link.icon>
+
+                              <span className='ml-2 xl:text-base md:text-2xl text-base'>
+                                {link.name}
+                              </span>
+                            </div>
+                          </li>
+                        </a>
+                      </Link>
+                    ))}
                   </ul>
                 </div>
                 <div className='w-full'>
-                  <div className='flex justify-center mb-4 w-full px-6'>
+                  {/* <div className='flex justify-center mb-4 w-full px-6'>
                     <div className='relative w-full'>
                       <div className='text-gray-500 absolute ml-4 inset-0 m-auto w-4 h-4'>
                         <svg
@@ -291,7 +166,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         placeholder='Search'
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div className='border-t border-gray-300'>
                     <div className='w-full flex items-center justify-between px-6 pt-1'>
                       <div className='flex items-center'>
@@ -304,7 +179,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           {user.data?.user?.name}
                         </p>
                       </div>
-                      <ul className='flex'>
+                      {/* <ul className='flex'>
                         <li className='cursor-pointer text-white pt-5 pb-3'>
                           <svg
                             xmlns='http://www.w3.org/2000/svg'
@@ -339,7 +214,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                             <path d='M9 17v1a3 3 0 0 0 6 0v-1' />
                           </svg>
                         </li>
-                      </ul>
+                      </ul> */}
                     </div>
                   </div>
                 </div>
@@ -352,7 +227,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             {/* Navigation starts */}
             <nav className='h-16 flex items-center lg:items-stretch justify-end lg:justify-between bg-white shadow relative z-10'>
               <div className='hidden lg:flex w-full pr-6'>
-                <div className='w-1/2 h-full hidden lg:flex items-center pl-6 pr-24'>
+                {/* <div className='w-1/2 h-full hidden lg:flex items-center pl-6 pr-24'>
                   <div className='relative w-full'>
                     <div className='text-gray-500 absolute ml-4 inset-0 m-auto w-4 h-4'>
                       <svg
@@ -377,12 +252,12 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       placeholder='Search'
                     />
                   </div>
-                </div>
-                <div className='w-1/2 hidden lg:flex'>
+                </div> */}
+                <div className='w-full hidden lg:flex'>
                   <div className='w-full flex items-center pl-8 justify-end'>
-                    <div className='h-full w-20 flex items-center justify-center border-r border-l'>
+                    {/* <div className='h-full w-20 flex items-center justify-center border-r border-l'>
                       <div className='relative cursor-pointer text-gray-600'>
-                        <svg
+                         <svg
                           xmlns='http://www.w3.org/2000/svg'
                           className='icon icon-tabler icon-tabler-bell'
                           width={28}
@@ -396,11 +271,11 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           <path stroke='none' d='M0 0h24v24H0z' />
                           <path d='M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6' />
                           <path d='M9 17v1a3 3 0 0 0 6 0v-1' />
-                        </svg>
+                        </svg> 
                         <div className='w-2 h-2 rounded-full bg-red-400 border border-white absolute inset-0 mt-1 mr-1 m-auto' />
                       </div>
-                    </div>
-                    <div className='h-full w-20 flex items-center justify-center border-r mr-4 cursor-pointer text-gray-600'>
+                    </div> */}
+                    {/* <div className='h-full w-20 flex items-center justify-center border-r mr-4 cursor-pointer text-gray-600'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
                         className='icon icon-tabler icon-tabler-messages'
@@ -416,7 +291,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         <path d='M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10' />
                         <path d='M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2' />
                       </svg>
-                    </div>
+                    </div> */}
                     <div
                       className='flex items-center relative cursor-pointer'
                       onClick={() => setProfile(!profile)}>

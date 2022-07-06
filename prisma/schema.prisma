@@ -2,34 +2,34 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-    previewFeatures = ["referentialIntegrity"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-    provider = "mysql"
-    url = env("DATABASE_URL")
-    referentialIntegrity = "prisma"
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 model Example {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 }
 
 // Necessary for Next auth
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -45,13 +45,30 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id             String         @id @default(cuid())
+  name           String?
+  status         UserStatus     @default(USER)
+  roles          Role[]
+  email          String?        @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  Organization   Organization?  @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  availability   Availability[]
+}
+
+enum UserStatus {
+  USER
+  MANAGER
+  ADMIN
+}
+
+model Availability {
+  id     String @id @default(cuid())
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
 }
 
 model VerificationToken {
@@ -60,4 +77,38 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Organization {
+  id           String      @id @default(uuid())
+  name         String
+  phone_number String?
+  users        User[]
+  locations    Locations[]
+  events       Event[]
+}
+
+model Locations {
+  id             String        @id @default(uuid())
+  name           String
+  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  events         Event[]
+}
+
+model Role {
+  id    String @id @default(uuid())
+  name  String
+  users User[]
+}
+
+model Event {
+  id               String        @id @default(cuid())
+  Organization     Organization? @relation(fields: [organizationId], references: [id])
+  organizationId   String?
+  datetime         DateTime
+  Locations        Locations?    @relation(fields: [locationsId], references: [id])
+  locationsId      String?
+  positions        Json
+  unavailableUsers Json?
 }

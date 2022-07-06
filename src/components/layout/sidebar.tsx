@@ -36,7 +36,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                 />
               </svg>
             </div>
-            <ul aria-orientation='vertical' className=' py-6'>
+            <ul className=' py-6'>
               <li className='pl-6 cursor-pointer text-white text-sm leading-3 tracking-normal pb-4 pt-5 text-indigo-700 focus:text-indigo-700 focus:outline-none'>
                 <div className='flex items-center'>
                   <div>
@@ -172,7 +172,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       </svg>
                     </div>
                   </div>
-                  <ul aria-orientation='vertical' className=' py-6'>
+                  <ul className=' py-6'>
                     <li className='pl-6 cursor-pointer text-white text-sm leading-3 tracking-normal pb-4 pt-5 text-indigo-700 focus:text-indigo-700 focus:outline-none'>
                       <div className='flex items-center'>
                         <div className='w-6 h-6 md:w-8 md:h-8'>

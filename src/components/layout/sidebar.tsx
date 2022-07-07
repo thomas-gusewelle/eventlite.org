@@ -29,7 +29,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
   return (
     <>
-      <div className='w-full h-full bg-gray-200'>
+      <div className='w-full h-full bg-white'>
         <div className='flex flex-no-wrap'>
           {/* Sidebar starts */}
           <div className='absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block'>
@@ -406,11 +406,9 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             </nav>
             {/* Navigation ends */}
             {/* Remove class [ h-64 ] when adding a card block */}
-            <div className='container mx-auto py-10 h-64 md:w-4/5 w-11/12 px-6'>
+            <div className='container mx-auto px-4 py-10'>
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
-              <div className='w-full h-full rounded border-dashed border-2 border-gray-300'>
-                {children}
-              </div>
+              <div className='w-full h-full rounded'>{children}</div>
             </div>
           </div>
         </div>

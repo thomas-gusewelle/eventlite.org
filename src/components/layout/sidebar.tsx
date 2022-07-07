@@ -20,7 +20,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const [menu2, setMenu2] = useState(false);
   const [menu3, setMenu3] = useState(false);
 
-  const user = useSession();
+  const session = useSession();
   const router = useRouter();
   const signOutRouter = () => {
     signOut();
@@ -172,11 +172,11 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       <div className='flex items-center'>
                         <img
                           alt='profile-pic'
-                          src={user.data?.user?.image || ""}
+                          src={session.data?.user?.image || ""}
                           className='w-8 h-8 rounded-md'
                         />
                         <p className='md:text-xl text-gray-800 text-base leading-4 ml-2'>
-                          {user.data?.user?.name}
+                          {session.data?.user?.name}
                         </p>
                       </div>
                       {/* <ul className='flex'>
@@ -349,14 +349,13 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         <div className='relative'>
                           <img
                             className='rounded-full h-10 w-10 object-cover'
-                            src={user.data?.user?.image || ""}
+                            src={session.data?.user?.image || ""}
                             alt=''
                           />
-                          <div className='w-2 h-2 rounded-full bg-green-400 border border-white absolute inset-0 mb-0 mr-0 m-auto' />
                         </div>
                       </div>
                       <p className='text-gray-800 text-sm mx-3'>
-                        {user.data?.user?.name}
+                        {session.data?.user?.name}
                       </p>
                       <div className='cursor-pointer text-gray-600'>
                         <svg

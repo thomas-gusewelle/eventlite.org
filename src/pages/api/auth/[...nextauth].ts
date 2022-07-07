@@ -18,21 +18,37 @@ export const authOptions: NextAuthOptions = {
       // clientSecret: process.env.GOOGLE_SECRET || "",
     }),
     // ...add more providers here
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        name: {
-          label: "Name",
-          type: "text",
-          placeholder: "Enter your name",
-        },
-      },
-      async authorize(credentials, _req) {
-        const user = { id: 1, name: credentials?.name ?? "J Smith" };
-        return user;
-      },
-    }),
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   credentials: {
+    //     name: {
+    //       label: "Name",
+    //       type: "text",
+    //       placeholder: "Enter your name",
+    //     },
+    //   },
+    //   async authorize(credentials, _req) {
+    //     const user = { id: 1, name: credentials?.name ?? "J Smith" };
+    //     return user;
+    //   },
+    // }),
   ],
+  callbacks: {
+    async session({ session, user }) {
+      session.user.organizationId = user?.organizationId;
+      return session;
+      // return Promise.resolve({session: {
+      //   expires: session.expires,
+      //   user: {
+      //     name: user.name,
+      //     email: user.email,
+      //     image: user.image,
+      //     organizationId: user.organizationId as String || null
+      //   },
+
+      //  }})
+    },
+  },
 };
 
 export default NextAuth(authOptions);

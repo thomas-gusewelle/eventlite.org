@@ -17,6 +17,9 @@ export const userRouter = createRouter()
         where: {
           organizationId: ctx.session?.user.organizationId,
         },
+        include: {
+          roles: true,
+        },
       });
     },
   });

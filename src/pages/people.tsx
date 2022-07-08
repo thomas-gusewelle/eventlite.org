@@ -7,6 +7,8 @@ import SidebarLayout from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
 import { trpc } from "../utils/trpc";
 import { BiChevronDown } from "react-icons/bi";
+import { AddUserMenu } from "../components/menus/addUser";
+import { SectionHeading } from "../components/headers/SectionHeading";
 
 const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"]);
@@ -22,39 +24,40 @@ const PeoplePage = () => {
 
   return (
     <SidebarLayout>
+      <div className='flex justify-between mb-8'>
+        <SectionHeading>Users</SectionHeading>
+        <AddUserMenu />
+      </div>
       <div className='w-full bg-white'>
         <table className='w-full table-auto text-left'>
           <thead>
             <tr>
               <th>Name</th>
+              <th className='hidden md:table-cell'>Email</th>
               <th>Role</th>
-              <th>Status</th>
+              <th className='hidden md:table-cell'>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {people.data?.map((person, index) => (
               <tr key={index} className='border-t last:border-b'>
-                <td className='py-2'>
+                <td className='py-4'>
                   <PicNameRow user={person} />
                 </td>
-                <td>{person.email}</td>
-                <td>{person.status}</td>
+                <td className='hidden md:table-cell'>{person.email}</td>
                 <td>
-                  <div className='flex gap-2'>
-                    <BtnNeutral>Edit</BtnNeutral>
-                    <BtnNeutral>Email</BtnNeutral>
-                  </div>
+                  {person.roles.map((role, index) => (
+                    <div key={index}>{role.name}</div>
+                  ))}
                 </td>
+                <td className='hidden md:table-cell'>{person.status}</td>
+
                 <td>
                   <Menu as='div' className='relative inline-block text-left'>
                     <div>
                       <Menu.Button className='inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500'>
-                        Options
-                        <BiChevronDown
-                          className='-mr-1 ml-2 h-5 w-5'
-                          aria-hidden='true'
-                        />
+                        <BiChevronDown aria-hidden='true' />
                       </Menu.Button>
                     </div>
 
@@ -78,7 +81,7 @@ const PeoplePage = () => {
                                     : "text-gray-700",
                                   "block px-4 py-2 text-sm"
                                 )}>
-                                Account settings
+                                View Profile
                               </a>
                             )}
                           </Menu.Item>
@@ -92,24 +95,11 @@ const PeoplePage = () => {
                                     : "text-gray-700",
                                   "block px-4 py-2 text-sm"
                                 )}>
-                                Support
+                                Edit
                               </a>
                             )}
                           </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href='#'
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}>
-                                License
-                              </a>
-                            )}
-                          </Menu.Item>
+
                           <form method='POST' action='#'>
                             <Menu.Item>
                               {({ active }) => (
@@ -121,7 +111,7 @@ const PeoplePage = () => {
                                       : "text-gray-700",
                                     "block w-full text-left px-4 py-2 text-sm"
                                   )}>
-                                  Sign out
+                                  Delete
                                 </button>
                               )}
                             </Menu.Item>

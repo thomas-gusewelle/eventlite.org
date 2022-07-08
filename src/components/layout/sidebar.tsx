@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/future/image";
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
 import Link from "next/link";
 import { IconType } from "react-icons";
-import { Url } from "url";
 import { Avatar } from "../profile/avatar";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {

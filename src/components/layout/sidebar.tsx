@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import Image from "next/future/image";
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
 import Link from "next/link";
 import { IconType } from "react-icons";
 import { Url } from "url";
+import { Avatar } from "../profile/avatar";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: String; href: String; icon: IconType }[] = [
@@ -170,11 +171,13 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <div className='border-t border-gray-300'>
                     <div className='w-full flex items-center justify-between px-6 pt-1'>
                       <div className='flex items-center'>
+                        <Avatar user={session.data?.user} />
+                        {/* <Image src={session.data?.user.image}/>
                         <img
                           alt='profile-pic'
                           src={session.data?.user?.image || ""}
                           className='w-8 h-8 rounded-md'
-                        />
+                        /> */}
                         <p className='md:text-xl text-gray-800 text-base leading-4 ml-2'>
                           {session.data?.user?.name}
                         </p>
@@ -347,11 +350,12 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           ""
                         )}
                         <div className='relative'>
-                          <img
+                          <Avatar user={session.data?.user} />
+                          {/* <img
                             className='rounded-full h-10 w-10 object-cover'
                             src={session.data?.user?.image || ""}
                             alt=''
-                          />
+                          /> */}
                         </div>
                       </div>
                       <p className='text-gray-800 text-sm mx-3'>

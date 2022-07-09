@@ -9,10 +9,10 @@ import { trpc } from "../utils/trpc";
 import { BiChevronDown } from "react-icons/bi";
 import { AddUserMenu } from "../components/menus/addUser";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { SearchBar } from "../components/form/SearchBar";
 
 const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"]);
-  console.log("This is the poeple", people);
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -26,7 +26,10 @@ const PeoplePage = () => {
     <SidebarLayout>
       <div className='flex justify-between mb-8'>
         <SectionHeading>Users</SectionHeading>
-        <AddUserMenu />
+        <div className='flex gap-4'>
+          <SearchBar />
+          <AddUserMenu />
+        </div>
       </div>
       <div className='w-full bg-white'>
         <table className='w-full table-auto text-left'>

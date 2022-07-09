@@ -12,6 +12,10 @@ export const Avatar: React.FC<{ user: User }> = ({ user }) => {
     return nameSplit;
   };
 
+  if (user == undefined || user == null) {
+    return <div></div>;
+  }
+
   return (
     <>
       {user.image ? (

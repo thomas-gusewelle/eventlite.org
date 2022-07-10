@@ -1,11 +1,14 @@
 import { UserForm } from "../../components/form/userForm";
 import SidebarLayout from "../../components/layout/sidebar";
-import { useSession } from "next-auth/react";
+import { useUser } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 
 const AddUser = () => {
-  const session = useSession();
+  const router = useRouter();
+  const user = useUser();
 
-  if (session.status == "unauthenticated") {
+  if (!user) {
+    router.push("/signin");
     return <div></div>;
   }
 

@@ -6,16 +6,21 @@ export const userRouter = createRouter()
     async resolve({ ctx }) {
       return await prisma?.user.findFirst({
         where: {
-          email: ctx.session?.user?.email,
+          id: ctx.session?.user.id,
         },
       });
     },
   })
   .query("getUsersByOrganization", {
     async resolve({ ctx }) {
+      const orgID = await prisma?.user.findFirst({
+        where: { id: ctx.session?.user.id },
+        select: { organizationId: true },
+      });
+
       return await prisma?.user.findMany({
         where: {
-          organizationId: ctx.session?.user.organizationId,
+          organizationId: orgID?.organizationId,
         },
         include: {
           roles: true,

@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
 import Link from "next/link";
 import { IconType } from "react-icons";
 import { Avatar } from "../profile/avatar";
+import { useUser } from "@supabase/auth-helpers-react";
+import { trpc } from "../../utils/trpc";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: String; href: String; icon: IconType }[] = [
@@ -19,12 +22,18 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const [menu2, setMenu2] = useState(false);
   const [menu3, setMenu3] = useState(false);
 
-  const session = useSession();
   const router = useRouter();
   const signOutRouter = () => {
-    signOut();
+    // signOut();
     router.push("/");
   };
+
+  const { data, isLoading, error } = trpc.useQuery(["user.getUser"]);
+  const user = useUser();
+
+  if (!data) {
+    return <div></div>;
+  }
 
   return (
     <>
@@ -169,7 +178,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <div className='border-t border-gray-300'>
                     <div className='w-full flex items-center justify-between px-6 pt-1'>
                       <div className='flex items-center'>
-                        <Avatar user={session.data?.user} />
+                        <Avatar user={data} />
                         {/* <Image src={session.data?.user.image}/>
                         <img
                           alt='profile-pic'
@@ -177,7 +186,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           className='w-8 h-8 rounded-md'
                         /> */}
                         <p className='md:text-xl text-gray-800 text-base leading-4 ml-2'>
-                          {session.data?.user?.name}
+                          {data.name}
                         </p>
                       </div>
                       {/* <ul className='flex'>
@@ -336,11 +345,9 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   <path d='M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2' />
                                   <path d='M7 12h14l-3 -3m0 6l3 -3' />
                                 </svg>
-                                <span
-                                  onClick={() => signOut()}
-                                  className='text-sm ml-2'>
-                                  Sign out
-                                </span>
+                                <Link href={"/api/auth/logout"}>
+                                  <span className='text-sm ml-2'>Sign out</span>
+                                </Link>
                               </div>
                             </li>
                           </ul>
@@ -348,7 +355,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           ""
                         )}
                         <div className='relative'>
-                          <Avatar user={session.data?.user} />
+                          <Avatar user={data} />
                           {/* <img
                             className='rounded-full h-10 w-10 object-cover'
                             src={session.data?.user?.image || ""}
@@ -356,9 +363,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           /> */}
                         </div>
                       </div>
-                      <p className='text-gray-800 text-sm mx-3'>
-                        {session.data?.user?.name}
-                      </p>
+                      <p className='text-gray-800 text-sm mx-3'>{data.name}</p>
                       <div className='cursor-pointer text-gray-600'>
                         <svg
                           aria-haspopup='true'

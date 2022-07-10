@@ -17,6 +17,9 @@ const PeoplePage = () => {
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
+  if (people.error) {
+    return <div>{people.error.message}</div>;
+  }
 
   if (people.isLoading) {
     return <div></div>;

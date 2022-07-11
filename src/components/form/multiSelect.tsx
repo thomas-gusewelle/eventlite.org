@@ -1,6 +1,6 @@
 import { FormEvent, Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { MdOutlineArrowDropDownCircle } from "react-icons/md";
+import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
 //this requies data to have an id and name property
@@ -31,7 +31,7 @@ export const MultiSelect: React.FC<{
   if (!list) return <div></div>;
 
   return (
-    <div className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border rounded-md'>
+    <div className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border rounded-md'>
       <Listbox
         value={selected}
         onChange={(person) => addSelected(person)}
@@ -41,7 +41,7 @@ export const MultiSelect: React.FC<{
             <div className='flex flex-wrap gap-2 min-h-[1rem]'>
               {selected.map((item) => (
                 <div
-                  className='flex gap-2 items-center z-50 py-1 px-2 rounded bg-indigo-100'
+                  className='flex gap-2 items-center py-1 px-2 rounded bg-indigo-100'
                   key={item.id}
                   onClick={(e) => removeSelected(item, e)}>
                   {item.name}
@@ -50,7 +50,7 @@ export const MultiSelect: React.FC<{
               ))}
             </div>
             <div className='absolute right-1 top-1/2 -translate-y-1/2'>
-              <MdOutlineArrowDropDownCircle size={20} className='' />
+              <MdOutlineKeyboardArrowDown size={20} className='text-gray-500' />
             </div>
           </Listbox.Button>
           <Transition

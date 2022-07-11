@@ -1,5 +1,6 @@
 import { createRouter } from "./context";
 import { z } from "zod";
+import { roleRouter } from "./role";
 
 export const userRouter = createRouter()
   .query("getUser", {
@@ -24,6 +25,33 @@ export const userRouter = createRouter()
         },
         include: {
           roles: true,
+        },
+      });
+    },
+  })
+  .mutation("addUser", {
+    input: z.object({
+      name: z.string(),
+      email: z.string(),
+      role: z.object({ id: z.string(), name: z.string() }).array(),
+    }),
+
+    async resolve({ ctx, input }) {
+      const orgID = await prisma?.user.findFirst({
+        where: { id: ctx.session?.user.id },
+        select: { organizationId: true },
+      });
+
+      await prisma?.user.create({
+        data: {
+          name: input.name,
+          email: input.email,
+          organizationId: orgID?.organizationId,
+          roles: {
+            connect: input.role.map((role) => ({
+              id: role.id,
+            })),
+          },
         },
       });
     },

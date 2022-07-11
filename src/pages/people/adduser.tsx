@@ -20,6 +20,8 @@ const AddUser = () => {
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const roles = trpc.useQuery(["role.getRoles"]);
+  const userRoles = ["USER", "MANAGER", "ADMIN"];
+  const addUser = trpc.useMutation(["user.addUser"]);
 
   useEffect(() => {
     if (roles.status == "success") {
@@ -28,9 +30,14 @@ const AddUser = () => {
   }, [roles]);
 
   const submit = handleSubmit((data) => {
-    console.log(data);
+    data["roles"] = selectedRoles;
+
+    addUser.mutate({
+      name: data.firstName + " " + data.lastName,
+      email: data.email,
+      role: data.roles,
+    });
   });
-  const [selected, setSelected] = useState([]);
 
   if (!user) {
     router.push("/signin");
@@ -114,6 +121,23 @@ const AddUser = () => {
               list={roleList}
               setList={setRoleList}></MultiSelect>
           </div>
+          <div className='hidden sm:block sm:col-span-3'></div>
+          <div className='col-span-6 sm:col-span-3 sm:ropw'>
+            <label
+              htmlFor='country'
+              className='block text-sm font-medium text-gray-700'>
+              Role
+            </label>
+            <select
+              id='role'
+              {...register("role")}
+              autoComplete='country-name'
+              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
+              {userRoles.map((role) => (
+                <option key={role}>{role}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>
           <button
@@ -123,9 +147,6 @@ const AddUser = () => {
           </button>
         </div>
       </form>
-      <div className='mt-10'>
-        <UserForm></UserForm>
-      </div>
     </SidebarLayout>
   );
 };

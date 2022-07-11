@@ -5,7 +5,9 @@ import { useRouter } from "next/router";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { useForm } from "react-hook-form";
 import { MultiSelect } from "../../components/form/multiSelect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { trpc } from "../../utils/trpc";
+import { Role } from "@prisma/client";
 const AddUser = () => {
   const router = useRouter();
   const user = useUser();
@@ -15,15 +17,20 @@ const AddUser = () => {
     formState: { errors },
   } = useForm();
 
+  const [roleList, setRoleList] = useState<any[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState([]);
+  const roles = trpc.useQuery(["role.getRoles"]);
+
+  useEffect(() => {
+    if (roles.status == "success") {
+      setRoleList(roles.data as any);
+    }
+  }, [roles]);
+
   const submit = handleSubmit((data) => {
     console.log(data);
   });
   const [selected, setSelected] = useState([]);
-  const test = [
-    { label: "Audio", value: 1 },
-    { label: "Video", value: 2 },
-    { label: "Slides", value: 3 },
-  ];
 
   if (!user) {
     router.push("/signin");
@@ -101,7 +108,11 @@ const AddUser = () => {
             <label className='block text-sm font-medium text-gray-700'>
               Positions
             </label>
-            <MultiSelect></MultiSelect>
+            <MultiSelect
+              selected={selectedRoles}
+              setSelected={setSelectedRoles}
+              list={roleList}
+              setList={setRoleList}></MultiSelect>
           </div>
         </div>
         <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>

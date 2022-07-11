@@ -7,6 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { AddUserMenu } from "../components/menus/addUser";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { SearchBar } from "../components/form/SearchBar";
+import Link from "next/link";
 
 const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"]);
@@ -76,30 +77,32 @@ const PeoplePage = () => {
                         <div className='py-1'>
                           <Menu.Item>
                             {({ active }) => (
-                              <a
-                                href='#'
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}>
-                                View Profile
-                              </a>
+                              <Link href={"#"}>
+                                <a
+                                  className={classNames(
+                                    active
+                                      ? "bg-gray-100 text-gray-900"
+                                      : "text-gray-700",
+                                    "block px-4 py-2 text-sm"
+                                  )}>
+                                  View Profile
+                                </a>
+                              </Link>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <a
-                                href='#'
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}>
-                                Edit
-                              </a>
+                              <Link href={`/people/edit/${person.id}`}>
+                                <a
+                                  className={classNames(
+                                    active
+                                      ? "bg-gray-100 text-gray-900"
+                                      : "text-gray-700",
+                                    "block px-4 py-2 text-sm"
+                                  )}>
+                                  Edit
+                                </a>
+                              </Link>
                             )}
                           </Menu.Item>
 

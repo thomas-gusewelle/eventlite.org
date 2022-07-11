@@ -2,7 +2,8 @@ import { FormEvent, Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-// import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
+
+//this requies data to have an id and name property
 export const MultiSelect: React.FC<{
   selected: any[];
   setSelected: Function;
@@ -30,14 +31,14 @@ export const MultiSelect: React.FC<{
   if (!list) return <div></div>;
 
   return (
-    <div className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'>
+    <div className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border rounded-md'>
       <Listbox
         value={selected}
         onChange={(person) => addSelected(person)}
         multiple>
         <div className='relative mt-1 '>
-          <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
-            <div className='flex flex-wrap gap-2'>
+          <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
+            <div className='flex flex-wrap gap-2 min-h-[1rem]'>
               {selected.map((item) => (
                 <div
                   className='flex gap-2 items-center z-50 py-1 px-2 rounded bg-indigo-100'
@@ -48,11 +49,8 @@ export const MultiSelect: React.FC<{
                 </div>
               ))}
             </div>
-            <div className='flex justify-end items-center'>
-              <MdOutlineArrowDropDownCircle
-                size={30}
-                className='text-indigo-700'
-              />
+            <div className='absolute right-1 top-1/2 -translate-y-1/2'>
+              <MdOutlineArrowDropDownCircle size={20} className='' />
             </div>
           </Listbox.Button>
           <Transition

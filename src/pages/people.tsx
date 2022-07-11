@@ -1,7 +1,4 @@
 import { Menu, Transition } from "@headlessui/react";
-import { useSession } from "next-auth/react";
-import { userInfo } from "os";
-import { BtnNeutral } from "../components/btn/btnNeutral";
 import { Fragment } from "react";
 import SidebarLayout from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";

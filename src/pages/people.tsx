@@ -9,15 +9,45 @@ import { SectionHeading } from "../components/headers/SectionHeading";
 import { SearchBar } from "../components/form/SearchBar";
 import Link from "next/link";
 import { CircularProgress } from "../components/circularProgress";
+import { User } from "@prisma/client";
 
 const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"]);
+  const adminCount = trpc.useQuery(["user.getAmdminCount"]);
+  const deleteUser = trpc.useMutation("user.deleteUserByID", {
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      people.refetch();
+    },
+  });
+
+  console.log(adminCount);
+
+  const onDelete = (person: User) => {
+    if (adminCount.isLoading) return;
+    if (adminCount.error) return;
+    if (adminCount.data == undefined) return;
+
+    if (adminCount.data >= 1 && person.status == "ADMIN") {
+      alert("You must have at least one admin user");
+      return;
+    }
+
+    deleteUser.mutate(person.id);
+  };
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
+
   if (people.error) {
-    return <div>{people.error.message}</div>;
+    return (
+      <SidebarLayout>
+        <div>{people.error.message}</div>;
+      </SidebarLayout>
+    );
   }
 
   if (people.isLoading) {
@@ -113,22 +143,20 @@ const PeoplePage = () => {
                             )}
                           </Menu.Item>
 
-                          <form method='POST' action='#'>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  type='submit'
-                                  className={classNames(
-                                    active
-                                      ? "bg-gray-100 text-gray-900"
-                                      : "text-gray-700",
-                                    "block w-full text-left px-4 py-2 text-sm"
-                                  )}>
-                                  Delete
-                                </button>
-                              )}
-                            </Menu.Item>
-                          </form>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={() => onDelete(person)}
+                                className={classNames(
+                                  active
+                                    ? "bg-gray-100 text-gray-900"
+                                    : "text-gray-700",
+                                  "block w-full text-left px-4 py-2 text-sm"
+                                )}>
+                                Delete
+                              </button>
+                            )}
+                          </Menu.Item>
                         </div>
                       </Menu.Items>
                     </Transition>

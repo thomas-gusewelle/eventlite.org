@@ -13,7 +13,6 @@ export const createContext = async (
 
   const session = req && res && (await getUser({ req, res }));
 
-  console.log(session);
   return {
     req,
     res,

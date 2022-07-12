@@ -37,6 +37,7 @@ const AddUser = () => {
       email: data.email,
       role: data.roles,
     });
+    router.push("/people");
   });
 
   if (!user) {

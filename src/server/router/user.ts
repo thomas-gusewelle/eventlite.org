@@ -18,7 +18,7 @@ export const userRouter = createRouter()
         where: { id: ctx.session?.user.id },
         select: { organizationId: true },
       });
-
+      console.log(orgID);
       return await prisma?.user.findMany({
         where: {
           organizationId: orgID?.organizationId,

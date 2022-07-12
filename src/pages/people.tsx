@@ -8,6 +8,7 @@ import { AddUserMenu } from "../components/menus/addUser";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { SearchBar } from "../components/form/SearchBar";
 import Link from "next/link";
+import { CircularProgress } from "../components/circularProgress";
 
 const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"]);
@@ -20,7 +21,13 @@ const PeoplePage = () => {
   }
 
   if (people.isLoading) {
-    return <div></div>;
+    return (
+      <SidebarLayout>
+        <div className='flex justify-center'>
+          <CircularProgress />
+        </div>
+      </SidebarLayout>
+    );
   }
 
   return (
@@ -73,7 +80,7 @@ const PeoplePage = () => {
                       leave='transition ease-in duration-75'
                       leaveFrom='transform opacity-100 scale-100'
                       leaveTo='transform opacity-0 scale-95'>
-                      <Menu.Items className='origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                      <Menu.Items className='origin-top-right z-50 absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
                         <div className='py-1'>
                           <Menu.Item>
                             {({ active }) => (

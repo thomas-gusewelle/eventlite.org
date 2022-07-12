@@ -18,15 +18,9 @@ export const MultiSelect: React.FC<{
 
   const addSelected = (items: any[]) => {
     if (!items) return;
-    console.log(items);
-
     // setList(list.filter((e) => !items.includes(e)));
     setSelected(items);
   };
-
-  useEffect(() => {
-    console.log("This is the list", list);
-  }, [list]);
 
   if (!list) return <div></div>;
 

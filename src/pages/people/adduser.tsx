@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { MultiSelect } from "../../components/form/multiSelect";
 import { useEffect, useState } from "react";
 import { trpc } from "../../utils/trpc";
-import { Role } from "@prisma/client";
+import { Role, UserStatus } from "@prisma/client";
 const AddUser = () => {
   const router = useRouter();
   const user = useUser();
@@ -20,7 +20,7 @@ const AddUser = () => {
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const roles = trpc.useQuery(["role.getRoles"]);
-  const userRoles = ["USER", "MANAGER", "ADMIN"];
+  const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
   const addUser = trpc.useMutation(["user.addUser"]);
 
   useEffect(() => {
@@ -31,11 +31,13 @@ const AddUser = () => {
 
   const submit = handleSubmit((data) => {
     data["roles"] = selectedRoles;
+    console.log(data);
 
     addUser.mutate({
       name: data.firstName + " " + data.lastName,
       email: data.email,
       role: data.roles,
+      status: data.status,
     });
     router.push("/people");
   });
@@ -131,7 +133,7 @@ const AddUser = () => {
             </label>
             <select
               id='role'
-              {...register("role")}
+              {...register("status")}
               autoComplete='country-name'
               className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
               {userRoles.map((role) => (

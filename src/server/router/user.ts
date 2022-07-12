@@ -1,6 +1,7 @@
 import { createRouter } from "./context";
 import { z } from "zod";
 import { roleRouter } from "./role";
+import { UserStatus } from "@prisma/client";
 
 export const userRouter = createRouter()
   .query("getUser", {
@@ -40,12 +41,13 @@ export const userRouter = createRouter()
       });
     },
   })
+
   .mutation("addUser", {
     input: z.object({
       name: z.string(),
       email: z.string(),
       role: z.object({ id: z.string(), name: z.string() }).array(),
-      status: z.any(),
+      status: z.string(),
     }),
 
     async resolve({ ctx, input }) {
@@ -53,7 +55,7 @@ export const userRouter = createRouter()
         where: { id: ctx.session?.user.id },
         select: { organizationId: true },
       });
-
+      console.log(input.status);
       await prisma?.user.create({
         data: {
           name: input.name,
@@ -64,7 +66,7 @@ export const userRouter = createRouter()
               id: role.id,
             })),
           },
-          status: input.status,
+          status: input.status as UserStatus,
         },
       });
     },

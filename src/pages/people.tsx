@@ -29,8 +29,8 @@ const PeoplePage = () => {
     if (adminCount.isLoading) return;
     if (adminCount.error) return;
     if (adminCount.data == undefined) return;
-
-    if (adminCount.data >= 1 && person.status == "ADMIN") {
+    console.log("number of admins", adminCount.data);
+    if (adminCount.data <= 1 && person.status == "ADMIN") {
       alert("You must have at least one admin user");
       return;
     }

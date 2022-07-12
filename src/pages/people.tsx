@@ -23,8 +23,6 @@ const PeoplePage = () => {
     },
   });
 
-  console.log(adminCount);
-
   const onDelete = (person: User) => {
     if (adminCount.isLoading) return;
     if (adminCount.error) return;
@@ -62,13 +60,26 @@ const PeoplePage = () => {
 
   return (
     <SidebarLayout>
-      <div className='flex justify-between mb-8'>
+      {/* MD Top Bar */}
+      <div className='md:hidden grid grid-cols-2 mb-8 gap-4'>
+        <SectionHeading>Users</SectionHeading>
+        <div className='flex justify-end'>
+          <AddUserMenu />
+        </div>
+        <div className='col-span-2'>
+          <SearchBar />
+        </div>
+      </div>
+
+      {/* Desktop Top Bar */}
+      <div className='hidden md:flex justify-between mb-8'>
         <SectionHeading>Users</SectionHeading>
         <div className='flex gap-4'>
           <SearchBar />
           <AddUserMenu />
         </div>
       </div>
+
       <div className='w-full bg-white'>
         <table className='w-full table-auto text-left'>
           <thead>
@@ -87,9 +98,13 @@ const PeoplePage = () => {
                   <PicNameRow user={person} />
                 </td>
                 <td className='hidden md:table-cell'>{person.email}</td>
-                <td>
+                <td className='flex flex-wrap gap-1 items-center justify-start my-1'>
                   {person.roles.map((role, index) => (
-                    <div key={index}>{role.name}</div>
+                    <div
+                      key={index}
+                      className='px-2 bg-indigo-200 rounded-xl text-center'>
+                      {role.name}
+                    </div>
                   ))}
                 </td>
                 <td className='hidden md:table-cell'>{person.status}</td>

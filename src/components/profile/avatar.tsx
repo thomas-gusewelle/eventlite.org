@@ -8,7 +8,8 @@ export const Avatar: React.FC<{ user: User }> = ({ user }) => {
     const nameSplit = user.name
       .split(" ")
       .map((i) => i[0])
-      .join("");
+      .join("")
+      .toLocaleUpperCase();
     return nameSplit;
   };
 
@@ -20,7 +21,7 @@ export const Avatar: React.FC<{ user: User }> = ({ user }) => {
     <>
       {user.image ? (
         <Image
-          className='rounded-full h-10 w-10 object-cover'
+          className='rounded-full aspect-square object-cover'
           src={user.image}
           alt={"avatar"}></Image>
       ) : (
@@ -29,7 +30,7 @@ export const Avatar: React.FC<{ user: User }> = ({ user }) => {
         //   src={user.image || ""}
         //   alt=''
         // />
-        <div className=' flex justify-center items-center rounded-full h-10 w-10 bg-indigo-600 text-white font-bold'>
+        <div className=' flex justify-center items-center rounded-full aspect-square h-10 w-10 bg-indigo-600 text-white font-bold'>
           {findInitials()}
         </div>
       )}

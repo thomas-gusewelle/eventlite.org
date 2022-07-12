@@ -98,14 +98,16 @@ const PeoplePage = () => {
                   <PicNameRow user={person} />
                 </td>
                 <td className='hidden md:table-cell'>{person.email}</td>
-                <td className='flex flex-wrap gap-1 items-center justify-start my-1'>
-                  {person.roles.map((role, index) => (
-                    <div
-                      key={index}
-                      className='px-2 bg-indigo-200 rounded-xl text-center'>
-                      {role.name}
-                    </div>
-                  ))}
+                <td>
+                  <div className='flex flex-wrap gap-1 items-center justify-start my-1'>
+                    {person.roles.map((role, index) => (
+                      <div
+                        key={index}
+                        className='px-2 bg-indigo-200 rounded-xl text-center'>
+                        {role.name}
+                      </div>
+                    ))}
+                  </div>
                 </td>
                 <td className='hidden md:table-cell'>{person.status}</td>
 

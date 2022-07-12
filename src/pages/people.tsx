@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import SidebarLayout from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
 import { trpc } from "../utils/trpc";
@@ -9,10 +9,16 @@ import { SectionHeading } from "../components/headers/SectionHeading";
 import { SearchBar } from "../components/form/SearchBar";
 import Link from "next/link";
 import { CircularProgress } from "../components/circularProgress";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
+import { classNames } from "../utils/classnames";
 
 const PeoplePage = () => {
-  const people = trpc.useQuery(["user.getUsersByOrganization"]);
+  const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
+  const people = trpc.useQuery(["user.getUsersByOrganization"], {
+    onSuccess: (data) => {
+      setPeopleList(data);
+    },
+  });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
     onError: (error) => {
@@ -23,6 +29,10 @@ const PeoplePage = () => {
     },
   });
 
+  useEffect(() => {
+    console.log(peopleList);
+  }, [peopleList]);
+
   const onDelete = (person: User) => {
     if (adminCount.isLoading) return;
     if (adminCount.error) return;
@@ -32,13 +42,19 @@ const PeoplePage = () => {
       alert("You must have at least one admin user");
       return;
     }
-
     deleteUser.mutate(person.id);
   };
 
-  function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(" ");
-  }
+  const filter = (e: string) => {
+    if (e.length > 0) {
+      const filter = people.data?.filter((person) => {
+        return person.name?.toLowerCase().startsWith(e.toLowerCase());
+      });
+      setPeopleList(filter);
+    } else {
+      setPeopleList(people.data);
+    }
+  };
 
   if (people.error) {
     return (
@@ -48,7 +64,7 @@ const PeoplePage = () => {
     );
   }
 
-  if (people.isLoading) {
+  if (people.isLoading || peopleList == undefined) {
     return (
       <SidebarLayout>
         <div className='flex justify-center'>
@@ -75,7 +91,13 @@ const PeoplePage = () => {
       <div className='hidden md:flex justify-between mb-8'>
         <SectionHeading>Users</SectionHeading>
         <div className='flex gap-4'>
-          <SearchBar />
+          <input
+            onChange={(e) => filter(e.target.value)}
+            className='border border-gray-100 focus:outline-none focus:border-indigo-700 rounded-xl w-full text-sm text-gray-500 bg-gray-100 pl-4 py-2'
+            type='text'
+            placeholder='Search'
+          />
+          {/* <SearchBar /> */}
           <AddUserMenu />
         </div>
       </div>
@@ -92,7 +114,7 @@ const PeoplePage = () => {
             </tr>
           </thead>
           <tbody>
-            {people.data?.map((person, index) => (
+            {peopleList.map((person, index) => (
               <tr key={index} className='border-t last:border-b'>
                 <td className='py-4'>
                   <PicNameRow user={person} />

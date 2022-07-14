@@ -13,6 +13,17 @@ export const userRouter = createRouter()
       });
     },
   })
+  .query("getUserByID", {
+    input: z.string(),
+    async resolve({ input }) {
+      return await prisma?.user.findFirst({
+        where: {
+          id: input,
+        },
+        include: { roles: true },
+      });
+    },
+  })
   .query("getUsersByOrganization", {
     async resolve({ ctx }) {
       const orgID = await prisma?.user.findFirst({

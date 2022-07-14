@@ -2,6 +2,7 @@ import { createRouter } from "./context";
 import { z } from "zod";
 import { roleRouter } from "./role";
 import { UserStatus } from "@prisma/client";
+import { connect } from "http2";
 
 export const userRouter = createRouter()
   .query("getUser", {
@@ -81,6 +82,33 @@ export const userRouter = createRouter()
           },
           status: input.status as UserStatus,
         },
+      });
+    },
+  })
+  .mutation("updateUserByID", {
+    input: z.object({
+      id: z.string(),
+      firstName: z.string(),
+      lastName: z.string(),
+      email: z.string(),
+      role: z.object({ id: z.string(), name: z.string() }).array(),
+      status: z.string(),
+    }),
+
+    async resolve({ input }) {
+      await prisma?.user.update({
+        data: {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          roles: {
+            connect: input.role.map((role) => ({
+              id: role.id,
+            })),
+          },
+          status: input.status as UserStatus,
+        },
+        where: { id: input.id },
       });
     },
   })

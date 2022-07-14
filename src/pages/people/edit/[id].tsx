@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Role, UserStatus } from "@prisma/client";
 import { AiOutlineConsoleSql } from "react-icons/ai";
+import { CircularProgress } from "../../../components/circularProgress";
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useUser();
@@ -19,18 +20,26 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
     reset,
   } = useForm();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const [roleList, setRoleList] = useState<any[]>([]);
-  const [selectedRoles, setSelectedRoles] = useState([]);
-  const roles = trpc.useQuery(["role.getRoles"]);
+  const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
+  const roles = trpc.useQuery(["role.getRoles"], {
+    refetchOnMount: false,
+  });
   const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
-  const addUser = trpc.useMutation(["user.addUser"]);
-  const editUser = trpc.useQuery(["user.getUserByID", id], {
+  const editUser = trpc.useMutation("user.updateUserByID");
+  const userQuery = trpc.useQuery(["user.getUserByID", id], {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
     onSuccess(data) {
-      if (data != null) reset(data);
+      if (data != null) {
+        reset(data);
+        setSelectedRoles(data?.roles);
+        setIsLoading(false);
+      }
     },
   });
-  console.log(editUser);
-  console.log(id);
 
   useEffect(() => {
     if (roles.status == "success") {
@@ -42,7 +51,8 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
     data["roles"] = selectedRoles;
     console.log(data);
 
-    addUser.mutate({
+    editUser.mutate({
+      id: id,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -55,6 +65,16 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   if (!user) {
     router.push("/signin");
     return <div></div>;
+  }
+
+  if (isLoading) {
+    return (
+      <SidebarLayout>
+        <div className='flex justify-center'>
+          <CircularProgress />
+        </div>
+      </SidebarLayout>
+    );
   }
 
   return (

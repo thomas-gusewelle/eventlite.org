@@ -24,14 +24,10 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
 
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
-  const roles = trpc.useQuery(["role.getRoles"], {
-    refetchOnMount: false,
-  });
+  const roles = trpc.useQuery(["role.getRoles"], {});
   const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
   const editUser = trpc.useMutation("user.updateUserByID");
   const userQuery = trpc.useQuery(["user.getUserByID", id], {
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
     onSuccess(data) {
       if (data != null) {
         reset(data);

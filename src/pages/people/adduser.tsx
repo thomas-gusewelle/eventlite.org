@@ -21,7 +21,12 @@ const AddUser = () => {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const roles = trpc.useQuery(["role.getRoles"]);
   const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
-  const addUser = trpc.useMutation(["user.addUser"]);
+  const addUser = trpc.useMutation(["user.addUser"], {
+    onSuccess: () => router.push("/people"),
+    onError(error, variables, context) {
+      alert(error.message);
+    },
+  });
 
   useEffect(() => {
     if (roles.status == "success") {
@@ -34,12 +39,12 @@ const AddUser = () => {
     console.log(data);
 
     addUser.mutate({
-      name: data.firstName + " " + data.lastName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       role: data.roles,
       status: data.status,
     });
-    router.push("/people");
   });
 
   if (!user) {

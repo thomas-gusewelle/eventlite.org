@@ -29,15 +29,11 @@ const PeoplePage = () => {
     },
   });
 
-  useEffect(() => {
-    console.log(peopleList);
-  }, [peopleList]);
-
   const onDelete = (person: User) => {
     if (adminCount.isLoading) return;
     if (adminCount.error) return;
     if (adminCount.data == undefined) return;
-    console.log("number of admins", adminCount.data);
+
     if (adminCount.data <= 1 && person.status == "ADMIN") {
       alert("You must have at least one admin user");
       return;
@@ -48,7 +44,7 @@ const PeoplePage = () => {
   const filter = (e: string) => {
     if (e.length > 0) {
       const filter = people.data?.filter((person) => {
-        return person.name?.toLowerCase().startsWith(e.toLowerCase());
+        return person.firstName?.toLowerCase().startsWith(e.toLowerCase());
       });
       setPeopleList(filter);
     } else {

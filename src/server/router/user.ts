@@ -69,7 +69,7 @@ export const userRouter = createRouter()
         select: { organizationId: true },
       });
       console.log(input.status);
-      await prisma?.user.create({
+      return await prisma?.user.create({
         data: {
           firstName: input.firstName,
           lastName: input.lastName,
@@ -96,7 +96,13 @@ export const userRouter = createRouter()
     }),
 
     async resolve({ input }) {
-      await prisma?.user.update({
+      const allRoles = await prisma?.role.findMany({});
+      const disconnectRoles = allRoles?.filter((role) =>
+        input.role.every((i) => i.id !== role.id)
+      );
+      console.log(input.role);
+      console.log(disconnectRoles);
+      return await prisma?.user.update({
         data: {
           firstName: input.firstName,
           lastName: input.lastName,
@@ -105,6 +111,7 @@ export const userRouter = createRouter()
             connect: input.role.map((role) => ({
               id: role.id,
             })),
+            disconnect: disconnectRoles?.map((role) => ({ id: role.id })),
           },
           status: input.status as UserStatus,
         },
@@ -115,7 +122,7 @@ export const userRouter = createRouter()
   .mutation("deleteUserByID", {
     input: z.string(),
     async resolve({ input }) {
-      await prisma?.user.delete({
+      return await prisma?.user.delete({
         where: { id: input },
       });
     },

@@ -8,6 +8,7 @@ import { Avatar } from "../profile/avatar";
 import { useUser } from "@supabase/auth-helpers-react";
 import { trpc } from "../../utils/trpc";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
+import { fullName } from "../../utils/fullName";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: String; href: String; icon: IconType }[] = [
@@ -186,7 +187,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           className='w-8 h-8 rounded-md'
                         /> */}
                         <p className='md:text-xl text-gray-800 text-base leading-4 ml-2'>
-                          {data.name}
+                          {fullName(data.firstName, data.lastName)}
                         </p>
                       </div>
                       {/* <ul className='flex'>
@@ -363,7 +364,9 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           /> */}
                         </div>
                       </div>
-                      <p className='text-gray-800 text-sm mx-3'>{data.name}</p>
+                      <p className='text-gray-800 text-sm mx-3'>
+                        {fullName(data.firstName, data.lastName)}
+                      </p>
                       <div className='cursor-pointer text-gray-600'>
                         <svg
                           aria-haspopup='true'

@@ -3,10 +3,9 @@ import Image from "next/future/image";
 
 export const Avatar: React.FC<{ user: User }> = ({ user }) => {
   const findInitials = () => {
-    if (!user.name) return;
-
-    const nameSplit = user.name
-      .split(" ")
+    if (!user.firstName || !user.lastName) return;
+    const initials = [user.firstName, user.lastName];
+    const nameSplit = initials
       .map((i) => i[0])
       .join("")
       .toLocaleUpperCase();

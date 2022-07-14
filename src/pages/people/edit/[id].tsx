@@ -8,6 +8,7 @@ import { MultiSelect } from "../../../components/form/multiSelect";
 import { useEffect, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Role, UserStatus } from "@prisma/client";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useUser();
@@ -25,7 +26,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const addUser = trpc.useMutation(["user.addUser"]);
   const editUser = trpc.useQuery(["user.getUserByID", id], {
     onSuccess(data) {
-      reset(data);
+      if (data != null) reset(data);
     },
   });
   console.log(editUser);
@@ -42,7 +43,8 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
     console.log(data);
 
     addUser.mutate({
-      name: data.firstName + " " + data.lastName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       role: data.roles,
       status: data.status,

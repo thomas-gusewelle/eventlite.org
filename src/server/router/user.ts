@@ -55,7 +55,8 @@ export const userRouter = createRouter()
 
   .mutation("addUser", {
     input: z.object({
-      name: z.string(),
+      firstName: z.string(),
+      lastName: z.string(),
       email: z.string(),
       role: z.object({ id: z.string(), name: z.string() }).array(),
       status: z.string(),
@@ -69,7 +70,8 @@ export const userRouter = createRouter()
       console.log(input.status);
       await prisma?.user.create({
         data: {
-          name: input.name,
+          firstName: input.firstName,
+          lastName: input.lastName,
           email: input.email,
           organizationId: orgID?.organizationId,
           roles: {

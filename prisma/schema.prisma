@@ -54,6 +54,8 @@ model User {
   Organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId String?
   availability   Availability[]
+
+  @@index([id, organizationId])
 }
 
 enum UserStatus {
@@ -83,6 +85,8 @@ model Organization {
   users        User[]
   locations    Locations[]
   events       Event[]
+
+  @@index([id])
 }
 
 model Locations {
@@ -108,4 +112,6 @@ model Event {
   locationsId      String?
   positions        Json
   unavailableUsers Json?
+
+  @@index([id, organizationId])
 }

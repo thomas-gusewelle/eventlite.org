@@ -24,7 +24,14 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
 
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
-  const roles = trpc.useQuery(["role.getRoles"], {});
+  const roles = trpc.useQuery(["role.getRoles"], {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+
+    onSuccess(data) {
+      setRoleList(data as any);
+    },
+  });
   const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
   const editUser = trpc.useMutation("user.updateUserByID");
   const userQuery = trpc.useQuery(["user.getUserByID", id], {
@@ -35,13 +42,8 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
         setIsLoading(false);
       }
     },
+    refetchOnWindowFocus: false,
   });
-
-  useEffect(() => {
-    if (roles.status == "success") {
-      setRoleList(roles.data as any);
-    }
-  }, [roles]);
 
   const submit = handleSubmit((data) => {
     data["roles"] = selectedRoles;
@@ -76,7 +78,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   return (
     <SidebarLayout>
       <div className='mb-8'>
-        <SectionHeading>Add User</SectionHeading>
+        <SectionHeading>Edit User</SectionHeading>
       </div>
       <form onSubmit={submit} className='shadow'>
         <div className='grid grid-cols-6 gap-6 mb-6 px-6'>

@@ -19,7 +19,13 @@ const AddUser = () => {
 
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const roles = trpc.useQuery(["role.getRoles"]);
+  const roles = trpc.useQuery(["role.getRoles"], {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    onSuccess(data) {
+      setRoleList(data as any);
+    },
+  });
   const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
   const addUser = trpc.useMutation(["user.addUser"], {
     onSuccess: () => router.push("/people"),
@@ -28,15 +34,8 @@ const AddUser = () => {
     },
   });
 
-  useEffect(() => {
-    if (roles.status == "success") {
-      setRoleList(roles.data as any);
-    }
-  }, [roles]);
-
   const submit = handleSubmit((data) => {
     data["roles"] = selectedRoles;
-    console.log(data);
 
     addUser.mutate({
       firstName: data.firstName,

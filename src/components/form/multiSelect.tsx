@@ -13,14 +13,23 @@ export const MultiSelect: React.FC<{
   const removeSelected = (item: any, e: FormEvent) => {
     e.stopPropagation();
     setSelected(selected.filter((e) => e.id != item.id));
-    // setList((arr: any) => [...arr, item]);
+    setList((arr: any) => [...arr, item]);
   };
 
   const addSelected = (items: any[]) => {
     if (!items) return;
-    // setList(list.filter((e) => !items.includes(e)));
+    setList(list.filter((e) => !items.includes(e)));
     setSelected(items);
   };
+
+  useEffect(() => {
+    const filteredList = list.filter((e) =>
+      selected.every((s) => s.id != e.id)
+    );
+
+    setList(filteredList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!list) return <div></div>;
 

@@ -43,8 +43,13 @@ const PeoplePage = () => {
 
   const filter = (e: string) => {
     if (e.length > 0) {
+      let key = e.toLowerCase();
       const filter = people.data?.filter((person) => {
-        return person.firstName?.toLowerCase().startsWith(e.toLowerCase());
+        return (
+          person.firstName?.toLowerCase().includes(key) ||
+          person.lastName?.toLowerCase().includes(key) ||
+          person.email?.toLowerCase().includes(key)
+        );
       });
       setPeopleList(filter);
     } else {

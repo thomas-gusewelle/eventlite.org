@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
+import { FaChurch } from "react-icons/fa";
 import Link from "next/link";
 import { IconType } from "react-icons";
 import { Avatar } from "../profile/avatar";
@@ -14,6 +15,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: String; href: String; icon: IconType }[] = [
     { name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
     { name: "People", href: "/people", icon: MdPeopleAlt },
+    { name: "Locations", href: "/locations", icon: FaChurch },
   ];
 
   const [show, setShow] = useState(false);

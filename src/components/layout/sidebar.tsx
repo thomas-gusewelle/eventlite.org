@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
 import Link from "next/link";
 import { IconType } from "react-icons";
-import { Url } from "url";
+import { Avatar } from "../profile/avatar";
+import { useUser } from "@supabase/auth-helpers-react";
+import { trpc } from "../../utils/trpc";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
+import { fullName } from "../../utils/fullName";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: String; href: String; icon: IconType }[] = [
@@ -20,16 +23,22 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const [menu2, setMenu2] = useState(false);
   const [menu3, setMenu3] = useState(false);
 
-  const user = useSession();
   const router = useRouter();
   const signOutRouter = () => {
-    signOut();
+    // signOut();
     router.push("/");
   };
 
+  const { data, isLoading, error } = trpc.useQuery(["user.getUser"]);
+  const user = useUser();
+
+  if (!data) {
+    return <div></div>;
+  }
+
   return (
     <>
-      <div className='w-full h-full bg-gray-200'>
+      <div className='w-full h-full bg-white'>
         <div className='flex flex-no-wrap'>
           {/* Sidebar starts */}
           <div className='absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block'>
@@ -170,13 +179,15 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <div className='border-t border-gray-300'>
                     <div className='w-full flex items-center justify-between px-6 pt-1'>
                       <div className='flex items-center'>
+                        <Avatar user={data} />
+                        {/* <Image src={session.data?.user.image}/>
                         <img
                           alt='profile-pic'
-                          src={user.data?.user?.image || ""}
+                          src={session.data?.user?.image || ""}
                           className='w-8 h-8 rounded-md'
-                        />
+                        /> */}
                         <p className='md:text-xl text-gray-800 text-base leading-4 ml-2'>
-                          {user.data?.user?.name}
+                          {fullName(data.firstName, data.lastName)}
                         </p>
                       </div>
                       {/* <ul className='flex'>
@@ -335,11 +346,9 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   <path d='M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2' />
                                   <path d='M7 12h14l-3 -3m0 6l3 -3' />
                                 </svg>
-                                <span
-                                  onClick={() => signOut()}
-                                  className='text-sm ml-2'>
-                                  Sign out
-                                </span>
+                                <Link href={"/api/auth/logout"}>
+                                  <span className='text-sm ml-2'>Sign out</span>
+                                </Link>
                               </div>
                             </li>
                           </ul>
@@ -347,16 +356,16 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           ""
                         )}
                         <div className='relative'>
-                          <img
+                          <Avatar user={data} />
+                          {/* <img
                             className='rounded-full h-10 w-10 object-cover'
-                            src={user.data?.user?.image || ""}
+                            src={session.data?.user?.image || ""}
                             alt=''
-                          />
-                          <div className='w-2 h-2 rounded-full bg-green-400 border border-white absolute inset-0 mb-0 mr-0 m-auto' />
+                          /> */}
                         </div>
                       </div>
                       <p className='text-gray-800 text-sm mx-3'>
-                        {user.data?.user?.name}
+                        {fullName(data.firstName, data.lastName)}
                       </p>
                       <div className='cursor-pointer text-gray-600'>
                         <svg
@@ -407,11 +416,9 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             </nav>
             {/* Navigation ends */}
             {/* Remove class [ h-64 ] when adding a card block */}
-            <div className='container mx-auto py-10 h-64 md:w-4/5 w-11/12 px-6'>
+            <div className='container mx-auto px-4 py-10'>
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
-              <div className='w-full h-full rounded border-dashed border-2 border-gray-300'>
-                {children}
-              </div>
+              <div className='w-full h-full rounded'>{children}</div>
             </div>
           </div>
         </div>

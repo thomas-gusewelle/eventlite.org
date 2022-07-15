@@ -1,16 +1,13 @@
-import { useSession } from "next-auth/react";
 import SidebarLayout from "../components/layout/sidebar";
 import { trpc } from "../utils/trpc";
 import { useRouter } from "next/router";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const Dashboard = () => {
-  const user = useSession();
+  const user = useUser();
   const router = useRouter();
 
-  if (user.status == "unauthenticated") {
-    router.push("/");
-    return <div></div>;
-  }
+  console.log(user);
 
   return (
     <SidebarLayout>

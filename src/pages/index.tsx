@@ -1,8 +1,17 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import Head from "next/head";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
+  const loggedUser = supabaseClient.auth.user();
+  const router = useRouter();
+
+  if (loggedUser) {
+    router.push("/dashboard");
+  }
+
   return (
     <>
       <Head>

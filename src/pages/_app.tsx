@@ -3,7 +3,8 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { SessionProvider } from "next-auth/react";
+import { UserProvider } from "@supabase/auth-helpers-react";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import "../styles/globals.css";
 
 const MyApp: AppType = ({
@@ -11,9 +12,9 @@ const MyApp: AppType = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
+    <UserProvider supabaseClient={supabaseClient}>
       <Component {...pageProps} />
-    </SessionProvider>
+    </UserProvider>
   );
 };
 
@@ -38,6 +39,13 @@ export default withTRPC<AppRouter>({
     return {
       url,
       transformer: superjson,
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      },
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
        */

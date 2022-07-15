@@ -25,9 +25,6 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
   const roles = trpc.useQuery(["role.getRoles"], {
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-
     onSuccess(data) {
       setRoleList(data as any);
     },

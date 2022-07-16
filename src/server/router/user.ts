@@ -102,8 +102,7 @@ export const userRouter = createRouter()
       const disconnectRoles = allRoles?.filter((role) =>
         input.role.every((i) => i.id !== role.id)
       );
-      console.log(input.role);
-      console.log(disconnectRoles);
+
       return await prisma?.user.update({
         data: {
           firstName: input.firstName,

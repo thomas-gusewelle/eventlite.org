@@ -103,7 +103,7 @@ const PeoplePage = () => {
         </div>
       </div>
 
-      <div className='w-full bg-white'>
+      <div className='w-full '>
         <table className='w-full table-auto text-left'>
           <thead>
             <tr>

@@ -38,6 +38,10 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
     return <div></div>;
   }
 
+  if (error) {
+    alert(error.message);
+  }
+
   return (
     <>
       <div className='w-full h-full bg-white'>

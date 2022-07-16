@@ -1,11 +1,26 @@
+import { Locations } from "@prisma/client";
+import { useState } from "react";
+import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnAdd } from "../components/btn/btnAdd";
 import { SearchBar } from "../components/form/SearchBar";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import SidebarLayout from "../components/layout/sidebar";
+import { TableDropdown } from "../components/menus/tableDropdown";
 import { trpc } from "../utils/trpc";
 
 const LocationsPage = () => {
-  const locations = trpc.useQuery(["locations.getLocationsByOrg"]);
+  const [locationList, setLocationList] = useState<Locations[]>();
+
+  const locations = trpc.useQuery(["locations.getLocationsByOrg"], {
+    onSuccess(data) {
+      setLocationList(data);
+    },
+    onError(err) {
+      alert(err.message);
+    },
+  });
+
+  const onDelete = (location: Locations) => {};
 
   return (
     <SidebarLayout>
@@ -33,6 +48,39 @@ const LocationsPage = () => {
           {/* <SearchBar /> */}
           <BtnAdd />
         </div>
+      </div>
+
+      <div className='w-full'>
+        <table className='w-full table-auto text-left'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {locationList?.map((loc, index) => {
+              const options: TableOptionsDropdown = [
+                {
+                  name: "Edit",
+                  href: `/people/edit/${loc.id}`,
+                },
+                { name: "Delete", function: () => onDelete(loc) },
+              ];
+
+              return (
+                <tr key={index} className='border-t last:border-b'>
+                  <td className='py-4 md:text-xl text-gray-800 text-base leading-4'>
+                    {loc.name}
+                  </td>
+                  <td>
+                    <TableDropdown options={options} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </SidebarLayout>
   );

@@ -7,11 +7,13 @@ import { connect } from "http2";
 export const userRouter = createRouter()
   .query("getUser", {
     async resolve({ ctx }) {
-      return await prisma?.user.findFirst({
+      const userInfo = await prisma?.user.findFirst({
         where: {
           id: ctx.session?.user.id,
         },
       });
+
+      return userInfo;
     },
   })
   .query("getUserByID", {

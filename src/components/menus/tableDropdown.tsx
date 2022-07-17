@@ -59,7 +59,7 @@ export const TableDropdown: React.FC<{
                             : "text-gray-700",
                           "block w-full text-left px-4 py-2 text-sm"
                         )}>
-                        Delete
+                        {option.name}
                       </button>
                     )}
                   </Menu.Item>

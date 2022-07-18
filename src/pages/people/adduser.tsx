@@ -8,6 +8,7 @@ import { MultiSelect } from "../../components/form/multiSelect";
 import { useEffect, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { Role, UserStatus } from "@prisma/client";
+import { CircularProgress } from "../../components/circularProgress";
 const AddUser = () => {
   const router = useRouter();
   const user = useUser();
@@ -20,8 +21,6 @@ const AddUser = () => {
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const roles = trpc.useQuery(["role.getRoles"], {
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
     onSuccess(data) {
       setRoleList(data as any);
     },
@@ -49,6 +48,16 @@ const AddUser = () => {
   if (!user) {
     router.push("/signin");
     return <div></div>;
+  }
+
+  if (roles.isLoading) {
+    return (
+      <SidebarLayout>
+        <div className='flex justify-center'>
+          <CircularProgress />
+        </div>
+      </SidebarLayout>
+    );
   }
 
   return (

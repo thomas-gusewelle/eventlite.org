@@ -13,6 +13,21 @@ export const locationRouter = createRouter()
       });
     },
   })
+  .mutation("createLocation", {
+    input: z.string(),
+    async resolve({ ctx, input }) {
+      const orgID = await prisma?.user.findFirst({
+        select: { organizationId: true },
+        where: { id: ctx.session?.user.id },
+      });
+      return await prisma?.locations.create({
+        data: {
+          name: input,
+          organizationId: orgID?.organizationId,
+        },
+      });
+    },
+  })
   .mutation("editLocationByID", {
     input: z.object({
       id: z.string(),
@@ -24,6 +39,14 @@ export const locationRouter = createRouter()
           name: input.name,
         },
         where: { id: input.id },
+      });
+    },
+  })
+  .mutation("deletebyId", {
+    input: z.string(),
+    async resolve({ input }) {
+      return await prisma?.locations.delete({
+        where: { id: input },
       });
     },
   });

@@ -1,7 +1,11 @@
 import { Locations } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
+import { ErrorAlert } from "../components/alerts/errorAlert";
 import { BtnAdd } from "../components/btn/btnAdd";
+import { BtnCancel } from "../components/btn/btnCancel";
+import { BtnSave } from "../components/btn/btnSave";
 import { SearchBar } from "../components/form/SearchBar";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import SidebarLayout from "../components/layout/sidebar";
@@ -15,6 +19,14 @@ import { trpc } from "../utils/trpc";
 const LocationsPage = () => {
   const [locationList, setLocationList] = useState<Locations[]>();
   const [editOpen, setEditOpen] = useState(false);
+  const [errorAlert, setErrorAlert] = useState({ state: false, message: "" });
+  const [editId, setEditId] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   const locations = trpc.useQuery(["locations.getLocationsByOrg"], {
     onSuccess(data) {
@@ -25,10 +37,68 @@ const LocationsPage = () => {
     },
   });
 
-  const close = () => {
-    console.log("close");
-    setEditOpen(false);
-  };
+  const addLocation = trpc.useMutation("locations.createLocation", {
+    onSuccess(data, variables, context) {
+      if (locationList && data) {
+        const newData = [...locationList, data];
+        setLocationList(newData);
+        setEditOpen(false);
+      }
+    },
+    onError() {
+      setErrorAlert({
+        state: true,
+        message: "There was an error editing your location. Please try again.",
+      });
+    },
+  });
+
+  const editLocation = trpc.useMutation("locations.editLocationByID", {
+    onMutate(data) {
+      if (editId != null && locationList) {
+        let index = locationList?.findIndex((loc) => loc.id == data.id);
+
+        if (index >= 0) {
+          locationList[index]!.name = data.name;
+        }
+        setEditOpen(false);
+      }
+    },
+    onError(error, variables, context) {
+      setErrorAlert({
+        state: true,
+        message: "There was an error editing your location. Please try again.",
+      });
+      locations.refetch();
+    },
+  });
+
+  const deleteLocation = trpc.useMutation("locations.deletebyId", {
+    onMutate(data) {
+      const newData = locationList?.filter((location) => location.id != data);
+      setLocationList(newData);
+    },
+    onSuccess(data) {},
+    onError(error, variables, context) {
+      setErrorAlert({
+        state: true,
+        message: "There was an error deleting your location. Please try again.",
+      });
+      locations.refetch();
+    },
+  });
+
+  const submit = handleSubmit((data) => {
+    if (editId == null) {
+      addLocation.mutate(data.name);
+    }
+    if (editId != null) {
+      editLocation.mutate({
+        id: editId,
+        name: data.name,
+      });
+    }
+  });
 
   const onDelete = (location: Locations) => {};
 
@@ -36,24 +106,54 @@ const LocationsPage = () => {
     <>
       <Modal open={editOpen} setOpen={setEditOpen}>
         <>
-          <ModalBody>
-            <ModalTitle text='Add Location' />
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>
-                Are you sure you want to deactivate your account? All of your
-                data will be permanently removed. This action cannot be undone.
-              </p>
-            </div>
-          </ModalBody>
-          <BottomButtons onClick={() => setEditOpen(false)} />
+          <form onSubmit={submit}>
+            <ModalBody>
+              <ModalTitle text='Add Location' />
+              <div className='mt-2'>
+                <label
+                  htmlFor='name'
+                  className='block text-sm font-medium text-gray-700'>
+                  Location Name
+                </label>
+                <input
+                  type='text'
+                  id='name'
+                  {...register("name", { required: true, minLength: 3 })}
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                />
+                {errors.name && (
+                  <span className='text-red-500'>
+                    Location Name is Required
+                  </span>
+                )}
+              </div>
+            </ModalBody>
+            <BottomButtons>
+              <BtnSave type={"submit"} />
+              <BtnCancel
+                onClick={() => {
+                  setEditOpen(false);
+                }}
+              />
+            </BottomButtons>
+          </form>
         </>
       </Modal>
       <SidebarLayout>
+        {errorAlert.state && (
+          <ErrorAlert setState={setErrorAlert} error={errorAlert} />
+        )}
         {/* MD Top Bar */}
         <div className='md:hidden grid grid-cols-2 mb-8 gap-4'>
           <SectionHeading>Locations</SectionHeading>
           <div className='flex justify-end'>
-            <BtnAdd onClick={() => setEditOpen(true)} />
+            <BtnAdd
+              onClick={() => {
+                reset({ name: "" });
+                setEditId(null);
+                setEditOpen(true);
+              }}
+            />
           </div>
           <div className='col-span-2'>
             <SearchBar />
@@ -71,7 +171,13 @@ const LocationsPage = () => {
               placeholder='Search'
             />
             {/* <SearchBar /> */}
-            <BtnAdd onClick={() => setEditOpen(true)} />
+            <BtnAdd
+              onClick={() => {
+                reset({ name: "" });
+                setEditId(null);
+                setEditOpen(true);
+              }}
+            />
           </div>
         </div>
 
@@ -88,9 +194,18 @@ const LocationsPage = () => {
                 const options: TableOptionsDropdown = [
                   {
                     name: "Edit",
-                    function: () => setEditOpen(true),
+                    function: () => {
+                      reset(loc);
+                      setEditId(loc.id);
+                      setEditOpen(true);
+                    },
                   },
-                  { name: "Delete", function: () => onDelete(loc) },
+                  {
+                    name: "Delete",
+                    function: () => {
+                      deleteLocation.mutate(loc.id);
+                    },
+                  },
                 ];
 
                 return (

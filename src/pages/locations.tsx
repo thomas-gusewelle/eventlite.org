@@ -8,6 +8,8 @@ import SidebarLayout from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
+import { ModalBody } from "../components/modal/modalBody";
+import { ModalTitle } from "../components/modal/modalTitle";
 import { trpc } from "../utils/trpc";
 
 const LocationsPage = () => {
@@ -33,7 +35,18 @@ const LocationsPage = () => {
   return (
     <>
       <Modal open={editOpen} setOpen={setEditOpen}>
-        <BottomButtons onClick={() => setEditOpen(false)} />
+        <>
+          <ModalBody>
+            <ModalTitle text='Add Location' />
+            <div className='mt-2'>
+              <p className='text-sm text-gray-500'>
+                Are you sure you want to deactivate your account? All of your
+                data will be permanently removed. This action cannot be undone.
+              </p>
+            </div>
+          </ModalBody>
+          <BottomButtons onClick={() => setEditOpen(false)} />
+        </>
       </Modal>
       <SidebarLayout>
         {/* MD Top Bar */}

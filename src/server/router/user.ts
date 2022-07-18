@@ -7,11 +7,13 @@ import { connect } from "http2";
 export const userRouter = createRouter()
   .query("getUser", {
     async resolve({ ctx }) {
-      return await prisma?.user.findFirst({
+      const userInfo = await prisma?.user.findFirst({
         where: {
           id: ctx.session?.user.id,
         },
       });
+
+      return userInfo;
     },
   })
   .query("getUserByID", {
@@ -100,8 +102,7 @@ export const userRouter = createRouter()
       const disconnectRoles = allRoles?.filter((role) =>
         input.role.every((i) => i.id !== role.id)
       );
-      console.log(input.role);
-      console.log(disconnectRoles);
+
       return await prisma?.user.update({
         data: {
           firstName: input.firstName,

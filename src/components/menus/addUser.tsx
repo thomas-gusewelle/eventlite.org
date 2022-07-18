@@ -1,4 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
+import Link from "next/link";
 import { Fragment } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { MdAdd } from "react-icons/md";
@@ -40,14 +41,15 @@ export const AddUserMenu = () => {
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
-                <a
-                  href='/people/adduser'
-                  className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "block px-4 py-2 text-sm"
-                  )}>
-                  Add User
-                </a>
+                <Link href={"/people/adduser"}>
+                  <a
+                    className={classNames(
+                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      "block px-4 py-2 text-sm"
+                    )}>
+                    Add User
+                  </a>
+                </Link>
               )}
             </Menu.Item>
           </div>

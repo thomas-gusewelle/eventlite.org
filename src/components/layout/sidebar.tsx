@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useRouter } from "next/router";
-import { MdSpaceDashboard, MdPeopleAlt } from "react-icons/md";
+import { MdSpaceDashboard, MdPeopleAlt, MdWorkspaces } from "react-icons/md";
 import { FaChurch } from "react-icons/fa";
 import Link from "next/link";
 import { IconType } from "react-icons";
@@ -16,6 +16,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
     { name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
     { name: "People", href: "/people", icon: MdPeopleAlt },
     { name: "Locations", href: "/locations", icon: FaChurch },
+    { name: "Roles", href: "/roles", icon: MdWorkspaces },
   ];
 
   const [show, setShow] = useState(false);

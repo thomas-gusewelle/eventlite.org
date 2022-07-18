@@ -42,6 +42,13 @@ const Roles = () => {
         setEditOpen(false);
       }
     },
+    onError() {
+      setError({
+        state: true,
+        message: "There was an error adding your role. Please try again.",
+      });
+      setEditOpen(false);
+    },
   });
 
   const editRole = trpc.useMutation("role.editRoleById", {

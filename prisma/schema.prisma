@@ -49,6 +49,7 @@ model Organization {
   users        User[]
   locations    Locations[]
   events       Event[]
+  roles        Role[]
 
   @@index([id])
 }
@@ -65,6 +66,10 @@ model Role {
   id    String @id @default(uuid())
   name  String
   users User[]
+
+  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  @@index([organizationId])
 }
 
 model Event {

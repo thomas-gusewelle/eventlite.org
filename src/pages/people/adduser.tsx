@@ -20,7 +20,7 @@ const AddUser = () => {
 
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const roles = trpc.useQuery(["role.getRoles"], {
+  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
     onSuccess(data) {
       setRoleList(data as any);
     },

@@ -13,12 +13,20 @@ import { Role, User } from "@prisma/client";
 import { classNames } from "../utils/classnames";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
+import { PaginationBar } from "../components/layout/pagination-bar";
+import { paginate } from "../utils/paginate";
+import { off } from "process";
 
 const PeoplePage = () => {
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
+  const [pageNum, setPageNum] = useState(1);
   const people = trpc.useQuery(["user.getUsersByOrganization"], {
     onSuccess: (data) => {
-      setPeopleList(data);
+      if (data) {
+        const pagianted = paginate(data, pageNum, 10);
+        console.log(pagianted);
+        setPeopleList(pagianted.data);
+      }
     },
   });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
@@ -54,11 +62,24 @@ const PeoplePage = () => {
           person.email?.toLowerCase().includes(key)
         );
       });
-      setPeopleList(filter);
+      if (filter) {
+        const paginated = paginate(filter, 1, 10);
+        setPeopleList(paginated.data);
+      }
     } else {
-      setPeopleList(people.data);
+      if (people.data) {
+        const paginated = paginate(people.data, pageNum, 10);
+        setPeopleList(paginated.data);
+      }
     }
   };
+
+  useEffect(() => {
+    if (people.data) {
+      const paginated = paginate(people.data, pageNum, 10);
+      setPeopleList(paginated.data);
+    }
+  }, [pageNum]);
 
   if (people.error) {
     return (
@@ -164,6 +185,7 @@ const PeoplePage = () => {
           </tbody>
         </table>
       </div>
+      <PaginationBar setPageNum={setPageNum} />
     </SidebarLayout>
   );
 };

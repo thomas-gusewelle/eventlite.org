@@ -1,10 +1,10 @@
 export function paginate<T>(
   items: T[],
-  currentPage: number,
-  perPageItems: number
+  currentPage: number = 1,
+  perPageItems: number = 10
 ) {
-  let page = currentPage || 1;
-  let perPage = perPageItems || 10;
+  let page = currentPage;
+  let perPage = perPageItems;
   let offset = (page - 1) * perPage;
 
   let paginatedItems = items.slice(offset).slice(0, perPageItems);

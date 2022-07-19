@@ -16,18 +16,27 @@ import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { paginate } from "../utils/paginate";
 import { off } from "process";
+import { PaginateData } from "../../types/paginate";
 
 const PeoplePage = () => {
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
   const [pageNum, setPageNum] = useState(1);
+  const [paginatedData, setPaginatedData] = useState<
+    PaginateData<
+      (User & {
+        roles: Role[];
+      })[]
+    >
+  >();
   const people = trpc.useQuery(["user.getUsersByOrganization"], {
-    onSuccess: (data) => {
-      if (data) {
-        const pagianted = paginate(data, pageNum, 10);
-        console.log(pagianted);
-        setPeopleList(pagianted.data);
-      }
-    },
+    // onSuccess: (data) => {
+    //   if (data) {
+    //     console.log("here");
+    //     const pagianted = paginate(data, pageNum, 10);
+    //     console.log(pagianted);
+    //     setPeopleList(pagianted.data);
+    //   }
+    // },
   });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
@@ -63,12 +72,12 @@ const PeoplePage = () => {
         );
       });
       if (filter) {
-        const paginated = paginate(filter, 1, 10);
+        const paginated = paginate(filter, 1);
         setPeopleList(paginated.data);
       }
     } else {
       if (people.data) {
-        const paginated = paginate(people.data, pageNum, 10);
+        const paginated = paginate(people.data, pageNum);
         setPeopleList(paginated.data);
       }
     }
@@ -77,9 +86,10 @@ const PeoplePage = () => {
   useEffect(() => {
     if (people.data) {
       const paginated = paginate(people.data, pageNum, 10);
+      setPaginatedData(paginated);
       setPeopleList(paginated.data);
     }
-  }, [pageNum]);
+  }, [pageNum, people.data]);
 
   if (people.error) {
     return (
@@ -89,7 +99,11 @@ const PeoplePage = () => {
     );
   }
 
-  if (people.isLoading || peopleList == undefined) {
+  if (
+    people.isLoading ||
+    peopleList == undefined ||
+    paginatedData == undefined
+  ) {
     return (
       <SidebarLayout>
         <div className='flex justify-center'>
@@ -185,7 +199,11 @@ const PeoplePage = () => {
           </tbody>
         </table>
       </div>
-      <PaginationBar setPageNum={setPageNum} />
+      <PaginationBar
+        setPageNum={setPageNum}
+        pageNum={pageNum}
+        paginateData={paginatedData}
+      />
     </SidebarLayout>
   );
 };

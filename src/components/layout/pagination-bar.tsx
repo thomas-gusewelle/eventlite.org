@@ -60,7 +60,7 @@ export const PaginationBar: React.FC<{
     setPageNum(5 * (pageRow - 1));
   };
 
-  if (pageNums == undefined) {
+  if (pageNums == undefined || paginateData.total_pages < 1) {
     return <div></div>;
   }
 

@@ -20,6 +20,8 @@ import { PaginateData } from "../../types/paginate";
 
 const PeoplePage = () => {
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
+  const [peopleUnPageList, setPeopleUnPageList] =
+    useState<(User & { roles: Role[] })[]>();
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setPaginatedData] = useState<
     PaginateData<
@@ -29,14 +31,11 @@ const PeoplePage = () => {
     >
   >();
   const people = trpc.useQuery(["user.getUsersByOrganization"], {
-    // onSuccess: (data) => {
-    //   if (data) {
-    //     console.log("here");
-    //     const pagianted = paginate(data, pageNum, 10);
-    //     console.log(pagianted);
-    //     setPeopleList(pagianted.data);
-    //   }
-    // },
+    onSuccess: (data) => {
+      if (data) {
+        setPeopleUnPageList(data);
+      }
+    },
   });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
@@ -72,24 +71,23 @@ const PeoplePage = () => {
         );
       });
       if (filter) {
-        const paginated = paginate(filter, 1);
-        setPeopleList(paginated.data);
+        setPageNum(1);
+        setPeopleUnPageList(filter);
       }
     } else {
       if (people.data) {
-        const paginated = paginate(people.data, pageNum);
-        setPeopleList(paginated.data);
+        setPeopleUnPageList(people.data);
       }
     }
   };
 
   useEffect(() => {
-    if (people.data) {
-      const paginated = paginate(people.data, pageNum, 10);
+    if (peopleUnPageList) {
+      const paginated = paginate(peopleUnPageList, pageNum, 10);
       setPaginatedData(paginated);
       setPeopleList(paginated.data);
     }
-  }, [pageNum, people.data]);
+  }, [pageNum, peopleUnPageList]);
 
   if (people.error) {
     return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt, MdWorkspaces } from "react-icons/md";
@@ -34,6 +34,15 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
   const { data, isLoading, error } = trpc.useQuery(["user.getUser"]);
   const user = useUser();
+
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = "hidden";
+    }
+    if (!show) {
+      document.body.style.overflow = "auto";
+    }
+  }, [show]);
 
   if (!data) {
     return <div></div>;
@@ -423,7 +432,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             </nav>
             {/* Navigation ends */}
             {/* Remove class [ h-64 ] when adding a card block */}
-            <div className='container mx-auto px-4 py-10'>
+            <div className='container mx-auto px-4 py-4 sm:py-10'>
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
               <div className='w-full h-full rounded'>{children}</div>
             </div>

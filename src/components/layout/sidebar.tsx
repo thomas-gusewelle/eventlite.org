@@ -12,7 +12,7 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { fullName } from "../../utils/fullName";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
-  const sideLinks: { name: String; href: String; icon: IconType }[] = [
+  const sideLinks: { name: string; href: string; icon: IconType }[] = [
     { name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
     { name: "People", href: "/people", icon: MdPeopleAlt },
     { name: "Locations", href: "/locations", icon: FaChurch },
@@ -48,7 +48,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
       <div className='w-full h-full bg-white'>
         <div className='flex flex-no-wrap'>
           {/* Sidebar starts */}
-          <div className='absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block'>
+          <div className='absolute lg:relative w-64 min-h-screen max-h-full shadow bg-gray-100 hidden lg:block'>
             <div className='h-16 w-full flex items-center px-8'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'

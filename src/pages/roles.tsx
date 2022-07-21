@@ -1,25 +1,32 @@
 import { Role } from "@prisma/client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { ErrorAlert } from "../components/alerts/errorAlert";
 import { BtnAdd } from "../components/btn/btnAdd";
 import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnSave } from "../components/btn/btnSave";
+import { CircularProgress } from "../components/circularProgress";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { PaginationBar } from "../components/layout/pagination-bar";
 import SidebarLayout from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
 import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
+import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
 const Roles = () => {
 	const [editOpen, setEditOpen] = useState(false);
 	const [editId, setEditId] = useState<string | null>(null);
 	const [roleList, setRoleList] = useState<Role[]>();
+	const [rolePaginated, setRolePaginated] = useState<Role[]>();
+	const [pageNum, setPageNum] = useState(1);
+	const [paginatedData, setpagiantedData] = useState<PaginateData<Role[]>>();
 	const [error, setError] = useState({ state: false, message: "" });
 
 	const {
@@ -85,6 +92,14 @@ const Roles = () => {
 		},
 	});
 
+	useEffect(() => {
+		if (roleList != undefined) {
+			const _paginated = paginate(roleList, pageNum);
+			setpagiantedData(_paginated);
+			setRolePaginated(_paginated.data);
+		}
+	}, [pageNum, roleList]);
+
 	const submit = handleSubmit((data) => {
 		if (editId == null) {
 			addRole.mutate(data.name);
@@ -103,11 +118,28 @@ const Roles = () => {
 			const filter = roles.data?.filter((role) => {
 				return role.name?.toLowerCase().includes(key);
 			});
+			setPageNum(1);
+
 			setRoleList(filter);
 		} else {
 			setRoleList(roles.data);
 		}
 	};
+
+	if (
+		roles.isLoading ||
+		rolePaginated == undefined ||
+		paginatedData == undefined
+	) {
+		return (
+			<SidebarLayout>
+				<div className="flex justify-center">
+					<CircularProgress />
+				</div>
+			</SidebarLayout>
+		);
+	}
+
 	return (
 		<>
 			<Modal open={editOpen} setOpen={setEditOpen}>
@@ -199,7 +231,7 @@ const Roles = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{roleList?.map((role, index) => {
+							{rolePaginated?.map((role, index) => {
 								const options: TableOptionsDropdown = [
 									{
 										name: "Edit",
@@ -231,6 +263,11 @@ const Roles = () => {
 						</tbody>
 					</table>
 				</div>
+				<PaginationBar
+					setPageNum={setPageNum}
+					pageNum={pageNum}
+					paginateData={paginatedData}
+				/>
 			</SidebarLayout>
 		</>
 	);

@@ -1,5 +1,6 @@
 export type TableOptionsDropdown = {
-  name: string;
-  href?: string;
-  function?: () => void;
+	name: string;
+	show?: boolean;
+	href?: string;
+	function?: () => void;
 }[];

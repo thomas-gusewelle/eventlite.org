@@ -47,6 +47,7 @@ const Roles = () => {
 			if (roleList && data) {
 				setRoleList([...roleList, data]);
 				setEditOpen(false);
+				roles.refetch();
 			}
 		},
 		onError() {
@@ -76,6 +77,9 @@ const Roles = () => {
 			});
 			roles.refetch();
 		},
+		onSuccess() {
+			roles.refetch();
+		},
 	});
 
 	const deleteRole = trpc.useMutation("role.deleteRoleById", {
@@ -88,6 +92,9 @@ const Roles = () => {
 				message: "There was an error deleting the role. Please try again",
 			});
 			setRoleList(roles.data);
+			roles.refetch();
+		},
+		onSettled() {
 			roles.refetch();
 		},
 	});

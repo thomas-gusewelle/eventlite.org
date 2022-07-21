@@ -26,6 +26,7 @@ model User {
   Organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId String?
   availability   Availability[]
+  hasLogin Boolean @default(false)
 
   @@index([id, organizationId])
 }

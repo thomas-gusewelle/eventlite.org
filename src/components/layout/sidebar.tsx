@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import { MdSpaceDashboard, MdPeopleAlt, MdWorkspaces } from "react-icons/md";
@@ -12,7 +12,7 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { fullName } from "../../utils/fullName";
 
 const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
-  const sideLinks: { name: String; href: String; icon: IconType }[] = [
+  const sideLinks: { name: string; href: string; icon: IconType }[] = [
     { name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
     { name: "People", href: "/people", icon: MdPeopleAlt },
     { name: "Locations", href: "/locations", icon: FaChurch },
@@ -35,6 +35,15 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const { data, isLoading, error } = trpc.useQuery(["user.getUser"]);
   const user = useUser();
 
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = "hidden";
+    }
+    if (!show) {
+      document.body.style.overflow = "auto";
+    }
+  }, [show]);
+
   if (!data) {
     return <div></div>;
   }
@@ -48,7 +57,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
       <div className='w-full h-full bg-white'>
         <div className='flex flex-no-wrap'>
           {/* Sidebar starts */}
-          <div className='absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block'>
+          <div className='absolute lg:relative w-64 min-h-screen max-h-full shadow bg-gray-100 hidden lg:block'>
             <div className='h-16 w-full flex items-center px-8'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -423,7 +432,7 @@ const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             </nav>
             {/* Navigation ends */}
             {/* Remove class [ h-64 ] when adding a card block */}
-            <div className='container mx-auto px-4 py-10'>
+            <div className='container mx-auto px-4 py-4 sm:py-10'>
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
               <div className='w-full h-full rounded'>{children}</div>
             </div>

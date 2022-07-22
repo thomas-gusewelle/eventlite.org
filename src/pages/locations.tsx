@@ -7,10 +7,11 @@ import { ErrorAlert } from "../components/alerts/errorAlert";
 import { BtnAdd } from "../components/btn/btnAdd";
 import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnSave } from "../components/btn/btnSave";
+import { CircularProgress } from "../components/circularProgress";
 import { SearchBar } from "../components/form/SearchBar";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { PaginationBar } from "../components/layout/pagination-bar";
-import SidebarLayout from "../components/layout/sidebar";
+import { sidebar, SidebarLayout } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
@@ -134,8 +135,12 @@ const LocationsPage = () => {
 		}
 	};
 
-	if (pagiantedData == undefined) {
-		return <div></div>;
+	if (locations.isLoading || pagiantedData == undefined) {
+		return (
+			<div className="flex justify-center">
+				<CircularProgress />
+			</div>
+		);
 	}
 
 	return (
@@ -177,7 +182,7 @@ const LocationsPage = () => {
 					</form>
 				</>
 			</Modal>
-			<SidebarLayout>
+			<>
 				{errorAlert.state && (
 					<ErrorAlert setState={setErrorAlert} error={errorAlert} />
 				)}
@@ -270,9 +275,11 @@ const LocationsPage = () => {
 					pageNum={pageNum}
 					paginateData={pagiantedData}
 				/>
-			</SidebarLayout>
+			</>
 		</>
 	);
 };
+
+LocationsPage.getLayout = sidebar;
 
 export default LocationsPage;

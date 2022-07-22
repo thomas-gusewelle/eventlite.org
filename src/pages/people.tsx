@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
-import SidebarLayout from "../components/layout/sidebar";
+import { sidebar } from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
 import { trpc } from "../utils/trpc";
 import { BiChevronDown } from "react-icons/bi";
@@ -90,11 +90,7 @@ const PeoplePage = () => {
 	}, [pageNum, peopleUnPageList]);
 
 	if (people.error) {
-		return (
-			<SidebarLayout>
-				<div>{people.error.message}</div>;
-			</SidebarLayout>
-		);
+		return <div>{people.error.message}</div>;
 	}
 
 	if (
@@ -103,16 +99,14 @@ const PeoplePage = () => {
 		paginatedData == undefined
 	) {
 		return (
-			<SidebarLayout>
-				<div className="flex justify-center">
-					<CircularProgress />
-				</div>
-			</SidebarLayout>
+			<div className="flex justify-center">
+				<CircularProgress />
+			</div>
 		);
 	}
 
 	return (
-		<SidebarLayout>
+		<>
 			{/* MD Top Bar */}
 			<div className="md:hidden grid grid-cols-2 mb-8 gap-4">
 				<SectionHeading>Users</SectionHeading>
@@ -202,8 +196,10 @@ const PeoplePage = () => {
 				pageNum={pageNum}
 				paginateData={paginatedData}
 			/>
-		</SidebarLayout>
+		</>
 	);
 };
+
+PeoplePage.getLayout = sidebar;
 
 export default PeoplePage;

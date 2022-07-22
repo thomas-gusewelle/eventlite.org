@@ -11,7 +11,7 @@ import { BtnSave } from "../components/btn/btnSave";
 import { CircularProgress } from "../components/circularProgress";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { PaginationBar } from "../components/layout/pagination-bar";
-import SidebarLayout from "../components/layout/sidebar";
+import { sidebar, SidebarLayout } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
@@ -139,11 +139,9 @@ const Roles = () => {
 		paginatedData == undefined
 	) {
 		return (
-			<SidebarLayout>
-				<div className="flex justify-center">
-					<CircularProgress />
-				</div>
-			</SidebarLayout>
+			<div className="flex justify-center">
+				<CircularProgress />
+			</div>
 		);
 	}
 
@@ -184,7 +182,7 @@ const Roles = () => {
 					</form>
 				</>
 			</Modal>
-			<SidebarLayout>
+			<>
 				{error.state && <ErrorAlert setState={setError} error={error} />}
 				{/* MD Top Bar */}
 				<div className="md:hidden grid grid-cols-2 mb-8 gap-4">
@@ -275,9 +273,11 @@ const Roles = () => {
 					pageNum={pageNum}
 					paginateData={paginatedData}
 				/>
-			</SidebarLayout>
+			</>
 		</>
 	);
 };
+
+Roles.getLayout = sidebar;
 
 export default Roles;

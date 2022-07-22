@@ -1,7 +1,12 @@
 import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import { MdSpaceDashboard, MdPeopleAlt, MdWorkspaces } from "react-icons/md";
+import {
+	MdSpaceDashboard,
+	MdPeopleAlt,
+	MdWorkspaces,
+	MdEvent,
+} from "react-icons/md";
 import { FaChurch } from "react-icons/fa";
 import Link from "next/link";
 import { IconType } from "react-icons";
@@ -14,6 +19,7 @@ import { fullName } from "../../utils/fullName";
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 	const sideLinks: { name: string; href: string; icon: IconType }[] = [
 		{ name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
+		{ name: "Events", href: "/events", icon: MdEvent },
 		{ name: "People", href: "/people", icon: MdPeopleAlt },
 		{ name: "Locations", href: "/locations", icon: FaChurch },
 		{ name: "Roles", href: "/roles", icon: MdWorkspaces },

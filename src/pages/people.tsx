@@ -4,7 +4,7 @@ import { sidebar } from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
 import { trpc } from "../utils/trpc";
 import { BiChevronDown } from "react-icons/bi";
-import { AddUserMenu } from "../components/menus/addUser";
+import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { SearchBar } from "../components/form/SearchBar";
 import Link from "next/link";
@@ -89,6 +89,11 @@ const PeoplePage = () => {
 		}
 	}, [pageNum, peopleUnPageList]);
 
+	const addOptions: TableOptionsDropdown = [
+		{ name: "Add User", href: "/people/adduser" },
+		{ name: "Invite User", href: "#" },
+	];
+
 	if (people.error) {
 		return <div>{people.error.message}</div>;
 	}
@@ -111,7 +116,7 @@ const PeoplePage = () => {
 			<div className="md:hidden grid grid-cols-2 mb-8 gap-4">
 				<SectionHeading>Users</SectionHeading>
 				<div className="flex justify-end">
-					<AddUserMenu />
+					<AddDropdownMenu options={addOptions} />
 				</div>
 				<div className="col-span-2">
 					<input
@@ -134,7 +139,7 @@ const PeoplePage = () => {
 						placeholder="Search"
 					/>
 					{/* <SearchBar /> */}
-					<AddUserMenu />
+					<AddDropdownMenu options={addOptions} />
 				</div>
 			</div>
 

@@ -8,7 +8,7 @@ const filter = (e: string) => {};
 
 const EventsPage = () => {
 	const addOptions: TableOptionsDropdown = [
-		{ name: "New Event", href: "#" },
+		{ name: "New Event", href: "/events/addevent" },
 		{ name: "From Template", href: "#" },
 	];
 	return (

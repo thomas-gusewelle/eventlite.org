@@ -6,10 +6,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
 import { MdOutlineCalendarToday, MdAccessTime } from "react-icons/md";
 import { Switch } from "@headlessui/react";
+import { SingleSelect } from "../../components/form/singleSelect";
 
 const AddEvent = () => {
 	const [eventDate, setEventDate] = useState<Date>();
 	const [eventTime, setEventTime] = useState<Date>();
+	const [repeatFrequency, setRepeatFrequency] = useState<string>("");
 	const [isRepeating, setIsRepeating] = useState(false);
 
 	const {
@@ -90,7 +92,7 @@ const AddEvent = () => {
 					<div className="hidden sm:block col-span-3"></div>
 					<div className="col-span-2 sm:col-span-3">
 						<label className="text-gray-700">Repeats?</label>
-						<div>
+						<div className="mt-1">
 							<Switch
 								checked={isRepeating}
 								onChange={setIsRepeating}
@@ -113,6 +115,11 @@ const AddEvent = () => {
 						{isRepeating && (
 							<div>
 								<label>Frequency</label>
+								<SingleSelect
+									list={["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"]}
+									selected={repeatFrequency}
+									setSelected={setRepeatFrequency}
+								/>
 							</div>
 						)}
 					</div>

@@ -1,9 +1,94 @@
+import { useForm } from "react-hook-form";
+import { SectionHeading } from "../../components/headers/SectionHeading";
 import { sidebar } from "../../components/layout/sidebar";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useState } from "react";
+import { MdOutlineCalendarToday } from "react-icons/md";
 
 const AddEvent = () => {
-	return <div></div>;
+	const [eventDate, setEventDate] = useState<Date>();
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
+
+	const submit = handleSubmit((data) => {
+		console.log(data);
+	});
+
+	return (
+		<>
+			<div className="mb-8">
+				<SectionHeading>Add Event</SectionHeading>
+			</div>
+			<form onSubmit={submit} className="shadow">
+				<div className="grid grid-cols-6 gap-6 mb-6 px-6">
+					<div className="col-span-6 sm:col-span-3">
+						<label
+							htmlFor="event-name"
+							className="block text-sm font-medium text-gray-700">
+							Event Name
+						</label>
+						<input
+							type="text"
+							id="Name"
+							{...register("name", { required: true, minLength: 3 })}
+							className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+						/>
+						{errors.name && (
+							<span className="text-red-500">Event Name is Required</span>
+						)}
+					</div>
+					<div className="hidden sm:block col-span-3"></div>
+					<div className="col-span-3 sm:col-span-2">
+						<div className="">
+							<div className="">
+								<label htmlFor="EventDate" className="text-gray-700">
+									Event Date
+								</label>
+								<div className="relative">
+									<div className="flex">
+										<DatePicker
+											id="datepick"
+											selected={eventDate}
+											onChange={(date: Date) => setEventDate(date)}
+											className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+										/>
+										<div
+											onClick={() =>
+												document.getElementById("datepick")?.focus()
+											}
+											className="flex items-center rounded-r cursor-pointer px-3 border border-gray-300 border-l-0 bg-gray-50">
+											<MdOutlineCalendarToday
+												size={20}
+												className="text-black"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="col-span-3 sm:col-span-1">
+						<label className="text-gray-700">Event Time</label>
+					</div>
+				</div>
+
+				<div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+					<button
+						type="submit"
+						className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						Save
+					</button>
+				</div>
+			</form>
+		</>
+	);
 };
 
-AddEvent.getlayout = sidebar;
+AddEvent.getLayout = sidebar;
 
 export default AddEvent;

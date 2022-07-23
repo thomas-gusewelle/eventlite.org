@@ -75,6 +75,7 @@ model Role {
 
 model Event {
   id               String        @id @default(cuid())
+  name String
   Organization     Organization? @relation(fields: [organizationId], references: [id])
   organizationId   String?
   datetime         DateTime

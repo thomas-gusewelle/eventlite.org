@@ -27,7 +27,13 @@ const AddEvent = () => {
       { id: "D", name: `Daily` },
       { id: "W", name: `Weekly (${findWeekday(eventDate)}s)` },
       { id: "WC", name: "Weekly (Custom)" },
-      { id: "M", name: `Monthly (${eventDate.getDate()})` },
+      {
+        id: "M",
+        name: `Monthly (${Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "2-digit",
+        }).format(eventDate)})`,
+      },
     ]);
   }, [eventDate]);
 
@@ -46,23 +52,21 @@ const AddEvent = () => {
         <form onSubmit={submit} className='shadow'>
           <div className='grid grid-cols-6 gap-6 mb-6 px-6'>
             <div className='col-span-6 sm:col-span-3'>
-              <label
-                htmlFor='event-name'
-                className='block text-sm font-medium text-gray-700'>
+              <label htmlFor='event-name' className=' text-gray-700'>
                 Event Name
               </label>
               <input
                 type='text'
                 id='Name'
                 {...methods.register("name", { required: true, minLength: 3 })}
-                className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               />
               {methods.formState.errors.name && (
                 <span className='text-red-500'>Event Name is Required</span>
               )}
             </div>
             <div className='hidden sm:block col-span-3'></div>
-            <div className='col-span-6 sm:col-span-2'>
+            <div className='col-span-6 md:col-span-2'>
               <label htmlFor='EventDate' className='text-gray-700'>
                 Event Date
               </label>
@@ -71,12 +75,13 @@ const AddEvent = () => {
                   <Controller
                     control={methods.control}
                     name='eventDate'
+                    defaultValue={new Date()}
                     render={({ field: { onChange, value } }) => (
                       <DatePicker
                         id='datepick'
                         selected={value}
                         onChange={onChange}
-                        className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+                        className=' block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                       />
                     )}
                   />
@@ -89,12 +94,13 @@ const AddEvent = () => {
                 </div>
               </div>
             </div>
-            <div className='col-span-6 sm:col-span-1'>
+            <div className='col-span-6 md:col-span-2 lg:col-span-1'>
               <label className='text-gray-700'>Event Time</label>
               <div className='flex'>
                 <Controller
                   control={methods.control}
                   name='eventTime'
+                  defaultValue={new Date()}
                   render={({ field: { onChange, value } }) => (
                     <DatePicker
                       id='timepick'
@@ -118,7 +124,7 @@ const AddEvent = () => {
               </div>
             </div>
             {/* Fill space div */}
-            <div className='hidden sm:block col-span-3'></div>
+            <div className='hidden md:block md:col-span-2 lg:col-span-3'></div>
 
             {/* Event recurring switch */}
             <div className='col-span-2 sm:col-span-1'>
@@ -159,9 +165,12 @@ const AddEvent = () => {
 
             {/* Options for recurring event */}
             {isRepeating && (
-              <div className='col-span-6 sm:col-span-3'>
-                <RecurringOptions selection={repeatFrequency} />
-              </div>
+              <>
+                <div className='hidden sm:block col-span-2'></div>
+                <div className='col-span-6 sm:col-span-3'>
+                  <RecurringOptions selection={repeatFrequency} />
+                </div>
+              </>
             )}
           </div>
 

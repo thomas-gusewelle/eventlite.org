@@ -3,16 +3,33 @@ import { SectionHeading } from "../../components/headers/SectionHeading";
 import { sidebar } from "../../components/layout/sidebar";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineCalendarToday, MdAccessTime } from "react-icons/md";
 import { Switch } from "@headlessui/react";
 import { SingleSelect } from "../../components/form/singleSelect";
+import { findWeekday } from "../../utils/findWeekday";
+import { RecurringOptions } from "../../components/form/recurringOptions";
 
 const AddEvent = () => {
-	const [eventDate, setEventDate] = useState<Date>();
+	const [eventDate, setEventDate] = useState<Date>(new Date());
 	const [eventTime, setEventTime] = useState<Date>();
-	const [repeatFrequency, setRepeatFrequency] = useState<string>("");
+	const [frequncyOptions, setFrequncyOptions] = useState<
+		{ id: string; name: string }[]
+	>([]);
+	const [repeatFrequency, setRepeatFrequency] = useState<{
+		id: string;
+		name: string;
+	}>({ id: "D", name: `Daily` });
 	const [isRepeating, setIsRepeating] = useState(false);
+
+	useEffect(() => {
+		setFrequncyOptions([
+			{ id: "D", name: `Daily` },
+			{ id: "W", name: `Weekly (${findWeekday(eventDate)}s)` },
+			{ id: "WC", name: "Weekly (Custom)" },
+			{ id: "M", name: `Monthly (${eventDate.getDate()})` },
+		]);
+	}, [eventDate]);
 
 	const {
 		register,
@@ -89,8 +106,11 @@ const AddEvent = () => {
 							</div>
 						</div>
 					</div>
+					{/* Fill space div */}
 					<div className="hidden sm:block col-span-3"></div>
-					<div className="col-span-2 sm:col-span-3">
+
+					{/* Event recurring switch */}
+					<div className="col-span-2 sm:col-span-1">
 						<label className="text-gray-700">Repeats?</label>
 						<div className="mt-1">
 							<Switch
@@ -111,18 +131,27 @@ const AddEvent = () => {
 							</Switch>
 						</div>
 					</div>
-					<div className="col-span-4">
+
+					{/* event frequency selection */}
+					<div className="col-span-4 sm:col-span-2">
 						{isRepeating && (
 							<div>
 								<label>Frequency</label>
 								<SingleSelect
-									list={["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"]}
+									list={frequncyOptions}
 									selected={repeatFrequency}
 									setSelected={setRepeatFrequency}
 								/>
 							</div>
 						)}
 					</div>
+
+					{/* Options for recurring event */}
+					{isRepeating && (
+						<div className="col-span-6 sm:col-span-3">
+							<RecurringOptions selection={repeatFrequency} />
+						</div>
+					)}
 				</div>
 
 				<div className="px-4 py-3 bg-gray-50 text-right sm:px-6">

@@ -21,8 +21,15 @@ import {
   EventFormValues,
   EventRepeatFrequency,
 } from "../../../types/eventFormValues";
+import { trpc } from "../../utils/trpc";
 
 const AddEvent = () => {
+  const addEvent = trpc.useMutation("events.createEvents");
+  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
   const [eventDate, setEventDate] = useState<Date>(new Date());
   const [eventTime, setEventTime] = useState<Date>();
   const [frequncyOptions, setFrequncyOptions] = useState<
@@ -71,6 +78,7 @@ const AddEvent = () => {
 
   const submit = methods.handleSubmit((data: EventFormValues) => {
     console.log(data);
+    addEvent.mutate([data]);
   });
 
   return (

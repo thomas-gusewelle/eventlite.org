@@ -84,23 +84,24 @@ const DailyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
             control={control}
             rules={{ required: true, max: 52 }}
             defaultValue={""}
-            render={({ field }) => (
-              <input
-                // {...register("DNum", { required: true, max: 52 })}
-                {...field}
-                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                type={"number"}
-                className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-              />
+            render={({ field, fieldState }) => (
+              <>
+                <input
+                  // {...register("DNum", { required: true, max: 52 })}
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  type={"number"}
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                />
+                {fieldState.error?.type === ("required" as any) && (
+                  <ErrorSpan>Number of occurances required</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("max" as any) && (
+                  <ErrorSpan>Max of 52 occurances</ErrorSpan>
+                )}
+              </>
             )}
           />
-
-          {errors.DNum?.type === ("required" as any) && (
-            <ErrorSpan>Number of occurances required</ErrorSpan>
-          )}
-          {errors.DNum?.type === ("max" as any) && (
-            <ErrorSpan>Max of 52 occurances</ErrorSpan>
-          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -181,17 +182,28 @@ const WeeklyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
-          <input
-            {...register("WNum", { required: true, max: 52 })}
-            type={"number"}
-            className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          <Controller
+            name='WNUM'
+            control={control}
+            rules={{ required: true, max: 52 }}
+            defaultValue={""}
+            render={({ field, fieldState }) => (
+              <>
+                <input
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  type={"number"}
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                />
+                {fieldState.error?.type === ("required" as any) && (
+                  <ErrorSpan>Number of occurances required</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("max" as any) && (
+                  <ErrorSpan>Maximum of 52 occurances allowed</ErrorSpan>
+                )}
+              </>
+            )}
           />
-          {errors.WNum?.type === ("required" as any) && (
-            <ErrorSpan>Number of occurances required</ErrorSpan>
-          )}
-          {errors.WNum?.type === ("max" as any) && (
-            <ErrorSpan>Max of 52 occurances</ErrorSpan>
-          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -281,17 +293,28 @@ const WeeklyCustomOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
-          <input
-            {...register("WCNum", { required: true, max: 52 })}
-            type={"number"}
-            className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          <Controller
+            name='WCNUM'
+            control={control}
+            rules={{ required: true, max: 52 }}
+            defaultValue={""}
+            render={({ field, fieldState }) => (
+              <>
+                <input
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  type={"number"}
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                />
+                {fieldState.error?.type === ("required" as any) && (
+                  <ErrorSpan>Number of occurances required</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("max" as any) && (
+                  <ErrorSpan>Max of 52 occurances</ErrorSpan>
+                )}
+              </>
+            )}
           />
-          {errors.WCNum?.type === ("required" as any) && (
-            <ErrorSpan>Number of occurances required</ErrorSpan>
-          )}
-          {errors.WCNum?.type === ("max" as any) && (
-            <ErrorSpan>Max of 52 occurances</ErrorSpan>
-          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -369,17 +392,27 @@ const MonthlyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
-          <input
-            {...register("MNum", { required: true, max: 52 })}
-            type={"number"}
-            className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          <Controller
+            name='WNUM'
+            control={control}
+            rules={{ required: true, max: 52 }}
+            defaultValue={""}
+            render={({ field, fieldState }) => (
+              <>
+                <input
+                  {...field}
+                  type={"number"}
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                />
+                {fieldState.error?.type === ("required" as any) && (
+                  <ErrorSpan>Number of occurances required</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("max" as any) && (
+                  <ErrorSpan>Max of 52 occurances</ErrorSpan>
+                )}
+              </>
+            )}
           />
-          {errors.MNum?.type === ("required" as any) && (
-            <ErrorSpan>Number of occurances required</ErrorSpan>
-          )}
-          {errors.MNum?.type === ("max" as any) && (
-            <ErrorSpan>Max of 52 occurances</ErrorSpan>
-          )}
         </div>
       )}
       {occuranceType.id == "Date" && (

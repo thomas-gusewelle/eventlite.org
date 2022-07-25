@@ -1,3 +1,5 @@
+import { addDays } from "./dateTimeModifers";
+
 export function FindFutureDates(
   eventDate: Date,
   repeatFrequency: { id: string; name: string },
@@ -25,10 +27,13 @@ function DailyDates(
   endDate?: Date
 ) {
   if (endSelect.id == "Num" && endNum != undefined && endNum > 0) {
-    let recurringDates = [];
+    let recurringDates = [eventDate];
     for (let i = 1; i <= endNum; i++) {
-      eventDate.addDays();
+      let newDate = addDays(eventDate, i);
+      recurringDates.push(newDate);
     }
+    console.log(recurringDates);
+    return recurringDates;
   }
   if (endSelect.id == "Date") {
   }

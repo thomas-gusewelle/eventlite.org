@@ -1,4 +1,9 @@
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  SubmitHandler,
+} from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { sidebar } from "../../components/layout/sidebar";
 import DatePicker from "react-datepicker";
@@ -10,6 +15,8 @@ import { SingleSelect } from "../../components/form/singleSelect";
 import { findWeekday } from "../../utils/findWeekday";
 import { RecurringOptions } from "../../components/form/recurringOptions";
 import { FindFutureDates } from "../../server/utils/findFutureDates";
+import { replaceTime } from "../../server/utils/dateTimeModifers";
+import { EventFormValues } from "../../../types/eventFormValues";
 
 const AddEvent = () => {
   const [eventDate, setEventDate] = useState<Date>(new Date());
@@ -58,10 +65,9 @@ const AddEvent = () => {
     }
   }, [_repeatFrequency]);
 
-  const submit = methods.handleSubmit((data) => {
+  const submit: SubmitHandler<EventFormValues> = (data) => {
     console.log(data);
-	
-  });
+  };
 
   return (
     <>
@@ -69,7 +75,7 @@ const AddEvent = () => {
         <SectionHeading>Add Event</SectionHeading>
       </div>
       <FormProvider {...methods}>
-        <form onSubmit={submit} className='shadow'>
+        <form onSubmit={methods.handleSubmit(submit)} className='shadow'>
           <div className='grid grid-cols-6 gap-6 mb-6 px-6'>
             <div className='col-span-6 sm:col-span-3'>
               <label htmlFor='event-name' className=' text-gray-700'>

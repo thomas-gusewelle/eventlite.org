@@ -238,7 +238,7 @@ const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
         <div className='grid grid-cols-4 gap-3'>
           {days.map((day, index) => (
             <div key={index} className='flex gap-1 items-center'>
-              <input type={"checkbox"} {...register("WC-" + day)} />
+              <input type={"checkbox"} {...register("WC" + day)} />
               <label>{day}</label>
             </div>
           ))}{" "}

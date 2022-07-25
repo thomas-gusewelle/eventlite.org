@@ -26,7 +26,7 @@ model User {
   Organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId String?
   availability   Availability[]
-  hasLogin Boolean @default(false)
+  hasLogin       Boolean        @default(false)
 
   @@index([id, organizationId])
 }
@@ -75,7 +75,7 @@ model Role {
 
 model Event {
   id               String        @id @default(cuid())
-  name String
+  name             String
   Organization     Organization? @relation(fields: [organizationId], references: [id])
   organizationId   String?
   datetime         DateTime

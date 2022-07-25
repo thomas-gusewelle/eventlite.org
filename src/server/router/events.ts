@@ -2,6 +2,10 @@ import { z } from "zod";
 import { createRouter } from "./context";
 
 export const eventsRouter = createRouter().mutation("createEvents", {
+  input: z.object({
+    name: z.string(),
+    eventDate: 
+  }),
   async resolve({ ctx }) {
     const org = await prisma?.user.findFirst({
       where: { id: ctx.session?.user.id },
@@ -9,7 +13,7 @@ export const eventsRouter = createRouter().mutation("createEvents", {
     });
 
     return await prisma?.event.createMany({
-      data: {},
+      data: 
     });
   },
 });

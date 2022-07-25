@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useForm,
   useFormContext,
@@ -25,6 +25,10 @@ export const PositionsSelector = () => {
       name: "positions", // unique name for your Field Array
     }
   );
+
+  useEffect(() => {
+    append({ position: { id: "", name: "" }, quantity: 1 });
+  }, [append]);
 
   return (
     <div className='col-span-6 px-6'>

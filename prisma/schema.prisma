@@ -3,30 +3,29 @@
 
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
 
 model User {
-  id             String         @id @default(cuid())
+  id             String           @id @default(cuid())
   firstName      String?
   lastName       String?
-  status         UserStatus     @default(USER)
+  status         UserStatus       @default(USER)
   roles          Role[]
-  email          String?        @unique
+  eventPositions EventPositions[]
+  email          String?          @unique
   emailVerified  DateTime?
   image          String?
   // accounts       Account[]
   // sessions       Session[]
-  Organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  Organization   Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId String?
   availability   Availability[]
-  hasLogin       Boolean        @default(false)
+  hasLogin       Boolean          @default(false)
 
   @@index([id, organizationId])
 }
@@ -64,25 +63,36 @@ model Locations {
 }
 
 model Role {
-  id    String @id @default(uuid())
-  name  String
-  users User[]
-
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  id             String           @id @default(uuid())
+  name           String
+  users          User[]
+  Organization   Organization?    @relation(fields: [organizationId], references: [id])
   organizationId String?
+  eventPositions EventPositions[]
+
   @@index([organizationId])
 }
 
 model Event {
-  id               String        @id @default(cuid())
+  id               String           @id @default(cuid())
   name             String
-  Organization     Organization? @relation(fields: [organizationId], references: [id])
+  Organization     Organization?    @relation(fields: [organizationId], references: [id])
   organizationId   String?
   datetime         DateTime
-  Locations        Locations?    @relation(fields: [locationsId], references: [id])
+  Locations        Locations?       @relation(fields: [locationsId], references: [id])
   locationsId      String?
-  positions        Json
+  positions        EventPositions[]
   unavailableUsers Json?
 
   @@index([id, organizationId])
+}
+
+model EventPositions {
+  id      String  @id @default(cuid())
+  Event   Event?  @relation(fields: [eventId], references: [id])
+  eventId String?
+  Role    Role?   @relation(fields: [roleId], references: [id])
+  roleId  String?
+  User    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 }

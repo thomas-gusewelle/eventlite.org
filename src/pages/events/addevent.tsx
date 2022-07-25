@@ -22,14 +22,10 @@ import {
   EventRepeatFrequency,
 } from "../../../types/eventFormValues";
 import { trpc } from "../../utils/trpc";
+import { PositionsSelector } from "../../components/form/event/positionSelections";
 
 const AddEvent = () => {
   const addEvent = trpc.useMutation("events.createEvents");
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
-    onSuccess(data) {
-      console.log(data);
-    },
-  });
   const [eventDate, setEventDate] = useState<Date>(new Date());
   const [eventTime, setEventTime] = useState<Date>();
   const [frequncyOptions, setFrequncyOptions] = useState<
@@ -226,6 +222,8 @@ const AddEvent = () => {
             )}
           </div>
 
+          {/* Positions Selection */}
+          <PositionsSelector />
           <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>
             <button
               type='submit'

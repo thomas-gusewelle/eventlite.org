@@ -6,14 +6,16 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdOutlineCalendarToday } from "react-icons/md";
 import { ErrorSpan } from "../errors/errorSpan";
-
-type selection = { id: string; name: string };
+import {
+  EventEndSelect,
+  EventRepeatFrequency,
+} from "../../../types/eventFormValues";
 
 export const RecurringOptions: React.FC<{
-  selection: selection;
+  selection: EventRepeatFrequency;
 }> = ({ selection }) => {
   if (selection == undefined) {
-    return <div></div>;
+    return null;
   }
 
   switch (selection.id) {
@@ -33,8 +35,10 @@ export const RecurringOptions: React.FC<{
   }
 };
 
-const DailyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
-  const [occuranceType, setOccuranceType] = useState<selection>({
+const DailyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
+  selection,
+}) => {
+  const [occuranceType, setOccuranceType] = useState<EventEndSelect>({
     id: "Num",
     name: "Ending After",
   });
@@ -75,11 +79,22 @@ const DailyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
-          <input
-            {...register("DNum", { required: true, max: 52 })}
-            type={"number"}
-            className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          <Controller
+            name='DNUM'
+            control={control}
+            rules={{ required: true, max: 52 }}
+            defaultValue={""}
+            render={({ field }) => (
+              <input
+                // {...register("DNum", { required: true, max: 52 })}
+                {...field}
+                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                type={"number"}
+                className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+              />
+            )}
           />
+
           {errors.DNum?.type === ("required" as any) && (
             <ErrorSpan>Number of occurances required</ErrorSpan>
           )}
@@ -122,8 +137,10 @@ const DailyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
   );
 };
 
-const WeeklyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
-  const [occuranceType, setOccuranceType] = useState<selection>({
+const WeeklyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
+  selection,
+}) => {
+  const [occuranceType, setOccuranceType] = useState<EventEndSelect>({
     id: "Num",
     name: "Ending After",
   });
@@ -208,10 +225,10 @@ const WeeklyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
   );
 };
 
-const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
+const WeeklyCustomOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
   selection,
 }) => {
-  const [occuranceType, setOccuranceType] = useState<selection>({
+  const [occuranceType, setOccuranceType] = useState<EventEndSelect>({
     id: "Num",
     name: "Ending After",
   });
@@ -308,8 +325,10 @@ const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
   );
 };
 
-const MonthlyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
-  const [occuranceType, setOccuranceType] = useState<selection>({
+const MonthlyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
+  selection,
+}) => {
+  const [occuranceType, setOccuranceType] = useState<EventEndSelect>({
     id: "Num",
     name: "Ending After",
   });

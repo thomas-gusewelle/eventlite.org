@@ -3,6 +3,7 @@ import {
   FormProvider,
   useForm,
   SubmitHandler,
+  FieldValues,
 } from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { sidebar } from "../../components/layout/sidebar";
@@ -16,18 +17,21 @@ import { findWeekday } from "../../utils/findWeekday";
 import { RecurringOptions } from "../../components/form/recurringOptions";
 import { FindFutureDates } from "../../server/utils/findFutureDates";
 import { replaceTime } from "../../server/utils/dateTimeModifers";
-import { EventFormValues } from "../../../types/eventFormValues";
+import {
+  EventFormValues,
+  EventRepeatFrequency,
+} from "../../../types/eventFormValues";
 
 const AddEvent = () => {
   const [eventDate, setEventDate] = useState<Date>(new Date());
   const [eventTime, setEventTime] = useState<Date>();
   const [frequncyOptions, setFrequncyOptions] = useState<
-    { id: string; name: string }[]
+    EventRepeatFrequency[]
   >([]);
-  const [repeatFrequency, setRepeatFrequency] = useState<{
-    id: string;
-    name: string;
-  }>({ id: "D", name: `Daily` });
+  const [repeatFrequency, setRepeatFrequency] = useState<EventRepeatFrequency>({
+    id: "D",
+    name: "Daily",
+  });
   const [isRepeating, setIsRepeating] = useState(false);
 
   useEffect(() => {
@@ -45,7 +49,7 @@ const AddEvent = () => {
     ]);
   }, [eventDate]);
 
-  const methods = useForm();
+  const methods = useForm<EventFormValues>();
   const _isRepeating = methods.watch("isRepeating", false);
   const _repeatFrequency = methods.watch("repeatFrequency", {
     id: "D",
@@ -65,9 +69,9 @@ const AddEvent = () => {
     }
   }, [_repeatFrequency]);
 
-  const submit: SubmitHandler<EventFormValues> = (data) => {
+  const submit = methods.handleSubmit((data: EventFormValues) => {
     console.log(data);
-  };
+  });
 
   return (
     <>
@@ -75,7 +79,7 @@ const AddEvent = () => {
         <SectionHeading>Add Event</SectionHeading>
       </div>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(submit)} className='shadow'>
+        <form onSubmit={submit} className='shadow'>
           <div className='grid grid-cols-6 gap-6 mb-6 px-6'>
             <div className='col-span-6 sm:col-span-3'>
               <label htmlFor='event-name' className=' text-gray-700'>

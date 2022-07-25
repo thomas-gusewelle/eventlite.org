@@ -3,7 +3,7 @@ export type EventFormValues = {
   eventDate: Date;
   eventTime: Date;
   isRepeating: boolean;
-  repeatFrequency: EventRepeatFrequency;
+  repeatFrequency?: EventRepeatFrequency;
   DEndSelect?: EventEndSelect;
   DNum?: number;
   DDate?: Date;
@@ -26,7 +26,8 @@ export type EventFormValues = {
 };
 
 export type EventRepeatFrequency = {
-  repeatFrequency: { id: "D" | "W" | "WC" | "M"; name: string };
+  id: "D" | "W" | "WC" | "M";
+  name: string;
 };
 
 export type EventEndSelect = { id: "Num" | "Date"; name: string };

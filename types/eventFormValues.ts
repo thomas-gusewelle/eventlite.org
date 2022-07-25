@@ -1,3 +1,5 @@
+import { Role } from "@prisma/client";
+
 export type EventFormValues = {
   name: string;
   eventDate: Date;
@@ -23,6 +25,7 @@ export type EventFormValues = {
   MEndSelect?: EventEndSelect;
   MNum?: number;
   MDate?: Date;
+  positions: Position[];
 };
 
 export type EventRepeatFrequency = {
@@ -31,3 +34,8 @@ export type EventRepeatFrequency = {
 };
 
 export type EventEndSelect = { id: "Num" | "Date"; name: string };
+
+export type Position = {
+  position: Role;
+  quantity: number;
+};

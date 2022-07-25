@@ -8,6 +8,7 @@ import {
 } from "react-hook-form";
 import { trpc } from "../../../utils/trpc";
 import { SingleSelect } from "../singleSelect";
+import { MdAddCircleOutline, MdDelete } from "react-icons/md";
 
 export const PositionsSelector = () => {
   const rolesQuery = trpc.useQuery(["role.getRolesByOrganization"], {
@@ -33,7 +34,7 @@ export const PositionsSelector = () => {
   return (
     <div className='col-span-6 px-6'>
       {/*  */}
-      <div className='grid grid-cols-6 gap-6'>
+      <div className='grid grid-cols-8 gap-6'>
         <div className='col-span-4'>
           <label className=''>Position</label>
         </div>
@@ -42,7 +43,7 @@ export const PositionsSelector = () => {
         </div>
       </div>
 
-      <div className='grid grid-cols-6 gap-6'>
+      <div className='grid grid-cols-8 gap-x-3 gap-y-6 mt-1'>
         {fields.map((field, index) => (
           <>
             <div className='col-span-4' key={index}>
@@ -65,6 +66,20 @@ export const PositionsSelector = () => {
                 type='number'
                 className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md'
               />
+            </div>
+            <div className='col-span-2 grid grid-cols-2'>
+              <div
+                onClick={() =>
+                  insert(index, { position: { id: "", name: "" }, quantity: 1 })
+                }
+                className='col-span-1 flex justify-center items-center'>
+                <MdAddCircleOutline size={25} className='text-green-600' />
+              </div>
+              <div
+                onClick={() => remove(index)}
+                className='cursor-pointer col-span-1 flex justify-center items-center'>
+                <MdDelete size={25} className='text-red-600' />
+              </div>
             </div>
           </>
         ))}

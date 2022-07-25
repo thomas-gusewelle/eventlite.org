@@ -9,3 +9,9 @@ export function replaceTime(date: Date, time: Date) {
   result.setTime(time.getTime());
   return result;
 }
+
+export function addWeeks(date: Date, occurance: number) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + occurance * 7);
+  return result;
+}

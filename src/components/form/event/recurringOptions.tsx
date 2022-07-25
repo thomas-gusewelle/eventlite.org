@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
-import { SingleSelect } from "./singleSelect";
+import { SingleSelect } from "../singleSelect";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdOutlineCalendarToday } from "react-icons/md";
-import { ErrorSpan } from "../errors/errorSpan";
+import { ErrorSpan } from "../../errors/errorSpan";
 import {
   EventEndSelect,
   EventRepeatFrequency,
-} from "../../../types/eventFormValues";
+} from "../../../../types/eventFormValues";
 
 export const RecurringOptions: React.FC<{
   selection: EventRepeatFrequency;

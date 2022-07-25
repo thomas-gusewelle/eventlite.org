@@ -14,7 +14,7 @@ import { MdOutlineCalendarToday, MdAccessTime } from "react-icons/md";
 import { Switch } from "@headlessui/react";
 import { SingleSelect } from "../../components/form/singleSelect";
 import { findWeekday } from "../../utils/findWeekday";
-import { RecurringOptions } from "../../components/form/recurringOptions";
+import { RecurringOptions } from "../../components/form/event/recurringOptions";
 import { FindFutureDates } from "../../server/utils/findFutureDates";
 import { replaceTime } from "../../server/utils/dateTimeModifers";
 import {

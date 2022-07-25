@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
 import { SingleSelect } from "./singleSelect";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdOutlineCalendarToday } from "react-icons/md";
+import { ErrorSpan } from "../errors/errorSpan";
 
 type selection = { id: string; name: string };
 
@@ -42,30 +43,49 @@ const DailyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
     control,
     register,
     formState: { errors },
+    watch,
   } = useFormContext();
+
+  const DEndSelect = watch("DEndSelect");
+  useEffect(() => {
+    if (DEndSelect != undefined) {
+      setOccuranceType(DEndSelect);
+    }
+  }, [DEndSelect]);
 
   return (
     <div className='grid grid-cols-6 gap-6'>
       <div className='col-span-6'>
-        <SingleSelect
-          selected={occuranceType}
-          setSelected={setOccuranceType}
-          list={[
-            { id: "Num", name: "Ending After" },
-            { id: "Date", name: "Ending On" },
-          ]}
+        <Controller
+          name='DEndSelect'
+          control={control}
+          defaultValue={occuranceType}
+          render={({ field: { onChange, value } }) => (
+            <SingleSelect
+              selected={value}
+              setSelected={onChange}
+              list={[
+                { id: "Num", name: "Ending After" },
+                { id: "Date", name: "Ending On" },
+              ]}
+            />
+          )}
         />
       </div>
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
-          <label className='text-gray-700'>Occurances</label>
+          <label className='text-gray-700'>Number of Occurances</label>
           <input
-            {...register("D-Num", { required: true, max: 52 })}
-            required
+            {...register("DNum", { required: true, max: 52 })}
             type={"number"}
-            max={52}
             className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
           />
+          {errors.DNum?.type === ("required" as any) && (
+            <ErrorSpan>Number of occurances required</ErrorSpan>
+          )}
+          {errors.DNum?.type === ("max" as any) && (
+            <ErrorSpan>Max of 52 occurances</ErrorSpan>
+          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -73,24 +93,29 @@ const DailyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
           <label className='text-gray-700'>End Date</label>
           <div className='flex'>
             <Controller
-              name='D-Date'
+              name='DDate'
               control={control}
-              defaultValue={new Date()}
+              rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <DatePicker
                   id='D-Datepick'
                   selected={value}
                   onChange={onChange}
+                  minDate={new Date()}
                   className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                 />
               )}
             />
+
             <div
               onClick={() => document.getElementById("D-Datepick")?.focus()}
               className='flex items-center rounded-r cursor-pointer px-3 border border-gray-300 border-l-0 bg-gray-50 hover:text-indigo-700'>
               <MdOutlineCalendarToday size={20} />
             </div>
           </div>
+          {errors.DDate && (
+            <span className='text-red-500'>End Date Required</span>
+          )}
         </div>
       )}
     </div>
@@ -107,30 +132,49 @@ const WeeklyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
     control,
     register,
     formState: { errors },
+    watch,
   } = useFormContext();
+
+  const WEndSelect = watch("WEndSelect");
+  useEffect(() => {
+    if (WEndSelect != undefined) {
+      setOccuranceType(WEndSelect);
+    }
+  }, [WEndSelect]);
 
   return (
     <div className='grid grid-cols-6 gap-6'>
       <div className='col-span-6'>
-        <SingleSelect
-          selected={occuranceType}
-          setSelected={setOccuranceType}
-          list={[
-            { id: "Num", name: "Ending After" },
-            { id: "Date", name: "Ending On" },
-          ]}
+        <Controller
+          name='WEndSelect'
+          control={control}
+          defaultValue={occuranceType}
+          render={({ field: { onChange, value } }) => (
+            <SingleSelect
+              selected={value}
+              setSelected={onChange}
+              list={[
+                { id: "Num", name: "Ending After" },
+                { id: "Date", name: "Ending On" },
+              ]}
+            />
+          )}
         />
       </div>
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
-          <label className='text-gray-700'>Occurances</label>
+          <label className='text-gray-700'>Number of Occurances</label>
           <input
-            {...register("W-Num", { required: true, max: 52 })}
-            required
+            {...register("WNum", { required: true, max: 52 })}
             type={"number"}
-            max={52}
             className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
           />
+          {errors.WNum?.type === ("required" as any) && (
+            <ErrorSpan>Number of occurances required</ErrorSpan>
+          )}
+          {errors.WNum?.type === ("max" as any) && (
+            <ErrorSpan>Max of 52 occurances</ErrorSpan>
+          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -138,13 +182,15 @@ const WeeklyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
           <label className='text-gray-700'>End Date</label>
           <div className='flex'>
             <Controller
-              name='W-Date'
+              name='WDate'
               control={control}
+              rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <DatePicker
                   id='W-Datepick'
                   selected={value}
                   onChange={onChange}
+                  minDate={new Date()}
                   className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                 />
               )}
@@ -155,6 +201,7 @@ const WeeklyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
               <MdOutlineCalendarToday size={20} />
             </div>
           </div>
+          {errors.WDate && <ErrorSpan>End date required</ErrorSpan>}
         </div>
       )}
     </div>
@@ -173,7 +220,15 @@ const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
     control,
     register,
     formState: { errors },
+    watch,
   } = useFormContext();
+
+  const WCEndSelect = watch("WCEndSelect");
+  useEffect(() => {
+    if (WCEndSelect != undefined) {
+      setOccuranceType(WCEndSelect);
+    }
+  }, [WCEndSelect]);
 
   const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
 
@@ -190,25 +245,36 @@ const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
         </div>
       </div>
       <div className='col-span-6'>
-        <SingleSelect
-          selected={occuranceType}
-          setSelected={setOccuranceType}
-          list={[
-            { id: "Num", name: "Ending After" },
-            { id: "Date", name: "Ending On" },
-          ]}
+        <Controller
+          name='WCEndSelect'
+          control={control}
+          defaultValue={occuranceType}
+          render={({ field: { onChange, value } }) => (
+            <SingleSelect
+              selected={value}
+              setSelected={onChange}
+              list={[
+                { id: "Num", name: "Ending After" },
+                { id: "Date", name: "Ending On" },
+              ]}
+            />
+          )}
         />
       </div>
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
-          <label className='text-gray-700'>Occurances</label>
+          <label className='text-gray-700'>Number of Occurances</label>
           <input
-            {...register("WC-Num", { required: true, max: 52 })}
-            required
+            {...register("WCNum", { required: true, max: 52 })}
             type={"number"}
-            max={52}
             className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
           />
+          {errors.WCNum?.type === ("required" as any) && (
+            <ErrorSpan>Number of occurances required</ErrorSpan>
+          )}
+          {errors.WCNum?.type === ("max" as any) && (
+            <ErrorSpan>Max of 52 occurances</ErrorSpan>
+          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -216,13 +282,15 @@ const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
           <label className='text-gray-700'>End Date</label>
           <div className='flex'>
             <Controller
-              name='WC-Date'
+              name='WCDate'
               control={control}
+              rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <DatePicker
                   id='WC-Datepick'
                   selected={value}
                   onChange={onChange}
+                  minDate={new Date()}
                   className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                 />
               )}
@@ -233,6 +301,7 @@ const WeeklyCustomOptions: React.FC<{ selection: selection }> = ({
               <MdOutlineCalendarToday size={20} />
             </div>
           </div>
+          {errors.WCDate && <ErrorSpan>End date required</ErrorSpan>}
         </div>
       )}
     </div>
@@ -249,30 +318,49 @@ const MonthlyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
     control,
     register,
     formState: { errors },
+    watch,
   } = useFormContext();
+
+  const MEndSelect = watch("MEndSelect");
+  useEffect(() => {
+    if (MEndSelect != undefined) {
+      setOccuranceType(MEndSelect);
+    }
+  }, [MEndSelect]);
 
   return (
     <div className='grid grid-cols-6 gap-6'>
       <div className='col-span-6'>
-        <SingleSelect
-          selected={occuranceType}
-          setSelected={setOccuranceType}
-          list={[
-            { id: "Num", name: "Ending After" },
-            { id: "Date", name: "Ending On" },
-          ]}
+        <Controller
+          name='MEndSelect'
+          control={control}
+          defaultValue={occuranceType}
+          render={({ field: { onChange, value } }) => (
+            <SingleSelect
+              selected={value}
+              setSelected={onChange}
+              list={[
+                { id: "Num", name: "Ending After" },
+                { id: "Date", name: "Ending On" },
+              ]}
+            />
+          )}
         />
       </div>
       {occuranceType.id == "Num" && (
         <div className='col-span-6'>
-          <label className='text-gray-700'>Occurances</label>
+          <label className='text-gray-700'>Number of Occurances</label>
           <input
-            {...register("M-Num", { required: true, max: 52 })}
-            required
+            {...register("MNum", { required: true, max: 52 })}
             type={"number"}
-            max={52}
             className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
           />
+          {errors.MNum?.type === ("required" as any) && (
+            <ErrorSpan>Number of occurances required</ErrorSpan>
+          )}
+          {errors.MNum?.type === ("max" as any) && (
+            <ErrorSpan>Max of 52 occurances</ErrorSpan>
+          )}
         </div>
       )}
       {occuranceType.id == "Date" && (
@@ -280,13 +368,15 @@ const MonthlyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
           <label className='text-gray-700'>End Date</label>
           <div className='flex'>
             <Controller
-              name='M-Date'
+              name='MDate'
               control={control}
+              rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <DatePicker
                   id='M-Datepick'
                   selected={value}
                   onChange={onChange}
+                  minDate={new Date()}
                   className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                 />
               )}
@@ -297,6 +387,7 @@ const MonthlyOptions: React.FC<{ selection: selection }> = ({ selection }) => {
               <MdOutlineCalendarToday size={20} />
             </div>
           </div>
+          {errors.MDate && <ErrorSpan>End date required</ErrorSpan>}
         </div>
       )}
     </div>

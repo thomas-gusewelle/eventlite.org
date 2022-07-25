@@ -38,6 +38,24 @@ const AddEvent = () => {
   }, [eventDate]);
 
   const methods = useForm();
+  const _isRepeating = methods.watch("isRepeating", false);
+  const _repeatFrequency = methods.watch("repeatFrequency", {
+    id: "D",
+    name: "Daily",
+  });
+
+  useEffect(() => {
+    if (_isRepeating != undefined) {
+      setIsRepeating(_isRepeating);
+    }
+  }, [_isRepeating]);
+
+  useEffect(() => {
+    console.log(_repeatFrequency);
+    if (_repeatFrequency != undefined) {
+      setRepeatFrequency(_repeatFrequency);
+    }
+  }, [_repeatFrequency]);
 
   const submit = methods.handleSubmit((data) => {
     console.log(data);
@@ -130,22 +148,29 @@ const AddEvent = () => {
             <div className='col-span-2 sm:col-span-1'>
               <label className='text-gray-700'>Repeats?</label>
               <div className='mt-1'>
-                <Switch
-                  checked={isRepeating}
-                  onChange={setIsRepeating}
-                  className={`${isRepeating ? "bg-indigo-700" : "bg-gray-200"}
-          relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}>
-                  <span className='sr-only'>Is Repeating</span>
-                  <span
-                    aria-hidden='true'
-                    className={`${
-                      isRepeating
-                        ? "translate-x-9 bg-white"
-                        : "translate-x-0 bg-white"
-                    }
-            pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`}
-                  />
-                </Switch>
+                <Controller
+                  name='isRepeating'
+                  control={methods.control}
+                  defaultValue={false}
+                  render={({ field: { onChange, value } }) => (
+                    <Switch
+                      checked={value}
+                      onChange={onChange}
+                      className={`${value ? "bg-indigo-700" : "bg-gray-200"}
+			 relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}>
+                      <span className='sr-only'>Is Repeating</span>
+                      <span
+                        aria-hidden='true'
+                        className={`${
+                          value
+                            ? "translate-x-9 bg-white"
+                            : "translate-x-0 bg-white"
+                        }
+			   pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`}
+                      />
+                    </Switch>
+                  )}
+                />
               </div>
             </div>
 
@@ -154,10 +179,17 @@ const AddEvent = () => {
               {isRepeating && (
                 <div>
                   <label>Frequency</label>
-                  <SingleSelect
-                    list={frequncyOptions}
-                    selected={repeatFrequency}
-                    setSelected={setRepeatFrequency}
+                  <Controller
+                    name='repeatFrequency'
+                    control={methods.control}
+                    defaultValue={{ id: "D", name: "Daily" }}
+                    render={({ field: { value, onChange } }) => (
+                      <SingleSelect
+                        list={frequncyOptions}
+                        selected={value}
+                        setSelected={onChange}
+                      />
+                    )}
                   />
                 </div>
               )}

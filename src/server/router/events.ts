@@ -11,9 +11,54 @@ export const eventsRouter = createRouter()
       });
       return await prisma?.event.findMany({
         where: { organizationId: org?.organizationId },
+        include: {
+          positions: true,
+        },
       });
     },
   })
+  .mutation("createSingleEvent", {
+    input: z.object({
+      name: z.string(),
+      eventDate: z.date(),
+      eventTime: z.date(),
+      isRepeating: z.boolean(),
+      positions: z
+        .object({
+          position: z.object({
+            id: z.string(),
+            name: z.string(),
+            organizationId: z.string().optional(),
+          }),
+          quantity: z.number(),
+        })
+        .array(),
+    }),
+
+    async resolve({ ctx, input }) {
+      console.log(input.positions);
+      if (input.isRepeating == false) {
+        const org = await prisma?.user.findFirst({
+          where: { id: ctx.session?.user.id },
+          select: { organizationId: true },
+        });
+
+        return await prisma?.event.create({
+          data: {
+            name: input.name,
+            datetime: replaceTime(input.eventDate, input.eventTime),
+            organizationId: org?.organizationId,
+            positions: {
+              create: input.positions.map((item) => ({
+                roleId: item.position.id,
+              })),
+            },
+          },
+        });
+      }
+    },
+  })
+
   .mutation("createEvents", {
     input: z
       .object({
@@ -43,6 +88,14 @@ export const eventsRouter = createRouter()
         MEndSelect: z.object({ id: z.string(), name: z.string() }).optional(),
         MNum: z.number().optional(),
         MDate: z.date().optional(),
+        positions: z.object({
+          position: z.object({
+            id: z.string(),
+            name: z.string(),
+            organizationId: z.string().optional(),
+          }),
+          quantity: z.number(),
+        }),
       })
       .array(),
     async resolve({ ctx, input }) {

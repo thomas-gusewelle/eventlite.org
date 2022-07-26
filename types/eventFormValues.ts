@@ -25,7 +25,10 @@ export type EventFormValues = {
   MEndSelect?: EventEndSelect;
   MNum?: number;
   MDate?: Date;
-  positions: Position[];
+  positions: {
+    position: { organizationId?: string | undefined; id: string; name: string };
+    quantity: number;
+  }[];
 };
 
 export type EventRepeatFrequency = {

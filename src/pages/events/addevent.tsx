@@ -23,9 +23,16 @@ import {
 } from "../../../types/eventFormValues";
 import { trpc } from "../../utils/trpc";
 import { PositionsSelector } from "../../components/form/event/positionSelections";
+import { useRouter } from "next/router";
 
 const AddEvent = () => {
+  const router = useRouter();
   const addEvent = trpc.useMutation("events.createEvents");
+  const addSingleEvent = trpc.useMutation("events.createSingleEvent", {
+    onSuccess() {
+      router.push("/events");
+    },
+  });
   const [eventDate, setEventDate] = useState<Date>(new Date());
   const [eventTime, setEventTime] = useState<Date>();
   const [frequncyOptions, setFrequncyOptions] = useState<
@@ -74,7 +81,10 @@ const AddEvent = () => {
 
   const submit = methods.handleSubmit((data: EventFormValues) => {
     console.log(data);
-    addEvent.mutate([data]);
+    if (!data.isRepeating) {
+      addSingleEvent.mutate(data);
+    }
+    // addEvent.mutate(data);
   });
 
   return (

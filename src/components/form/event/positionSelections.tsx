@@ -46,7 +46,7 @@ export const PositionsSelector = () => {
       <div className='grid grid-cols-8 gap-x-3 gap-y-6 mt-1'>
         {fields.map((field, index) => (
           <>
-            <div className='col-span-4' key={index}>
+            <div className='col-span-4' key={field.id}>
               <Controller
                 name={`positions.${index}.position`}
                 control={control}
@@ -60,11 +60,17 @@ export const PositionsSelector = () => {
               />
             </div>
             <div className='col-span-2'>
-              <input
-                key={field.id} // important to include key with field's id
-                {...register(`positions.${index}.quantity`)}
-                type='number'
-                className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md'
+              <Controller
+                name={`positions.${index}.quantity`}
+                render={({ field }) => (
+                  <input
+                    // important to include key with field's id
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    type='number'
+                    className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md'
+                  />
+                )}
               />
             </div>
             <div className='col-span-2 grid grid-cols-2'>

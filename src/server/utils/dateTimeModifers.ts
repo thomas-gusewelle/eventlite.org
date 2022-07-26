@@ -6,7 +6,8 @@ export function addDays(date: Date, days: number) {
 
 export function replaceTime(date: Date, time: Date) {
   let result = new Date(date);
-  result.setTime(time.getTime());
+  console.log("date: ", result);
+  result.setHours(time.getHours(), time.getMinutes(), 0);
   return result;
 }
 

@@ -98,8 +98,9 @@ const AddEvent = () => {
 
   const submit = methods.handleSubmit((data: EventFormValues) => {
     console.log(data);
+    console.log("replaced time: ", replaceTime(data.eventDate, data.eventTime));
     if (!data.isRepeating) {
-      addSingleEvent.mutate(data);
+      // addSingleEvent.mutate(data);
     }
     // addEvent.mutate(data);
   });

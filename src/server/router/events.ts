@@ -12,7 +12,11 @@ export const eventsRouter = createRouter()
       return await prisma?.event.findMany({
         where: { organizationId: org?.organizationId },
         include: {
-          positions: true,
+          positions: {
+            include: {
+              Role: true,
+            },
+          },
         },
       });
     },
@@ -47,6 +51,12 @@ export const eventsRouter = createRouter()
           where: { id: ctx.session?.user.id },
           select: { organizationId: true },
         });
+
+        console.log("INput date", input.eventDate);
+        console.log(
+          "replaced Time",
+          replaceTime(input.eventDate, input.eventTime)
+        );
 
         return await prisma?.event.create({
           data: {

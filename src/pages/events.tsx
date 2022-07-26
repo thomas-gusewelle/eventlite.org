@@ -1,4 +1,4 @@
-import { Event } from "@prisma/client";
+import { Event, EventPositions, Role } from "@prisma/client";
 import { FormEvent, useState } from "react";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { SectionHeading } from "../components/headers/SectionHeading";
@@ -16,7 +16,13 @@ const EventsPage = () => {
       }
     },
   });
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<
+    (Event & {
+      positions: (EventPositions & {
+        Role: Role;
+      })[];
+    })[]
+  >([]);
   const addOptions: TableOptionsDropdown = [
     { name: "New Event", href: "/events/addevent" },
     { name: "From Template", href: "#" },
@@ -54,9 +60,18 @@ const EventsPage = () => {
         </div>
       </div>
 
-      <div>
+      <div className='grid grid-cols-3 gap-12'>
         {events.map((event) => (
-          <span key={event.name}>{event.name}</span>
+          <div
+            key={event.id}
+            className='flex flex-col justify-center items-center py-4 rounded border border-b-gray-300'>
+            <h3>{event.name}</h3>
+            <span>{event.datetime.toLocaleDateString()}</span>
+            <span>{event.datetime.toLocaleTimeString()}</span>
+            {event.positions.map((position) => (
+              <div key={position.id}>{position.Role.name}</div>
+            ))}
+          </div>
         ))}
       </div>
     </>

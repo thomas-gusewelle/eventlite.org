@@ -55,10 +55,10 @@ model Organization {
 }
 
 model Locations {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
   events         Event[]
 }
 
@@ -66,8 +66,8 @@ model Role {
   id             String           @id @default(uuid())
   name           String
   users          User[]
-  Organization   Organization?    @relation(fields: [organizationId], references: [id])
-  organizationId String?
+  Organization   Organization     @relation(fields: [organizationId], references: [id])
+  organizationId String
   eventPositions EventPositions[]
 
   @@index([organizationId])
@@ -91,8 +91,8 @@ model EventPositions {
   id      String  @id @default(cuid())
   Event   Event?  @relation(fields: [eventId], references: [id])
   eventId String?
-  Role    Role?   @relation(fields: [roleId], references: [id])
-  roleId  String?
+  Role    Role    @relation(fields: [roleId], references: [id])
+  roleId  String
   User    User?   @relation(fields: [userId], references: [id])
   userId  String?
 }

@@ -63,11 +63,11 @@ const EventsPage = () => {
         </div>
       </div>
 
-      <div className='grid grid-cols-3 gap-12'>
+      <div className='grid grid-cols-1 sm:grid-cols-3 gap-12 px-6'>
         {events.map((event) => (
           <div
             key={event.id}
-            className='flex flex-col justify-center items-center py-4 rounded border border-b-gray-300'>
+            className='flex flex-col justify-center items-center py-4 shadow rounded-lg border border-b-gray-300'>
             <h3>{event.name}</h3>
             <span>{event.datetime.toLocaleDateString()}</span>
             <span>{event.datetime.toLocaleTimeString()}</span>

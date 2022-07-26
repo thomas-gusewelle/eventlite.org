@@ -1,16 +1,22 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { replaceTime } from "../utils/dateTimeModifers";
+import { replaceTime, roundHourDown } from "../utils/dateTimeModifers";
 import { createRouter } from "./context";
 
 export const eventsRouter = createRouter()
-  .query("getEventsByOrganization", {
+  .query("getUpcomingEventsByOrganization", {
     async resolve({ ctx }) {
       const org = await prisma?.user.findFirst({
         where: { id: ctx.session?.user.id },
         select: { organizationId: true },
       });
       return await prisma?.event.findMany({
-        where: { organizationId: org?.organizationId },
+        where: {
+          organizationId: org?.organizationId,
+          datetime: {
+            gte: roundHourDown(),
+          },
+        },
         include: {
           positions: {
             include: {
@@ -18,8 +24,49 @@ export const eventsRouter = createRouter()
             },
           },
         },
+        orderBy: {
+          datetime: "asc",
+        },
       });
     },
+  })
+  .query("getPastEventsByOrganization", {
+    async resolve({ ctx }) {
+      const org = await prisma?.user.findFirst({
+        where: { id: ctx.session?.user.id },
+        select: { organizationId: true },
+      });
+      return await prisma?.event.findMany({
+        where: {
+          organizationId: org?.organizationId,
+          datetime: {
+            lt: roundHourDown(),
+          },
+        },
+        include: {
+          positions: {
+            include: {
+              Role: true,
+            },
+          },
+        },
+        orderBy: {
+          datetime: "desc",
+        },
+      });
+    },
+  })
+  .middleware(async ({ ctx, next }) => {
+    const user = await prisma?.user.findFirst({
+      where: { id: ctx.session?.user.id },
+      select: {
+        status: true,
+      },
+    });
+    if (user?.status != "ADMIN") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next();
   })
   .mutation("createSingleEvent", {
     input: z.object({
@@ -130,5 +177,15 @@ export const eventsRouter = createRouter()
         });
       });
       return posts;
+    },
+  })
+  .mutation("deleteEventById", {
+    input: z.string(),
+    async resolve({ input }) {
+      return await prisma?.event.delete({
+        where: {
+          id: input,
+        },
+      });
     },
   });

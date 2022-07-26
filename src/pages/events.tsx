@@ -9,13 +9,16 @@ import { trpc } from "../utils/trpc";
 const filter = (e: string) => {};
 
 const EventsPage = () => {
-  const eventsQuery = trpc.useQuery(["events.getEventsByOrganization"], {
-    onSuccess(data) {
-      if (data != undefined) {
-        setEvents(data);
-      }
-    },
-  });
+  const eventsQuery = trpc.useQuery(
+    ["events.getUpcomingEventsByOrganization"],
+    {
+      onSuccess(data) {
+        if (data != undefined) {
+          setEvents(data);
+        }
+      },
+    }
+  );
   const [events, setEvents] = useState<
     (Event & {
       positions: (EventPositions & {

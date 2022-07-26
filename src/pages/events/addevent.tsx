@@ -1,10 +1,4 @@
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  SubmitHandler,
-  FieldValues,
-} from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { sidebar } from "../../components/layout/sidebar";
 import DatePicker from "react-datepicker";
@@ -15,7 +9,7 @@ import { Switch } from "@headlessui/react";
 import { SingleSelect } from "../../components/form/singleSelect";
 import { findWeekday } from "../../utils/findWeekday";
 import { RecurringOptions } from "../../components/form/event/recurringOptions";
-import { FindFutureDates } from "../../server/utils/findFutureDates";
+
 import { replaceTime } from "../../server/utils/dateTimeModifers";
 import {
   EventFormValues,
@@ -100,7 +94,7 @@ const AddEvent = () => {
     console.log(data);
     console.log("replaced time: ", replaceTime(data.eventDate, data.eventTime));
     if (!data.isRepeating) {
-      // addSingleEvent.mutate(data);
+      addSingleEvent.mutate(data);
     }
     // addEvent.mutate(data);
   });

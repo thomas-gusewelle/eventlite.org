@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Locations, Role } from "@prisma/client";
 
 export type EventFormValues = {
   name: string;
@@ -29,6 +29,7 @@ export type EventFormValues = {
     position: { organizationId?: string | undefined; id: string; name: string };
     quantity: number;
   }[];
+  eventLocation: Locations;
 };
 
 export type EventRepeatFrequency = {

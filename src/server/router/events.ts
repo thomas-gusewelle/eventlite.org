@@ -23,6 +23,11 @@ export const eventsRouter = createRouter()
       eventDate: z.date(),
       eventTime: z.date(),
       isRepeating: z.boolean(),
+      eventLocation: z.object({
+        id: z.string(),
+        name: z.string(),
+        organizationId: z.string(),
+      }),
       positions: z
         .object({
           position: z.object({
@@ -48,6 +53,7 @@ export const eventsRouter = createRouter()
             name: input.name,
             datetime: replaceTime(input.eventDate, input.eventTime),
             organizationId: org?.organizationId,
+            locationsId: input.eventLocation.id,
             positions: {
               create: input.positions.map((item) => ({
                 roleId: item.position.id,

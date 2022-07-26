@@ -24,9 +24,26 @@ import {
 import { trpc } from "../../utils/trpc";
 import { PositionsSelector } from "../../components/form/event/positionSelections";
 import { useRouter } from "next/router";
+import { Locations } from "@prisma/client";
+import { CircularProgress } from "../../components/circularProgress";
 
 const AddEvent = () => {
   const router = useRouter();
+  const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
+    onSuccess(data) {
+      if (data != undefined) {
+        setLocations(data);
+      }
+    },
+  });
+  const [locations, setLocations] = useState<Locations[]>([
+    { id: "", name: "", organizationId: "" },
+  ]);
+
+  useEffect(() => {
+    console.log("This is the locations", locations);
+  }, [locations]);
+
   const addEvent = trpc.useMutation("events.createEvents");
   const addSingleEvent = trpc.useMutation("events.createSingleEvent", {
     onSuccess() {
@@ -86,6 +103,18 @@ const AddEvent = () => {
     }
     // addEvent.mutate(data);
   });
+
+  if (locationsQuery.isLoading) {
+    return (
+      <div className='flex justify-center'>
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (locations == undefined) {
+    return <div></div>;
+  }
 
   return (
     <>
@@ -169,6 +198,25 @@ const AddEvent = () => {
             </div>
             {/* Fill space div */}
             <div className='hidden md:block md:col-span-2 lg:col-span-3'></div>
+
+            {/* Event Location */}
+            <div className='col-span-6 md:col-span-3 '>
+              <label className='text-gray-700'>Event Location</label>
+              <Controller
+                name='eventLocation'
+                control={methods.control}
+                defaultValue={{ id: "", name: "", organizationId: "" }}
+                render={({ field: { onChange, value } }) => (
+                  <SingleSelect
+                    selected={value}
+                    setSelected={onChange}
+                    list={locations}
+                  />
+                )}
+              />
+            </div>
+            {/* Fill space div */}
+            <div className='hidden md:block md:col-span-3 '></div>
 
             {/* Event recurring switch */}
             <div className='col-span-2 sm:col-span-1'>

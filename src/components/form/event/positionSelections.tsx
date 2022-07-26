@@ -32,7 +32,7 @@ export const PositionsSelector = () => {
   }, [append]);
 
   return (
-    <div className='col-span-6 px-6'>
+    <div className='col-span-6 px-6 mb-6'>
       {/*  */}
       <div className='grid grid-cols-8 gap-6'>
         <div className='col-span-4'>
@@ -89,15 +89,6 @@ export const PositionsSelector = () => {
             </div>
           </>
         ))}
-        {/* <div>fadfdsafdsa</div> */}
-        <button
-          className=''
-          type='button'
-          onClick={() =>
-            append({ position: { id: "", name: "" }, quantity: 1 })
-          }>
-          click
-        </button>
       </div>
     </div>
   );

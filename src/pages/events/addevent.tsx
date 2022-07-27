@@ -38,7 +38,7 @@ const AddEvent = () => {
     console.log("This is the locations", locations);
   }, [locations]);
 
-  const addEvent = trpc.useMutation("events.createEvents");
+  const addEvent = trpc.useMutation("events.createRecurringEvents");
   const addSingleEvent = trpc.useMutation("events.createSingleEvent", {
     onSuccess() {
       router.push("/events");

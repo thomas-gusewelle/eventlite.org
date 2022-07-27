@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { replaceTime, roundHourDown } from "../utils/dateTimeModifers";
 import { createRouter } from "./context";
+import { findFutureDates } from "../utils/findFutureDates";
 
 export const eventsRouter = createRouter()
   .query("getUpcomingEventsByOrganization", {
@@ -99,12 +100,6 @@ export const eventsRouter = createRouter()
           select: { organizationId: true },
         });
 
-        console.log("INput date", input.eventDate);
-        console.log(
-          "replaced Time",
-          replaceTime(input.eventDate, input.eventTime)
-        );
-
         return await prisma?.event.create({
           data: {
             name: input.name,
@@ -122,61 +117,77 @@ export const eventsRouter = createRouter()
     },
   })
 
-  .mutation("createEvents", {
-    input: z
-      .object({
+  .mutation("createRecurringEvents", {
+    input: z.object({
+      name: z.string(),
+      eventDate: z.date(),
+      eventTime: z.date(),
+      eventLocation: z.object({
+        id: z.string(),
         name: z.string(),
-        eventDate: z.date(),
-        eventTime: z.date(),
-        isRepeating: z.boolean(),
-        repeatFrequency: z
-          .object({ id: z.string(), name: z.string() })
-          .optional(),
-        DEndSelect: z.object({ id: z.string(), name: z.string() }).optional(),
-        DNum: z.number().optional(),
-        DDate: z.date().optional(),
-        WEndSelect: z.object({ id: z.string(), name: z.string() }).optional(),
-        WNum: z.number().optional(),
-        WDate: z.date().optional(),
-        WCEndSelect: z.object({ id: z.string(), name: z.string() }).optional(),
-        WCNum: z.number().optional(),
-        WCDate: z.date().optional(),
-        WCSun: z.boolean().optional(),
-        WCMon: z.boolean().optional(),
-        WCTues: z.boolean().optional(),
-        WCWed: z.boolean().optional(),
-        WCThurs: z.boolean().optional(),
-        WCFri: z.boolean().optional(),
-        WCSat: z.boolean().optional(),
-        MEndSelect: z.object({ id: z.string(), name: z.string() }).optional(),
-        MNum: z.number().optional(),
-        MDate: z.date().optional(),
-        positions: z.object({
-          position: z.object({
-            id: z.string(),
-            name: z.string(),
-            organizationId: z.string().optional(),
-          }),
-          quantity: z.number(),
+        organizationId: z.string(),
+      }),
+      isRepeating: z.boolean(),
+      repeatFrequency: z
+        .object({
+          id: z.union([
+            z.literal("D"),
+            z.literal("W"),
+            z.literal("WC"),
+            z.literal("M"),
+          ]),
+          name: z.string(),
+        })
+        .optional(),
+      DEndSelect: z.object({ id: z.union([z.literal("Num"), z.literal("Date")]), name: z.string() }).optional(),
+      DNum: z.number().optional(),
+      DDate: z.date().optional(),
+      WEndSelect: z.object({ id: z.union([z.literal("Num"), z.literal("Date")]), name: z.string() }).optional(),
+      WNum: z.number().optional(),
+      WDate: z.date().optional(),
+      WCEndSelect: z.object({id: z.union([z.literal("Num"), z.literal("Date")]), name: z.string() }).optional(),
+      WCNum: z.number().optional(),
+      WCDate: z.date().optional(),
+      WCSun: z.boolean().optional(),
+      WCMon: z.boolean().optional(),
+      WCTues: z.boolean().optional(),
+      WCWed: z.boolean().optional(),
+      WCThurs: z.boolean().optional(),
+      WCFri: z.boolean().optional(),
+      WCSat: z.boolean().optional(),
+      MEndSelect: z.object({ id: z.union([z.literal("Num"), z.literal("Date")]) name: z.string() }).optional(),
+      MNum: z.number().optional(),
+      MDate: z.date().optional(),
+      positions: z.object({
+        position: z.object({
+          id: z.string(),
+          name: z.string(),
+          organizationId: z.string().optional(),
         }),
-      })
-      .array(),
+        quantity: z.number(),
+      }).array()
+    }),
+
     async resolve({ ctx, input }) {
+      if (input.isRepeating == false) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+        return;
+      }
       const org = await prisma?.user.findFirst({
         where: { id: ctx.session?.user.id },
         select: { organizationId: true },
       });
 
-      const posts = input.map(async (event) => {
-        return await prisma?.event.create({
-          data: {
-            name: event.name,
-            datetime: replaceTime(event.eventDate, event.eventTime),
-            organizationId: org?.organizationId,
-          },
-        });
+      const formatedDate = replaceTime(input.eventDate, input.eventTime);
+      const newDates = findFutureDates(input);
+
+      return await prisma?.event.create({
+        data: {
+          name: event.name,
+          datetime: replaceTime(event.eventDate, event.eventTime),
+          organizationId: org?.organizationId,
+        },
       });
-      return posts;
     },
   })
   .mutation("deleteEventById", {

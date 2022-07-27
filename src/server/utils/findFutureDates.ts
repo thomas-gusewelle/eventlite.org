@@ -1,15 +1,17 @@
+import { EventFormValues } from "../../../types/eventFormValues";
 import { addDays } from "./dateTimeModifers";
 
-export function FindFutureDates(
-  eventDate: Date,
-  repeatFrequency: { id: string; name: string },
-  endSelect: { id: string; name: string },
-  endNum?: number,
-  endDate?: Date
-) {
-  switch (repeatFrequency.id) {
+export function findFutureDates(input: EventFormValues) {
+  if (input == undefined) return null;
+
+  switch (input.repeatFrequency?.id) {
     case "D":
-      return DailyDates(eventDate, endSelect, endNum, endDate);
+      return DailyDates(
+        input.eventDate,
+        input.DEndSelect,
+        input.DNum,
+        input.DDate
+      );
       break;
     case "W":
       break;
@@ -22,11 +24,11 @@ export function FindFutureDates(
 
 function DailyDates(
   eventDate: Date,
-  endSelect: { id: string; name: string },
+  endSelect?: { id: string; name: string },
   endNum?: number,
   endDate?: Date
 ) {
-  if (endSelect.id == "Num" && endNum != undefined && endNum > 0) {
+  if (endSelect?.id == "Num" && endNum != undefined && endNum > 0) {
     let recurringDates = [eventDate];
     for (let i = 1; i <= endNum; i++) {
       let newDate = addDays(eventDate, i);
@@ -35,6 +37,6 @@ function DailyDates(
     console.log(recurringDates);
     return recurringDates;
   }
-  if (endSelect.id == "Date") {
+  if (endSelect?.id == "Date") {
   }
 }

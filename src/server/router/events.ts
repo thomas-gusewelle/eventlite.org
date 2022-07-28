@@ -139,13 +139,28 @@ export const eventsRouter = createRouter()
           name: z.string(),
         })
         .optional(),
-      DEndSelect: z.object({ id: z.union([z.literal("Num"), z.literal("Date")]), name: z.string() }).optional(),
+      DEndSelect: z
+        .object({
+          id: z.union([z.literal("Num"), z.literal("Date")]),
+          name: z.string(),
+        })
+        .optional(),
       DNum: z.number().optional(),
       DDate: z.date().optional(),
-      WEndSelect: z.object({ id: z.union([z.literal("Num"), z.literal("Date")]), name: z.string() }).optional(),
+      WEndSelect: z
+        .object({
+          id: z.union([z.literal("Num"), z.literal("Date")]),
+          name: z.string(),
+        })
+        .optional(),
       WNum: z.number().optional(),
       WDate: z.date().optional(),
-      WCEndSelect: z.object({id: z.union([z.literal("Num"), z.literal("Date")]), name: z.string() }).optional(),
+      WCEndSelect: z
+        .object({
+          id: z.union([z.literal("Num"), z.literal("Date")]),
+          name: z.string(),
+        })
+        .optional(),
       WCNum: z.number().optional(),
       WCDate: z.date().optional(),
       WCSun: z.boolean().optional(),
@@ -155,17 +170,24 @@ export const eventsRouter = createRouter()
       WCThurs: z.boolean().optional(),
       WCFri: z.boolean().optional(),
       WCSat: z.boolean().optional(),
-      MEndSelect: z.object({ id: z.union([z.literal("Num"), z.literal("Date")]) name: z.string() }).optional(),
+      MEndSelect: z
+        .object({
+          id: z.union([z.literal("Num"), z.literal("Date")]),
+          name: z.string(),
+        })
+        .optional(),
       MNum: z.number().optional(),
       MDate: z.date().optional(),
-      positions: z.object({
-        position: z.object({
-          id: z.string(),
-          name: z.string(),
-          organizationId: z.string().optional(),
-        }),
-        quantity: z.number(),
-      }).array()
+      positions: z
+        .object({
+          position: z.object({
+            id: z.string(),
+            name: z.string(),
+            organizationId: z.string().optional(),
+          }),
+          quantity: z.number(),
+        })
+        .array(),
     }),
 
     async resolve({ ctx, input }) {
@@ -180,14 +202,14 @@ export const eventsRouter = createRouter()
 
       const formatedDate = replaceTime(input.eventDate, input.eventTime);
       const newDates = findFutureDates(input);
-
-      return await prisma?.event.create({
-        data: {
-          name: event.name,
-          datetime: replaceTime(event.eventDate, event.eventTime),
-          organizationId: org?.organizationId,
-        },
-      });
+      return null;
+      // return await prisma?.event.create({
+      //   data: {
+      //     name: event.name,
+      //     datetime: replaceTime(event.eventDate, event.eventTime),
+      //     organizationId: org?.organizationId,
+      //   },
+      // });
     },
   })
   .mutation("deleteEventById", {

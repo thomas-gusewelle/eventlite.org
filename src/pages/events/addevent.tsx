@@ -38,7 +38,7 @@ const AddEvent = () => {
     console.log("This is the locations", locations);
   }, [locations]);
 
-  const addEvent = trpc.useMutation("events.createRecurringEvents");
+  const addRecurringEvent = trpc.useMutation("events.createRecurringEvents");
   const addSingleEvent = trpc.useMutation("events.createSingleEvent", {
     onSuccess() {
       router.push("/events");
@@ -96,7 +96,9 @@ const AddEvent = () => {
     if (!data.isRepeating) {
       addSingleEvent.mutate(data);
     }
-    // addEvent.mutate(data);
+    if (data.isRepeating) {
+    }
+    addRecurringEvent.mutate(data);
   });
 
   if (locationsQuery.isLoading) {

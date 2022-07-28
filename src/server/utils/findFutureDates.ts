@@ -38,5 +38,13 @@ function DailyDates(
     return recurringDates;
   }
   if (endSelect?.id == "Date") {
+    let recurringDates = [eventDate];
+    if (endDate == undefined) return null;
+    const numberOfDays = endDate?.getDate() - eventDate.getDate();
+    for (let i = 1; i <= numberOfDays; i++) {
+      let newDate = addDays(eventDate, i);
+      recurringDates.push(newDate);
+    }
+    return recurringDates;
   }
 }

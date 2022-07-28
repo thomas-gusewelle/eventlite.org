@@ -12,17 +12,27 @@ export function addWeeks(date: Date, occurance: number) {
   return result;
 }
 
+export function yearsFromToday() {
+  const now = new Date();
+  now.setFullYear(now.getFullYear() + 2);
+  return now;
+}
+
 // Time Modifiers
 
 export function replaceTime(date: Date, time: Date) {
   let result = new Date(date);
-  result.setHours(time.getHours(), time.getMinutes(), 0);
+  result.setHours(
+    time.getHours(),
+    time.getMinutes(),
+    time.getSeconds(),
+    time.getMilliseconds()
+  );
   return result;
 }
 
 export function roundHourDown() {
   let currentTime = new Date();
   currentTime.setHours(currentTime.getHours(), 0, 0);
-  console.log("current time rounded down: ", currentTime);
   return currentTime;
 }

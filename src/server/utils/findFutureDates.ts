@@ -1,8 +1,9 @@
 import { EventFormValues } from "../../../types/eventFormValues";
-import { addDays } from "./dateTimeModifers";
+import { addDays, replaceTime } from "./dateTimeModifers";
 
 export function findFutureDates(input: EventFormValues) {
   if (input == undefined) return null;
+  console.log("This is the number", input.DNum);
 
   switch (input.repeatFrequency?.id) {
     case "D":
@@ -12,7 +13,7 @@ export function findFutureDates(input: EventFormValues) {
         input.DNum,
         input.DDate
       );
-      break;
+
     case "W":
       break;
     case "WC":
@@ -24,23 +25,27 @@ export function findFutureDates(input: EventFormValues) {
 
 function DailyDates(
   eventDate: Date,
-  endSelect?: { id: string; name: string },
+  endSelect?: { id: "Num" | "Date"; name: string },
   endNum?: number,
   endDate?: Date
 ) {
+  const timeInDay = 1000 * 60 * 60 * 24;
+
   if (endSelect?.id == "Num" && endNum != undefined && endNum > 0) {
     let recurringDates = [eventDate];
     for (let i = 1; i <= endNum; i++) {
       let newDate = addDays(eventDate, i);
       recurringDates.push(newDate);
     }
-    console.log(recurringDates);
+
     return recurringDates;
   }
   if (endSelect?.id == "Date") {
     let recurringDates = [eventDate];
     if (endDate == undefined) return null;
-    const numberOfDays = endDate?.getDate() - eventDate.getDate();
+
+    endDate = replaceTime(endDate, eventDate);
+    const numberOfDays = (endDate.getTime() - eventDate.getTime()) / timeInDay;
     for (let i = 1; i <= numberOfDays; i++) {
       let newDate = addDays(eventDate, i);
       recurringDates.push(newDate);

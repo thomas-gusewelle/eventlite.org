@@ -202,16 +202,28 @@ export const eventsRouter = createRouter()
 
       const formatedDate = replaceTime(input.eventDate, input.eventTime);
       const newDates = findFutureDates(input);
-      return null;
-      // return await prisma?.event.create({
-      //   data: {
-      //     name: event.name,
-      //     datetime: replaceTime(event.eventDate, event.eventTime),
-      //     organizationId: org?.organizationId,
-      //   },
-      // });
+      console.log("This is the new dates: ", newDates);
+
+      const events = newDates?.map(async (date) => {
+        await prisma?.event.create({
+          data: {
+            name: input.name,
+            datetime: date,
+            organizationId: org?.organizationId,
+            locationsId: input.eventLocation.id,
+            positions: {
+              create: input.positions.map((item) => ({
+                roleId: item.position.id,
+              })),
+            },
+          },
+        });
+      });
+      console.log("This is the added events", events);
+      return events;
     },
   })
+
   .mutation("deleteEventById", {
     input: z.string(),
     async resolve({ input }) {

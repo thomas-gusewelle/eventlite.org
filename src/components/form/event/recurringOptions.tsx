@@ -10,6 +10,7 @@ import {
   EventEndSelect,
   EventRepeatFrequency,
 } from "../../../../types/eventFormValues";
+import { yearsFromToday } from "../../../server/utils/dateTimeModifers";
 
 export const RecurringOptions: React.FC<{
   selection: EventRepeatFrequency;
@@ -80,10 +81,10 @@ const DailyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
           <Controller
-            name='DNUM'
+            name='DNum'
             control={control}
             rules={{ required: true, max: 52 }}
-            defaultValue={""}
+            defaultValue={1}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -115,9 +116,11 @@ const DailyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
               render={({ field: { value, onChange } }) => (
                 <DatePicker
                   id='D-Datepick'
+                  autoComplete='off'
                   selected={value}
                   onChange={onChange}
                   minDate={new Date()}
+                  maxDate={yearsFromToday()}
                   className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
                 />
               )}

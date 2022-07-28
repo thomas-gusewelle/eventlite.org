@@ -7,8 +7,8 @@ import { BiCommentX } from "react-icons/bi";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
-  console.log("this is the user", user);
-  if (user) {
+
+  if (user.user && !user.error) {
     return {
       redirect: {
         destination: "/dashboard",

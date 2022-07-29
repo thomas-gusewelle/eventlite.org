@@ -75,6 +75,7 @@ model Role {
 
 model Event {
   id               String           @id @default(cuid())
+  recurringId      String?
   name             String
   Organization     Organization?    @relation(fields: [organizationId], references: [id])
   organizationId   String?

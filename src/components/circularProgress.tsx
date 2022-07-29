@@ -17,3 +17,9 @@ export const CircularProgress = () => {
     </svg>
   );
 };
+
+export const CircularProgressSmall = () => {
+  return (
+    <div className='w-6 h-6 border-t border-t-white animate-spin rounded-[100%]'></div>
+  );
+};

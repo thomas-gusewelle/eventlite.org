@@ -19,7 +19,10 @@ import { trpc } from "../../utils/trpc";
 import { PositionsSelector } from "../../components/form/event/positionSelections";
 import { useRouter } from "next/router";
 import { Locations } from "@prisma/client";
-import { CircularProgress } from "../../components/circularProgress";
+import {
+  CircularProgress,
+  CircularProgressSmall,
+} from "../../components/circularProgress";
 import { findFutureDates } from "../../server/utils/findFutureDates";
 import { v4 as uuidv4 } from "uuid";
 
@@ -122,13 +125,6 @@ const AddEvent = () => {
           }
         );
       });
-      // addRecurringEvent.mutate(data, {
-      //   onSuccess() {
-      //     if (utils.queryClient.isMutating() == 0) {
-      //       router.push("/events");
-      //     }
-      //   },
-      // });
     }
   });
 
@@ -313,8 +309,8 @@ const AddEvent = () => {
           <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>
             <button
               type='submit'
-              className='inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-              {addEvent.isLoading ? <CircularProgress /> : "Save"}
+              className='w-16 h-10 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+              {addEvent.isLoading ? <CircularProgressSmall /> : "Save"}
             </button>
           </div>
         </form>

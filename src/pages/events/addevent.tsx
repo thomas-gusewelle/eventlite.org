@@ -20,8 +20,11 @@ import { PositionsSelector } from "../../components/form/event/positionSelection
 import { useRouter } from "next/router";
 import { Locations } from "@prisma/client";
 import { CircularProgress } from "../../components/circularProgress";
+import { findFutureDates } from "../../server/utils/findFutureDates";
+import { v4 as uuidv4 } from "uuid";
 
 const AddEvent = () => {
+  const utils = trpc.useContext();
   const router = useRouter();
   const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
     onSuccess(data) {
@@ -38,16 +41,11 @@ const AddEvent = () => {
     console.log("This is the locations", locations);
   }, [locations]);
 
-  const addRecurringEvent = trpc.useMutation("events.createRecurringEvents", {
-    onSuccess() {
-      router.push("/events");
-    },
-  });
-  const addSingleEvent = trpc.useMutation("events.createSingleEvent", {
-    onSuccess() {
-      router.push("/events");
-    },
-  });
+  // const addRecurringEvent = trpc.useMutation(
+  //   "events.createRecurringEvents",
+  //   {}
+  // );
+  const addEvent = trpc.useMutation("events.createEvent", {});
   const [eventDate, setEventDate] = useState<Date>(new Date());
   const [eventTime, setEventTime] = useState<Date>();
   const [frequncyOptions, setFrequncyOptions] = useState<
@@ -98,10 +96,39 @@ const AddEvent = () => {
     console.log(data);
     console.log("replaced time: ", replaceTime(data.eventDate, data.eventTime));
     if (!data.isRepeating) {
-      addSingleEvent.mutate(data);
+      addEvent.mutate(data, {
+        onSuccess() {
+          router.push("/events");
+        },
+      });
     }
     if (data.isRepeating) {
-      addRecurringEvent.mutate(data);
+      const newDates = findFutureDates(data);
+      const recurringId = uuidv4();
+      newDates?.map((date) => {
+        addEvent.mutate(
+          {
+            name: data.name,
+            eventDate: date,
+            eventTime: data.eventTime,
+            recurringId: recurringId,
+            eventLocation: data.eventLocation,
+            positions: data.positions,
+          },
+          {
+            onSuccess() {
+              router.push("/events");
+            },
+          }
+        );
+      });
+      // addRecurringEvent.mutate(data, {
+      //   onSuccess() {
+      //     if (utils.queryClient.isMutating() == 0) {
+      //       router.push("/events");
+      //     }
+      //   },
+      // });
     }
   });
 
@@ -287,7 +314,7 @@ const AddEvent = () => {
             <button
               type='submit'
               className='inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-              Save
+              {addEvent.isLoading ? <CircularProgress /> : "Save"}
             </button>
           </div>
         </form>

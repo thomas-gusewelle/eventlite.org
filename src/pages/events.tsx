@@ -119,7 +119,7 @@ const EventsPage = () => {
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-3 gap-12 px-6'>
-        {events.map((event) => (
+        {eventsPagianted.map((event) => (
           <div
             key={event.id}
             className='flex flex-col justify-center items-center py-4 shadow rounded-lg border border-b-gray-300'>

@@ -122,10 +122,16 @@ const EventsPage = () => {
         {eventsPagianted.map((event) => (
           <div
             key={event.id}
-            className='flex flex-col justify-center items-center py-4 shadow rounded-lg border border-b-gray-300'>
-            <h3>{event.name}</h3>
-            <span>{event.datetime.toLocaleDateString()}</span>
-            <span>{event.datetime.toLocaleTimeString()}</span>
+            className='px-6 py-4 shadow rounded-lg border border-b-gray-300'>
+            <div className='flex flex-col'>
+              <h3 className='font-bold text-xl'>{event.name}</h3>
+              <span>{event.datetime.toLocaleDateString()}</span>
+              <span>
+                {Intl.DateTimeFormat("en-US", { timeStyle: "medium" }).format(
+                  event.datetime
+                )}
+              </span>
+            </div>
             {event.positions.map((position) => (
               <div key={position.id}>{position.Role.name}</div>
             ))}

@@ -12,10 +12,28 @@ export function addWeeks(date: Date, occurance: number) {
   return result;
 }
 
+export function addMonths(date: Date, occurance: number) {
+  const result = new Date(date);
+  result.setMonth(date.getMonth() + occurance);
+  return result;
+}
+
 export function yearsFromToday() {
   const now = new Date();
   now.setFullYear(now.getFullYear() + 2);
   return now;
+}
+
+export function monthsBetween(startDate: Date, endDate: Date) {
+  const numberOfMonths =
+    endDate.getMonth() -
+    startDate.getMonth() +
+    12 * (endDate.getFullYear() - startDate.getFullYear());
+
+  if (endDate.getDate() < startDate.getDate()) {
+    return numberOfMonths - 1;
+  }
+  return numberOfMonths;
 }
 
 // Time Modifiers

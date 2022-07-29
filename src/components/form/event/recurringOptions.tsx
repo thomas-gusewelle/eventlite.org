@@ -186,10 +186,10 @@ const WeeklyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
           <Controller
-            name='WNUM'
+            name='WNum'
             control={control}
             rules={{ required: true, max: 52 }}
-            defaultValue={""}
+            defaultValue={1}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -297,10 +297,10 @@ const WeeklyCustomOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
           <Controller
-            name='WCNUM'
+            name='WCNum'
             control={control}
             rules={{ required: true, max: 52 }}
-            defaultValue={""}
+            defaultValue={1}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -396,14 +396,15 @@ const MonthlyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
         <div className='col-span-6'>
           <label className='text-gray-700'>Number of Occurances</label>
           <Controller
-            name='WNUM'
+            name='MNum'
             control={control}
             rules={{ required: true, max: 52 }}
-            defaultValue={""}
+            defaultValue={1}
             render={({ field, fieldState }) => (
               <>
                 <input
                   {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
                   type={"number"}
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                 />

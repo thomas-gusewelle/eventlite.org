@@ -7,7 +7,7 @@ import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { TableDropdown } from "../components/menus/tableDropdown";
-import { PicNameRow } from "../components/profile/PicNameRow";
+import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
@@ -163,13 +163,13 @@ const EventsPage = () => {
 								</span>
 								{position.userId ? (
 									<div
-										className={`py-3 px-6 text-center ${
+										className={`flex justify-center py-3 text-center ${
 											position.userResponse == null && "bg-gray-100"
 										}
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-										<PicNameRow user={position?.User} />
+										<PicNameRowSmall user={position?.User} />
 									</div>
 								) : (
 									<div className="py-3 px-6 bg-gray-100 text-center">

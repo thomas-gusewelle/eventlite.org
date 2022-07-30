@@ -96,4 +96,5 @@ model EventPositions {
   roleId  String
   User    User?   @relation(fields: [userId], references: [id])
   userId  String?
+  userResponse Boolean?
 }

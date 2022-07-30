@@ -123,7 +123,7 @@ const EventsPage = () => {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-1 sm:grid-cols-3 gap-12 px-6">
+			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 px-6 overflow-hidden">
 				{eventsPagianted.map((event) => (
 					<div
 						key={event.id}
@@ -156,14 +156,14 @@ const EventsPage = () => {
 						</div>
 						{event.positions.map((position) => (
 							<div
-								className="grid grid-cols-2 items-center last:pb-0 border-t-2"
+								className="grid grid-cols-2 items-center last:pb-0 last:border-b-2 border-t-2"
 								key={position.id}>
 								<span className="py-3 px-6 font-medium">
 									{position.Role.name}
 								</span>
 								{position.userId ? (
 									<div
-										className={`flex justify-center py-3 text-center ${
+										className={`flex justify-center h-full py-1 px-3 text-center ${
 											position.userResponse == null && "bg-gray-100"
 										}
                     ${position.userResponse == true && "bg-green-200"}
@@ -172,7 +172,7 @@ const EventsPage = () => {
 										<PicNameRowSmall user={position?.User} />
 									</div>
 								) : (
-									<div className="py-3 px-6 bg-gray-100 text-center">
+									<div className="flex justify-center items-center py-3 px-6 leading-4 h-full bg-gray-100 text-center">
 										Not Scheduled
 									</div>
 								)}

@@ -65,7 +65,7 @@ export const AvatarSmall: React.FC<{ user: User }> = ({ user }) => {
 				//   src={user.image || ""}
 				//   alt=''
 				// />
-				<div className=" flex justify-center items-center rounded-full aspect-square w-8 bg-indigo-600 text-white font-semibold">
+				<div className=" flex justify-center items-center rounded-full aspect-square w-8 h-8 bg-indigo-600 text-white font-semibold">
 					{findInitials()}
 				</div>
 			)}

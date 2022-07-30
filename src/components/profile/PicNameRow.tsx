@@ -24,7 +24,7 @@ export const PicNameRowSmall: React.FC<{ user: User | null }> = ({ user }) => {
 	return (
 		<div className="flex items-center">
 			<AvatarSmall user={user} />
-			<p className=" md:text-l text-gray-800 ml-2">
+			<p className=" md:text-l leading-4 text-gray-800 ml-2">
 				{fullName(user.firstName, user.lastName)}
 				{/* {user.firstName} */}
 			</p>

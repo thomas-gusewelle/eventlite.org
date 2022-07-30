@@ -45,10 +45,10 @@ export const PositionsSelector = () => {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-8 gap-x-3 gap-y-6 mt-1">
+			<div className="grid gap-y-6 mt-1">
 				{fields.map((field, index) => (
-					<>
-						<div className="col-span-4" key={field.id}>
+					<div key={field.id} className="grid grid-cols-8 gap-x-3 gap-y-6 mt-1">
+						<div className="col-span-4">
 							<Controller
 								name={`positions.${index}.position`}
 								control={control}
@@ -89,7 +89,7 @@ export const PositionsSelector = () => {
 								<MdDelete size={25} className="text-red-600" />
 							</div>
 						</div>
-					</>
+					</div>
 				))}
 			</div>
 		</div>

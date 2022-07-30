@@ -3,6 +3,7 @@ import { z } from "zod";
 import { replaceTime, roundHourDown } from "../utils/dateTimeModifers";
 import { createRouter } from "./context";
 import { findFutureDates } from "../utils/findFutureDates";
+import Roles from "../../pages/roles";
 
 export const eventsRouter = createRouter()
 	.query("getUpcomingEventsByOrganization", {
@@ -58,6 +59,20 @@ export const eventsRouter = createRouter()
 			});
 		},
 	})
+	.query("getEventById", {
+		input: z.string(),
+		async resolve({ input }) {
+			return await prisma?.event.findFirst({
+				where: { id: input },
+				include: {
+					Locations: true,
+					positions: {
+						include: { Role: true },
+					},
+				},
+			});
+		},
+	})
 	.middleware(async ({ ctx, next }) => {
 		const user = await prisma?.user.findFirst({
 			where: { id: ctx.session?.user.id },
@@ -94,8 +109,6 @@ export const eventsRouter = createRouter()
 		}),
 
 		async resolve({ ctx, input }) {
-			console.log(input.positions);
-
 			const org = await prisma?.user.findFirst({
 				where: { id: ctx.session?.user.id },
 				select: { organizationId: true },
@@ -113,6 +126,58 @@ export const eventsRouter = createRouter()
 							roleId: item.position.id,
 						})),
 					},
+				},
+			});
+		},
+	})
+	.mutation("editEvent", {
+		input: z.object({
+			id: z.string(),
+			name: z.string(),
+			eventDate: z.date(),
+			eventTime: z.date(),
+			organization: z.string(),
+			recurringId: z.string().optional(),
+			eventLocation: z.object({
+				id: z.string(),
+				name: z.string(),
+				organizationId: z.string(),
+			}),
+			positions: z
+				.object({
+					position: z.object({
+						id: z.string(),
+						name: z.string(),
+						organizationId: z.string().optional(),
+					}),
+					quantity: z.number(),
+				})
+				.array(),
+		}),
+
+		async resolve({ ctx, input }) {
+			//deletes all connected positions that are not
+			await prisma?.eventPositions.deleteMany({
+				where: {
+					eventId: input.id,
+				},
+			});
+
+			const event = await prisma?.event.update({
+				data: {
+					name: input.name,
+					recurringId: input?.recurringId,
+					datetime: replaceTime(input.eventDate, input.eventTime),
+					organizationId: input.organization,
+					locationsId: input.eventLocation.id,
+					positions: {
+						connectOrCreate: input.positions.map((position) => ({
+							roleId: position.position.id,
+						})),
+					},
+				},
+				where: {
+					id: input.id,
 				},
 			});
 		},

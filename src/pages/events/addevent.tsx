@@ -40,10 +40,6 @@ const AddEvent = () => {
 		{ id: "", name: "", organizationId: "" },
 	]);
 
-	useEffect(() => {
-		console.log("This is the locations", locations);
-	}, [locations]);
-
 	// const addRecurringEvent = trpc.useMutation(
 	//   "events.createRecurringEvents",
 	//   {}
@@ -89,7 +85,6 @@ const AddEvent = () => {
 	}, [_isRepeating]);
 
 	useEffect(() => {
-		console.log(_repeatFrequency);
 		if (_repeatFrequency != undefined) {
 			setRepeatFrequency(_repeatFrequency);
 		}

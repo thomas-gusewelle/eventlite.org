@@ -20,6 +20,7 @@ export const eventsRouter = createRouter()
           },
         },
         include: {
+          Locations: true,
           positions: {
             include: {
               Role: true,

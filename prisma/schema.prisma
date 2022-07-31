@@ -88,6 +88,36 @@ model Event {
   @@index([id, organizationId])
 }
 
+model EventReccurance {
+  recurringId String @id
+  repeatFrequecyId String
+  repeatFrequencyName String
+  DEndSelectId String?
+  DEndSelectName String?
+  DNum Int?
+  DDate DateTime?
+  WEndSelectId String?
+  WEndSelectName String?
+  WNum Int?
+  WDate DateTime?
+  WCEndSelectId String?
+  WCEndSelectName String?
+  WCNum Int?
+  WCDate DateTime?
+  WCSun Boolean?
+  WCMon Boolean?
+  WCTues Boolean?
+  WCWed Boolean?
+  WCThurs Boolean?
+  WCFri Boolean?
+  WCSat Boolean?
+  MEndSelectId String?
+  MEndSelectName String?
+  MNum Int?
+  MDate DateTime?
+
+}
+
 model EventPositions {
   id           String   @id @default(cuid())
   Event        Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)

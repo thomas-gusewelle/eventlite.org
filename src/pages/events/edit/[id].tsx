@@ -101,10 +101,6 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
       return data.positions.every((d) => d.eventPositionId != item.id);
     });
 
-    console.log("this is new", newPositions),
-      console.log("this is update", updatePositions);
-    console.log("this is the delete", deletePositions);
-
     editEvent.mutate(
       {
         id: id,

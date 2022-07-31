@@ -137,11 +137,14 @@ const EventsPage = () => {
                 <TableDropdown
                   options={[
                     { name: "Schedule", href: "/schedule" },
-                    { name: "Edit", href: `/events/edit/${event.id}` },
+                    {
+                      name: "Edit",
+                      href: `/events/edit/${event.id}?rec=false`,
+                    },
                     {
                       name: "Edit All",
                       href: `/events/edit/${event.recurringId}`,
-                      show: event.recurringId ? false : true,
+                      show: event.recurringId ? true : false,
                     },
                     {
                       name: "Delete",

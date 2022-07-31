@@ -81,12 +81,13 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
   const submit = methods.handleSubmit((data) => {
     if (eventQuery.data?.organizationId == null) return;
 
-    const newPositions = data.positions.filter((item) => {
+    let newPositions = data.positions.filter((item) => {
       return eventQuery.data?.positions.every(
         (e) => e.Role.id != item.position.id || item.eventPositionId == null
       );
     });
-    newPositions.filter((item) => item.eventPositionId != null);
+    newPositions = newPositions.filter((item) => item.eventPositionId == null);
+
     let updatePositions = data.positions.filter((item) => {
       console.log("this is the position ID", item.eventPositionId);
       return eventQuery.data?.positions.filter(
@@ -104,40 +105,40 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
       console.log("this is update", updatePositions);
     console.log("this is the delete", deletePositions);
 
-    // editEvent.mutate(
-    //   {
-    //     id: id,
-    //     name: data.name,
-    //     eventDate: data.eventDate,
-    //     eventTime: data.eventTime,
-    //     organization: eventQuery.data.organizationId,
-    //     recurringId: eventQuery.data.recurringId || undefined,
-    //     eventLocation: data.eventLocation,
-    //     newPositions: newPositions.map((item) => ({
-    //       position: {
-    //         roleId: item.position.id,
-    //         roleName: item.position.name,
-    //         organizationId: item.position.organizationId,
-    //       },
-    //       quantity: item.quantity,
-    //     })),
-    //     updatePositions: updatePositions.map((item) => ({
-    //       eventPositionId: item.eventPositionId!,
-    //       position: {
-    //         roleId: item.position.id,
-    //         roleName: item.position.name,
-    //         organizationId: item.position.organizationId,
-    //       },
-    //       quantity: item.quantity,
-    //     })),
-    //     deletePositions: deletePositions.map((item) => item.id),
-    //   },
-    //   {
-    //     onSuccess() {
-    //       router.push("/events");
-    //     },
-    //   }
-    // );
+    editEvent.mutate(
+      {
+        id: id,
+        name: data.name,
+        eventDate: data.eventDate,
+        eventTime: data.eventTime,
+        organization: eventQuery.data.organizationId,
+        recurringId: eventQuery.data.recurringId || undefined,
+        eventLocation: data.eventLocation,
+        newPositions: newPositions.map((item) => ({
+          position: {
+            roleId: item.position.id,
+            roleName: item.position.name,
+            organizationId: item.position.organizationId,
+          },
+          quantity: item.quantity,
+        })),
+        updatePositions: updatePositions.map((item) => ({
+          eventPositionId: item.eventPositionId!,
+          position: {
+            roleId: item.position.id,
+            roleName: item.position.name,
+            organizationId: item.position.organizationId,
+          },
+          quantity: item.quantity,
+        })),
+        deletePositions: deletePositions.map((item) => item.id),
+      },
+      {
+        onSuccess() {
+          router.push("/events");
+        },
+      }
+    );
   });
 
   return (

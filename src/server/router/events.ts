@@ -187,6 +187,11 @@ export const eventsRouter = createRouter()
             },
             data: {
               numberNeeded: item.quantity,
+              Role: {
+                connect: {
+                  id: item.position.roleId,
+                },
+              },
             },
           });
         })

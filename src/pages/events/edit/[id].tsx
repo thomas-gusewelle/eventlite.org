@@ -86,6 +86,7 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
         (e) => e.Role.id != item.position.id || item.eventPositionId == null
       );
     });
+    newPositions.filter((item) => item.eventPositionId != null);
     let updatePositions = data.positions.filter((item) => {
       console.log("this is the position ID", item.eventPositionId);
       return eventQuery.data?.positions.filter(
@@ -96,13 +97,12 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
       (item) => item.eventPositionId != undefined
     );
     const deletePositions = eventQuery.data.positions.filter((item) => {
-      return data.positions.every(
-        (d) => d.eventPositionId != item.id || d.position.id != item.Role.id
-      );
+      return data.positions.every((d) => d.eventPositionId != item.id);
     });
 
-    console.log("this is the deleted: ", deletePositions);
-    console.log("This is the create", newPositions);
+    console.log("this is new", newPositions),
+      console.log("this is update", updatePositions);
+    console.log("this is the delete", deletePositions);
 
     // editEvent.mutate(
     //   {

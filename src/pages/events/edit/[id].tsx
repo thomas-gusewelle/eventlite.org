@@ -81,9 +81,6 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
   const submit = methods.handleSubmit((data) => {
     if (eventQuery.data?.organizationId == null) return;
 
-    // const newPositions = eventQuery.data.positions.filter((item) => {
-    //   return data.positions.map((d) => d.position.id != item.Role.id);
-    // });
     const newPositions = data.positions.filter((item) => {
       return eventQuery.data?.positions.every(
         (e) => e.Role.id != item.position.id || item.eventPositionId == null
@@ -99,43 +96,48 @@ const EditEvent: React.FC<{ id: string }> = ({ id }) => {
       (item) => item.eventPositionId != undefined
     );
     const deletePositions = eventQuery.data.positions.filter((item) => {
-      return data.positions.every((d) => d.eventPositionId != item.id);
+      return data.positions.every(
+        (d) => d.eventPositionId != item.id || d.position.id != item.Role.id
+      );
     });
 
-    editEvent.mutate(
-      {
-        id: id,
-        name: data.name,
-        eventDate: data.eventDate,
-        eventTime: data.eventTime,
-        organization: eventQuery.data.organizationId,
-        recurringId: eventQuery.data.recurringId || undefined,
-        eventLocation: data.eventLocation,
-        newPositions: newPositions.map((item) => ({
-          position: {
-            roleId: item.position.id,
-            roleName: item.position.name,
-            organizationId: item.position.organizationId,
-          },
-          quantity: item.quantity,
-        })),
-        updatePositions: updatePositions.map((item) => ({
-          eventPositionId: item.eventPositionId!,
-          position: {
-            roleId: item.position.id,
-            roleName: item.position.name,
-            organizationId: item.position.organizationId,
-          },
-          quantity: item.quantity,
-        })),
-        deletePositions: deletePositions.map((item) => item.id),
-      },
-      {
-        onSuccess() {
-          router.push("/events");
-        },
-      }
-    );
+    console.log("this is the deleted: ", deletePositions);
+    console.log("This is the create", newPositions);
+
+    // editEvent.mutate(
+    //   {
+    //     id: id,
+    //     name: data.name,
+    //     eventDate: data.eventDate,
+    //     eventTime: data.eventTime,
+    //     organization: eventQuery.data.organizationId,
+    //     recurringId: eventQuery.data.recurringId || undefined,
+    //     eventLocation: data.eventLocation,
+    //     newPositions: newPositions.map((item) => ({
+    //       position: {
+    //         roleId: item.position.id,
+    //         roleName: item.position.name,
+    //         organizationId: item.position.organizationId,
+    //       },
+    //       quantity: item.quantity,
+    //     })),
+    //     updatePositions: updatePositions.map((item) => ({
+    //       eventPositionId: item.eventPositionId!,
+    //       position: {
+    //         roleId: item.position.id,
+    //         roleName: item.position.name,
+    //         organizationId: item.position.organizationId,
+    //       },
+    //       quantity: item.quantity,
+    //     })),
+    //     deletePositions: deletePositions.map((item) => item.id),
+    //   },
+    //   {
+    //     onSuccess() {
+    //       router.push("/events");
+    //     },
+    //   }
+    // );
   });
 
   return (

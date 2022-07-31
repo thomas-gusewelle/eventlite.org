@@ -26,6 +26,7 @@ export type EventFormValues = {
   MNum?: number;
   MDate?: Date;
   positions: {
+    eventPositionId?: string;
     position: { organizationId?: string | undefined; id: string; name: string };
     quantity: number;
   }[];

@@ -33,7 +33,6 @@ export const EventForm: React.FC<{
   });
   const _eventDate: Date = watch("eventDate", new Date());
   useEffect(() => {
-    console.log("this is the repeating", _isRepeating);
     if (_isRepeating != undefined) {
       setIsRepeating(_isRepeating);
     }
@@ -159,7 +158,7 @@ export const EventForm: React.FC<{
         <div className='hidden md:block md:col-span-3 '></div>
 
         {/* Event recurring switch */}
-        {(rec || alreadyRec == false) && (
+        {(alreadyRec == false || alreadyRec == null || rec == true) && (
           <>
             <div className='col-span-2 sm:col-span-1'>
               <label className='text-gray-700'>Repeats?</label>

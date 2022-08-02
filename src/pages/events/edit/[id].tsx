@@ -28,6 +28,7 @@ import { trpc } from "../../../utils/trpc";
 import { useRouter } from "next/router";
 import { formatEventData } from "../../../utils/formatEventData";
 import { EventForm } from "../../../components/form/event/eventForm";
+import { findFutureDates } from "../../../server/utils/findFutureDates";
 
 const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const router = useRouter();
@@ -55,6 +56,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     }
   );
   const editEvent = trpc.useMutation("events.editEvent");
+  const editRecurringEvent = trpc.useMutation("events.editRecurringEvent");
 
   const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
     onSuccess(data) {
@@ -65,6 +67,27 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   });
   const [locations, setLocations] = useState<Locations[]>([
     { id: "", name: "", organizationId: "" },
+  ]);
+
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    if (eventQuery.isLoading || EventRecurrance.isLoading) {
+      setIsLoading(true);
+    }
+    if (
+      EventRecurrance.isSuccess ||
+      eventQuery.isSuccess ||
+      eventQuery.data?.recurringId == ""
+    ) {
+      setIsLoading(false);
+    }
+  }, [
+    EventRecurrance.isFetchedAfterMount,
+    EventRecurrance.isLoading,
+    EventRecurrance.isSuccess,
+    eventQuery.data?.recurringId,
+    eventQuery.isLoading,
+    eventQuery.isSuccess,
   ]);
 
   const submit = methods.handleSubmit((data) => {
@@ -88,41 +111,79 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     const deletePositions = eventQuery.data.positions.filter((item) => {
       return data.positions.every((d) => d.eventPositionId != item.id);
     });
-
-    editEvent.mutate(
-      {
-        id: id,
-        name: data.name,
-        eventDate: data.eventDate,
-        eventTime: data.eventTime,
-        organization: eventQuery.data.organizationId,
-        recurringId: eventQuery.data.recurringId || undefined,
-        eventLocation: data.eventLocation,
-        newPositions: newPositions.map((item) => ({
-          position: {
-            roleId: item.position.id,
-            roleName: item.position.name,
-            organizationId: item.position.organizationId,
-          },
-          quantity: item.quantity,
-        })),
-        updatePositions: updatePositions.map((item) => ({
-          eventPositionId: item.eventPositionId!,
-          position: {
-            roleId: item.position.id,
-            roleName: item.position.name,
-            organizationId: item.position.organizationId,
-          },
-          quantity: item.quantity,
-        })),
-        deletePositions: deletePositions.map((item) => item.id),
-      },
-      {
-        onSuccess() {
-          router.push("/events");
+    if (rec == false) {
+      editEvent.mutate(
+        {
+          id: id,
+          name: data.name,
+          eventDate: data.eventDate,
+          eventTime: data.eventTime,
+          organization: eventQuery.data.organizationId,
+          recurringId: eventQuery.data.recurringId || undefined,
+          eventLocation: data.eventLocation,
+          newPositions: newPositions.map((item) => ({
+            position: {
+              roleId: item.position.id,
+              roleName: item.position.name,
+              organizationId: item.position.organizationId,
+            },
+            quantity: item.quantity,
+          })),
+          updatePositions: updatePositions.map((item) => ({
+            eventPositionId: item.eventPositionId!,
+            position: {
+              roleId: item.position.id,
+              roleName: item.position.name,
+              organizationId: item.position.organizationId,
+            },
+            quantity: item.quantity,
+          })),
+          deletePositions: deletePositions.map((item) => item.id),
         },
-      }
-    );
+        {
+          onSuccess() {
+            router.push("/events");
+          },
+        }
+      );
+    }
+
+    if (rec == true) {
+      const newDates = findFutureDates(data);
+      if (
+        newDates == undefined ||
+        newDates == null ||
+        eventQuery.data.recurringId == null
+      )
+        return;
+      editRecurringEvent.mutate(
+        {
+          name: data.name,
+          eventTime: data.eventTime,
+          recurringId: eventQuery.data.recurringId,
+          positions: data.positions.map((position) => ({
+            eventPositionId: position.eventPositionId,
+            position: {
+              roleId: position.position.id,
+              roleName: position.position.name,
+              organizationId: position.position.organizationId,
+            },
+            quantity: position.quantity,
+          })),
+          eventLocation: data.eventLocation,
+          organization: eventQuery.data.organizationId,
+          newDates: newDates,
+        },
+        {
+          onError(error, variables, context) {
+            alert(error.message);
+          },
+          onSuccess() {
+            router.push("/events");
+          },
+        }
+      );
+    }
   });
 
   if (locationsQuery.isLoading) {
@@ -140,17 +201,14 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   return (
     <>
       {/* The is loading is handled here to make the reset work correctly */}
-      {eventQuery.isLoading || EventRecurrance.isLoading ? (
+      {isLoading ? (
         <div className='flex justify-center'>
           <CircularProgress />
         </div>
       ) : (
         <></>
       )}
-      <div
-        className={`${
-          eventQuery.isLoading || EventRecurrance.isLoading ? "hidden" : "block"
-        }`}>
+      <div className={`${isLoading ? "hidden" : "block"}`}>
         <div className='mb-8'>
           <SectionHeading>Edit Event</SectionHeading>
         </div>
@@ -166,7 +224,11 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               <button
                 type='submit'
                 className='w-16 h-10 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                {editEvent.isLoading ? <CircularProgressSmall /> : "Save"}
+                {editEvent.isLoading || editRecurringEvent.isLoading ? (
+                  <CircularProgressSmall />
+                ) : (
+                  "Save"
+                )}
               </button>
             </div>
           </form>

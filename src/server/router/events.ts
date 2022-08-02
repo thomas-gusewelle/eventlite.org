@@ -353,9 +353,7 @@ export const eventsRouter = createRouter()
   })
   .mutation("editRecurringEvent", {
     input: z.object({
-      id: z.string(),
       name: z.string(),
-      eventDate: z.date(),
       eventTime: z.date(),
       organization: z.string(),
       recurringId: z.string().optional(),
@@ -393,85 +391,102 @@ export const eventsRouter = createRouter()
       if (exisitingEvents == undefined) {
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
+      console.log("recurring ID: ", input.recurringId);
+      console.log("exisitng length", exisitingEvents.length);
+      console.log("new length", input.newDates.length);
 
       // They are the same
       if (exisitingEvents.length == input.newDates.length) {
-        const _promises = Promise.all(
+        const _promises = await Promise.all(
           exisitingEvents.map(async (oldEvent, index) => {
-            let newPositions = input.positions.filter((item) => {
-              return oldEvent.positions.filter(
-                (p) =>
-                  p.Role.id === item.position.roleId ||
-                  item.eventPositionId == null
-              );
-            });
-            newPositions = newPositions.filter(
-              (item) => item.eventPositionId == null
-            );
-
-            let updatePositions = input.positions.filter((item) => {
-              return oldEvent.positions.filter(
-                (p) => p.Role.id === item.position.roleId
-              );
-            });
-            updatePositions = updatePositions.filter(
-              (item) => item.eventPositionId != undefined
-            );
-
-            let deletePositions = oldEvent.positions.filter((item) => {
-              return input.positions.every((p) => p.eventPositionId != item.id);
-            });
-
-            await Promise.all(
-              deletePositions.map(async (deletePosition) => {
-                await prisma?.eventPositions.delete({
-                  where: {
-                    id: deletePosition.id,
-                  },
-                });
-              })
-            );
-
-            await Promise.all(
-              updatePositions.map(async (item) => {
-                await prisma?.eventPositions.update({
-                  where: {
-                    id: item.eventPositionId,
-                  },
-                  data: {
-                    numberNeeded: item.quantity,
-                    Role: {
-                      connect: {
-                        id: item.position.roleId,
-                      },
-                    },
-                  },
-                });
-              })
-            );
             let date = input.newDates[index];
             if (date == undefined) {
               throw new TRPCError({ code: "BAD_REQUEST" });
             }
 
-            const event = await prisma?.event.update({
-              data: {
-                name: input.name,
-                recurringId: input?.recurringId,
-                datetime: replaceTime(date, input.eventTime),
-                organizationId: input.organization,
-                locationsId: input.eventLocation.id,
-                positions: {
-                  create: newPositions.map((item) => ({
-                    numberNeeded: item.quantity,
-                    roleId: item.position.roleId,
-                  })),
-                },
-              },
-              where: {
-                id: input.id,
-              },
+            // checks if any of the positions submitted are different from the ones on the event based on role
+            const differentPositions = oldEvent.positions.filter((item) => {
+              return input.positions.every(
+                (input) => input.position.roleId != item.Role.id
+              );
             });
+
+            if (differentPositions.length == 0) {
+              const differentPositionNumber = input.positions.filter(
+                (input) => {
+                  return oldEvent.positions.every(
+                    (old) => old.numberNeeded != input.quantity
+                  );
+                }
+              );
+
+              if (differentPositionNumber.length > 0) {
+                await Promise.all(
+                  differentPositionNumber.map(async (item) => {
+                    await prisma?.eventPositions.update({
+                      where: {
+                        id: item.eventPositionId,
+                      },
+                      data: {
+                        numberNeeded: item.quantity,
+                      },
+                    });
+                  })
+                );
+              }
+
+              const newPositions = input.positions.filter(
+                (item) => item.eventPositionId == null
+              );
+
+              const event = await prisma?.event.update({
+                data: {
+                  name: input.name,
+                  recurringId: input?.recurringId,
+                  datetime: replaceTime(date, input.eventTime),
+                  organizationId: input.organization,
+                  locationsId: input.eventLocation.id,
+                  positions: {
+                    create: newPositions.map((position) => ({
+                      numberNeeded: position.quantity,
+                      roleId: position.position.roleId,
+                    })),
+                  },
+                },
+                where: {
+                  id: oldEvent.id,
+                },
+              });
+            }
+
+            if (differentPositions.length > 0) {
+              await prisma?.eventPositions.deleteMany({
+                where: {
+                  id: {
+                    in: differentPositions.map((item) => item.id),
+                  },
+                },
+              });
+
+              const event = await prisma?.event.update({
+                data: {
+                  name: input.name,
+                  recurringId: input?.recurringId,
+                  datetime: replaceTime(date, input.eventTime),
+                  organizationId: input.organization,
+                  locationsId: input.eventLocation.id,
+                  positions: {
+                    create: input.positions.map((item) => ({
+                      numberNeeded: item.quantity,
+                      roleId: item.position.roleId,
+                    })),
+                  },
+                },
+                where: {
+                  id: oldEvent.id,
+                },
+              });
+            }
           })
         );
       }

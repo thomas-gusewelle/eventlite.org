@@ -117,6 +117,7 @@ model EventReccurance {
   MDate               DateTime?
 }
 
+//each event has its own positions to faciliate different people being scheduled for different events
 model EventPositions {
   id           String   @id @default(cuid())
   Event        Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)

@@ -408,6 +408,8 @@ export const eventsRouter = createRouter()
               );
             });
 
+            console.log("this is the different: ", differentPositions);
+
             if (differentPositions.length == 0) {
               const differentPositionNumber = input.positions.filter(
                 (input) => {
@@ -432,10 +434,40 @@ export const eventsRouter = createRouter()
                 );
               }
 
+              //   let updatePositions = input.positions.filter((item) => {
+              //     return oldEvent.positions.filter(
+              //       (old) => old.Role.id === item.position.roleId
+              //     );
+              //   });
+
+              //   updatePositions = updatePositions.filter(
+              //     (item) => item.eventPositionId != undefined
+              //   );
+
+              //   if (updatePositions.length > 0) {
+              //     await Promise.all(
+              //       updatePositions.map(async (item) => {
+              //         await prisma?.eventPositions.update({
+              //           where: {
+              //             id: item.eventPositionId,
+              //           },
+              //           data: {
+              //             numberNeeded: item.quantity,
+              //             roleId: item.position.roleId,
+              //           },
+              //           include: {
+              //             User: true,
+              //           },
+              //         });
+              //       })
+              //     );
+              //   }
+
               const newPositions = input.positions.filter(
                 (item) => item.eventPositionId == null
               );
 
+              console.log("this is the new; ", newPositions);
               const event = await prisma?.event.update({
                 data: {
                   name: input.name,
@@ -465,6 +497,18 @@ export const eventsRouter = createRouter()
                 },
               });
 
+              let newPositions = input.positions.filter(
+                (item) => item.eventPositionId == null
+              );
+
+              let additionalPositions = input.positions.filter((item) => {
+                return differentPositions.every(
+                  (dif) => dif.roleId != item.position.roleId
+                );
+              });
+
+              newPositions = [...additionalPositions, ...newPositions];
+
               const event = await prisma?.event.update({
                 data: {
                   name: input.name,
@@ -473,7 +517,7 @@ export const eventsRouter = createRouter()
                   organizationId: input.organization,
                   locationsId: input.eventLocation.id,
                   positions: {
-                    create: input.positions.map((item) => ({
+                    create: newPositions.map((item) => ({
                       numberNeeded: item.quantity,
                       roleId: item.position.roleId,
                     })),

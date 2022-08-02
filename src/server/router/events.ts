@@ -305,7 +305,6 @@ export const eventsRouter = createRouter()
 
     async resolve({ ctx, input }) {
       //deletes all connected positions that are not in the posiitons list
-
       await prisma?.eventPositions.deleteMany({
         where: {
           id: {
@@ -353,7 +352,138 @@ export const eventsRouter = createRouter()
     },
   })
   .mutation("editRecurringEvent", {
-    async resolve() {},
+    input: z.object({
+      id: z.string(),
+      name: z.string(),
+      eventDate: z.date(),
+      eventTime: z.date(),
+      organization: z.string(),
+      recurringId: z.string().optional(),
+      eventLocation: z.object({
+        id: z.string(),
+        name: z.string(),
+        organizationId: z.string(),
+      }),
+      positions: z
+        .object({
+          eventPositionId: z.string().optional(),
+          position: z.object({
+            roleId: z.string(),
+            roleName: z.string(),
+            organizationId: z.string().optional(),
+          }),
+          quantity: z.number(),
+        })
+        .array(),
+      newDates: z.date().array(),
+    }),
+    async resolve({ input }) {
+      const exisitingEvents = await prisma?.event.findMany({
+        where: {
+          recurringId: input.recurringId,
+        },
+        include: {
+          positions: {
+            include: { Role: true },
+          },
+        },
+        orderBy: { datetime: "asc" },
+      });
+      // finding if there are same, more, or less new dates than current events
+      if (exisitingEvents == undefined) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+
+      // They are the same
+      if (exisitingEvents.length == input.newDates.length) {
+        const _promises = Promise.all(
+          exisitingEvents.map(async (oldEvent, index) => {
+            let newPositions = input.positions.filter((item) => {
+              return oldEvent.positions.filter(
+                (p) =>
+                  p.Role.id === item.position.roleId ||
+                  item.eventPositionId == null
+              );
+            });
+            newPositions = newPositions.filter(
+              (item) => item.eventPositionId == null
+            );
+
+            let updatePositions = input.positions.filter((item) => {
+              return oldEvent.positions.filter(
+                (p) => p.Role.id === item.position.roleId
+              );
+            });
+            updatePositions = updatePositions.filter(
+              (item) => item.eventPositionId != undefined
+            );
+
+            let deletePositions = oldEvent.positions.filter((item) => {
+              return input.positions.every((p) => p.eventPositionId != item.id);
+            });
+
+            await Promise.all(
+              deletePositions.map(async (deletePosition) => {
+                await prisma?.eventPositions.delete({
+                  where: {
+                    id: deletePosition.id,
+                  },
+                });
+              })
+            );
+
+            await Promise.all(
+              updatePositions.map(async (item) => {
+                await prisma?.eventPositions.update({
+                  where: {
+                    id: item.eventPositionId,
+                  },
+                  data: {
+                    numberNeeded: item.quantity,
+                    Role: {
+                      connect: {
+                        id: item.position.roleId,
+                      },
+                    },
+                  },
+                });
+              })
+            );
+            let date = input.newDates[index];
+            if (date == undefined) {
+              throw new TRPCError({ code: "BAD_REQUEST" });
+            }
+
+            const event = await prisma?.event.update({
+              data: {
+                name: input.name,
+                recurringId: input?.recurringId,
+                datetime: replaceTime(date, input.eventTime),
+                organizationId: input.organization,
+                locationsId: input.eventLocation.id,
+                positions: {
+                  create: newPositions.map((item) => ({
+                    numberNeeded: item.quantity,
+                    roleId: item.position.roleId,
+                  })),
+                },
+              },
+              where: {
+                id: input.id,
+              },
+            });
+          })
+        );
+      }
+
+      //new dates is longer so new events will be created
+      if (exisitingEvents.length < input.newDates.length) {
+      }
+
+      //new dates is shorter so last events will be deleted
+      if (exisitingEvents.length > input.newDates.length) {
+      }
+    },
   })
   .mutation("deleteEventById", {
     input: z.string(),

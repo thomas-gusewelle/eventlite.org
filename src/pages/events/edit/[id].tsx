@@ -91,6 +91,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   ]);
 
   const submit = methods.handleSubmit((data) => {
+    console.log("this is the data: ", data);
     if (eventQuery.data?.organizationId == null) return;
 
     let newPositions = data.positions.filter((item) => {

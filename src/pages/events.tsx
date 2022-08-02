@@ -126,7 +126,7 @@ const EventsPage = () => {
         </div>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 px-6 mb-6 overflow-hidden'>
+      <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 px-6 mb-6'>
         {eventsPagianted.map((event) => (
           <div
             key={event.id}

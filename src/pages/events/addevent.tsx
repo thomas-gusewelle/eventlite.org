@@ -62,6 +62,7 @@ const AddEvent = () => {
               if (recurringId == undefined) return;
               let _data: any = data;
               _data["recurringId"] = recurringId;
+              console.log("this is the reccuracne data: ", _data);
               addEventRecurrance.mutate(_data as EventRecurrance, {
                 onSuccess() {
                   router.push("/events");

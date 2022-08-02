@@ -34,7 +34,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
-  const eventQuery = trpc.useQuery(["events.getEventById", id], {
+  const eventQuery = trpc.useQuery(["events.getEditEvent", id], {
     onSuccess(data) {
       if (data?.recurringId) setAlreadyRec(true);
       if (!rec && data != undefined) methods.reset(formatEventData(data));
@@ -43,7 +43,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
 
   const recurringId = rec ? eventQuery.data?.recurringId || "" : "";
   const EventRecurrance = trpc.useQuery(
-    ["events.getEventRecurrance", recurringId],
+    ["events.getEventRecurranceData", recurringId],
     {
       enabled: !!recurringId,
       onSuccess(data) {
@@ -78,7 +78,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     newPositions = newPositions.filter((item) => item.eventPositionId == null);
 
     let updatePositions = data.positions.filter((item) => {
-      console.log("this is the position ID", item.eventPositionId);
       return eventQuery.data?.positions.filter(
         (e) => e.Role.id === item.position.id
       );
@@ -167,7 +166,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               <button
                 type='submit'
                 className='w-16 h-10 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                {/* {addEvent.isLoading ? <CircularProgressSmall /> : "Save"} */}
+                {editEvent.isLoading ? <CircularProgressSmall /> : "Save"}
               </button>
             </div>
           </form>
@@ -179,9 +178,8 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
 
 const EditEventPage = () => {
   const router = useRouter();
-  console.log("This is the query", router.query);
+
   const { id, rec } = router.query;
-  console.log("this is the id", id);
 
   if (!id || typeof id !== "string" || !rec || typeof rec !== "string") {
     return <div>No Id Provided</div>;

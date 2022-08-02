@@ -48,7 +48,7 @@ export const EventForm: React.FC<{
     setFrequncyOptions([
       { id: "D", name: `Daily` },
       { id: "W", name: `Weekly (${findWeekday(_eventDate)}s)` },
-      { id: "WC", name: "Weekly (Custom)" },
+      // { id: "WC", name: "Weekly (Custom)" },
       {
         id: "M",
         name: `Monthly (${Intl.DateTimeFormat("en-US", {

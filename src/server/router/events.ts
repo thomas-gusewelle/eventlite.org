@@ -330,7 +330,7 @@ export const eventsRouter = createRouter()
         })
       );
 
-      const event = await prisma?.event.update({
+      const events = await prisma?.event.update({
         data: {
           name: input.name,
           recurringId: input?.recurringId,
@@ -348,7 +348,7 @@ export const eventsRouter = createRouter()
           id: input.id,
         },
       });
-      return event;
+      return events;
     },
   })
   .mutation("editRecurringEvent", {
@@ -391,9 +391,6 @@ export const eventsRouter = createRouter()
       if (exisitingEvents == undefined) {
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
-      console.log("recurring ID: ", input.recurringId);
-      console.log("exisitng length", exisitingEvents.length);
-      console.log("new length", input.newDates.length);
 
       // They are the same
       if (exisitingEvents.length == input.newDates.length) {

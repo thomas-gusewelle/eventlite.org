@@ -19,18 +19,31 @@ export const PositionsSelector = () => {
     },
   });
   const [roles, setRoles] = useState<Role[]>([]);
-  const { control, register, setValue } = useFormContext();
+  const { control, register, setValue, watch } = useFormContext();
   const { fields, append, prepend, remove, swap, move, insert, update } =
     useFieldArray({
       name: "positions", // unique name for your Field Array
     });
 
+  const posiitonsField = watch("positions");
+  useEffect(() => {
+    console.log("field values: ", posiitonsField);
+  });
+
   useEffect(() => {
     append(
-      { position: { id: "", name: "" }, quantity: 1 },
+      {
+        eventPositionId: "fdafdsa",
+        position: { id: "", name: "" },
+        quantity: 1,
+      },
       { shouldFocus: false }
     );
   }, [append]);
+
+  const changeValue = (index: number, value: any) => {
+    update(index, value);
+  };
 
   return (
     <div className='col-span-6 px-6 mb-6'>
@@ -72,9 +85,7 @@ export const PositionsSelector = () => {
                     //   setValue(`positions.${index}.eventPositionId`, null);
                     // }}
                     onChange={(e) =>
-                      update(index, {
-                        eventPositionId: null,
-                        position: e.target.value,
+                      field.onChange(parse
                       })
                     }
                     type='number'
@@ -100,6 +111,11 @@ export const PositionsSelector = () => {
           </div>
         ))}
       </div>
+      <button
+        type='button'
+        onClick={() => update(0, { eventPositionId: "1", position: {} })}>
+        fdhsakjlfjhdsa
+      </button>
     </div>
   );
 };

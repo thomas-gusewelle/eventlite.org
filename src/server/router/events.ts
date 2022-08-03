@@ -364,7 +364,7 @@ export const eventsRouter = createRouter()
       }),
       positions: z
         .object({
-          eventPositionId: z.string().optional(),
+          eventPositionId: z.string().nullable().optional(),
           position: z.object({
             roleId: z.string(),
             roleName: z.string(),
@@ -394,6 +394,15 @@ export const eventsRouter = createRouter()
 
       // They are the same
       if (exisitingEvents.length == input.newDates.length) {
+        if (exisitingEvents[0] == undefined) {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        }
+        console.log(exisitingEvents[0]);
+        const differentPositionsId = exisitingEvents[0].positions.filter(
+          (item) =>
+            !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
+        );
+
         const _promises = await Promise.all(
           exisitingEvents.map(async (oldEvent, index) => {
             let date = input.newDates[index];
@@ -402,37 +411,39 @@ export const eventsRouter = createRouter()
             }
 
             // checks if any of the positions submitted are different from the ones on the event based on role
-            const differentPositions = oldEvent.positions.filter((item) => {
-              return input.positions.every(
-                (input) => input.position.roleId != item.Role.id
-              );
-            });
+            // const differentPositions = oldEvent.positions.filter((item) => {
+            //   return input.positions.every(
+            //     (input) => input.position.roleId != item.Role.id
+            //   );
+            // });
 
-            console.log("this is the different: ", differentPositions);
+            console.log("this is the different: ", differentPositionsId);
 
-            if (differentPositions.length == 0) {
-              const differentPositionNumber = input.positions.filter(
-                (input) => {
-                  return oldEvent.positions.every(
-                    (old) => old.numberNeeded != input.quantity
-                  );
-                }
-              );
+            // return;
 
-              if (differentPositionNumber.length > 0) {
-                await Promise.all(
-                  differentPositionNumber.map(async (item) => {
-                    await prisma?.eventPositions.update({
-                      where: {
-                        id: item.eventPositionId,
-                      },
-                      data: {
-                        numberNeeded: item.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+            if (differentPositionsId.length == 0) {
+              // const differentPositionNumber = input.positions.filter(
+              //   (input) => {
+              //     return oldEvent.positions.every(
+              //       (old) => old.numberNeeded != input.quantity
+              //     );
+              //   }
+              // );
+
+              // if (differentPositionNumber.length > 0) {
+              //   await Promise.all(
+              //     differentPositionNumber.map(async (item) => {
+              //       await prisma?.eventPositions.update({
+              //         where: {
+              //           id: item.eventPositionId
+              //         },
+              //         data: {
+              //           numberNeeded: item.quantity,
+              //         },
+              //       });
+              //     })
+              //   );
+              // }
 
               //   let updatePositions = input.positions.filter((item) => {
               //     return oldEvent.positions.filter(
@@ -488,11 +499,11 @@ export const eventsRouter = createRouter()
               });
             }
 
-            if (differentPositions.length > 0) {
+            if (differentPositionsId.length > 0) {
               await prisma?.eventPositions.deleteMany({
                 where: {
-                  id: {
-                    in: differentPositions.map((item) => item.id),
+                  roleId: {
+                    in: differentPositionsId.map((item) => item.roleId),
                   },
                 },
               });
@@ -500,14 +511,6 @@ export const eventsRouter = createRouter()
               let newPositions = input.positions.filter(
                 (item) => item.eventPositionId == null
               );
-
-              let additionalPositions = input.positions.filter((item) => {
-                return differentPositions.every(
-                  (dif) => dif.roleId != item.position.roleId
-                );
-              });
-
-              newPositions = [...additionalPositions, ...newPositions];
 
               const event = await prisma?.event.update({
                 data: {

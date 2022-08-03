@@ -67,7 +67,14 @@ export const PositionsSelector = () => {
                 render={({ field }) => (
                   <SingleSelect
                     selected={field.value}
-                    setSelected={field.onChange}
+                    // setSelected={field.onChange}
+                    setSelected={(value) =>
+                      update(index, {
+                        eventPositionId: null,
+                        position: value,
+                        quantity: posiitonsField[index].quantity,
+                      })
+                    }
                     list={roles}
                   />
                 )}
@@ -84,10 +91,7 @@ export const PositionsSelector = () => {
                     //   field.onChange(parseInt(e.target.value));
                     //   setValue(`positions.${index}.eventPositionId`, null);
                     // }}
-                    onChange={(e) =>
-                      field.onChange(parse
-                      })
-                    }
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
                     type='number'
                     className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md'
                   />
@@ -111,11 +115,6 @@ export const PositionsSelector = () => {
           </div>
         ))}
       </div>
-      <button
-        type='button'
-        onClick={() => update(0, { eventPositionId: "1", position: {} })}>
-        fdhsakjlfjhdsa
-      </button>
     </div>
   );
 };

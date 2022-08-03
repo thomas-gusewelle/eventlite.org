@@ -410,17 +410,6 @@ export const eventsRouter = createRouter()
               throw new TRPCError({ code: "BAD_REQUEST" });
             }
 
-            // checks if any of the positions submitted are different from the ones on the event based on role
-            // const differentPositions = oldEvent.positions.filter((item) => {
-            //   return input.positions.every(
-            //     (input) => input.position.roleId != item.Role.id
-            //   );
-            // });
-
-            console.log("this is the different: ", differentPositionsId);
-
-            // return;
-
             if (differentPositionsId.length == 0) {
               // const differentPositionNumber = input.positions.filter(
               //   (input) => {
@@ -451,34 +440,35 @@ export const eventsRouter = createRouter()
               //     );
               //   });
 
-              //   updatePositions = updatePositions.filter(
-              //     (item) => item.eventPositionId != undefined
-              //   );
+              const updateNumbers = input.positions.filter((item) => {
+                const indexOf = oldEvent.positions.findIndex(
+                  (obj) => obj.roleId == item.position.roleId
+                );
+                return (
+                  oldEvent.positions[indexOf]?.numberNeeded != item.quantity
+                );
+              });
 
-              //   if (updatePositions.length > 0) {
-              //     await Promise.all(
-              //       updatePositions.map(async (item) => {
-              //         await prisma?.eventPositions.update({
-              //           where: {
-              //             id: item.eventPositionId,
-              //           },
-              //           data: {
-              //             numberNeeded: item.quantity,
-              //             roleId: item.position.roleId,
-              //           },
-              //           include: {
-              //             User: true,
-              //           },
-              //         });
-              //       })
-              //     );
-              //   }
+              if (updateNumbers.length > 0) {
+                await Promise.all(
+                  updateNumbers.map(async (update) => {
+                    await prisma?.eventPositions.updateMany({
+                      where: {
+                        eventId: oldEvent.id,
+                        roleId: update.position.roleId,
+                      },
+                      data: {
+                        numberNeeded: update.quantity,
+                      },
+                    });
+                  })
+                );
+              }
 
               const newPositions = input.positions.filter(
                 (item) => item.eventPositionId == null
               );
 
-              console.log("this is the new; ", newPositions);
               const event = await prisma?.event.update({
                 data: {
                   name: input.name,
@@ -502,11 +492,37 @@ export const eventsRouter = createRouter()
             if (differentPositionsId.length > 0) {
               await prisma?.eventPositions.deleteMany({
                 where: {
+                  eventId: oldEvent.id,
                   roleId: {
                     in: differentPositionsId.map((item) => item.roleId),
                   },
                 },
               });
+
+              const updateNumbers = input.positions.filter((item) => {
+                const indexOf = oldEvent.positions.findIndex(
+                  (obj) => obj.roleId == item.position.roleId
+                );
+                return (
+                  oldEvent.positions[indexOf]?.numberNeeded != item.quantity
+                );
+              });
+
+              if (updateNumbers.length > 0) {
+                await Promise.all(
+                  updateNumbers.map(async (update) => {
+                    await prisma?.eventPositions.updateMany({
+                      where: {
+                        eventId: oldEvent.id,
+                        roleId: update.position.roleId,
+                      },
+                      data: {
+                        numberNeeded: update.quantity,
+                      },
+                    });
+                  })
+                );
+              }
 
               let newPositions = input.positions.filter(
                 (item) => item.eventPositionId == null

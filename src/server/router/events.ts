@@ -749,7 +749,7 @@ export const eventsRouter = createRouter()
         const numOfNew = input.newDates.length - exisitingEvents.length;
         const newEvents = input.newDates.slice(-numOfNew);
 
-        const _createdEvents = Promise.all(
+        const _createdEvents = await Promise.all(
           newEvents.map(async (date) => {
             await prisma?.event.create({
               data: {
@@ -768,10 +768,150 @@ export const eventsRouter = createRouter()
             });
           })
         );
+        return [..._promises, ..._createdEvents];
       }
 
       //new dates is shorter so last events will be deleted
       if (exisitingEvents.length > input.newDates.length) {
+        if (exisitingEvents[0] == undefined) {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        }
+
+        const differentPositionsId = exisitingEvents[0].positions.filter(
+          (item) =>
+            !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
+        );
+
+        const numToDelete = input.newDates.length - exisitingEvents.length;
+        const eventsToDelete = exisitingEvents.slice(numToDelete);
+
+        const _deletes = await prisma?.event.deleteMany({
+          where: {
+            id: {
+              in: eventsToDelete.map((event) => event.id),
+            },
+          },
+        });
+
+        const _promises = await Promise.all(
+          input.newDates.map(async (newDate, index) => {
+            let date = input.newDates[index];
+            if (date == undefined) {
+              throw new TRPCError({ code: "BAD_REQUEST" });
+            }
+
+            if (differentPositionsId.length == 0) {
+              const updateNumbers = input.positions.filter((item) => {
+                const indexOf = exisitingEvents[index]!.positions.findIndex(
+                  (obj) => obj.roleId == item.position.roleId
+                );
+                return (
+                  exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
+                  item.quantity
+                );
+              });
+
+              if (updateNumbers.length > 0) {
+                await Promise.all(
+                  updateNumbers.map(async (update) => {
+                    await prisma?.eventPositions.updateMany({
+                      where: {
+                        eventId: exisitingEvents[index]!.id,
+                        roleId: update.position.roleId,
+                      },
+                      data: {
+                        numberNeeded: update.quantity,
+                      },
+                    });
+                  })
+                );
+              }
+
+              const newPositions = input.positions.filter(
+                (item) => item.eventPositionId == null
+              );
+
+              const event = await prisma?.event.update({
+                data: {
+                  name: input.name,
+                  recurringId: input?.recurringId,
+                  datetime: replaceTime(date, input.eventTime),
+                  organizationId: input.organization,
+                  locationsId: input.eventLocation.id,
+                  positions: {
+                    create: newPositions.map((position) => ({
+                      numberNeeded: position.quantity,
+                      roleId: position.position.roleId,
+                    })),
+                  },
+                },
+                where: {
+                  id: exisitingEvents[index]!.id,
+                },
+              });
+            }
+
+            if (differentPositionsId.length > 0) {
+              await prisma?.eventPositions.deleteMany({
+                where: {
+                  eventId: exisitingEvents[index]!.id,
+                  roleId: {
+                    in: differentPositionsId.map((item) => item.roleId),
+                  },
+                },
+              });
+
+              const updateNumbers = input.positions.filter((item) => {
+                const indexOf = exisitingEvents[index]!.positions.findIndex(
+                  (obj) => obj.roleId == item.position.roleId
+                );
+                return (
+                  exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
+                  item.quantity
+                );
+              });
+
+              if (updateNumbers.length > 0) {
+                await Promise.all(
+                  updateNumbers.map(async (update) => {
+                    await prisma?.eventPositions.updateMany({
+                      where: {
+                        eventId: exisitingEvents[index]!.id,
+                        roleId: update.position.roleId,
+                      },
+                      data: {
+                        numberNeeded: update.quantity,
+                      },
+                    });
+                  })
+                );
+              }
+
+              let newPositions = input.positions.filter(
+                (item) => item.eventPositionId == null
+              );
+
+              const event = await prisma?.event.update({
+                data: {
+                  name: input.name,
+                  recurringId: input?.recurringId,
+                  datetime: replaceTime(date, input.eventTime),
+                  organizationId: input.organization,
+                  locationsId: input.eventLocation.id,
+                  positions: {
+                    create: newPositions.map((item) => ({
+                      numberNeeded: item.quantity,
+                      roleId: item.position.roleId,
+                    })),
+                  },
+                },
+                where: {
+                  id: exisitingEvents[index]!.id,
+                },
+              });
+            }
+          })
+        );
       }
     },
   })

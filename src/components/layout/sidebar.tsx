@@ -79,7 +79,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 						<ul className=" py-6">
 							{sideLinks.map((link, index) => (
 								<Link key={index} href={link.href as any}>
-									<a>
+									<a onClick={() => setShow(false)}>
 										<li
 											key={index}
 											className={`${
@@ -101,11 +101,12 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 					</div>
 					{/*Mobile responsive sidebar*/}
 					<div
-						className={
-							show
-								? "w-full h-full absolute z-40  transform  translate-x-0 "
-								: "   w-full h-full absolute z-40  transform -translate-x-full"
-						}
+						className={`
+							${
+								show
+									? "w-full h-full absolute z-40  transform  translate-x-0 "
+									: "   w-full h-full absolute z-40  transform -translate-x-full"
+							} transform 200ms ease-out`}
 						id="mobile-nav">
 						<div
 							className="bg-gray-800 opacity-50 absolute h-full w-full lg:hidden"
@@ -151,7 +152,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 									<ul className=" py-6">
 										{sideLinks.map((link, index) => (
 											<Link key={index} href={link.href as any}>
-												<a>
+												<a onClick={() => setShow(false)}>
 													<li
 														className={`${
 															router.asPath == link.href

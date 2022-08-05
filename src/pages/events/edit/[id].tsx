@@ -36,10 +36,16 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
+  useEffect(() => {
+    console.log("Is it loading", eventQuery.isFetching),
+      [eventQuery.isFetching];
+  });
+
   const eventQuery = trpc.useQuery(["events.getEditEvent", id], {
+    cacheTime: 0,
     onSuccess(data) {
-      if (data?.recurringId) setAlreadyRec(true);
       if (!rec && data != undefined) methods.reset(formatEventData(data));
+      if (data?.recurringId) setAlreadyRec(true);
     },
   });
 
@@ -48,6 +54,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     ["events.getEventRecurranceData", recurringId],
     {
       enabled: !!recurringId,
+      cacheTime: 0,
       onSuccess(data) {
         if (data) {
           if (eventQuery.data == undefined) return;
@@ -192,7 +199,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   return (
     <>
       {/* The is loading is handled here to make the reset work correctly */}
-      {eventQuery.isLoading || EventRecurrance.isLoading ? (
+      {eventQuery.isFetching || EventRecurrance.isLoading ? (
         <div className='flex justify-center'>
           <CircularProgress />
         </div>
@@ -201,7 +208,9 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
       )}
       <div
         className={`${
-          eventQuery.isLoading || EventRecurrance.isLoading ? "hidden" : "block"
+          eventQuery.isFetching || EventRecurrance.isLoading
+            ? "hidden"
+            : "block"
         }`}>
         <div className='mb-8'>
           <SectionHeading>Edit Event</SectionHeading>

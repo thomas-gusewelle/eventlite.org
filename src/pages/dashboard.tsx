@@ -11,8 +11,6 @@ const Dashboard = () => {
     router.push("/");
   }
 
-  console.log(user);
-
   return <div></div>;
 };
 

@@ -10,6 +10,7 @@ import {
 import { MdAccessTime, MdOutlineCalendarToday } from "react-icons/md";
 import {
   EventFormValues,
+  EventRecurrance,
   EventRepeatFrequency,
 } from "../../../../types/eventFormValues";
 import {
@@ -54,6 +55,9 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         }
       },
     }
+  );
+  const editEventRecurranceData = trpc.useMutation(
+    "events.EditEventReccuranceData"
   );
   const editEvent = trpc.useMutation("events.editEvent");
   const editRecurringEvent = trpc.useMutation("events.editRecurringEvent");
@@ -180,7 +184,14 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
             alert(error.message);
           },
           onSuccess() {
-            router.push("/events");
+            let _data: any = data;
+            _data["recurringId"] = recurringId;
+            console.log("This is the data", _data);
+            editEventRecurranceData.mutate(_data as EventRecurrance, {
+              onSuccess() {
+                router.push("/events");
+              },
+            });
           },
         }
       );
@@ -225,7 +236,9 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               <button
                 type='submit'
                 className='w-16 h-10 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                {editEvent.isLoading || editRecurringEvent.isLoading ? (
+                {editEvent.isLoading ||
+                editRecurringEvent.isLoading ||
+                editEventRecurranceData.isLoading ? (
                   <CircularProgressSmall />
                 ) : (
                   "Save"

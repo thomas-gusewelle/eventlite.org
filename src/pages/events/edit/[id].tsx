@@ -73,27 +73,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     { id: "", name: "", organizationId: "" },
   ]);
 
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    if (eventQuery.isLoading || EventRecurrance.isLoading) {
-      setIsLoading(true);
-    }
-    if (
-      EventRecurrance.isSuccess ||
-      eventQuery.isSuccess ||
-      eventQuery.data?.recurringId == ""
-    ) {
-      setIsLoading(false);
-    }
-  }, [
-    EventRecurrance.isFetchedAfterMount,
-    EventRecurrance.isLoading,
-    EventRecurrance.isSuccess,
-    eventQuery.data?.recurringId,
-    eventQuery.isLoading,
-    eventQuery.isSuccess,
-  ]);
-
   const submit = methods.handleSubmit((data) => {
     console.log("this is the data: ", data);
     if (eventQuery.data?.organizationId == null) return;
@@ -213,14 +192,17 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   return (
     <>
       {/* The is loading is handled here to make the reset work correctly */}
-      {isLoading ? (
+      {eventQuery.isLoading || EventRecurrance.isLoading ? (
         <div className='flex justify-center'>
           <CircularProgress />
         </div>
       ) : (
         <></>
       )}
-      <div className={`${isLoading ? "hidden" : "block"}`}>
+      <div
+        className={`${
+          eventQuery.isLoading || EventRecurrance.isLoading ? "hidden" : "block"
+        }`}>
         <div className='mb-8'>
           <SectionHeading>Edit Event</SectionHeading>
         </div>

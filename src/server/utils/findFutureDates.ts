@@ -9,7 +9,6 @@ import {
 
 export function findFutureDates(input: EventFormValues) {
   if (input == undefined) return null;
-  console.log("This is the number", input.DNum);
 
   switch (input.repeatFrequency?.id) {
     case "D":

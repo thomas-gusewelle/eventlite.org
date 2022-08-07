@@ -47,6 +47,17 @@ export const PositionsSelector = () => {
     setRoles(_roles);
   }, [setRoles, posiitonsField, rolesQuery.data]);
 
+  //creates first position field on load of event create
+  useEffect(() => {
+    if (posiitonsField?.length == undefined) return;
+    if (posiitonsField.length > 0) return;
+    append({
+      eventPositionId: null,
+      position: { id: "", name: "" },
+      quantity: 1,
+    });
+  }, [append, posiitonsField?.length]);
+
   return (
     <div className='col-span-6 px-6 mb-6'>
       {/*  */}

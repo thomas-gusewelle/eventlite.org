@@ -193,30 +193,36 @@ const EventsPage = () => {
                 )}
               </span>
             </div>
-            {event.positions.map((position) => (
-              <div
-                className='grid grid-cols-2 items-center last:pb-0 last:border-b-2 border-t-2'
-                key={position.id}>
-                <span className='py-3 px-6 font-medium'>
-                  {position.Role.name}
-                </span>
-                {position.userId ? (
-                  <div
-                    className={`flex justify-center h-full py-1 px-3 text-center ${
-                      position.userResponse == null && "bg-gray-100"
-                    }
+            {event.positions.map((position) => {
+              let positionNum = [];
+              for (let i = 1; i <= position.numberNeeded; i++) {
+                positionNum.push(i);
+              }
+              return (
+                <div
+                  className='grid grid-cols-2 items-center last:pb-0 last:border-b-2 border-t-2'
+                  key={position.id}>
+                  <span className='py-3 px-6 font-medium'>
+                    {position.Role.name}
+                  </span>
+                  {position.userId ? (
+                    <div
+                      className={`flex justify-center h-full py-1 px-3 text-center ${
+                        position.userResponse == null && "bg-gray-100"
+                      }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                    <PicNameRowSmall user={position?.User} />
-                  </div>
-                ) : (
-                  <div className='flex justify-center items-center py-3 px-6 leading-4 h-full bg-gray-100 text-center'>
-                    Not Scheduled
-                  </div>
-                )}
-              </div>
-            ))}
+                      <PicNameRowSmall user={position?.User} />
+                    </div>
+                  ) : (
+                    <div className='flex justify-center items-center py-3 px-6 leading-4 h-full bg-gray-100 text-center'>
+                      Not Scheduled
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

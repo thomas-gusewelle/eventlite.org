@@ -47,16 +47,6 @@ export const PositionsSelector = () => {
     setRoles(_roles);
   }, [setRoles, posiitonsField, rolesQuery.data]);
 
-  //   const setRolesList = (index: number) => {
-  //     const _roles = rolesQuery.data?.map((item) => {
-  //       let isShow = !posiitonsField
-  //         .map((field) => field.position.id)
-  //         .includes(item.id);
-  //       return { ...item, show: isShow };
-  //     });
-  //     return _roles;
-  //   };
-
   return (
     <div className='col-span-6 px-6 mb-6'>
       {/*  */}
@@ -110,10 +100,11 @@ export const PositionsSelector = () => {
                 )}
               />
             </div>
-            <div className='col-span-2 grid grid-cols-2'>
+            <div className='col-span-2 ml-3 flex gap-6'>
               <div
                 onClick={() =>
                   insert(index + 1, {
+                    eventPositionId: null,
                     position: { id: "", name: "" },
                     quantity: 1,
                   })

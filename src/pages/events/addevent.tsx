@@ -16,10 +16,15 @@ import { findFutureDates } from "../../server/utils/findFutureDates";
 import { v4 as uuidv4 } from "uuid";
 import { EventForm } from "../../components/form/event/eventForm";
 import { sidebar } from "../../components/layout/sidebar";
+import { ErrorAlert } from "../../components/alerts/errorAlert";
 
 const AddEvent = () => {
   const utils = trpc.useContext();
   const router = useRouter();
+  const [error, setError] = useState({
+    state: false,
+    message: "There was an error creating your event. Please try again.",
+  });
   const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
     onSuccess(data) {
       if (data != undefined) {
@@ -33,7 +38,7 @@ const AddEvent = () => {
 
   const addEventRecurrance = trpc.useMutation("events.createEventReccurance");
   const addEvent = trpc.useMutation("events.createEvent", {
-    onSuccess(data, variables, context) {},
+    onError(error, variables, context) {},
   });
   const methods = useForm<EventFormValues>();
   const submit = methods.handleSubmit((data: EventFormValues) => {
@@ -58,6 +63,13 @@ const AddEvent = () => {
             positions: data.positions,
           },
           {
+            onError(error, variables, context) {
+              setError({
+                state: true,
+                message:
+                  "There was an error creating your event. Please try again.",
+              });
+            },
             onSuccess() {
               if (recurringId == undefined) return;
               let _data: any = data;
@@ -90,6 +102,7 @@ const AddEvent = () => {
 
   return (
     <>
+      {error.state && <ErrorAlert error={error} setState={setError} />}
       <div className='mb-8'>
         <SectionHeading>Add Event</SectionHeading>
       </div>

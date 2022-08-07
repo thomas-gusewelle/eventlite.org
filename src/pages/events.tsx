@@ -1,12 +1,18 @@
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
+import { BtnCancel } from "../components/btn/btnCancel";
+import { BtnDelete } from "../components/btn/btnDelete";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { TableDropdown } from "../components/menus/tableDropdown";
+import { BottomButtons } from "../components/modal/bottomButtons";
+import { Modal } from "../components/modal/modal";
+import { ModalBody } from "../components/modal/modalBody";
+import { ModalTitle } from "../components/modal/modalTitle";
 import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
@@ -16,6 +22,9 @@ const filter = (e: string) => {};
 const EventsPage = () => {
   const utils = trpc.useContext();
   const [error, setError] = useState({ state: false, message: "" });
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const eventId = useRef<{ id: string | null }>({ id: null });
+
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setpagiantedData] = useState<
     PaginateData<
@@ -70,6 +79,7 @@ const EventsPage = () => {
     onMutate(data) {
       utils.queryClient.cancelQueries();
       setEvents(events.filter((event) => event.id != data));
+      setDeleteConfirm(false);
     },
     onError() {
       if (eventsQuery.data) {
@@ -78,6 +88,7 @@ const EventsPage = () => {
       eventsQuery.refetch();
     },
     onSuccess() {
+      eventId.current.id = null;
       eventsQuery.refetch();
     },
   });
@@ -95,6 +106,22 @@ const EventsPage = () => {
 
   return (
     <>
+      <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>
+        <div className='flex justify-center'>
+          <ModalBody>
+            <ModalTitle text='Are you sure you want to delete this event?' />
+            <BottomButtons>
+              <BtnDelete
+                onClick={() => {
+                  if (eventId.current.id != null)
+                    deleteEventMutation.mutate(eventId.current.id);
+                }}
+              />
+              <BtnCancel onClick={() => setDeleteConfirm(false)} />
+            </BottomButtons>
+          </ModalBody>
+        </div>
+      </Modal>
       {/* MD Top Bar */}
       <div className='md:hidden grid grid-cols-2 mb-8 gap-4'>
         <SectionHeading>Events</SectionHeading>
@@ -148,7 +175,10 @@ const EventsPage = () => {
                     },
                     {
                       name: "Delete",
-                      function: () => deleteEventMutation.mutate(event.id),
+                      function: () => {
+                        setDeleteConfirm(true);
+                        eventId.current.id = event.id;
+                      },
                     },
                   ]}
                 />

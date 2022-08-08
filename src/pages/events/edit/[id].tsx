@@ -19,9 +19,11 @@ import { useRouter } from "next/router";
 import { formatEventData } from "../../../utils/formatEventData";
 import { EventForm } from "../../../components/form/event/eventForm";
 import { findFutureDates } from "../../../server/utils/findFutureDates";
+import { ErrorAlert } from "../../../components/alerts/errorAlert";
 
 const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const router = useRouter();
+  const [error, setError] = useState({ state: true, message: "" });
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
@@ -116,6 +118,13 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           deletePositions: deletePositions.map((item) => item.id),
         },
         {
+          onError() {
+            setError({
+              state: true,
+              message:
+                "There was an error updating you event. Please try again.",
+            });
+          },
           onSuccess() {
             router.push("/events");
           },
@@ -151,7 +160,11 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         },
         {
           onError(error, variables, context) {
-            alert(error.message);
+            setError({
+              state: true,
+              message:
+                "There was an error updating you event. Please try again.",
+            });
           },
           onSuccess() {
             let _data: any = data;
@@ -196,6 +209,8 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
             ? "hidden"
             : "block"
         }`}>
+        {error.state && <ErrorAlert error={error} setState={setError} />}
+
         <div className='mb-8'>
           <SectionHeading>Edit Event</SectionHeading>
         </div>

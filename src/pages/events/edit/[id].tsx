@@ -73,7 +73,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   ]);
 
   const submit = methods.handleSubmit((data) => {
-    console.log("this is the data: ", data);
     if (eventQuery.data?.organizationId == null) return;
 
     let newPositions = data.positions.filter((item) => {
@@ -175,7 +174,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           onSuccess() {
             let _data: any = data;
             _data["recurringId"] = recurringId;
-            console.log("This is the data", _data);
+
             editEventRecurranceData.mutate(_data as EventRecurrance, {
               onSuccess() {
                 router.push("/events");

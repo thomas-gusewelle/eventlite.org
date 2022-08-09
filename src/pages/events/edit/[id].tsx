@@ -23,12 +23,18 @@ import { ErrorAlert } from "../../../components/alerts/errorAlert";
 
 const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const router = useRouter();
-  const [error, setError] = useState({ state: true, message: "" });
+  const [error, setError] = useState({ state: false, message: "" });
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
   const eventQuery = trpc.useQuery(["events.getEditEvent", id], {
     cacheTime: 0,
+    onError() {
+      setError({
+        state: true,
+        message: "There was an issue getting your event.",
+      });
+    },
     onSuccess(data) {
       if (!rec && data != undefined) methods.reset(formatEventData(data));
       if (data?.recurringId) setAlreadyRec(true);

@@ -31,7 +31,7 @@ const EventsPage = () => {
       (Event & {
         Locations: Locations | null;
         positions: (EventPositions & {
-          User: User | null;
+          User: User[];
           Role: Role;
         })[];
       })[]
@@ -41,7 +41,7 @@ const EventsPage = () => {
     (Event & {
       Locations: Locations | null;
       positions: (EventPositions & {
-        User: User | null;
+        User: User[];
         Role: Role;
       })[];
     })[]
@@ -50,7 +50,7 @@ const EventsPage = () => {
     (Event & {
       Locations: Locations | null;
       positions: (EventPositions & {
-        User: User | null;
+        User: User[];
         Role: Role;
       })[];
     })[]
@@ -198,14 +198,14 @@ const EventsPage = () => {
               for (let i = 1; i <= position.numberNeeded; i++) {
                 positionNum.push(i);
               }
-              return (
+              return positionNum.map((num, index) => (
                 <div
                   className='grid grid-cols-2 items-center last:pb-0 last:border-b-2 border-t-2'
                   key={position.id}>
                   <span className='py-3 px-6 font-medium'>
                     {position.Role.name}
                   </span>
-                  {position.userId ? (
+                  {position.User[index] ? (
                     <div
                       className={`flex justify-center h-full py-1 px-3 text-center ${
                         position.userResponse == null && "bg-gray-100"
@@ -213,7 +213,7 @@ const EventsPage = () => {
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                      <PicNameRowSmall user={position?.User} />
+                      <PicNameRowSmall user={position?.User[index]} />
                     </div>
                   ) : (
                     <div className='flex justify-center items-center py-3 px-6 leading-4 h-full bg-gray-100 text-center'>
@@ -221,7 +221,7 @@ const EventsPage = () => {
                     </div>
                   )}
                 </div>
-              );
+              ));
             })}
           </div>
         ))}

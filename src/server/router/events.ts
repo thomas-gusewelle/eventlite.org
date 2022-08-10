@@ -916,12 +916,44 @@ export const eventsRouter = createRouter()
     },
   })
   .mutation("deleteEventById", {
-    input: z.string(),
+    input: z.object({ id: z.string(), deleteRecurring: z.boolean() }),
     async resolve({ input }) {
-      return await prisma?.event.delete({
-        where: {
-          id: input,
-        },
-      });
+      if (input.deleteRecurring == false) {
+        return await prisma?.event.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      }
+
+      if (input.deleteRecurring == true) {
+        const event = await prisma?.event.findFirst({
+          where: {
+            id: input.id,
+          },
+          select: {
+            recurringId: true,
+          },
+        });
+
+        if (
+          event == undefined ||
+          event == null ||
+          event.recurringId == undefined ||
+          event.recurringId == null
+        ) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+
+        const deletedEvents = await prisma?.event.deleteMany({
+          where: {
+            recurringId: event.recurringId,
+          },
+        });
+        const recurringDataDelete = await prisma?.eventReccurance.delete({
+          where: { recurringId: event.recurringId },
+        });
+        return { ...deletedEvents, ...recurringDataDelete };
+      }
     },
   });

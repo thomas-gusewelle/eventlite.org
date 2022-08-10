@@ -24,6 +24,7 @@ const EventsPage = () => {
   const [error, setError] = useState({ state: false, message: "" });
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
+  const deleteAllRecurring = useRef<boolean>(false);
 
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setpagiantedData] = useState<
@@ -78,7 +79,16 @@ const EventsPage = () => {
   const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
     onMutate(data) {
       utils.queryClient.cancelQueries();
-      setEvents(events.filter((event) => event.id != data));
+
+      if (deleteAllRecurring.current == false) {
+        setEvents(events.filter((event) => event.id != data.id));
+      }
+      if (deleteAllRecurring.current == true) {
+        let _event = events.filter((event) => event.id == data.id);
+        setEvents(
+          events.filter((event) => event.recurringId != _event[0]?.recurringId)
+        );
+      }
       setDeleteConfirm(false);
     },
     onError() {
@@ -89,6 +99,7 @@ const EventsPage = () => {
     },
     onSuccess() {
       eventId.current.id = null;
+      deleteAllRecurring.current = false;
       eventsQuery.refetch();
     },
   });
@@ -109,12 +120,21 @@ const EventsPage = () => {
       <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>
         <div className='flex justify-center'>
           <ModalBody>
-            <ModalTitle text='Are you sure you want to delete this event?' />
+            <ModalTitle
+              text={
+                deleteAllRecurring
+                  ? "Are you sure you want to delete all events in this reccurance?"
+                  : "Are you sure you want to delete this event?"
+              }
+            />
             <BottomButtons>
               <BtnDelete
                 onClick={() => {
                   if (eventId.current.id != null)
-                    deleteEventMutation.mutate(eventId.current.id);
+                    deleteEventMutation.mutate({
+                      id: eventId.current.id,
+                      deleteRecurring: deleteAllRecurring.current,
+                    });
                 }}
               />
               <BtnCancel onClick={() => setDeleteConfirm(false)} />
@@ -176,8 +196,16 @@ const EventsPage = () => {
                     {
                       name: "Delete",
                       function: () => {
-                        setDeleteConfirm(true);
                         eventId.current.id = event.id;
+                        setDeleteConfirm(true);
+                      },
+                    },
+                    {
+                      name: "Delete Recurring",
+                      function: () => {
+                        deleteAllRecurring.current = true;
+                        eventId.current.id = event.id;
+                        setDeleteConfirm(true);
                       },
                     },
                   ]}

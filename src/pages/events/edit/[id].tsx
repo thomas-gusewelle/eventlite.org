@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import {
@@ -20,10 +20,19 @@ import { formatEventData } from "../../../utils/formatEventData";
 import { EventForm } from "../../../components/form/event/eventForm";
 import { findFutureDates } from "../../../server/utils/findFutureDates";
 import { ErrorAlert } from "../../../components/alerts/errorAlert";
+import { Modal } from "../../../components/modal/modal";
+import { ModalBody } from "../../../components/modal/modalBody";
+import { ModalTitle } from "../../../components/modal/modalTitle";
+import { BottomButtons } from "../../../components/modal/bottomButtons";
+import { BtnDelete } from "../../../components/btn/btnDelete";
+import { BtnCancel } from "../../../components/btn/btnCancel";
 
 const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const router = useRouter();
   const [error, setError] = useState({ state: false, message: "" });
+  const [modifyPositionsConfirm, setModifyPositionsConfirm] = useState(true);
+
+  const [formData, setFormData] = useState<EventFormValues | null>(null);
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
@@ -72,7 +81,31 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     { id: "", name: "", organizationId: "" },
   ]);
 
-  const submit = methods.handleSubmit((data) => {
+  const preSubmit = methods.handleSubmit((data) => {
+    setFormData(data);
+    // checking for different positions
+    const differentPositionsId = eventQuery.data?.positions.filter(
+      (item) =>
+        !data.positions.map((inp) => inp.eventPositionId).includes(item.id)
+    );
+
+    if (differentPositionsId) {
+      if (differentPositionsId.length > 0) {
+        setModifyPositionsConfirm(true);
+      }
+      if (differentPositionsId.length == 0) {
+        submit(data);
+      }
+    }
+    if (differentPositionsId == undefined) {
+      submit(data);
+    }
+  });
+
+  const submit = (data: EventFormValues) => {
+    if (data == null) return;
+
+    //submitting data
     if (eventQuery.data?.organizationId == null) return;
 
     let newPositions = data.positions.filter((item) => {
@@ -184,7 +217,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         }
       );
     }
-  });
+  };
 
   if (locationsQuery.isLoading) {
     return (
@@ -200,6 +233,31 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
 
   return (
     <>
+      <Modal open={modifyPositionsConfirm} setOpen={setModifyPositionsConfirm}>
+        <div className='flex justify-center'>
+          <ModalBody>
+            <ModalTitle
+              text={
+                "Modifying exisiting positions will remove all scheduled users. Would you like to proceed?"
+              }
+            />
+            <BottomButtons>
+              <BtnDelete
+                onClick={() => {
+                  if (formData == null) return;
+                  submit(formData);
+                  setModifyPositionsConfirm(false);
+                }}
+              />
+              <BtnCancel
+                onClick={() => {
+                  setModifyPositionsConfirm(false);
+                }}
+              />
+            </BottomButtons>
+          </ModalBody>
+        </div>
+      </Modal>
       {/* The is loading is handled here to make the reset work correctly */}
       {eventQuery.isFetching || EventRecurrance.isLoading ? (
         <div className='flex justify-center'>
@@ -220,7 +278,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           <SectionHeading>Edit Event</SectionHeading>
         </div>
         <FormProvider {...methods}>
-          <form onSubmit={submit} className='shadow'>
+          <form onSubmit={preSubmit} className='shadow'>
             <EventForm
               locations={locations}
               rec={rec}

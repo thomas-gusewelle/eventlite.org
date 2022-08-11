@@ -24,7 +24,7 @@ const EventsPage = () => {
   const [error, setError] = useState({ state: false, message: "" });
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
-  const deleteAllRecurring = useRef<boolean>(false);
+  const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
 
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setpagiantedData] = useState<
@@ -80,10 +80,10 @@ const EventsPage = () => {
     onMutate(data) {
       utils.queryClient.cancelQueries();
 
-      if (deleteAllRecurring.current == false) {
+      if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));
       }
-      if (deleteAllRecurring.current == true) {
+      if (deleteAllRecurring == true) {
         let _event = events.filter((event) => event.id == data.id);
         setEvents(
           events.filter((event) => event.recurringId != _event[0]?.recurringId)
@@ -99,7 +99,7 @@ const EventsPage = () => {
     },
     onSuccess() {
       eventId.current.id = null;
-      deleteAllRecurring.current = false;
+      setDeleteAllRecuring(false);
       eventsQuery.refetch();
     },
   });
@@ -169,7 +169,7 @@ const EventsPage = () => {
                   if (eventId.current.id != null)
                     deleteEventMutation.mutate({
                       id: eventId.current.id,
-                      deleteRecurring: deleteAllRecurring.current,
+                      deleteRecurring: deleteAllRecurring,
                     });
                 }}
               />
@@ -233,13 +233,14 @@ const EventsPage = () => {
                       name: "Delete",
                       function: () => {
                         eventId.current.id = event.id;
+                        setDeleteAllRecuring(false);
                         setDeleteConfirm(true);
                       },
                     },
                     {
                       name: "Delete Recurring",
                       function: () => {
-                        deleteAllRecurring.current = true;
+                        setDeleteAllRecuring(true);
                         eventId.current.id = event.id;
                         setDeleteConfirm(true);
                       },

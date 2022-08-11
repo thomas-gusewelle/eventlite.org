@@ -104,7 +104,43 @@ const EventsPage = () => {
     },
   });
 
-  const filter = (e: string) => {};
+  const filter = (e: string) => {
+    if (e.length > 0) {
+      let key = e.toLowerCase();
+      const filter = eventsQuery.data?.filter((event) => {
+        console.log(
+          "This is the date string: ",
+          event.datetime.toLocaleString("default", { month: "long" })
+        );
+        return (
+          event.name.toLowerCase().includes(key) ||
+          event.Locations?.name.toLowerCase().includes(key) ||
+          event.datetime.toLocaleDateString().toLowerCase().includes(key) ||
+          event.datetime
+            .toLocaleString("default", { month: "long" })
+            .toLowerCase()
+            .startsWith(key) ||
+          event.positions.some((pos) =>
+            pos.Role.name.toLowerCase().includes(key)
+          ) ||
+          event.positions.some((pos) =>
+            pos.User.some(
+              (user) =>
+                user.firstName?.toLowerCase().includes(key) ||
+                user.lastName?.toLowerCase().includes(key)
+            )
+          )
+        );
+      });
+      console.log("This is the filter", filter);
+      if (filter == undefined) return;
+      setPageNum(1);
+      setEvents(filter);
+    } else {
+      if (eventsQuery.data == undefined) return;
+      setEvents(eventsQuery.data);
+    }
+  };
 
   const addOptions: TableOptionsDropdown = [
     { name: "New Event", href: "/events/addevent" },

@@ -15,6 +15,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { trpc } from "../../utils/trpc";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { fullName } from "../../utils/fullName";
+import Head from "next/head";
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 	const sideLinks: { name: string; href: string; icon: IconType }[] = [
@@ -60,6 +61,9 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
 	return (
 		<>
+			<Head>
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+			</Head>
 			<div className="w-full h-full bg-white">
 				<div className="flex flex-no-wrap">
 					{/* Sidebar starts */}

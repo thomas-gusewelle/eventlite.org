@@ -83,8 +83,8 @@ const DailyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
           <Controller
             name='DNum'
             control={control}
-            rules={{ required: true, max: 52 }}
-            defaultValue={1}
+            rules={{ required: true, min: 2, max: 52 }}
+            defaultValue={2}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -99,6 +99,9 @@ const DailyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
                 )}
                 {fieldState.error?.type === ("max" as any) && (
                   <ErrorSpan>Max of 52 occurances</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("min" as any) && (
+                  <ErrorSpan>Must have at least 2 occurnaces</ErrorSpan>
                 )}
               </>
             )}
@@ -188,8 +191,8 @@ const WeeklyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
           <Controller
             name='WNum'
             control={control}
-            rules={{ required: true, max: 52 }}
-            defaultValue={1}
+            rules={{ required: true, min: 2, max: 52 }}
+            defaultValue={2}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -203,6 +206,9 @@ const WeeklyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
                 )}
                 {fieldState.error?.type === ("max" as any) && (
                   <ErrorSpan>Maximum of 52 occurances allowed</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("min" as any) && (
+                  <ErrorSpan>Must have at least 2 occurnaces</ErrorSpan>
                 )}
               </>
             )}
@@ -300,8 +306,8 @@ const WeeklyCustomOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
           <Controller
             name='WCNum'
             control={control}
-            rules={{ required: true, max: 52 }}
-            defaultValue={1}
+            rules={{ required: true, min: 2, max: 52 }}
+            defaultValue={2}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -315,6 +321,9 @@ const WeeklyCustomOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
                 )}
                 {fieldState.error?.type === ("max" as any) && (
                   <ErrorSpan>Max of 52 occurances</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("min" as any) && (
+                  <ErrorSpan>Must have at least 2 occurnaces</ErrorSpan>
                 )}
               </>
             )}
@@ -400,8 +409,8 @@ const MonthlyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
           <Controller
             name='MNum'
             control={control}
-            rules={{ required: true, max: 52 }}
-            defaultValue={1}
+            rules={{ required: true, min: 2, max: 52 }}
+            defaultValue={2}
             render={({ field, fieldState }) => (
               <>
                 <input
@@ -415,6 +424,9 @@ const MonthlyOptions: React.FC<{ selection: EventRepeatFrequency }> = ({
                 )}
                 {fieldState.error?.type === ("max" as any) && (
                   <ErrorSpan>Max of 52 occurances</ErrorSpan>
+                )}
+                {fieldState.error?.type === ("min" as any) && (
+                  <ErrorSpan>Must have at least 2 occurnaces</ErrorSpan>
                 )}
               </>
             )}

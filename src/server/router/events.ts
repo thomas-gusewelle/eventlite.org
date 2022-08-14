@@ -474,7 +474,7 @@ export const eventsRouter = createRouter()
         },
         include: {
           positions: {
-            include: { Role: true },
+            include: { Role: true, User: true },
           },
         },
         orderBy: { datetime: "asc" },
@@ -515,6 +515,27 @@ export const eventsRouter = createRouter()
               if (updateNumbers.length > 0) {
                 await Promise.all(
                   updateNumbers.map(async (update) => {
+                    let oldNumObj = oldEvent.positions.find(
+                      (old) => old.Role.id == update.position.roleId
+                    );
+
+                    if (oldNumObj == undefined) {
+                      throw new TRPCError({ code: "BAD_REQUEST" });
+                    }
+                    if (update.quantity < oldNumObj.numberNeeded) {
+                      let difference = update.quantity - oldNumObj.numberNeeded;
+                      const removeItems = oldNumObj.User.slice(0, difference);
+                      await prisma?.eventPositions.update({
+                        where: { id: oldNumObj.id },
+                        data: {
+                          User: {
+                            disconnect: removeItems.map((item) => ({
+                              id: item.id,
+                            })),
+                          },
+                        },
+                      });
+                    }
                     await prisma?.eventPositions.updateMany({
                       where: {
                         eventId: oldEvent.id,
@@ -574,6 +595,27 @@ export const eventsRouter = createRouter()
               if (updateNumbers.length > 0) {
                 await Promise.all(
                   updateNumbers.map(async (update) => {
+                    let oldNumObj = oldEvent.positions.find(
+                      (old) => old.Role.id == update.position.roleId
+                    );
+                    console.log("OldNum", oldNumObj);
+                    if (oldNumObj == undefined) {
+                      throw new TRPCError({ code: "BAD_REQUEST" });
+                    }
+                    if (update.quantity < oldNumObj.numberNeeded) {
+                      let difference = update.quantity - oldNumObj.numberNeeded;
+                      const removeItems = oldNumObj.User.slice(0, difference);
+                      await prisma?.eventPositions.update({
+                        where: { id: oldNumObj.id },
+                        data: {
+                          User: {
+                            disconnect: removeItems.map((item) => ({
+                              id: item.id,
+                            })),
+                          },
+                        },
+                      });
+                    }
                     await prisma?.eventPositions.updateMany({
                       where: {
                         eventId: oldEvent.id,
@@ -647,6 +689,27 @@ export const eventsRouter = createRouter()
               if (updateNumbers.length > 0) {
                 await Promise.all(
                   updateNumbers.map(async (update) => {
+                    let oldNumObj = oldEvent.positions.find(
+                      (old) => old.Role.id == update.position.roleId
+                    );
+                    console.log("OldNum", oldNumObj);
+                    if (oldNumObj == undefined) {
+                      throw new TRPCError({ code: "BAD_REQUEST" });
+                    }
+                    if (update.quantity < oldNumObj.numberNeeded) {
+                      let difference = update.quantity - oldNumObj.numberNeeded;
+                      const removeItems = oldNumObj.User.slice(0, difference);
+                      await prisma?.eventPositions.update({
+                        where: { id: oldNumObj.id },
+                        data: {
+                          User: {
+                            disconnect: removeItems.map((item) => ({
+                              id: item.id,
+                            })),
+                          },
+                        },
+                      });
+                    }
                     await prisma?.eventPositions.updateMany({
                       where: {
                         eventId: oldEvent.id,
@@ -706,6 +769,27 @@ export const eventsRouter = createRouter()
               if (updateNumbers.length > 0) {
                 await Promise.all(
                   updateNumbers.map(async (update) => {
+                    let oldNumObj = oldEvent.positions.find(
+                      (old) => old.Role.id == update.position.roleId
+                    );
+                    console.log("OldNum", oldNumObj);
+                    if (oldNumObj == undefined) {
+                      throw new TRPCError({ code: "BAD_REQUEST" });
+                    }
+                    if (update.quantity < oldNumObj.numberNeeded) {
+                      let difference = update.quantity - oldNumObj.numberNeeded;
+                      const removeItems = oldNumObj.User.slice(0, difference);
+                      await prisma?.eventPositions.update({
+                        where: { id: oldNumObj.id },
+                        data: {
+                          User: {
+                            disconnect: removeItems.map((item) => ({
+                              id: item.id,
+                            })),
+                          },
+                        },
+                      });
+                    }
                     await prisma?.eventPositions.updateMany({
                       where: {
                         eventId: oldEvent.id,
@@ -814,6 +898,27 @@ export const eventsRouter = createRouter()
               if (updateNumbers.length > 0) {
                 await Promise.all(
                   updateNumbers.map(async (update) => {
+                    let oldNumObj = exisitingEvents[index]!.positions.find(
+                      (old) => old.Role.id == update.position.roleId
+                    );
+                    console.log("OldNum", oldNumObj);
+                    if (oldNumObj == undefined) {
+                      throw new TRPCError({ code: "BAD_REQUEST" });
+                    }
+                    if (update.quantity < oldNumObj.numberNeeded) {
+                      let difference = update.quantity - oldNumObj.numberNeeded;
+                      const removeItems = oldNumObj.User.slice(0, difference);
+                      await prisma?.eventPositions.update({
+                        where: { id: oldNumObj.id },
+                        data: {
+                          User: {
+                            disconnect: removeItems.map((item) => ({
+                              id: item.id,
+                            })),
+                          },
+                        },
+                      });
+                    }
                     await prisma?.eventPositions.updateMany({
                       where: {
                         eventId: exisitingEvents[index]!.id,
@@ -874,6 +979,27 @@ export const eventsRouter = createRouter()
               if (updateNumbers.length > 0) {
                 await Promise.all(
                   updateNumbers.map(async (update) => {
+                    let oldNumObj = exisitingEvents[index]!.positions.find(
+                      (old) => old.Role.id == update.position.roleId
+                    );
+                    console.log("OldNum", oldNumObj);
+                    if (oldNumObj == undefined) {
+                      throw new TRPCError({ code: "BAD_REQUEST" });
+                    }
+                    if (update.quantity < oldNumObj.numberNeeded) {
+                      let difference = update.quantity - oldNumObj.numberNeeded;
+                      const removeItems = oldNumObj.User.slice(0, difference);
+                      await prisma?.eventPositions.update({
+                        where: { id: oldNumObj.id },
+                        data: {
+                          User: {
+                            disconnect: removeItems.map((item) => ({
+                              id: item.id,
+                            })),
+                          },
+                        },
+                      });
+                    }
                     await prisma?.eventPositions.updateMany({
                       where: {
                         eventId: exisitingEvents[index]!.id,

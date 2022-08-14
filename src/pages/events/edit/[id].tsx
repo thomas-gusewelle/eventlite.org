@@ -30,7 +30,7 @@ import { BtnCancel } from "../../../components/btn/btnCancel";
 const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const router = useRouter();
   const [error, setError] = useState({ state: false, message: "" });
-  const [modifyPositionsConfirm, setModifyPositionsConfirm] = useState(true);
+  const [modifyPositionsConfirm, setModifyPositionsConfirm] = useState(false);
 
   const [formData, setFormData] = useState<EventFormValues | null>(null);
   const methods = useForm<EventFormValues>();

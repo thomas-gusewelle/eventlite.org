@@ -4,6 +4,7 @@ import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnDelete } from "../components/btn/btnDelete";
+import { CircularProgress } from "../components/circularProgress";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
@@ -149,6 +150,14 @@ const EventsPage = () => {
 
   if (paginatedData == undefined) {
     return null;
+  }
+
+  if (eventsQuery.isLoading) {
+    return (
+      <div className='flex justify-center'>
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (

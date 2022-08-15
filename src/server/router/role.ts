@@ -1,9 +1,20 @@
-import { truncate } from "fs";
-import { resolve } from "path";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "./context";
 
 export const roleRouter = createRouter()
+  .middleware(async ({ ctx, next }) => {
+    const user = await prisma?.user.findFirst({
+      where: { id: ctx.session?.user.id },
+      select: {
+        status: true,
+      },
+    });
+    if (user?.status != "ADMIN") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next();
+  })
   .query("getRolesByOrganization", {
     async resolve({ ctx }) {
       const org = await prisma?.user.findFirst({
@@ -14,9 +25,11 @@ export const roleRouter = createRouter()
           id: ctx.session?.user.id,
         },
       });
-      return await prisma?.role.findMany({
-        where: { organizationId: org?.organizationId },
-      });
+      if (org?.organizationId) {
+        return await prisma?.role.findMany({
+          where: { organizationId: org?.organizationId },
+        });
+      }
     },
   })
   .mutation("addRole", {
@@ -26,12 +39,14 @@ export const roleRouter = createRouter()
         select: { organizationId: true },
         where: { id: ctx.session?.user.id },
       });
-      return await prisma?.role.create({
-        data: {
-          name: input,
-          organizationId: org?.organizationId,
-        },
-      });
+      if (org?.organizationId) {
+        return await prisma?.role.create({
+          data: {
+            name: input,
+            organizationId: org?.organizationId,
+          },
+        });
+      }
     },
   })
   .mutation("editRoleById", {

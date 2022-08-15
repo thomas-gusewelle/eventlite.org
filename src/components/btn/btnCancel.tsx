@@ -1,5 +1,3 @@
-import { ButtonHTMLAttributes } from "react";
-
 export const BtnCancel: React.FC<{ onClick?: () => void; type?: any }> = ({
   onClick,
   type = "button",

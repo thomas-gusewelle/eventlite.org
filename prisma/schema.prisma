@@ -3,30 +3,29 @@
 
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
 
 model User {
-  id             String         @id @default(cuid())
+  id             String           @id @default(cuid())
   firstName      String?
   lastName       String?
-  status         UserStatus     @default(USER)
+  status         UserStatus       @default(USER)
   roles          Role[]
-  email          String?        @unique
+  eventPositions EventPositions[]
+  email          String?          @unique
   emailVerified  DateTime?
   image          String?
   // accounts       Account[]
   // sessions       Session[]
-  Organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  Organization   Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId String?
   availability   Availability[]
-  hasLogin Boolean @default(false)
+  hasLogin       Boolean          @default(false)
 
   @@index([id, organizationId])
 }
@@ -56,32 +55,79 @@ model Organization {
 }
 
 model Locations {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
   events         Event[]
 }
 
 model Role {
-  id    String @id @default(uuid())
-  name  String
-  users User[]
+  id             String           @id @default(uuid())
+  name           String
+  users          User[]
+  Organization   Organization     @relation(fields: [organizationId], references: [id])
+  organizationId String
+  eventPositions EventPositions[]
 
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?
   @@index([organizationId])
 }
 
 model Event {
-  id               String        @id @default(cuid())
-  Organization     Organization? @relation(fields: [organizationId], references: [id])
+  id               String           @id @default(cuid())
+  recurringId      String?
+  name             String
+  Organization     Organization?    @relation(fields: [organizationId], references: [id])
   organizationId   String?
   datetime         DateTime
-  Locations        Locations?    @relation(fields: [locationsId], references: [id])
+  Locations        Locations?       @relation(fields: [locationsId], references: [id])
   locationsId      String?
-  positions        Json
+  positions        EventPositions[]
   unavailableUsers Json?
 
   @@index([id, organizationId])
+}
+
+model EventReccurance {
+  recurringId         String    @id
+  repeatFrequecyId    String
+  repeatFrequencyName String
+  DEndSelectId        String?
+  DEndSelectName      String?
+  DNum                Int?
+  DDate               DateTime?
+  WEndSelectId        String?
+  WEndSelectName      String?
+  WNum                Int?
+  WDate               DateTime?
+  WCEndSelectId       String?
+  WCEndSelectName     String?
+  WCNum               Int?
+  WCDate              DateTime?
+  WCSun               Boolean?
+  WCMon               Boolean?
+  WCTues              Boolean?
+  WCWed               Boolean?
+  WCThurs             Boolean?
+  WCFri               Boolean?
+  WCSat               Boolean?
+  MEndSelectId        String?
+  MEndSelectName      String?
+  MNum                Int?
+  MDate               DateTime?
+}
+
+//each event has its own positions to faciliate different people being scheduled for different events
+model EventPositions {
+  id      String  @id @default(cuid())
+  Event   Event?  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String?
+  Role    Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId  String
+  User    User[]
+
+  userResponse Boolean?
+  numberNeeded Int      @default(1)
+
+  @@index([eventId, roleId])
 }

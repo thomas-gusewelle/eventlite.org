@@ -28,27 +28,28 @@ export const TableDropdown: React.FC<{
 				<Menu.Items className="origin-top-right z-50 absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
 						{options.map((option, index) => {
-							console.log("This is the boolean", option.show);
-							if (option.href && !option.show != false) {
+							if (option.href && option.show != false) {
 								return (
 									<Menu.Item key={index}>
 										{({ active }) => (
-											<Link href={option.href as unknown as Url}>
-												<a
-													className={classNames(
-														active
-															? "bg-gray-100 text-gray-900"
-															: "text-gray-700",
-														"block px-4 py-2 text-sm"
-													)}>
-													{option.name}
-												</a>
-											</Link>
+											<button className="w-full text-left">
+												<Link href={option.href as unknown as Url}>
+													<a
+														className={classNames(
+															active
+																? "bg-gray-100 text-gray-900"
+																: "text-gray-700",
+															"block px-4 py-2 text-sm"
+														)}>
+														{option.name}
+													</a>
+												</Link>
+											</button>
 										)}
 									</Menu.Item>
 								);
 							}
-							if (option.function != undefined && !option.show != false) {
+							if (option.function != undefined && option.show != false) {
 								return (
 									<Menu.Item key={index}>
 										{({ active }) => (

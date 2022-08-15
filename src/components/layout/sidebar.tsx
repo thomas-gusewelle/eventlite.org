@@ -1,7 +1,12 @@
 import { ReactElement, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import { MdSpaceDashboard, MdPeopleAlt, MdWorkspaces } from "react-icons/md";
+import {
+	MdSpaceDashboard,
+	MdPeopleAlt,
+	MdWorkspaces,
+	MdEvent,
+} from "react-icons/md";
 import { FaChurch } from "react-icons/fa";
 import Link from "next/link";
 import { IconType } from "react-icons";
@@ -10,10 +15,12 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { trpc } from "../../utils/trpc";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { fullName } from "../../utils/fullName";
+import Head from "next/head";
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 	const sideLinks: { name: string; href: string; icon: IconType }[] = [
 		{ name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
+		{ name: "Events", href: "/events", icon: MdEvent },
 		{ name: "People", href: "/people", icon: MdPeopleAlt },
 		{ name: "Locations", href: "/locations", icon: FaChurch },
 		{ name: "Roles", href: "/roles", icon: MdWorkspaces },
@@ -54,6 +61,9 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
 	return (
 		<>
+			<Head>
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+			</Head>
 			<div className="w-full h-full bg-white">
 				<div className="flex flex-no-wrap">
 					{/* Sidebar starts */}
@@ -73,7 +83,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 						<ul className=" py-6">
 							{sideLinks.map((link, index) => (
 								<Link key={index} href={link.href as any}>
-									<a>
+									<a onClick={() => setShow(false)}>
 										<li
 											key={index}
 											className={`${
@@ -95,11 +105,12 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 					</div>
 					{/*Mobile responsive sidebar*/}
 					<div
-						className={
-							show
-								? "w-full h-full absolute z-40  transform  translate-x-0 "
-								: "   w-full h-full absolute z-40  transform -translate-x-full"
-						}
+						className={`
+							${
+								show
+									? "w-full h-full absolute z-40  transform  translate-x-0 "
+									: "   w-full h-full absolute z-40  transform -translate-x-full"
+							} transform 200ms ease-out`}
 						id="mobile-nav">
 						<div
 							className="bg-gray-800 opacity-50 absolute h-full w-full lg:hidden"
@@ -145,7 +156,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 									<ul className=" py-6">
 										{sideLinks.map((link, index) => (
 											<Link key={index} href={link.href as any}>
-												<a>
+												<a onClick={() => setShow(false)}>
 													<li
 														className={`${
 															router.asPath == link.href

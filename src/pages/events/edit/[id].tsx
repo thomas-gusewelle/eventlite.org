@@ -45,20 +45,29 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
       });
     },
     onSuccess(data) {
+      console.log("This is the data", data);
       if (!rec && data != undefined) methods.reset(formatEventData(data));
       if (data?.recurringId) setAlreadyRec(true);
     },
   });
 
   const recurringId = rec ? eventQuery.data?.recurringId || "" : "";
+  useEffect(() => {
+    console.log("recurring id: ", recurringId);
+  }, [recurringId]);
   const EventRecurrance = trpc.useQuery(
     ["events.getEventRecurranceData", recurringId],
     {
       enabled: !!recurringId,
       cacheTime: 0,
       onSuccess(data) {
+        console.log("Event Recurrance data", data);
         if (data) {
           if (eventQuery.data == undefined) return;
+          console.log(
+            "This is the reset data: ",
+            formatEventData(eventQuery.data, data)
+          );
           methods.reset(formatEventData(eventQuery.data, data));
         }
       },

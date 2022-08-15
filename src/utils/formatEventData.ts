@@ -16,8 +16,6 @@ export function formatEventData(
   },
   eventRecurrance?: EV
 ) {
-  if (input.Locations == null) return;
-
   if (input.recurringId && eventRecurrance != undefined) {
     let recurringData = formatEventRecurrance(eventRecurrance, input);
     const newData: EventFormValues = {
@@ -35,10 +33,10 @@ export function formatEventData(
         quantity: position.numberNeeded,
       })),
       eventLocation: {
-        id: input.Locations.id,
-        name: input.Locations.name,
-        organizationId: input.Locations.organizationId,
-      },
+        id: input.Locations?.id || "",
+        name: input.Locations?.name || "",
+        organizationId: input.Locations?.organizationId || "",
+      } || { id: "", name: "", organizationId: "" },
       repeatFrequency: recurringData?.repeatFrequency,
       DEndSelect: recurringData?.DEndSelect,
       DNum: recurringData?.DNum,
@@ -78,9 +76,9 @@ export function formatEventData(
       quantity: position.numberNeeded,
     })),
     eventLocation: {
-      id: input.Locations.id,
-      name: input.Locations.name,
-      organizationId: input.Locations.organizationId,
+      id: input.Locations?.id || "",
+      name: input.Locations?.name || "",
+      organizationId: input.Locations?.organizationId || "",
     },
   };
   return newData;

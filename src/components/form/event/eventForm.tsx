@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { EventRepeatFrequency } from "../../../../types/eventFormValues";
 import { findWeekday } from "../../../utils/findWeekday";
 import { NIL } from "uuid";
+import { ErrorSpan } from "../../errors/errorSpan";
+import { yearsFromToday } from "../../../server/utils/dateTimeModifers";
 
 export const EventForm: React.FC<{
   locations: Locations[];
@@ -83,57 +85,73 @@ export const EventForm: React.FC<{
             Event Date
           </label>
           <div className='relative'>
-            <div className='flex'>
-              <Controller
-                control={control}
-                name='eventDate'
-                defaultValue={new Date()}
-                render={({ field: { onChange, value } }) => (
-                  <DatePicker
-                    id='datepick'
-                    selected={value}
-                    onChange={onChange}
-                    className=' block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
-                  />
-                )}
-              />
+            <Controller
+              control={control}
+              name='eventDate'
+              defaultValue={new Date()}
+              rules={{ required: true }}
+              render={({ field: { onChange, value }, fieldState }) => (
+                <>
+                  <div className='flex'>
+                    <DatePicker
+                      id='datepick'
+                      selected={value}
+                      onChange={onChange}
+                      minDate={new Date()}
+                      maxDate={yearsFromToday()}
+                      className=' block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+                    />
 
-              <div
-                onClick={() => document.getElementById("datepick")?.focus()}
-                className='flex items-center rounded-r cursor-pointer px-3 border border-gray-300 border-l-0 bg-gray-50 hover:text-indigo-700'>
-                <MdOutlineCalendarToday size={20} />
-              </div>
-            </div>
+                    <div
+                      onClick={() =>
+                        document.getElementById("datepick")?.focus()
+                      }
+                      className='flex items-center rounded-r cursor-pointer px-3 border border-gray-300 border-l-0 bg-gray-50 hover:text-indigo-700'>
+                      <MdOutlineCalendarToday size={20} />
+                    </div>
+                  </div>
+                  {fieldState.error?.type == "required" && (
+                    <ErrorSpan>Date Required</ErrorSpan>
+                  )}
+                </>
+              )}
+            />
           </div>
         </div>
         <div className='col-span-6 md:col-span-2 lg:col-span-1'>
           <label className='text-gray-700'>Event Time</label>
-          <div className='flex'>
-            <Controller
-              control={control}
-              name='eventTime'
-              defaultValue={new Date()}
-              render={({ field: { onChange, value } }) => (
-                <DatePicker
-                  id='timepick'
-                  selected={value}
-                  onChange={onChange}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeIntervals={15}
-                  timeCaption='Time'
-                  dateFormat='h:mm aa'
-                  className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
-                />
-              )}
-            />
 
-            <div
-              onClick={() => document.getElementById("timepick")?.focus()}
-              className='flex items-center rounded-r cursor-pointer px-3 border hover:text-indigo-700 border-gray-300 border-l-0 bg-gray-50'>
-              <MdAccessTime size={20} />
-            </div>
-          </div>
+          <Controller
+            control={control}
+            name='eventTime'
+            defaultValue={new Date()}
+            rules={{ required: true }}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <>
+                <div className='flex'>
+                  <DatePicker
+                    id='timepick'
+                    selected={value}
+                    onChange={onChange}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption='Time'
+                    dateFormat='h:mm aa'
+                    className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+                  />
+                  <div
+                    onClick={() => document.getElementById("timepick")?.focus()}
+                    className='flex items-center rounded-r cursor-pointer px-3 border hover:text-indigo-700 border-gray-300 border-l-0 bg-gray-50'>
+                    <MdAccessTime size={20} />
+                  </div>
+                </div>
+                {fieldState.error?.type == "required" && (
+                  <ErrorSpan>Time Required</ErrorSpan>
+                )}
+              </>
+            )}
+          />
         </div>
         {/* Fill space div */}
         <div className='hidden md:block md:col-span-2 lg:col-span-3'></div>
@@ -145,12 +163,18 @@ export const EventForm: React.FC<{
             name='eventLocation'
             control={control}
             defaultValue={{ id: "", name: "", organizationId: "" }}
-            render={({ field: { onChange, value } }) => (
-              <SingleSelect
-                selected={value}
-                setSelected={onChange}
-                list={locations}
-              />
+            rules={{ validate: { isNull: (v) => v.id != "" } }}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <>
+                <SingleSelect
+                  selected={value}
+                  setSelected={onChange}
+                  list={locations}
+                />
+                {fieldState.error?.type == "isNull" && (
+                  <ErrorSpan>Location Required</ErrorSpan>
+                )}
+              </>
             )}
           />
         </div>

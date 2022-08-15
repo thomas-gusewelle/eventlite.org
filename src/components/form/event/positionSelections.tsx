@@ -9,6 +9,7 @@ import {
 import { trpc } from "../../../utils/trpc";
 import { SingleSelect } from "../singleSelect";
 import { MdAddCircleOutline, MdDelete } from "react-icons/md";
+import { ErrorSpan } from "../../errors/errorSpan";
 
 export const PositionsSelector = () => {
   const rolesQuery = trpc.useQuery(["role.getRolesByOrganization"], {
@@ -22,19 +23,29 @@ export const PositionsSelector = () => {
     },
   });
   const [roles, setRoles] = useState<(Role & { show: boolean })[]>([]);
-  const { control, register, setValue, watch } = useFormContext();
+  const {
+    control,
+    register,
+    setValue,
+    watch,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext();
   const { fields, append, prepend, remove, swap, move, insert, update } =
     useFieldArray({
       name: "positions", // unique name for your Field Array
     });
 
-  const posiitonsField: {
+  type positionField = {
     eventPositionId: string;
     position: { id: string; name: string };
     quantity: number;
-  }[] = watch("positions");
+  };
+
+  const posiitonsField: positionField[] = watch("positions");
 
   useEffect(() => {
+    console.log(posiitonsField);
     if (rolesQuery.data == undefined || posiitonsField == undefined) return;
     const _roles = rolesQuery.data?.map((item) => {
       let isShow = !posiitonsField
@@ -58,6 +69,7 @@ export const PositionsSelector = () => {
     });
   }, [append, posiitonsField?.length]);
 
+  const test = (v: any) => console.log(v);
   return (
     <div className='col-span-6 px-6 mb-6'>
       {/*  */}
@@ -77,37 +89,57 @@ export const PositionsSelector = () => {
               <Controller
                 name={`positions.${index}.position`}
                 control={control}
-                render={({ field }) => (
-                  <SingleSelect
-                    selected={field.value}
-                    // setSelected={field.onChange}
-                    setSelected={(value) =>
-                      update(index, {
-                        eventPositionId: null,
-                        position: value,
-                        quantity: posiitonsField[index]!.quantity,
-                      })
-                    }
-                    list={roles}
-                  />
+                rules={{
+                  validate: {
+                    isNull: (v) => v.id != "",
+                  },
+                }}
+                render={({ field, fieldState }) => (
+                  <>
+                    <SingleSelect
+                      selected={field.value}
+                      // setSelected={field.onChange}
+                      setSelected={(value) => {
+                        update(index, {
+                          eventPositionId: null,
+                          position: value,
+                          quantity: posiitonsField[index]!.quantity,
+                        });
+                        clearErrors(`positions.${index}`);
+                      }}
+                      list={roles}
+                    />
+                    {fieldState.error?.type == "isNull" && (
+                      <ErrorSpan>Position Required</ErrorSpan>
+                    )}
+                  </>
                 )}
               />
             </div>
             <div className='col-span-2'>
               <Controller
                 name={`positions.${index}.quantity`}
-                render={({ field }) => (
-                  <input
-                    // important to include key with field's id
-                    {...field}
-                    // onChange={(e) => {
-                    //   field.onChange(parseInt(e.target.value));
-                    //   setValue(`positions.${index}.eventPositionId`, null);
-                    // }}
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    type='number'
-                    className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md'
-                  />
+                rules={{ min: 1, max: 20 }}
+                render={({ field, fieldState }) => (
+                  <>
+                    <input
+                      // important to include key with field's id
+                      {...field}
+                      // onChange={(e) => {
+                      //   field.onChange(parseInt(e.target.value));
+                      //   setValue(`positions.${index}.eventPositionId`, null);
+                      // }}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      type='number'
+                      className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md'
+                    />
+                    {fieldState.error?.type == "min" && (
+                      <ErrorSpan>Quantity Must Be 1 or More</ErrorSpan>
+                    )}
+                    {fieldState.error?.type == "max" && (
+                      <ErrorSpan>Max Quantity of 20</ErrorSpan>
+                    )}
+                  </>
                 )}
               />
             </div>

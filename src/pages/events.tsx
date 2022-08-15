@@ -213,7 +213,7 @@ const EventsPage = () => {
         {eventsPagianted.map((event) => (
           <div
             key={event.id}
-            className='pt-4 shadow rounded-lg border border-b-gray-300'>
+            className='pt-4 shadow rounded-lg overflow-hidden border border-gray-300'>
             <div className='flex flex-col px-6 mb-4'>
               <div className='flex justify-between'>
                 <h3 className='font-bold text-xl'>{event.name}</h3>
@@ -265,7 +265,7 @@ const EventsPage = () => {
               }
               return positionNum.map((num, index) => (
                 <div
-                  className='grid grid-cols-2 items-center last:pb-0 last:border-b-2 border-t-2'
+                  className='grid grid-cols-2 items-center last:pb-0 last:border-b border-t'
                   key={position.id + index}>
                   <span className='py-3 px-6 font-medium'>
                     {position.Role.name}

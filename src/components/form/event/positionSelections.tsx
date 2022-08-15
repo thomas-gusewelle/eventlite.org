@@ -45,7 +45,6 @@ export const PositionsSelector = () => {
   const posiitonsField: positionField[] = watch("positions");
 
   useEffect(() => {
-    console.log(posiitonsField);
     if (rolesQuery.data == undefined || posiitonsField == undefined) return;
     const _roles = rolesQuery.data?.map((item) => {
       let isShow = !posiitonsField
@@ -69,7 +68,6 @@ export const PositionsSelector = () => {
     });
   }, [append, posiitonsField?.length]);
 
-  const test = (v: any) => console.log(v);
   return (
     <div className='col-span-6 px-6 mb-6'>
       {/*  */}

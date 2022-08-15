@@ -266,7 +266,7 @@ const EventsPage = () => {
               return positionNum.map((num, index) => (
                 <div
                   className='grid grid-cols-2 items-center last:pb-0 last:border-b-2 border-t-2'
-                  key={position.id}>
+                  key={position.id + index}>
                   <span className='py-3 px-6 font-medium'>
                     {position.Role.name}
                   </span>

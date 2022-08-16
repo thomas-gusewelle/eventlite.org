@@ -51,9 +51,53 @@ export const scheduleRouter = createRouter()
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
       if (items?.length > limit) {
-        const nextitem = items?.pop(),
-          nextCursor = nextitem!.id;
+        const nextitem = items?.pop();
+        nextCursor = nextitem!.id;
       }
       return { items, nextCursor };
+    },
+  })
+  .query("getSchedule", {
+    input: z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(),
+      lastCursor: z.string().nullish(),
+    }),
+    async resolve({ input }) {
+      const firstEvent = await prisma?.event.findFirst({
+        where: {
+          datetime: {
+            gte: new Date(),
+          },
+        },
+        orderBy: {
+          datetime: "asc",
+        },
+      });
+
+      const limit = input.limit ?? 50;
+      const { cursor } = input ?? firstEvent?.id;
+      const items = await prisma?.event.findMany({
+        take: limit + 1,
+        where: {
+          datetime: {
+            gte: new Date(),
+          },
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          datetime: "asc",
+        },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      let lastCursor: typeof cursor | undefined = input.lastCursor;
+      if (items == undefined) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+      if (items?.length > limit) {
+        const nextitem = items?.pop();
+        nextCursor = nextitem!.id;
+      }
+      return { items, nextCursor, lastCursor };
     },
   });

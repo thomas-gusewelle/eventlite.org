@@ -7,46 +7,41 @@ import { sidebar } from "../components/layout/sidebar";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { trpc } from "../utils/trpc";
 import { Event } from "@prisma/client";
+import { CircularProgress } from "../components/circularProgress";
+import { TableDropdown } from "../components/menus/tableDropdown";
+import { PicNameRowSmall } from "../components/profile/PicNameRow";
+import { SingleSelect } from "../components/form/singleSelect";
 
 const SchedulePage = () => {
   const utils = trpc.useContext();
   const [cursor, setcursor] = useState<string | null | undefined>(null);
-  const [lastCursor, setLastCursor] = useState<string | null | undefined>(null);
-  const scheduleInfiniteQuery = trpc.useInfiniteQuery(
-    ["schedule.infiniteSchedule", { limit: 1 }],
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      onSuccess(data) {},
-    }
-  );
-  const [data, setData] = useState<{
-    items: Event[];
-    nextCursor: string | undefined;
-    lastCursor: string | null | undefined;
-  }>();
+
   const getScheduleQuery = trpc.useQuery(
-    ["schedule.getSchedule", { limit: 1, cursor: cursor }],
+    ["schedule.getSchedule", { limit: 3, cursor: cursor }],
     {
       keepPreviousData: true,
-
       onSuccess(data) {
-        if (lastCursor == null) {
-          setLastCursor(data.items[0]!.id);
-        }
-
-        setData(data);
+        console.log("this is the data: ", data);
       },
     }
   );
-  useEffect(() => {
-    console.log("thjis is the cuirsor", cursor);
-    console.log("this is the last cursor", lastCursor);
-  }, [cursor, lastCursor]);
 
   const addOptions: TableOptionsDropdown = [
     { name: "New Event", href: "/events/addevent" },
     { name: "From Template", href: "#" },
   ];
+
+  if (
+    getScheduleQuery.data == undefined ||
+    getScheduleQuery.data.users == undefined ||
+    getScheduleQuery.isLoading
+  ) {
+    return (
+      <div className='flex justify-center'>
+        <CircularProgress />
+      </div>
+    );
+  }
   return (
     <>
       <div className='md:hidden grid grid-cols-2 mb-8 gap-4'>
@@ -77,41 +72,79 @@ const SchedulePage = () => {
         </div>
       </div>
       <div>
-        {data?.items.map((item) => (
-          <div key={item.id}>
-            <h1>{item.name}</h1>
-            <p>{item.datetime.toLocaleDateString()}</p>
-          </div>
-        ))}
-      </div>
-      <button
-        onClick={() => setcursor(lastCursor)}
-        className='text-white bg-red-500 p-2 m-2'>
-        get prev page
-      </button>
-      <button
-        onClick={() => setcursor(getScheduleQuery.data?.nextCursor)}
-        className='text-white bg-red-500 p-2 mr-2'>
-        get next page
-      </button>
-
-      {/* <div>
-        {scheduleInfiniteQuery.data?.pages.map((group, i) => (
-          <React.Fragment key={i}>
-            {group.items.map((item) => (
-              <div key={item.id}>
-                <h1 key={item.id}>{item.name}</h1>
-                <p>{item.datetime.toLocaleDateString()}</p>
+        <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 px-6 mb-6'>
+          {getScheduleQuery?.data.items.map((event) => (
+            <div
+              key={event.id}
+              className='pt-4 shadow rounded-lg border border-gray-300'>
+              <div className='flex flex-col px-6 mb-4'>
+                <div className='flex justify-between'>
+                  <h3 className='font-bold text-xl'>{event.name}</h3>
+                </div>
+                <span className='text-lg font-medium'>
+                  {event.Locations?.name}
+                </span>
+                <span>{event.datetime.toLocaleDateString()}</span>
+                <span>
+                  {Intl.DateTimeFormat("en-US", { timeStyle: "short" }).format(
+                    event.datetime
+                  )}
+                </span>
               </div>
-            ))}
-          </React.Fragment>
-        ))}
+              {event.positions.map((position) => {
+                let positionNum = [];
+                for (let i = 1; i <= position.numberNeeded; i++) {
+                  positionNum.push(i);
+                }
+                return positionNum.map((num, index) => (
+                  <div
+                    className='grid grid-cols-2 items-center last:pb-0 last:border-b border-t'
+                    key={position.id + index}>
+                    <span className='py-3 px-6 font-medium'>
+                      {position.Role.name}
+                    </span>
+                    {position.User[index] ? (
+                      <div
+                        className={`flex justify-center h-full py-1 px-3 text-center ${
+                          position.userResponse == null && "bg-gray-100"
+                        }
+                   ${position.userResponse == true && "bg-green-200"}
+                   ${position.userResponse == false && "bg-red-200"}
+                   `}>
+                        <PicNameRowSmall user={position?.User[index]} />
+                      </div>
+                    ) : (
+                      <SingleSelect
+                        selected={{ name: "" }}
+                        setSelected={function (value: any): void {
+                          throw new Error("Function not implemented.");
+                        }}
+                        list={
+                          getScheduleQuery?.data?.users?.map((user) => ({
+                            name: user.firstName + " " + user.lastName,
+                            show: true,
+                          })) || [{ name: "" }]
+                        }
+                      />
+                    )}
+                  </div>
+                ));
+              })}
+            </div>
+          ))}
+        </div>
       </div>
       <button
-        onClick={() => scheduleInfiniteQuery.fetchNextPage()}
-        className='bg-red-500 text-white p-2'>
-        Move Page Forward
-      </button> */}
+        onClick={() => setcursor(getScheduleQuery.data?.lastCursor?.id)}
+        className='text-white bg-red-500 p-2 m-2'>
+        {getScheduleQuery.data?.lastCursor?.datetime.toLocaleDateString()}
+      </button>
+      <button
+        onClick={() => setcursor(getScheduleQuery.data?.nextCursor?.id)}
+        className='text-white bg-red-500 p-2 mr-2'>
+        {getScheduleQuery.data?.nextCursor?.datetime.toLocaleDateString() ||
+          null}
+      </button>
     </>
   );
 };

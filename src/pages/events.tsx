@@ -222,7 +222,7 @@ const EventsPage = () => {
         {eventsPagianted.map((event) => (
           <div
             key={event.id}
-            className='pt-4 shadow rounded-lg overflow-hidden border border-gray-300'>
+            className='pt-4 shadow rounded-lg border border-gray-300'>
             <div className='flex flex-col px-6 mb-4'>
               <div className='flex justify-between'>
                 <h3 className='font-bold text-xl'>{event.name}</h3>

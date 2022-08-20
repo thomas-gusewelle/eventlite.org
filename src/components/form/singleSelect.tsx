@@ -11,12 +11,12 @@ export const SingleSelect: React.FC<{
 	if (!list) return <div></div>;
 
 	return (
-		<div className=" focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border rounded-md">
+		<div className=" block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
 			<Listbox value={selected} onChange={(value) => setSelected(value)}>
 				<div className="relative mt-1 ">
-					<Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-						<div className="flex flex-wrap gap-2 min-h-[1rem]">
-							{selected.name}
+					<Listbox.Button className="relative h-full w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+						<div className="flex min-h-[1.5rem] flex-wrap">
+							{selected.name || ""}
 						</div>
 						<div className="absolute right-1 top-1/2 -translate-y-1/2">
 							<MdOutlineKeyboardArrowDown size={20} className="text-gray-500" />

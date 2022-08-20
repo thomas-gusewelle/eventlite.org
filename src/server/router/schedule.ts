@@ -112,4 +112,39 @@ export const scheduleRouter = createRouter()
 
 			return { items, users, nextCursor, lastCursor };
 		},
+	})
+	.mutation("updateUserRole", {
+		input: z.object({
+			posisitionId: z.string(),
+			userId: z.string(),
+		}),
+		async resolve({ input }) {
+			const position = await prisma?.eventPositions.findFirst({
+				where: {
+					id: input.posisitionId,
+				},
+				select: {
+					numberNeeded: true,
+					User: true,
+				},
+			});
+			if (position?.User.length == position?.numberNeeded) {
+				throw new TRPCError({
+					code: "CONFLICT",
+					message: "Maxiumum number of users for posisition already scheduled.",
+				});
+			}
+			return await prisma?.eventPositions.update({
+				where: {
+					id: input.posisitionId,
+				},
+				data: {
+					User: {
+						connect: {
+							id: input.userId,
+						},
+					},
+				},
+			});
+		},
 	});

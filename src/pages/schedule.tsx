@@ -13,22 +13,29 @@ import { PicNameRowSmall } from "../components/profile/PicNameRow";
 import { SingleSelect } from "../components/form/singleSelect";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { fullName } from "../utils/fullName";
+import { ErrorAlert } from "../components/alerts/errorAlert";
 
 const SchedulePage = () => {
 	const utils = trpc.useContext();
+	const [showConfirm, setShowConfirm] = useState({
+		state: false,
+		message: "Changes Saved",
+	});
 	const [cursor, setcursor] = useState<string | null | undefined>(null);
 
 	const getScheduleQuery = trpc.useQuery(
 		["schedule.getSchedule", { limit: 4, cursor: cursor }],
 		{
 			keepPreviousData: true,
-			onSuccess(data) {
-				console.log("this is the data: ", data);
-			},
+			onSuccess(data) {},
 		}
 	);
 
-	const scheduleUserMutation = trpc.useMutation("schedule.updateUserRole");
+	const scheduleUserMutation = trpc.useMutation("schedule.updateUserRole", {
+		onSuccess() {
+			setShowConfirm({ state: true, message: "Changes Saved" });
+		},
+	});
 
 	const methods = useForm();
 
@@ -55,6 +62,9 @@ const SchedulePage = () => {
 	}
 	return (
 		<>
+			{showConfirm.state && (
+				<ErrorAlert error={showConfirm} setState={setShowConfirm} />
+			)}
 			<form onSubmit={sumbit}>
 				<div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
 					<SectionHeading>Schedule</SectionHeading>
@@ -116,11 +126,16 @@ const SchedulePage = () => {
 															render={({ field, fieldState }) => (
 																<SingleSelect
 																	selected={field.value}
-																	setSelected={(value: User) => {
+																	setSelected={(value) => {
 																		field.onChange(value);
-																		scheduleUserMutation.mutate({
+																		console.log(value);
+																		console.log({
 																			posisitionId: position.id,
 																			userId: value.id,
+																		});
+																		scheduleUserMutation.mutate({
+																			posisitionId: position.id,
+																			userId: value.userId,
 																		});
 																	}}
 																	list={

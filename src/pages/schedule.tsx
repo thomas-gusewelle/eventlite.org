@@ -1,18 +1,16 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { sidebar } from "../components/layout/sidebar";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { trpc } from "../utils/trpc";
-import { Event, Role, User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { CircularProgress } from "../components/circularProgress";
-
-import { SingleSelect } from "../components/form/singleSelect";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { fullName } from "../utils/fullName";
 import { SuccdssAlert } from "../components/alerts/successAlert";
+import { ScheduleSelect } from "../components/form/scheduleSelect";
 
 const SchedulePage = () => {
 	const utils = trpc.useContext();
@@ -150,11 +148,12 @@ const SchedulePage = () => {
 																		position.User[index]?.firstName,
 																		position.User[index]?.lastName
 																	),
+																	userResponce: position.userResponse,
 																} || { name: "" }
 															}
 															control={methods.control}
 															render={({ field, fieldState }) => (
-																<SingleSelect
+																<ScheduleSelect
 																	selected={field.value}
 																	setSelected={(value) => {
 																		field.onChange(value);

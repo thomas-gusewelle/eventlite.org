@@ -11,10 +11,11 @@ export const ScheduleSelect: React.FC<{
   useEffect(() => {
     console.log("Selected: ", selected);
   }, []);
+  list.unshift({ name: "Not Scheduled", show: true });
   if (!list) return <div></div>;
 
   return (
-    <div className=' block w-full border-t first:border-t-0 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm '>
+    <div className='block w-full border-t first:border-t-0 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm '>
       <Listbox
         value={selected}
         onChange={(value) => {

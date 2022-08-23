@@ -161,7 +161,7 @@ const SchedulePage = () => {
                                   ),
                                   userResponce: position.userResponse,
                                   userId: position.User[index]?.id,
-                                } || { name: "" }
+                                } || { name: "Not Scheuled" }
                               }
                               control={methods.control}
                               render={({ field, fieldState }) => (

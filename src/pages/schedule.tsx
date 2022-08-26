@@ -158,11 +158,10 @@ const SchedulePage = () => {
 															name={position.id + index}
 															defaultValue={
 																{
-																	name:
-																		fullName(
-																			position.User[index]?.firstName,
-																			position.User[index]?.lastName
-																		) || "Not Scheduled",
+																	name: fullName(
+																		position.User[index]?.firstName,
+																		position.User[index]?.lastName
+																	),
 																	userResponce: position.userResponse,
 																	userId: position.User[index]?.id,
 																} || { name: "Not Scheuled" }

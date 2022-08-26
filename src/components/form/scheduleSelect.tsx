@@ -57,33 +57,39 @@ export const ScheduleSelect: React.FC<{
 						leaveFrom="opacity-100"
 						leaveTo="opacity-0">
 						<Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-							{filteredPeople.map((item, index) => {
-								if (item.show != false) {
-									return (
-										<Combobox.Option
-											key={index}
-											className={({ active }) =>
-												`relative cursor-default select-none py-2 pl-10 pr-4 ${
-													active ? "bg-indigo-100" : "text-gray-900"
-												}`
-											}
-											value={item}>
-											{({ selected }) => (
-												<>
-													<span
-														className={`block truncate ${
-															selected
-																? "font-medium text-indigo-700"
-																: "font-normal"
-														}`}>
-														{item.name}
-													</span>
-												</>
-											)}
-										</Combobox.Option>
-									);
-								}
-							})}
+							{filteredPeople.length == 0 && query != "" ? (
+								<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+									Nothing found.
+								</div>
+							) : (
+								filteredPeople.map((item, index) => {
+									if (item.show != false) {
+										return (
+											<Combobox.Option
+												key={index}
+												className={({ active }) =>
+													`relative cursor-default select-none py-2 pl-10 pr-4 ${
+														active ? "bg-indigo-100" : "text-gray-900"
+													}`
+												}
+												value={item}>
+												{({ selected }) => (
+													<>
+														<span
+															className={`block truncate ${
+																selected
+																	? "font-medium text-indigo-700"
+																	: "font-normal"
+															}`}>
+															{item.name}
+														</span>
+													</>
+												)}
+											</Combobox.Option>
+										);
+									}
+								})
+							)}
 						</Combobox.Options>
 					</Transition>
 				</div>

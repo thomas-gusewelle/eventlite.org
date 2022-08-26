@@ -1,6 +1,7 @@
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Combobox, Listbox, Transition } from "@headlessui/react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { TiDeleteOutline } from "react-icons/ti";
 
 //this requies data to have an id and name property
 export const ScheduleSelect: React.FC<{
@@ -8,16 +9,18 @@ export const ScheduleSelect: React.FC<{
 	setSelected: Dispatch<SetStateAction<any>>;
 	list: { name: string | null; show: boolean }[];
 }> = ({ selected, setSelected, list }) => {
-	useEffect(() => {
-		list.unshift({ name: "Not Scheduled", show: true });
-	}, []);
-
 	const [query, setQuery] = useState("");
+	const [peopleList, setPeopleList] = useState(list);
 
+	useEffect(() => {
+		setPeopleList(list);
+	}, [list]);
+
+	// list.unshift({ name: "Not Scheduled", show: true });
 	const filteredPeople =
 		query === ""
-			? list
-			: list.filter((person) =>
+			? peopleList
+			: peopleList.filter((person) =>
 					person.name
 						?.toLowerCase()
 						.replace(/\s+/g, "")
@@ -31,21 +34,26 @@ export const ScheduleSelect: React.FC<{
 			<Combobox
 				value={selected}
 				onChange={(value) => {
-					console.log("this is the value", value);
 					setSelected(value);
 				}}>
-				<div className="relative ">
-					<Combobox.Input
-						className={`relative h-full w-full cursor-default py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm
+				<div className="relative flex">
+					<div onClick={() => setSelected()}>
+						<TiDeleteOutline className="text-red-200" size={20} />
+					</div>
+					<Combobox.Button>
+						<Combobox.Input
+							className={`relative h-full w-full cursor-default border-none py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-300 sm:text-sm
                             ${selected.userResponce == null && "bg-gray-100"}
                             ${selected.userResponce == true && "bg-green-200"}
                             ${selected.userResponce == false && "bg-red-200"}`}
-						displayValue={(item: any) => item.name}
-						onChange={(event) => setQuery(event.target.value)}>
-						{/* <div className="flex h-full min-h-[1.5rem] flex-wrap items-center">
+							displayValue={(item: any) => item.name || ""}
+							onChange={(event) => setQuery(event.target.value)}>
+							{/* <div className="flex h-full min-h-[1.5rem] flex-wrap items-center">
 							{selected.name || ""}
 						</div> */}
-					</Combobox.Input>
+						</Combobox.Input>
+					</Combobox.Button>
+
 					<Combobox.Button>
 						<div className="absolute right-1 top-1/2 -translate-y-1/2">
 							<MdOutlineKeyboardArrowDown size={20} className="text-gray-500" />

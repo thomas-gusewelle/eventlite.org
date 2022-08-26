@@ -103,9 +103,11 @@ const SchedulePage = () => {
 		);
 	}
 	return (
-		<>
+		<div className="relative">
 			{showConfirm.state && (
-				<SuccdssAlert error={showConfirm} setState={setShowConfirm} />
+				<div className="sticky top-0 z-30">
+					<SuccdssAlert error={showConfirm} setState={setShowConfirm} />
+				</div>
 			)}
 			<form onSubmit={sumbit}>
 				<div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
@@ -259,7 +261,7 @@ const SchedulePage = () => {
 				</button>
 				<button className="bg-indigo-200">Submit form</button>
 			</form>
-		</>
+		</div>
 	);
 };
 

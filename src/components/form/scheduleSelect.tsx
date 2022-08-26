@@ -36,70 +36,79 @@ export const ScheduleSelect: React.FC<{
 				onChange={(value) => {
 					setSelected(value);
 				}}>
-				<div className="relative flex">
-					<div onClick={() => setSelected()}>
-						<TiDeleteOutline className="text-red-200" size={20} />
-					</div>
-					<Combobox.Button>
-						<Combobox.Input
-							className={`relative h-full w-full cursor-default border-none py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-300 sm:text-sm
+				<div className="flex items-center">
+					<div className="relative">
+						{selected.name != null && (
+							<div
+								className="absolute left-1 top-1/2 z-10 -translate-y-1/2"
+								onClick={() => setSelected({ name: null })}>
+								<TiDeleteOutline className="text-red-400" size={20} />
+							</div>
+						)}
+						<Combobox.Button>
+							<Combobox.Input
+								className={`relative h-full w-full cursor-default border-none py-2 pl-8 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-300 sm:text-sm
                             ${selected.userResponce == null && "bg-gray-100"}
                             ${selected.userResponce == true && "bg-green-200"}
                             ${selected.userResponce == false && "bg-red-200"}`}
-							displayValue={(item: any) => item.name || ""}
-							onChange={(event) => setQuery(event.target.value)}>
-							{/* <div className="flex h-full min-h-[1.5rem] flex-wrap items-center">
+								displayValue={(item: any) => item.name || ""}
+								onChange={(event) => setQuery(event.target.value)}>
+								{/* <div className="flex h-full min-h-[1.5rem] flex-wrap items-center">
 							{selected.name || ""}
 						</div> */}
-						</Combobox.Input>
-					</Combobox.Button>
+							</Combobox.Input>
+						</Combobox.Button>
 
-					<Combobox.Button>
-						<div className="absolute right-1 top-1/2 -translate-y-1/2">
-							<MdOutlineKeyboardArrowDown size={20} className="text-gray-500" />
-						</div>
-					</Combobox.Button>
-					<Transition
-						as={Fragment}
-						leave="transition ease-in duration-100"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0">
-						<Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-							{filteredPeople.length == 0 && query != "" ? (
-								<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-									Nothing found.
-								</div>
-							) : (
-								filteredPeople.map((item, index) => {
-									if (item.show != false) {
-										return (
-											<Combobox.Option
-												key={index}
-												className={({ active }) =>
-													`relative cursor-default select-none py-2 pl-10 pr-4 ${
-														active ? "bg-indigo-100" : "text-gray-900"
-													}`
-												}
-												value={item}>
-												{({ selected }) => (
-													<>
-														<span
-															className={`block truncate ${
-																selected
-																	? "font-medium text-indigo-700"
-																	: "font-normal"
-															}`}>
-															{item.name}
-														</span>
-													</>
-												)}
-											</Combobox.Option>
-										);
-									}
-								})
-							)}
-						</Combobox.Options>
-					</Transition>
+						<Combobox.Button>
+							<div className="absolute right-1 top-1/2 -translate-y-1/2">
+								<MdOutlineKeyboardArrowDown
+									size={20}
+									className="text-gray-500"
+								/>
+							</div>
+						</Combobox.Button>
+						<Transition
+							as={Fragment}
+							leave="transition ease-in duration-100"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0">
+							<Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+								{filteredPeople.length == 0 && query != "" ? (
+									<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+										Nothing found.
+									</div>
+								) : (
+									filteredPeople.map((item, index) => {
+										if (item.show != false) {
+											return (
+												<Combobox.Option
+													key={index}
+													className={({ active }) =>
+														`relative cursor-default select-none py-2 pl-10 pr-4 ${
+															active ? "bg-indigo-100" : "text-gray-900"
+														}`
+													}
+													value={item}>
+													{({ selected }) => (
+														<>
+															<span
+																className={`block truncate ${
+																	selected
+																		? "font-medium text-indigo-700"
+																		: "font-normal"
+																}`}>
+																{item.name}
+															</span>
+														</>
+													)}
+												</Combobox.Option>
+											);
+										}
+									})
+								)}
+							</Combobox.Options>
+						</Transition>
+					</div>
 				</div>
 			</Combobox>
 		</div>

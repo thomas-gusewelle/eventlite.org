@@ -181,11 +181,7 @@ const SchedulePage = () => {
 																				},
 																				{
 																					onSuccess() {
-																						if (
-																							value.name.toLowerCase() ==
-																							"not scheduled"
-																						)
-																							return;
+																						if (value.name == null) return;
 																						scheduleUserMutation.mutate({
 																							posisitionId: position.id,
 																							userId: value.userId,
@@ -194,11 +190,7 @@ const SchedulePage = () => {
 																				}
 																			);
 																		}
-																		if (
-																			value.name.toLowerCase() ==
-																			"not scheduled"
-																		)
-																			return;
+																		if (value.name == null) return;
 																		if (field.value.userId == null) {
 																			scheduleUserMutation.mutate({
 																				posisitionId: position.id,

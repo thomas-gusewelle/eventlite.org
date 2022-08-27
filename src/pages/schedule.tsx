@@ -31,10 +31,6 @@ const SchedulePage = () => {
 		})[]
 	>();
 
-	useEffect(() => {
-		console.log("This is the selected people", selectedPeople);
-	}, [selectedPeople]);
-
 	const getScheduleQuery = trpc.useQuery(
 		["schedule.getSchedule", { limit: 4, cursor: cursor }],
 		{
@@ -248,18 +244,20 @@ const SchedulePage = () => {
 						))}
 					</div>
 				</div>
-				<button
-					onClick={() => setcursor(getScheduleQuery.data?.lastCursor?.id)}
-					className="m-2 bg-red-500 p-2 text-white">
-					{getScheduleQuery.data?.lastCursor?.datetime.toLocaleDateString()}
-				</button>
-				<button
-					onClick={() => setcursor(getScheduleQuery.data?.nextCursor?.id)}
-					className="mr-2 bg-red-500 p-2 text-white">
-					{getScheduleQuery.data?.nextCursor?.datetime.toLocaleDateString() ||
-						null}
-				</button>
-				<button className="bg-indigo-200">Submit form</button>
+				<div className="flex justify-between">
+					<button
+						onClick={() => setcursor(getScheduleQuery.data?.lastCursor?.id)}
+						disabled={getScheduleQuery.data.lastCursor ? false : true}
+						className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+						Prev Page
+					</button>
+					<button
+						onClick={() => setcursor(getScheduleQuery.data?.nextCursor?.id)}
+						disabled={getScheduleQuery.data.nextCursor ? false : true}
+						className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+						Next Page
+					</button>
+				</div>
 			</form>
 		</div>
 	);

@@ -310,7 +310,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 						</nav>
 						{/* Navigation ends */}
 						{/* Remove class [ h-64 ] when adding a card block */}
-						<div className="container mx-auto px-4 py-4 sm:py-10">
+						<div className="pb-42 container mx-auto px-4 pt-4 pb-52 sm:pt-10 2xl:pb-10">
 							{/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
 							<div className="h-full w-full rounded">{children}</div>
 						</div>

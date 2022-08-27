@@ -244,19 +244,25 @@ const SchedulePage = () => {
 						))}
 					</div>
 				</div>
-				<div className="flex justify-between">
-					<button
-						onClick={() => setcursor(getScheduleQuery.data?.lastCursor?.id)}
-						disabled={getScheduleQuery.data.lastCursor ? false : true}
-						className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
-						Prev Page
-					</button>
-					<button
-						onClick={() => setcursor(getScheduleQuery.data?.nextCursor?.id)}
-						disabled={getScheduleQuery.data.nextCursor ? false : true}
-						className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
-						Next Page
-					</button>
+				<div className="mx-6 flex justify-between">
+					{getScheduleQuery.data.lastCursor &&
+						getScheduleQuery.data.lastCursor.datetime.getTime() <
+							getScheduleQuery.data.items[0]!.datetime.getTime() && (
+							<button
+								onClick={() => setcursor(getScheduleQuery.data?.lastCursor?.id)}
+								disabled={getScheduleQuery.data.lastCursor ? false : true}
+								className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+								Prev Page
+							</button>
+						)}
+					{getScheduleQuery.data.nextCursor && (
+						<button
+							onClick={() => setcursor(getScheduleQuery.data?.nextCursor?.id)}
+							disabled={getScheduleQuery.data.nextCursor ? false : true}
+							className="ml-auto inline-flex items-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+							Next Page
+						</button>
+					)}
 				</div>
 			</form>
 		</div>

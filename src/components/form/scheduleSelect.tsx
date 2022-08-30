@@ -42,21 +42,19 @@ export const ScheduleSelect: React.FC<{
 							<button
 								className="absolute left-1 top-1/2 z-10 -translate-y-1/2"
 								onClick={() => setSelected({ name: null })}>
-								<TiDeleteOutline className="text-red-400" size={20} />
+								<TiDeleteOutline className="text-red-400" size={28} />
 							</button>
 						)}
 						<Combobox.Button>
 							<Combobox.Input
-								className={`relative h-full w-full cursor-default border-none py-2 pl-8 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-300 sm:text-sm
+								className={`relative h-12 w-full cursor-default border-none py-2 pl-10 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-300 sm:text-sm
                             ${selected.userResponce == null && "bg-gray-100"}
                             ${selected.userResponce == true && "bg-green-200"}
                             ${selected.userResponce == false && "bg-red-200"}`}
 								displayValue={(item: any) => item.name || ""}
-								onChange={(event) => setQuery(event.target.value)}>
-								{/* <div className="flex h-full min-h-[1.5rem] flex-wrap items-center">
-							{selected.name || ""}
-						</div> */}
-							</Combobox.Input>
+								onChange={(event) =>
+									setQuery(event.target.value)
+								}></Combobox.Input>
 						</Combobox.Button>
 
 						<Combobox.Button>

@@ -11,6 +11,7 @@ import { useForm, FormProvider, Controller } from "react-hook-form";
 import { fullName } from "../utils/fullName";
 import { SuccdssAlert } from "../components/alerts/successAlert";
 import { ScheduleSelect } from "../components/form/scheduleSelect";
+import { LimitSelect } from "../components/form/limitSelect";
 
 const SchedulePage = () => {
 	const utils = trpc.useContext();
@@ -30,9 +31,10 @@ const SchedulePage = () => {
 			roles: Role[];
 		})[]
 	>();
+	const [limit, setLimit] = useState(4);
 
 	const getScheduleQuery = trpc.useQuery(
-		["schedule.getSchedule", { limit: 4, cursor: cursor }],
+		["schedule.getSchedule", { limit: limit, cursor: cursor }],
 		{
 			keepPreviousData: true,
 			onSuccess(data) {
@@ -106,14 +108,18 @@ const SchedulePage = () => {
 				</div>
 			)}
 			<form onSubmit={sumbit}>
-				<div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
+				<div className="mb-8 flex justify-between gap-4 md:hidden">
 					<SectionHeading>Schedule</SectionHeading>
-					<div className="flex justify-end">
-						<AddDropdownMenu options={addOptions} />
+					<div>
+						<span></span>
+						<LimitSelect selected={limit} setSelected={setLimit} />
 					</div>
 				</div>
 				<div className="mb-8 hidden justify-between md:flex">
 					<SectionHeading>Schedule</SectionHeading>
+					<div>
+						<LimitSelect selected={limit} setSelected={setLimit} />
+					</div>
 				</div>
 				<div>
 					<div className="mb-6 grid gap-6 px-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">

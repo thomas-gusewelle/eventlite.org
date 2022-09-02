@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { SectionHeading } from "../components/headers/SectionHeading";
@@ -12,6 +12,7 @@ import { fullName } from "../utils/fullName";
 import { SuccdssAlert } from "../components/alerts/successAlert";
 import { ScheduleSelect } from "../components/form/scheduleSelect";
 import { LimitSelect } from "../components/form/limitSelect";
+import { UserContext } from "../providers/userProvider";
 
 const SchedulePage = () => {
 	const utils = trpc.useContext();
@@ -31,7 +32,10 @@ const SchedulePage = () => {
 			roles: Role[];
 		})[]
 	>();
-	const [limit, setLimit] = useState(4);
+	const user = useContext(UserContext);
+	const [limit, setLimit] = useState(
+		user?.UserSettings?.scheduleShowAmount ?? 4
+	);
 
 	const getScheduleQuery = trpc.useQuery(
 		["schedule.getSchedule", { limit: limit, cursor: cursor }],

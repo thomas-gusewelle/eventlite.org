@@ -22,7 +22,7 @@ import { UserContext, UserProvider } from "../../providers/userProvider";
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 	const sideLinks: { name: string; href: string; icon: IconType }[] = [
 		{ name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
-		{ name: "Schedule", href: "/schedule", icon: MdSchedule },
+		{ name: "Schedule", href: "/schedule?cursor=", icon: MdSchedule },
 		{ name: "Events", href: "/events", icon: MdEvent },
 		{ name: "People", href: "/people", icon: MdPeopleAlt },
 		{ name: "Locations", href: "/locations", icon: FaChurch },

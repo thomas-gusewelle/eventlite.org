@@ -101,6 +101,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 		getScheduleQuery.data == undefined ||
 		getScheduleQuery.data.users == undefined ||
 		getScheduleQuery.isLoading ||
+		getScheduleQuery.isFetching ||
 		poepleList == undefined
 	) {
 		return (
@@ -116,6 +117,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 					<SuccdssAlert error={showConfirm} setState={setShowConfirm} />
 				</div>
 			)}
+
 			<form onSubmit={sumbit}>
 				<div className="mb-8 flex justify-between gap-4 md:hidden">
 					<SectionHeading>Schedule</SectionHeading>

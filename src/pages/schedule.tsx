@@ -162,7 +162,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 										<div
 											className="grid grid-cols-[1fr_1.5fr] border-t last:border-b last:pb-0"
 											key={position.id}>
-											<span className="px-6 font-medium">
+											<span className="flex items-center px-6 font-medium">
 												{position.Role.name}
 											</span>
 											<div>

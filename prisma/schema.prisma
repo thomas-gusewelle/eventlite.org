@@ -49,6 +49,7 @@ model Availability {
   id     String @id @default(cuid())
   User   User   @relation(fields: [userId], references: [id])
   userId String
+  date DateTime
 }
 
 model Organization {

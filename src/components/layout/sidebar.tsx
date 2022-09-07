@@ -7,6 +7,7 @@ import {
 	MdWorkspaces,
 	MdEvent,
 	MdSchedule,
+	MdPermContactCalendar,
 } from "react-icons/md";
 import { FaChurch } from "react-icons/fa";
 import Link from "next/link";
@@ -24,6 +25,11 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 		{ name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
 		{ name: "Schedule", href: "/schedule?cursor=", icon: MdSchedule },
 		{ name: "Events", href: "/events", icon: MdEvent },
+		{
+			name: "Availability",
+			href: "/availability",
+			icon: MdPermContactCalendar,
+		},
 		{ name: "People", href: "/people", icon: MdPeopleAlt },
 		{ name: "Locations", href: "/locations", icon: FaChurch },
 		{ name: "Roles", href: "/roles", icon: MdWorkspaces },

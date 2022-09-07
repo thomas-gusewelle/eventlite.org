@@ -160,12 +160,12 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 									}
 									return (
 										<div
-											className="grid grid-cols-[1fr_1.5fr] border-t last:border-b last:pb-0"
+											className="grid grid-cols-3 border-t last:border-b last:pb-0"
 											key={position.id}>
 											<span className="flex items-center px-6 font-medium">
 												{position.Role.name}
 											</span>
-											<div>
+											<div className="col-span-2">
 												{positionNum.map((num, index) => (
 													<>
 														<Controller

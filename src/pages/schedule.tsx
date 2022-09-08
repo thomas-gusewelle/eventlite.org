@@ -137,7 +137,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 						{getScheduleQuery?.data.items.map((event) => (
 							<div
 								key={event.id}
-								className="flex flex-col rounded-lg border border-gray-300 shadow">
+								className="flex flex-col justify-between rounded-lg border border-gray-300 shadow">
 								<div className=" mb-4 flex flex-col px-6 pt-4">
 									<div className="flex justify-between">
 										<h3 className="text-xl font-bold">{event.name}</h3>
@@ -152,111 +152,113 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 										}).format(event.datetime)}
 									</span>
 								</div>
+								<div>
+									{event.positions.map((position) => {
+										let positionNum = [];
+										for (let i = 1; i <= position.numberNeeded; i++) {
+											positionNum.push(i);
+										}
+										return (
+											<div
+												className="grid grid-cols-3 border-t last:border-b last:pb-0"
+												key={position.id}>
+												<span className="flex items-center px-6 font-medium">
+													{position.Role.name}
+												</span>
+												<div className="col-span-2">
+													{positionNum.map((num, index) => (
+														<>
+															<Controller
+																key={num + index}
+																name={position.id + index}
+																defaultValue={
+																	{
+																		name: fullName(
+																			position.User[index]?.firstName,
+																			position.User[index]?.lastName
+																		),
+																		userResponce: position.userResponse,
+																		userId: position.User[index]?.id,
+																	} || { name: "Not Scheuled" }
+																}
+																control={methods.control}
+																render={({ field, fieldState }) => (
+																	<ScheduleSelect
+																		selected={field.value}
+																		setSelected={(value) => {
+																			field.onChange(value);
 
-								{event.positions.map((position) => {
-									let positionNum = [];
-									for (let i = 1; i <= position.numberNeeded; i++) {
-										positionNum.push(i);
-									}
-									return (
-										<div
-											className="grid grid-cols-3 border-t last:border-b last:pb-0"
-											key={position.id}>
-											<span className="flex items-center px-6 font-medium">
-												{position.Role.name}
-											</span>
-											<div className="col-span-2">
-												{positionNum.map((num, index) => (
-													<>
-														<Controller
-															key={num + index}
-															name={position.id + index}
-															defaultValue={
-																{
-																	name: fullName(
-																		position.User[index]?.firstName,
-																		position.User[index]?.lastName
-																	),
-																	userResponce: position.userResponse,
-																	userId: position.User[index]?.id,
-																} || { name: "Not Scheuled" }
-															}
-															control={methods.control}
-															render={({ field, fieldState }) => (
-																<ScheduleSelect
-																	selected={field.value}
-																	setSelected={(value) => {
-																		field.onChange(value);
-
-																		if (field.value.userId != null) {
-																			removeUserFromPosition.mutate(
-																				{
-																					userId: field.value.userId,
-																					eventPositionId: position.id,
-																				},
-																				{
-																					onSuccess() {
-																						if (value.name == null) return;
-																						scheduleUserMutation.mutate({
-																							posisitionId: position.id,
-																							userId: value.userId,
-																						});
+																			if (field.value.userId != null) {
+																				removeUserFromPosition.mutate(
+																					{
+																						userId: field.value.userId,
+																						eventPositionId: position.id,
 																					},
-																				}
-																			);
-																		}
-																		if (value.name == null) return;
-																		if (field.value.userId == null) {
-																			scheduleUserMutation.mutate({
-																				posisitionId: position.id,
-																				userId: value.userId,
-																			});
-																		}
+																					{
+																						onSuccess() {
+																							if (value.name == null) return;
+																							scheduleUserMutation.mutate({
+																								posisitionId: position.id,
+																								userId: value.userId,
+																							});
+																						},
+																					}
+																				);
+																			}
+																			if (value.name == null) return;
+																			if (field.value.userId == null) {
+																				scheduleUserMutation.mutate({
+																					posisitionId: position.id,
+																					userId: value.userId,
+																				});
+																			}
 
-																		setSelectedPeople([
-																			...(selectedPeople || [
-																				{ userId: "", dateTime: new Date() },
-																			]),
-																			{
-																				userId: value.userId,
-																				dateTime: event.datetime,
-																			},
-																		]);
-																	}}
-																	list={
-																		poepleList
-																			.filter(
-																				(person) =>
-																					person.roles
-																						.map((role) => role.id)
-																						.includes(position.roleId) &&
-																					!selectedPeople
-																						?.filter(
-																							(date) =>
-																								date.dateTime == event.datetime
-																						)
-																						.map((selPer) => selPer.userId)
-																						.includes(person.id)
-																			)
-																			.map((user) => ({
-																				name: fullName(
-																					user.firstName,
-																					user.lastName
-																				),
-																				userId: user.id,
-																				positionId: position.id,
-																				show: true,
-																			})) || [{ name: "" }]
-																	}
-																/>
-															)}
-														/>
-													</>
-												))}
+																			setSelectedPeople([
+																				...(selectedPeople || [
+																					{ userId: "", dateTime: new Date() },
+																				]),
+																				{
+																					userId: value.userId,
+																					dateTime: event.datetime,
+																				},
+																			]);
+																		}}
+																		list={
+																			poepleList
+																				.filter(
+																					(person) =>
+																						person.roles
+																							.map((role) => role.id)
+																							.includes(position.roleId) &&
+																						!selectedPeople
+																							?.filter(
+																								(date) =>
+																									date.dateTime ==
+																									event.datetime
+																							)
+																							.map((selPer) => selPer.userId)
+																							.includes(person.id)
+																				)
+																				.map((user) => ({
+																					name: fullName(
+																						user.firstName,
+																						user.lastName
+																					),
+																					userId: user.id,
+																					positionId: position.id,
+																					show: true,
+																				})) || [{ name: "" }]
+																		}
+																	/>
+																)}
+															/>
+														</>
+													))}
+												</div>
 											</div>
-										</div>
-									);
-								})}
+										);
+									})}
+								</div>
 							</div>
 						))}
 					</div>

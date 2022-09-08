@@ -133,11 +133,11 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 					</div>
 				</div>
 				<div>
-					<div className="mb-6 grid gap-6 px-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+					<div className="mb-6 grid gap-6 px-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 						{getScheduleQuery?.data.items.map((event) => (
 							<div
 								key={event.id}
-								className="flex flex-col justify-between rounded-lg border border-gray-300 shadow">
+								className="flex flex-col rounded-lg border border-gray-300 shadow">
 								<div className=" mb-4 flex flex-col px-6 pt-4">
 									<div className="flex justify-between">
 										<h3 className="text-xl font-bold">{event.name}</h3>

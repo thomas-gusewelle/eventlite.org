@@ -218,11 +218,11 @@ const EventsPage = () => {
 				</div>
 			</div>
 
-			<div className="mb-6 grid grid-cols-1 gap-12 px-6 md:grid-cols-2 xl:grid-cols-3">
+			<div className="mb-6 grid grid-cols-1 gap-12 px-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 				{eventsPagianted.map((event) => (
 					<div
 						key={event.id}
-						className="rounded-lg border border-gray-300 pt-4 shadow">
+						className="flex flex-col rounded-lg border border-gray-300 pt-4 shadow">
 						<div className="mb-4 flex flex-col px-6">
 							<div className="flex justify-between">
 								<h3 className="text-xl font-bold">{event.name}</h3>
@@ -267,36 +267,38 @@ const EventsPage = () => {
 								)}
 							</span>
 						</div>
-						{event.positions.map((position) => {
-							let positionNum = [];
-							for (let i = 1; i <= position.numberNeeded; i++) {
-								positionNum.push(i);
-							}
-							return positionNum.map((num, index) => (
-								<div
-									className="grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0"
-									key={position.id + index}>
-									<span className="py-3 px-6 font-medium">
-										{position.Role.name}
-									</span>
-									{position.User[index] ? (
-										<div
-											className={`flex h-full py-1 px-3 text-center ${
-												position.userResponse == null && "bg-gray-100"
-											}
+						<div className="">
+							{event.positions.map((position) => {
+								let positionNum = [];
+								for (let i = 1; i <= position.numberNeeded; i++) {
+									positionNum.push(i);
+								}
+								return positionNum.map((num, index) => (
+									<div
+										className="grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0"
+										key={position.id + index}>
+										<span className="py-3 px-6 font-medium">
+											{position.Role.name}
+										</span>
+										{position.User[index] ? (
+											<div
+												className={`flex h-full py-1 px-3 text-center ${
+													position.userResponse == null && "bg-gray-100"
+												}
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-											<PicNameRowSmall user={position?.User[index]} />
-										</div>
-									) : (
-										<div className="flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4">
-											Not Scheduled
-										</div>
-									)}
-								</div>
-							));
-						})}
+												<PicNameRowSmall user={position?.User[index]} />
+											</div>
+										) : (
+											<div className="flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4">
+												Not Scheduled
+											</div>
+										)}
+									</div>
+								));
+							})}
+						</div>
 					</div>
 				))}
 			</div>

@@ -110,8 +110,8 @@ const AvailabilityPage = () => {
 								/>
 								<div className="flex flex-col gap-3">
 									{dates.map((date, index) => (
-										<div key={index} className="flex gap-3">
-											<span>{date.toString()}</span>
+										<div key={index} className="grid grid-cols-2 gap-3">
+											<span>{date.toDateString()}</span>
 											<button
 												className="bg-black p-2 text-red-200"
 												onClick={() =>
@@ -121,54 +121,6 @@ const AvailabilityPage = () => {
 											</button>
 										</div>
 									))}
-								</div>
-								<div className="grid grid-cols-2 gap-3">
-									<div className="flex flex-col">
-										<label className="text-gray-700">Start Date</label>
-										<Controller
-											name="startDate"
-											rules={{ required: true }}
-											control={methods.control}
-											defaultValue={new Date()}
-											render={({ field }) => (
-												<DatePicker
-													autoComplete="off"
-													selected={field.value}
-													onChange={(date) => {
-														field.onChange(date);
-														let endDate: Date | null =
-															methods.getValues("endDate");
-														if (endDate && date) {
-															if (endDate.getTime() < date.getTime()) {
-																methods.setValue("endDate", null);
-															}
-														}
-													}}
-													className="m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
-												/>
-											)}
-										/>
-									</div>
-
-									<div>
-										<label className="text-gray-700">End Date</label>
-										<Controller
-											name="endDate"
-											rules={{ required: true }}
-											control={methods.control}
-											defaultValue={null}
-											render={({ field }) => (
-												<DatePicker
-													autoComplete="off"
-													selected={field.value}
-													onChange={field.onChange}
-													minDate={methods.getValues("startDate")}
-													isClearable
-													className="m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
-												/>
-											)}
-										/>
-									</div>
 								</div>
 							</div>
 							{/* {methods.formState.errors.DDate && (

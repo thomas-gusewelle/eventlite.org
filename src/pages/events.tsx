@@ -218,12 +218,12 @@ const EventsPage = () => {
 				</div>
 			</div>
 
-			<div className="mb-6 grid grid-cols-1 gap-12 px-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+			<div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 				{eventsPagianted.map((event) => (
 					<div
 						key={event.id}
 						className="flex flex-col rounded-lg border border-gray-300 pt-4 shadow">
-						<div className="mb-4 flex flex-col px-6">
+						<div className="mb-4 flex flex-col px-3">
 							<div className="flex justify-between">
 								<h3 className="text-xl font-bold">{event.name}</h3>
 								<TableDropdown
@@ -275,9 +275,9 @@ const EventsPage = () => {
 								}
 								return positionNum.map((num, index) => (
 									<div
-										className="grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0"
+										className="grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0"
 										key={position.id + index}>
-										<span className="py-3 px-6 font-medium">
+										<span className="py-3 px-3 font-medium">
 											{position.Role.name}
 										</span>
 										{position.User[index] ? (

@@ -10,7 +10,7 @@ export const avalibiltyRouter = createRouter()
     async resolve({ ctx }) {
       return await prisma?.availability.findMany({
         where: {
-          id: ctx.session?.user.id,
+          userId: ctx.session?.user.id,
           date: {
             gte: new Date(),
           },

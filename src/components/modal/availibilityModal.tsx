@@ -30,13 +30,19 @@ export const AvaililityModal: React.FC<{
     }
   );
 
-  const submit = methods.handleSubmit((data) => {});
+  const submit = () => {
+    updateAvailibility.mutate({
+      newDates: newDates,
+      deleteDates: deletedDates,
+    });
+  };
 
   return (
     <Modal open={open} setOpen={setOpen}>
-      <ModalBody>
-        <ModalTitle text={"Add Unavailable Dates"} />
-        <form onSubmit={submit} className='h-max min-h-[250px]'>
+      <form onSubmit={submit} className='h-max min-h-[250px]'>
+        <ModalBody>
+          <ModalTitle text={"Add Unavailable Dates"} />
+
           <div className='w-full'>
             {/* <label className="text-gray-700">End Date</label> */}
             <div className='mt-6 flex flex-col gap-3'>
@@ -55,6 +61,7 @@ export const AvaililityModal: React.FC<{
                       onChange={(date) => {
                         onChange(date);
                         if (date) {
+                          //checks if the date is included in the new dates list already and removes it. Triggered when a user clicks on a date already highlighted
                           if (
                             newDates
                               .map((item) => item.getTime())
@@ -65,6 +72,18 @@ export const AvaililityModal: React.FC<{
                                 (_date) => _date.getTime() != date.getTime()
                               )
                             );
+                            methods.setValue("Date", null);
+                          } else if (
+                            exisitingDates
+                              .map((item) => item.getTime())
+                              .includes(date.getTime())
+                          ) {
+                            setExisitingDates(
+                              exisitingDates.filter(
+                                (_date) => _date.getTime() != date.getTime()
+                              )
+                            );
+                            setDeletedDates([...deletedDates, date]);
                             methods.setValue("Date", null);
                           } else {
                             setNewDates([...newDates, date]);
@@ -97,16 +116,16 @@ export const AvaililityModal: React.FC<{
                             <span className="text-red-500">End Date Required</span>
                         )} */}
           </div>
-        </form>
-      </ModalBody>
-      <BottomButtons>
-        <BtnSave type={"submit"} />
-        <BtnCancel
-          onClick={() => {
-            setOpen(false);
-          }}
-        />
-      </BottomButtons>
+        </ModalBody>
+        <BottomButtons>
+          <BtnSave type={"button"} onClick={submit} />
+          <BtnCancel
+            onClick={() => {
+              setOpen(false);
+            }}
+          />
+        </BottomButtons>
+      </form>
     </Modal>
   );
 };

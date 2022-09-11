@@ -14,6 +14,7 @@ const AvailabilityPage = () => {
 
   const getDatesQuery = trpc.useQuery(["avalibility.getUserAvalibility"], {
     onSuccess(data) {
+      console.log("this is the data: ", data);
       setDates(data?.map((item) => item.date) ?? []);
     },
   });

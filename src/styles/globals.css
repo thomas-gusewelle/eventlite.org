@@ -15,5 +15,5 @@ div.customDate>div>div>div.react-datepicker__month-container>div.react-datepicke
     border: 2px solid linear-gradient( 174deg, rgba(255, 165, 0, 0.7357317927170868) 32%, rgba(249, 239, 170, 1) 100%);
     border-radius: 0.3rem;
     color: white;
-    background: #9fa8da !important;
+    background: rgb(79 70 229) !important;
 }

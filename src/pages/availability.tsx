@@ -9,7 +9,7 @@ import { ModalTitle } from "../components/modal/modalTitle";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { MdOutlineCalendarToday } from "react-icons/md";
+import { MdDelete, MdOutlineCalendarToday } from "react-icons/md";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { BtnSave } from "../components/btn/btnSave";
 import { BtnCancel } from "../components/btn/btnCancel";
@@ -54,9 +54,9 @@ const AvailabilityPage = () => {
 				<ModalBody>
 					<ModalTitle text={"Add Unavailable Dates"} />
 					<form onSubmit={submit} className="h-max min-h-[250px]">
-						<div className="">
+						<div className="w-full">
 							{/* <label className="text-gray-700">End Date</label> */}
-							<div className="mt-6 flex flex-col gap-3 md:flex-row">
+							<div className="mt-6 flex flex-col gap-3">
 								<Controller
 									name="Date"
 									control={methods.control}
@@ -69,6 +69,7 @@ const AvailabilityPage = () => {
 												id="aDate"
 												autoComplete="off"
 												selected={null}
+												wrapperClassName="datepicker_custom"
 												// onChange={(dates) => {
 												// 	const [start, end] = dates;
 												// 	onChange({ start: start, end: end });
@@ -108,16 +109,18 @@ const AvailabilityPage = () => {
 										</div>
 									)}
 								/>
-								<div className="flex flex-col gap-3">
+								<div className="flex flex-col justify-center gap-3">
 									{dates.map((date, index) => (
-										<div key={index} className="grid grid-cols-2 gap-3">
+										<div
+											key={index}
+											className="grid grid-cols-[2fr_.5fr] gap-3">
 											<span>{date.toDateString()}</span>
 											<button
-												className="bg-black p-2 text-red-200"
+												className="text-red-600"
 												onClick={() =>
 													setDates(dates.filter((item) => item != date))
 												}>
-												Delete
+												<MdDelete size={25} />
 											</button>
 										</div>
 									))}

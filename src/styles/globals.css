@@ -17,3 +17,20 @@ div.customDate>div>div>div.react-datepicker__month-container>div.react-datepicke
     color: white;
     background: rgb(79 70 229) !important;
 }
+
+div.customDate>div>div.react-datepicker {
+    font-size: 1em !important;
+}
+
+div.customDate>div>div.react-datepicker>.react-datepicker__month-container>.react-datepicker__header {
+    padding-top: 0.8em !important;
+}
+
+div.customDate>div>div.react-datepicker>.react-datepicker__month-container>.react-datepicker__month {
+    margin: 0.4em 1em !important;
+}
+
+.datepicker_customer {
+    width: 100%;
+    color: yellow;
+}

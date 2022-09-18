@@ -10,12 +10,13 @@ import { BtnSave } from "../btn/btnSave";
 import { BtnCancel } from "../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
 import { trpc } from "../../utils/trpc";
+import { Availability } from "@prisma/client";
 
 export const AvaililityModal: React.FC<{
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  exisitingDates: Date[];
-  setExisitingDates: Dispatch<SetStateAction<Date[]>>;
+  exisitingDates: Availability[];
+  setExisitingDates: Dispatch<SetStateAction<Availability[]>>;
 }> = ({ open, setOpen, exisitingDates, setExisitingDates }) => {
   const methods = useForm();
   const [newDates, setNewDates] = useState<Date[]>([]);
@@ -58,6 +59,7 @@ export const AvaililityModal: React.FC<{
                       id='aDate'
                       autoComplete='off'
                       selected={null}
+                      minDate={new Date()}
                       onChange={(date) => {
                         onChange(date);
                         if (date) {
@@ -75,12 +77,13 @@ export const AvaililityModal: React.FC<{
                             methods.setValue("Date", null);
                           } else if (
                             exisitingDates
-                              .map((item) => item.getTime())
+                              .map((item) => item.date.getTime())
                               .includes(date.getTime())
                           ) {
                             setExisitingDates(
                               exisitingDates.filter(
-                                (_date) => _date.getTime() != date.getTime()
+                                (_date) =>
+                                  _date.date.getTime() != date.getTime()
                               )
                             );
                             setDeletedDates([...deletedDates, date]);
@@ -90,7 +93,10 @@ export const AvaililityModal: React.FC<{
                           }
                         }
                       }}
-                      highlightDates={[...exisitingDates, ...newDates]}
+                      highlightDates={[
+                        ...exisitingDates.map((item) => item.date),
+                        ...newDates,
+                      ]}
                       inline
                       className='customDate m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
                     />

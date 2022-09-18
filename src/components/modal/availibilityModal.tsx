@@ -21,12 +21,14 @@ export const AvaililityModal: React.FC<{
   const methods = useForm();
   const [newDates, setNewDates] = useState<Date[]>([]);
   const [deletedDates, setDeletedDates] = useState<Date[]>([]);
+  const opts = trpc.useContext();
 
   const updateAvailibility = trpc.useMutation(
     "avalibility.updateUserAvalibility",
     {
       onSuccess() {
         setOpen(false);
+        opts.refetchQueries(["avalibility.getUserAvalibility"]);
       },
     }
   );
@@ -124,7 +126,12 @@ export const AvaililityModal: React.FC<{
           </div>
         </ModalBody>
         <BottomButtons>
-          <BtnSave type={"button"} onClick={submit} />
+          <BtnSave
+            type={"button"}
+            onClick={() => {
+              submit();
+            }}
+          />
           <BtnCancel
             onClick={() => {
               setOpen(false);

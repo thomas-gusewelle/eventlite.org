@@ -40,7 +40,7 @@ const AvailabilityPage = () => {
 
   const deleteDateMutation = trpc.useMutation("avalibility.deleteDate");
 
-  if (pagiantedData == undefined) {
+  if (pagiantedData == undefined || getDatesQuery.isFetching) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />

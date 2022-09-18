@@ -92,7 +92,12 @@ const AvailabilityPage = () => {
               return (
                 <tr key={index} className='border-t last:border-b'>
                   <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
-                    {date.date.toDateString()}
+                    {Intl.DateTimeFormat("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    }).format(date.date)}
                   </td>
                   <td className=''>
                     <TableDropdown options={options} />

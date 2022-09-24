@@ -6,48 +6,61 @@ import { TRPCError } from "@trpc/server";
 import { resolve } from "path";
 
 export const avalibiltyRouter = createRouter()
-  .query("getUserAvalibility", {
-    async resolve({ ctx }) {
-      return await prisma?.availability.findMany({
-        where: {
-          userId: ctx.session?.user.id,
-          date: {
-            gte: new Date(),
-          },
-        },
-      });
-    },
-  })
-  .mutation("updateUserAvalibility", {
-    input: z.object({
-      newDates: z.date().array(),
-      deleteDates: z.date().array(),
-    }),
-    async resolve({ ctx, input }) {
-      const newDates = await prisma?.availability.createMany({
-        data: input.newDates.map((date) => ({
-          userId: ctx.session?.user.id,
-          date: date,
-        })),
-      });
-      const deleteDates = await prisma?.availability.deleteMany({
-        where: {
-          userId: ctx.session?.user.id,
-          date: {
-            in: input.deleteDates,
-          },
-        },
-      });
-      return { newDates: newDates, deletedDates: deleteDates };
-    },
-  })
-  .mutation("deleteDate", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.availability.delete({
-        where: {
-          id: input,
-        },
-      });
-    },
-  });
+	.query("getUserAvalibility", {
+		async resolve({ ctx }) {
+			return await prisma?.availability.findMany({
+				where: {
+					userId: ctx.session?.user.id,
+					date: {
+						gte: new Date(),
+					},
+				},
+			});
+		},
+	})
+	.query("getUserAvalibilityByID", {
+		input: z.string(),
+		async resolve({ input }) {
+			return await prisma?.availability.findMany({
+				where: {
+					userId: input,
+					date: {
+						gte: new Date(),
+					},
+				},
+			});
+		},
+	})
+	.mutation("updateUserAvalibility", {
+		input: z.object({
+			newDates: z.date().array(),
+			deleteDates: z.date().array(),
+		}),
+		async resolve({ ctx, input }) {
+			const newDates = await prisma?.availability.createMany({
+				data: input.newDates.map((date) => ({
+					userId: ctx.session?.user.id,
+					date: date,
+				})),
+			});
+			const deleteDates = await prisma?.availability.deleteMany({
+				where: {
+					userId: ctx.session?.user.id,
+					date: {
+						in: input.deleteDates,
+					},
+				},
+			});
+			return { newDates: newDates, deletedDates: deleteDates };
+		},
+	})
+	.mutation("deleteDate", {
+		input: z.string(),
+		async resolve({ input }) {
+			return await prisma?.availability.delete({
+				where: {
+					id: input,
+				},
+			});
+		},
+	});

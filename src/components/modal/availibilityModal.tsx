@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+	Dispatch,
+	SetStateAction,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
@@ -26,7 +32,6 @@ export const AvaililityModal: React.FC<{
 	const [newDates, setNewDates] = useState<Date[]>([]);
 	const [deletedDates, setDeletedDates] = useState<Date[]>([]);
 	const opts = trpc.useContext();
-	const user = useContext(UserContext);
 
 	const updateAvailibility = trpc.useMutation(
 		"avalibility.updateUserAvalibility",
@@ -37,10 +42,6 @@ export const AvaililityModal: React.FC<{
 			},
 		}
 	);
-
-	const getUsers = trpc.useQuery(["user.getUsersByOrganization"], {
-		enabled: !!(user?.status == "ADMIN"),
-	});
 
 	const submit = () => {
 		updateAvailibility.mutate({
@@ -114,25 +115,7 @@ export const AvaililityModal: React.FC<{
 									</div>
 								)}
 							/>
-							{user?.status == "ADMIN" && (
-								<Controller
-									control={methods.control}
-									name="adminUser"
-									defaultValue={{
-										name: fullName(user.firstName, user.lastName),
-									}}
-									render={({ field }) => (
-										<SingleSelect
-											selected={field.value}
-											setSelected={field.onChange}
-											list={
-												getUsers?.data?.map((user) => ({
-													name: fullName(user.firstName, user.lastName),
-												})) ?? []
-											}></SingleSelect>
-									)}
-								/>
-							)}
+
 							<div className="flex flex-col justify-center gap-3">
 								{newDates.map((date, index) => (
 									<div key={index} className="grid grid-cols-[2fr_.5fr] gap-3">

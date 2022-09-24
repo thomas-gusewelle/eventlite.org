@@ -6,6 +6,7 @@ import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnAdd } from "../components/btn/btnAdd";
 import { CircularProgress } from "../components/circularProgress";
 import { LimitSelect } from "../components/form/limitSelect";
+import { SingleSelect } from "../components/form/singleSelect";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
@@ -54,11 +55,20 @@ const AvailabilityPage = () => {
 	}
 	return (
 		<>
-			<div className="mb-8 flex justify-between gap-4 md:hidden">
+			<div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
 				<SectionHeading>Unavaliable Dates</SectionHeading>
-				<div>
+				<div className="flex justify-end">
 					<BtnAdd onClick={() => setModalOpen(true)} />
-					<LimitSelect selected={limit} setSelected={setLimit} />
+					{/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
+				</div>
+				<div className="col-span-2">
+					<SingleSelect
+						selected={undefined}
+						setSelected={function (value: any): void {
+							throw new Error("Function not implemented.");
+						}}
+						list={[]}
+					/>
 				</div>
 			</div>
 			<div className="mb-8 hidden justify-between md:flex">

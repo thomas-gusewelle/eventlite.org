@@ -75,8 +75,6 @@ export const NewSingleSelect = <List extends Object>({
   setSelected,
   list,
 }: SingleSelectProps<List>) => {
-  if (!list) return <div></div>;
-
   return (
     <div className=' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
       <Listbox value={selected} onChange={(value) => setSelected(value)}>
@@ -96,7 +94,7 @@ export const NewSingleSelect = <List extends Object>({
             leaveTo='opacity-0'>
             <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
               {list.map((item, index) => {
-                if (item.hide == true) {
+                if (item.hide != true) {
                   return (
                     <Listbox.Option
                       key={index}
@@ -114,7 +112,7 @@ export const NewSingleSelect = <List extends Object>({
                                 ? "font-medium text-indigo-700"
                                 : "font-normal"
                             }`}>
-                            {item.label}
+                            {item.label ?? "fhfhfhfhf"}
                           </span>
                         </>
                       )}

@@ -64,9 +64,10 @@ export const SingleSelect: React.FC<{
 };
 
 interface SingleSelectProps<ListItem extends Object> {
-  selected: { item: ListItem; label: string };
-  setSelected: Dispatch<SetStateAction<{ item: ListItem; label: string }>>;
-  list: { item: ListItem; label: string; hide?: boolean }[];
+  selected: ListItem;
+  setSelected: Dispatch<SetStateAction<ListItem>>;
+  list: { item: ListItem; hide?: boolean }[];
+  label: (item: ListItem) => any;
 }
 
 //this requies data to have an id and name property
@@ -74,6 +75,7 @@ export const NewSingleSelect = <List extends Object>({
   selected,
   setSelected,
   list,
+  label,
 }: SingleSelectProps<List>) => {
   return (
     <div className=' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
@@ -81,7 +83,7 @@ export const NewSingleSelect = <List extends Object>({
         <div className='relative mt-1 '>
           <Listbox.Button className='relative h-full w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
             <div className='flex min-h-[1.5rem] flex-wrap'>
-              {selected.label || ""}
+              {label(selected)}
             </div>
             <div className='absolute right-1 top-1/2 -translate-y-1/2'>
               <MdOutlineKeyboardArrowDown size={20} className='text-gray-500' />
@@ -103,7 +105,7 @@ export const NewSingleSelect = <List extends Object>({
                           active ? "bg-indigo-100" : "text-gray-900"
                         }`
                       }
-                      value={item}>
+                      value={item.item}>
                       {({ selected }) => (
                         <>
                           <span
@@ -112,7 +114,7 @@ export const NewSingleSelect = <List extends Object>({
                                 ? "font-medium text-indigo-700"
                                 : "font-normal"
                             }`}>
-                            {item.label ?? "fhfhfhfhf"}
+                            {label(item.item)}
                           </span>
                         </>
                       )}

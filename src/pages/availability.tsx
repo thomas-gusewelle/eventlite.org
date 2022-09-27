@@ -26,10 +26,7 @@ const AvailabilityPage = () => {
     useState<PaginateData<Availability[]>>();
   const [pageNum, setPageNum] = useState(1);
   const user = useContext(UserContext);
-  const [userSelected, setUserSelected] = useState<{
-    item: User;
-    label: string;
-  }>({ item: user!, label: fullName(user?.firstName, user?.lastName) ?? "" });
+  const [userSelected, setUserSelected] = useState<User>(user!);
   const [peopleList, setPeopleList] = useState<{ item: User; label: string }[]>(
     []
   );
@@ -69,7 +66,7 @@ const AvailabilityPage = () => {
   });
 
   const getUserAvailibilityQuery = trpc.useQuery(
-    ["avalibility.getUserAvalibilityByID", userSelected.item.id],
+    ["avalibility.getUserAvalibilityByID", userSelected.id],
     {
       onSuccess(data) {
         setDates(data ?? []);
@@ -102,6 +99,7 @@ const AvailabilityPage = () => {
               selected={userSelected}
               setSelected={setUserSelected}
               list={peopleList}
+              label={(item) => fullName(item.firstName, item.lastName)}
             />
           </div>
         )}

@@ -63,7 +63,9 @@ const AvailabilityPage = () => {
     ["avalibility.getUserAvalibilityByID", userSelected.id],
     {
       onSuccess(data) {
-        setDates(data ?? []);
+        setDates(
+          data?.sort((a, b) => a.date.getTime() - b.date.getTime()) ?? []
+        );
       },
     }
   );

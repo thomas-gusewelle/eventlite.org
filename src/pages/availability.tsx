@@ -31,12 +31,6 @@ const AvailabilityPage = () => {
     []
   );
 
-  // const getDatesQuery = trpc.useQuery(["avalibility.getUserAvalibility"], {
-  //   onSuccess(data) {
-  //     setDates(data ?? []);
-  //   },
-  // });
-
   useEffect(() => {
     if (dates != undefined) {
       const _paginated = paginate(dates, pageNum);
@@ -113,6 +107,7 @@ const AvailabilityPage = () => {
       </div>
 
       <AvaililityModal
+        userId={userSelected.id}
         open={modalOpen}
         setOpen={setModalOpen}
         exisitingDates={dates}

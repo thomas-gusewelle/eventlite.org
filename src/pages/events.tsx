@@ -253,6 +253,7 @@ const EventsPage = () => {
 												eventId.current.id = event.id;
 												setDeleteConfirm(true);
 											},
+											show: event.recurringId ? true : false,
 										},
 									]}
 								/>

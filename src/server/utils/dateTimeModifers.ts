@@ -54,3 +54,11 @@ export function roundHourDown() {
   currentTime.setHours(currentTime.getHours(), 0, 0);
   return currentTime;
 }
+
+export function zeroTime(input: Date | undefined): Date | undefined {
+  if (input == undefined) return undefined;
+  input.setHours(0);
+  input.setMinutes(0);
+  input.setMilliseconds(0);
+  return input;
+}

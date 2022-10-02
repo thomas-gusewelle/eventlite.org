@@ -481,13 +481,19 @@ export const eventsRouter = createRouter()
       });
       // finding if there are same, more, or less new dates than current events
       if (exisitingEvents == undefined) {
-        throw new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "There are no existing events that match this one",
+        });
       }
 
       // They are the same
       if (exisitingEvents.length == input.newDates.length) {
         if (exisitingEvents[0] == undefined) {
-          throw new TRPCError({ code: "BAD_REQUEST" });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "The first existing event does not exist.",
+          });
         }
 
         const differentPositionsId = exisitingEvents[0].positions.filter(
@@ -499,7 +505,10 @@ export const eventsRouter = createRouter()
           exisitingEvents.map(async (oldEvent, index) => {
             let date = input.newDates[index];
             if (date == undefined) {
-              throw new TRPCError({ code: "BAD_REQUEST" });
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Date does not exist.",
+              });
             }
 
             if (differentPositionsId.length == 0) {
@@ -507,10 +516,15 @@ export const eventsRouter = createRouter()
                 const indexOf = oldEvent.positions.findIndex(
                   (obj) => obj.roleId == item.position.roleId
                 );
+                if (indexOf == -1) {
+                  return;
+                }
                 return (
                   oldEvent.positions[indexOf]?.numberNeeded != item.quantity
                 );
               });
+              console.log("this is the old event", oldEvent.positions);
+              console.log("This is the update numebrs", updateNumbers);
 
               if (updateNumbers.length > 0) {
                 await Promise.all(
@@ -520,7 +534,10 @@ export const eventsRouter = createRouter()
                     );
 
                     if (oldNumObj == undefined) {
-                      throw new TRPCError({ code: "BAD_REQUEST" });
+                      throw new TRPCError({
+                        code: "BAD_REQUEST",
+                        message: "Numbers on old positions does not exist.",
+                      });
                     }
                     if (update.quantity < oldNumObj.numberNeeded) {
                       let difference = update.quantity - oldNumObj.numberNeeded;
@@ -587,6 +604,9 @@ export const eventsRouter = createRouter()
                 const indexOf = oldEvent.positions.findIndex(
                   (obj) => obj.roleId == item.position.roleId
                 );
+                if (indexOf == -1) {
+                  return;
+                }
                 return (
                   oldEvent.positions[indexOf]?.numberNeeded != item.quantity
                 );
@@ -681,6 +701,9 @@ export const eventsRouter = createRouter()
                 const indexOf = oldEvent.positions.findIndex(
                   (obj) => obj.roleId == item.position.roleId
                 );
+                if (indexOf == -1) {
+                  return;
+                }
                 return (
                   oldEvent.positions[indexOf]?.numberNeeded != item.quantity
                 );
@@ -761,6 +784,9 @@ export const eventsRouter = createRouter()
                 const indexOf = oldEvent.positions.findIndex(
                   (obj) => obj.roleId == item.position.roleId
                 );
+                if (indexOf == -1) {
+                  return;
+                }
                 return (
                   oldEvent.positions[indexOf]?.numberNeeded != item.quantity
                 );
@@ -889,6 +915,9 @@ export const eventsRouter = createRouter()
                 const indexOf = exisitingEvents[index]!.positions.findIndex(
                   (obj) => obj.roleId == item.position.roleId
                 );
+                if (indexOf == -1) {
+                  return;
+                }
                 return (
                   exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
                   item.quantity
@@ -970,6 +999,9 @@ export const eventsRouter = createRouter()
                 const indexOf = exisitingEvents[index]!.positions.findIndex(
                   (obj) => obj.roleId == item.position.roleId
                 );
+                if (indexOf == -1) {
+                  return;
+                }
                 return (
                   exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
                   item.quantity

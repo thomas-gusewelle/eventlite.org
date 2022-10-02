@@ -27,7 +27,16 @@ model User {
   availability   Availability[]
   hasLogin       Boolean          @default(false)
 
-  @@index([id, organizationId])
+  userSettingsId String?
+  UserSettings   UserSettings?
+  @@index([id, organizationId, userSettingsId])
+}
+
+model UserSettings {
+  id                 String @id @default(cuid())
+  User               User   @relation(fields: [userId], references: [id])
+  userId             String @unique
+  scheduleShowAmount Int    @default(4)
 }
 
 enum UserStatus {
@@ -40,6 +49,7 @@ model Availability {
   id     String @id @default(cuid())
   User   User   @relation(fields: [userId], references: [id])
   userId String
+  date DateTime
 }
 
 model Organization {

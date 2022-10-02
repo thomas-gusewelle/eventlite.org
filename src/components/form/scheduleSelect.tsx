@@ -64,7 +64,7 @@ export const ScheduleSelect: React.FC<{
 						</Combobox.Button>
 
 						<Combobox.Button>
-							<div className="absolute right-3 top-1/2 -translate-y-1/2 bg-gray-100">
+							<div className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-100">
 								<MdOutlineKeyboardArrowDown
 									size={28}
 									className="text-gray-500"

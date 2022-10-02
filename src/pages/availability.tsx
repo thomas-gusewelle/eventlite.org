@@ -98,9 +98,19 @@ const AvailabilityPage = () => {
 			</div>
 			<div className="mb-8 hidden justify-between md:flex">
 				<SectionHeading>Unavailable Dates</SectionHeading>
-				<div>
+				<div className="flex gap-4">
+					{user?.status == "ADMIN" && (
+						<div className="min-w-[10rem]">
+							<NewSingleSelect
+								selected={userSelected}
+								setSelected={setUserSelected}
+								list={peopleList}
+								label={(item) => fullName(item.firstName, item.lastName)}
+							/>
+						</div>
+					)}
 					<BtnAdd onClick={() => setModalOpen(true)} />
-					<LimitSelect selected={limit} setSelected={setLimit} />
+					{/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
 				</div>
 			</div>
 

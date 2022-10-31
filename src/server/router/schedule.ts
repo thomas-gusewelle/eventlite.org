@@ -117,7 +117,7 @@ export const scheduleRouter = createRouter()
       });
 
       // Map creates a copy of the arrary to avoid mutation of the original
-      let gteTime = items.map((item) => ({ item }));
+      let gteTime = items.map((item) => item);
 
       const users = await prisma?.user.findMany({
         where: {

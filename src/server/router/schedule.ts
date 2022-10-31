@@ -23,7 +23,7 @@ export const scheduleRouter = createRouter()
       cursor: z.string().nullish(),
     }),
     async resolve({ input, ctx }) {
-      const limit = input.limit ?? 50;
+      const limit: number = input.limit ?? 50;
       const { cursor } = input;
       const testItems = await prisma?.event.findMany({
         where: {
@@ -67,7 +67,6 @@ export const scheduleRouter = createRouter()
           datetime: "asc",
         },
       });
-      console.log("this is items at beginning: ", items);
 
       const lastItems = await prisma?.event.findMany({
         take: -limit - 1,
@@ -116,8 +115,8 @@ export const scheduleRouter = createRouter()
         },
       });
 
-      // Map creates a copy of the arrary to avoid mutation of the original
-      let gteTime = items.map((item) => item);
+      // This json parsing is a dirty way of deep cloning the array to keep a mutation from happening on line 130
+      let gteTime = JSON.parse(JSON.stringify(items));
 
       const users = await prisma?.user.findMany({
         where: {
@@ -128,7 +127,8 @@ export const scheduleRouter = createRouter()
           availability: {
             where: {
               date: {
-                gte: zeroTime(gteTime[0]?.datetime),
+                // new Date() is required because of the JSON parse/stringify hack
+                gte: zeroTime(new Date(gteTime[0]?.datetime)),
                 lte: zeroTime(nextCursor?.datetime),
               },
             },

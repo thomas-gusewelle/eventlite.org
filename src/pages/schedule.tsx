@@ -60,6 +60,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     {
       keepPreviousData: true,
       onSuccess(data) {
+        console.log("this is the data: ", data);
         let _selectedPeople: { userId: string; dateTime: Date }[] = [];
         data.items.map((item) =>
           item.positions.map((pos) =>
@@ -74,7 +75,6 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
         setSelectedPeople(_selectedPeople);
         setPoepleList(data.users);
-        console.log("this is the users:", data.users);
       },
     }
   );

@@ -23,19 +23,29 @@ export const scheduleRouter = createRouter()
       cursor: z.string().nullish(),
     }),
     async resolve({ input, ctx }) {
-      const firstEvent = await prisma?.event.findFirst({
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
+      const testItems = await prisma?.event.findMany({
         where: {
-          datetime: {
-            gte: new Date(),
-          },
+          datetime: { gte: new Date() },
         },
+        take: 4,
         orderBy: {
           datetime: "asc",
         },
+        include: {
+          Locations: true,
+          positions: {
+            include: {
+              Role: true,
+              User: true,
+            },
+          },
+        },
+        cursor: cursor ? { id: cursor } : undefined,
       });
+      // console.log("this is the test: ", testItems);
 
-      const limit = input.limit ?? 50;
-      const { cursor } = input ?? firstEvent?.id;
       const items = await prisma?.event.findMany({
         take: limit + 1,
         where: {
@@ -57,6 +67,7 @@ export const scheduleRouter = createRouter()
           datetime: "asc",
         },
       });
+      console.log("this is items at beginning: ", items);
 
       const lastItems = await prisma?.event.findMany({
         take: -limit - 1,
@@ -80,6 +91,7 @@ export const scheduleRouter = createRouter()
         const nextitem = items?.pop();
         nextCursor = nextitem;
       }
+
       if (lastItems) {
         if (lastItems[0]?.datetime && nextCursor?.datetime) {
           if (
@@ -94,6 +106,7 @@ export const scheduleRouter = createRouter()
           lastCursor = lastItems[0];
         }
       }
+
       const org = await prisma?.user.findFirst({
         where: {
           id: ctx.session?.user.id,
@@ -102,6 +115,10 @@ export const scheduleRouter = createRouter()
           organizationId: true,
         },
       });
+
+      // Map creates a copy of the arrary to avoid mutation of the original
+      let gteTime = items.map((item) => item);
+
       const users = await prisma?.user.findMany({
         where: {
           organizationId: org?.organizationId,
@@ -111,14 +128,13 @@ export const scheduleRouter = createRouter()
           availability: {
             where: {
               date: {
-                gte: zeroTime(items[0]?.datetime),
+                gte: zeroTime(gteTime[0]?.datetime),
                 lte: zeroTime(nextCursor?.datetime),
               },
             },
           },
         },
       });
-
       return { items, users, nextCursor, lastCursor };
     },
   })

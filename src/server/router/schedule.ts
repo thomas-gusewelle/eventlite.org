@@ -23,19 +23,19 @@ export const scheduleRouter = createRouter()
       cursor: z.string().nullish(),
     }),
     async resolve({ input, ctx }) {
-      const firstEvent = await prisma?.event.findFirst({
-        where: {
-          datetime: {
-            gte: new Date(),
-          },
-        },
-        orderBy: {
-          datetime: "asc",
-        },
-      });
+      // const firstEvent = await prisma?.event.findFirst({
+      //   where: {
+      //     datetime: {
+      //       gte: new Date(),
+      //     },
+      //   },
+      //   orderBy: {
+      //     datetime: "asc",
+      //   },
+      // });
 
       const limit = input.limit ?? 50;
-      const { cursor } = input ?? firstEvent?.id;
+      const { cursor } = input;
       const items = await prisma?.event.findMany({
         take: limit + 1,
         where: {
@@ -118,7 +118,7 @@ export const scheduleRouter = createRouter()
           },
         },
       });
-
+      console.log("this is the items: ", items);
       return { items, users, nextCursor, lastCursor };
     },
   })

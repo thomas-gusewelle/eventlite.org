@@ -21,6 +21,7 @@ import Head from "next/head";
 import { UserContext, UserProvider } from "../../providers/userProvider";
 import { AlertProvider } from "../../providers/alertProvider";
 import { ErrorAlert } from "../alerts/errorAlert";
+import { SuccdssAlert } from "../alerts/successAlert";
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: string; href: string; icon: IconType }[] = [
@@ -325,8 +326,13 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                 <div className='pb-42 container mx-auto px-4 pt-4 pb-52 sm:pt-10 2xl:pb-10'>
                   {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
                   <AlertProvider>
-                    <ErrorAlert />
-                    <div className='h-full w-full rounded'>{children}</div>
+                    <div className='h-full w-full rounded'>
+                      <>
+                        <ErrorAlert />
+                        <SuccdssAlert />
+                        {children}
+                      </>
+                    </div>
                   </AlertProvider>
                 </div>
               </div>

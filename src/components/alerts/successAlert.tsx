@@ -11,6 +11,10 @@ export const SuccdssAlert = () => {
       context.setSuccess({ state: false, message: "" });
     }, 3500);
   }
+
+  if (context.success.state == false) {
+    return null;
+  }
   return (
     <div className='absolute right-0 top-0 z-50 text-green-600'>
       {/* Code block starts */}

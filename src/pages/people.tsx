@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { sidebar } from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
 import { trpc } from "../utils/trpc";
@@ -11,9 +11,10 @@ import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { paginate } from "../utils/paginate";
 import { PaginateData } from "../../types/paginate";
+import { AlertContext } from "../providers/alertProvider";
 
-//TODO add errors to file using new context
 const PeoplePage = () => {
+  const alertContext = useContext(AlertContext);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
   const [peopleUnPageList, setPeopleUnPageList] =
     useState<(User & { roles: Role[] })[]>();
@@ -35,6 +36,10 @@ const PeoplePage = () => {
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
     onError: (error) => {
+      alertContext.setError({
+        message: `Sorry. There was an issue deleting the user. Message: ${error}`,
+        state: true,
+      });
       console.log(error);
     },
     onSuccess: () => {
@@ -49,7 +54,10 @@ const PeoplePage = () => {
     if (adminCount.data == undefined) return;
 
     if (adminCount.data <= 1 && person.status == "ADMIN") {
-      alert("You must have at least one admin user");
+      alertContext.setError({
+        message: "Error. You must have at least one admin account.",
+        state: true,
+      });
       return;
     }
     deleteUser.mutate(person.id);

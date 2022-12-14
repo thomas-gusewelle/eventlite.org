@@ -1,5 +1,5 @@
 import { Locations } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
@@ -17,17 +17,18 @@ import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
 import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
+import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
 const LocationsPage = () => {
+  const alertContext = useContext(AlertContext);
   const [locationList, setLocationList] = useState<Locations[]>();
   const [locationPaginated, setlocationPaginated] = useState<Locations[]>();
   const [pagiantedData, setpagiantedData] =
     useState<PaginateData<Locations[]>>();
   const [pageNum, setPageNum] = useState(1);
   const [editOpen, setEditOpen] = useState(false);
-  const [errorAlert, setErrorAlert] = useState({ state: false, message: "" });
   const [editId, setEditId] = useState<string | null>(null);
   const {
     register,
@@ -41,7 +42,10 @@ const LocationsPage = () => {
       setLocationList(data);
     },
     onError(err) {
-      alert(err.message);
+      alertContext.setError({
+        message: `Error fetching locations. Message: ${err.message}`,
+        state: true,
+      });
     },
   });
 
@@ -54,10 +58,10 @@ const LocationsPage = () => {
         locations.refetch();
       }
     },
-    onError() {
-      setErrorAlert({
+    onError(err) {
+      alertContext.setError({
         state: true,
-        message: "There was an error editing your location. Please try again.",
+        message: `There was an error editing your location. Please try again. ${err.message}`,
       });
     },
   });
@@ -74,10 +78,11 @@ const LocationsPage = () => {
       }
     },
     onError(error, variables, context) {
-      setErrorAlert({
+      alertContext.setError({
         state: true,
-        message: "There was an error editing your location. Please try again.",
+        message: `There was an error editing your location. Please try again. Message: ${error.message}`,
       });
+
       locations.refetch();
     },
     onSuccess() {
@@ -94,9 +99,9 @@ const LocationsPage = () => {
       locations.refetch();
     },
     onError(error, variables, context) {
-      setErrorAlert({
+      alertContext.setError({
         state: true,
-        message: "There was an error deleting your location. Please try again.",
+        message: `There was an error deleting your location. Please try again. Message: ${error.message}`,
       });
       locations.refetch();
     },
@@ -162,7 +167,7 @@ const LocationsPage = () => {
                   type='text'
                   id='name'
                   {...register("name", { required: true, minLength: 3 })}
-                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                  className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
                 />
                 {errors.name && (
                   <span className='text-red-500'>
@@ -183,11 +188,8 @@ const LocationsPage = () => {
         </>
       </Modal>
       <>
-        {errorAlert.state && (
-          <ErrorAlert setState={setErrorAlert} error={errorAlert} />
-        )}
         {/* MD Top Bar */}
-        <div className='md:hidden grid grid-cols-2 mb-8 gap-4'>
+        <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
           <SectionHeading>Locations</SectionHeading>
           <div className='flex justify-end'>
             <BtnAdd
@@ -201,7 +203,7 @@ const LocationsPage = () => {
           <div className='col-span-2'>
             <input
               onChange={(e) => filter(e.target.value)}
-              className='border border-gray-100 focus:outline-none focus:border-indigo-700 rounded-xl w-full text-sm text-gray-500 bg-gray-100 pl-4 py-2'
+              className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
               type='text'
               placeholder='Search'
             />
@@ -209,12 +211,12 @@ const LocationsPage = () => {
         </div>
 
         {/* Desktop Top Bar */}
-        <div className='hidden md:flex justify-between mb-8'>
+        <div className='mb-8 hidden justify-between md:flex'>
           <SectionHeading>Locations</SectionHeading>
           <div className='flex gap-4'>
             <input
               onChange={(e) => filter(e.target.value)}
-              className='border border-gray-100 focus:outline-none focus:border-indigo-700 rounded-xl w-full text-sm text-gray-500 bg-gray-100 pl-4 py-2'
+              className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
               type='text'
               placeholder='Search'
             />
@@ -258,7 +260,7 @@ const LocationsPage = () => {
 
                 return (
                   <tr key={index} className='border-t last:border-b'>
-                    <td className='py-4 md:text-xl text-gray-800 text-base leading-4'>
+                    <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
                       {loc.name}
                     </td>
                     <td>

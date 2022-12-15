@@ -1,5 +1,5 @@
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnCancel } from "../components/btn/btnCancel";
@@ -17,6 +17,7 @@ import { Modal } from "../components/modal/modal";
 import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
+import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
@@ -24,7 +25,7 @@ const filter = (e: string) => {};
 
 const EventsPage = () => {
   const utils = trpc.useContext();
-  const [error, setError] = useState({ state: false, message: "" });
+  const alertContext = useContext(AlertContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
@@ -76,6 +77,12 @@ const EventsPage = () => {
           setEvents(data);
         }
       },
+      onError(err) {
+        alertContext.setError({
+          state: true,
+          message: `There was an error fetching your events. Message: ${err.message}`,
+        });
+      },
     }
   );
 
@@ -94,7 +101,11 @@ const EventsPage = () => {
       }
       setDeleteConfirm(false);
     },
-    onError() {
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error deleting the event. Message: ${err.message}`,
+      });
       if (eventsQuery.data) {
         setEvents(eventsQuery.data);
       }

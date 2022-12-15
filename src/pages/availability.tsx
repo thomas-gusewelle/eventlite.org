@@ -14,12 +14,14 @@ import { sidebar } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
 
 import { AvaililityModal } from "../components/modal/availibilityModal";
+import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { fullName } from "../utils/fullName";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
 const AvailabilityPage = () => {
+  const alertContext = useContext(AlertContext);
   const [limit, setLimit] = useState(4);
   const [modalOpen, setModalOpen] = useState(false);
   const [dates, setDates] = useState<Availability[]>([]);
@@ -45,6 +47,12 @@ const AvailabilityPage = () => {
       setDates(dates.filter((item) => item.id != data?.id));
       // getDatesQuery.refetch();
     },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error deleting this date. Message: ${err.message}`,
+      });
+    },
   });
 
   const getUsersQuery = trpc.useQuery(["user.getUsersByOrganization"], {
@@ -58,6 +66,13 @@ const AvailabilityPage = () => {
         })) ?? []
       );
     },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error fetching the users. Message: ${err.message}`,
+      });
+      getUsersQuery.refetch();
+    },
   });
 
   const getUserAvailibilityQuery = trpc.useQuery(
@@ -67,6 +82,13 @@ const AvailabilityPage = () => {
         setDates(
           data?.sort((a, b) => a.date.getTime() - b.date.getTime()) ?? []
         );
+      },
+      onError(err) {
+        alertContext.setError({
+          state: true,
+          message: `There was an error fetching the user availibility. Message: ${err.message}`,
+        });
+        getUserAvailibilityQuery.refetch();
       },
     }
   );

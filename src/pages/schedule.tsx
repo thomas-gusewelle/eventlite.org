@@ -9,12 +9,12 @@ import { Availability, Role, User } from "@prisma/client";
 import { CircularProgress } from "../components/circularProgress";
 import { useForm, Controller } from "react-hook-form";
 import { fullName } from "../utils/fullName";
-import { SuccdssAlert } from "../components/alerts/successAlert";
+
 import { ScheduleSelect } from "../components/form/scheduleSelect";
 import { LimitSelect } from "../components/form/limitSelect";
 import { UserContext } from "../providers/userProvider";
 import { useRouter } from "next/router";
-import { router } from "@trpc/server";
+
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { Modal } from "../components/modal/modal";
 import { ModalBody } from "../components/modal/modalBody";
@@ -24,6 +24,7 @@ import { BtnDelete } from "../components/btn/btnDelete";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
+import { AlertContext } from "../providers/alertProvider";
 
 const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   cursor,
@@ -33,10 +34,8 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
-  const [showConfirm, setShowConfirm] = useState({
-    state: false,
-    message: "Changes Saved",
-  });
+
+  const alertContext = useContext(AlertContext);
 
   const [selectedPeople, setSelectedPeople] = useState<
     {
@@ -81,7 +80,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   const scheduleUserMutation = trpc.useMutation("schedule.updateUserRole", {
     onSuccess() {
-      setShowConfirm({ state: true, message: "Changes Saved" });
+      alertContext.setSuccess({ state: true, message: "Changes Saved" });
     },
   });
 
@@ -94,7 +93,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         );
       },
       onSuccess() {
-        setShowConfirm({ state: true, message: "Changes Saved" });
+        alertContext.setSuccess({ state: true, message: "Changes Saved" });
       },
     }
   );
@@ -168,12 +167,6 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         </div>
       </Modal>
       <div className='relative'>
-        {showConfirm.state && (
-          <div className='sticky top-0 z-30'>
-            <SuccdssAlert error={showConfirm} setState={setShowConfirm} />
-          </div>
-        )}
-
         <form onSubmit={sumbit}>
           <div className='mb-8 flex justify-between gap-4 md:hidden'>
             <SectionHeading>Schedule</SectionHeading>

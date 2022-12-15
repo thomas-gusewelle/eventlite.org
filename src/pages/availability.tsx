@@ -1,18 +1,16 @@
 import { Availability, User } from "@prisma/client";
 import { useContext, useEffect, useState } from "react";
-
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnAdd } from "../components/btn/btnAdd";
+import { BtnPurple } from "../components/btn/btnPurple";
 import { CircularProgress } from "../components/circularProgress";
 import { longDate } from "../components/dateTime/dates";
-import { LimitSelect } from "../components/form/limitSelect";
-import { NewSingleSelect, SingleSelect } from "../components/form/singleSelect";
+import { NewSingleSelect } from "../components/form/singleSelect";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
-
 import { AvaililityModal } from "../components/modal/availibilityModal";
 import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
@@ -58,7 +56,6 @@ const AvailabilityPage = () => {
   const getUsersQuery = trpc.useQuery(["user.getUsersByOrganization"], {
     enabled: !!(user?.status == "ADMIN"),
     onSuccess(data) {
-      console.log("this is the data, ", data);
       setPeopleList(
         data?.map((user) => ({
           item: user,
@@ -151,44 +148,53 @@ const AvailabilityPage = () => {
           </div>
         ) : (
           <>
-            <div className='w-full'>
-              <table className='w-full table-auto text-left'>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pagiantedData.data.map((date, index) => {
-                    const options: TableOptionsDropdown = [
-                      {
-                        name: "Delete",
-                        function: () => {
-                          deleteDateMutation.mutate(date.id);
-                        },
-                      },
-                    ];
-
-                    return (
-                      <tr key={index} className='border-t last:border-b'>
-                        <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
-                          {longDate(date.date)}
-                        </td>
-                        <td className=''>
-                          <TableDropdown options={options} />
-                        </td>
+            {dates.length <= 0 && (
+              <div className='flex justify-center'>
+                <BtnPurple func={() => setModalOpen(true)}>Add Dates</BtnPurple>
+              </div>
+            )}
+            {dates.length >= 1 && (
+              <>
+                <div className='w-full'>
+                  <table className='w-full table-auto text-left'>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Actions</th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <PaginationBar
-              setPageNum={setPageNum}
-              pageNum={pageNum}
-              paginateData={pagiantedData}
-            />
+                    </thead>
+                    <tbody>
+                      {pagiantedData.data.map((date, index) => {
+                        const options: TableOptionsDropdown = [
+                          {
+                            name: "Delete",
+                            function: () => {
+                              deleteDateMutation.mutate(date.id);
+                            },
+                          },
+                        ];
+
+                        return (
+                          <tr key={index} className='border-t last:border-b'>
+                            <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
+                              {longDate(date.date)}
+                            </td>
+                            <td className=''>
+                              <TableDropdown options={options} />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <PaginationBar
+                  setPageNum={setPageNum}
+                  pageNum={pageNum}
+                  paginateData={pagiantedData}
+                />
+              </>
+            )}
           </>
         )}
       </>

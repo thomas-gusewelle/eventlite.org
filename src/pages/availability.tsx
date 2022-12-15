@@ -33,6 +33,7 @@ const AvailabilityPage = () => {
   );
 
   useEffect(() => {
+    console.log("THis is the dates: ", dates);
     if (dates != undefined) {
       const _paginated = paginate(dates, pageNum);
       setpagiantedData(_paginated);
@@ -43,7 +44,7 @@ const AvailabilityPage = () => {
   const deleteDateMutation = trpc.useMutation("avalibility.deleteDate", {
     onSuccess(data) {
       setDates(dates.filter((item) => item.id != data?.id));
-      // getDatesQuery.refetch();
+      getUserAvailibilityQuery.refetch();
     },
     onError(err) {
       alertContext.setError({

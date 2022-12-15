@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
@@ -23,6 +23,16 @@ export const AvaililityModal: React.FC<{
   const [newDates, setNewDates] = useState<Date[]>([]);
   const [deletedDates, setDeletedDates] = useState<Date[]>([]);
   const opts = trpc.useContext();
+
+  //TODO: fix display of dates below calendar
+  useEffect(() => {
+    setNewDates(
+      newDates.filter((date) =>
+        exisitingDates.map((item) => item.date).includes(date)
+      )
+    );
+    console.log(newDates);
+  }, [exisitingDates]);
 
   const updateAvailibility = trpc.useMutation(
     "avalibility.updateUserAvalibility",

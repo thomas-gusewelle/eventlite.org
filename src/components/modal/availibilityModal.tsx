@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
@@ -17,10 +11,6 @@ import { BtnCancel } from "../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
 import { trpc } from "../../utils/trpc";
 import { Availability } from "@prisma/client";
-import { UserContext } from "../../providers/userProvider";
-import { ScheduleSelect } from "../form/scheduleSelect";
-import { fullName } from "../../utils/fullName";
-import { SingleSelect } from "../form/singleSelect";
 
 export const AvaililityModal: React.FC<{
   userId: string;

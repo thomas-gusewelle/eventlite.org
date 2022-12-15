@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import {
@@ -26,10 +26,11 @@ import { ModalTitle } from "../../../components/modal/modalTitle";
 import { BottomButtons } from "../../../components/modal/bottomButtons";
 import { BtnDelete } from "../../../components/btn/btnDelete";
 import { BtnCancel } from "../../../components/btn/btnCancel";
+import { AlertContext } from "../../../providers/alertProvider";
 
 const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const router = useRouter();
-  const [error, setError] = useState({ state: false, message: "" });
+  const alertContext = useContext(AlertContext);
   const [modifyPositionsConfirm, setModifyPositionsConfirm] = useState(false);
 
   const [formData, setFormData] = useState<EventFormValues | null>(null);
@@ -38,10 +39,10 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
 
   const eventQuery = trpc.useQuery(["events.getEditEvent", id], {
     cacheTime: 0,
-    onError() {
-      setError({
+    onError(err) {
+      alertContext.setError({
         state: true,
-        message: "There was an issue getting your event.",
+        message: `There was an issue getting your event. Message: ${err.message}`,
       });
     },
     onSuccess(data) {
@@ -165,11 +166,10 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           deletePositions: deletePositions.map((item) => item.id),
         },
         {
-          onError() {
-            setError({
+          onError(err) {
+            alertContext.setError({
               state: true,
-              message:
-                "There was an error updating you event. Please try again.",
+              message: `There was an error updating you event. Please try again. ${err.message}`,
             });
           },
           onSuccess() {
@@ -207,10 +207,9 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         },
         {
           onError(error, variables, context) {
-            setError({
+            alertContext.setError({
               state: true,
-              message:
-                "There was an error updating you event. Please try again.",
+              message: `There was an error updating you event. Please try again. ${error.message}`,
             });
           },
           onSuccess() {
@@ -281,8 +280,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
             ? "hidden"
             : "block"
         }`}>
-        {error.state && <ErrorAlert error={error} setState={setError} />}
-
         <div className='mb-8'>
           <SectionHeading>Edit Event</SectionHeading>
         </div>
@@ -294,10 +291,10 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               alreadyRec={alreadyRec}
             />
 
-            <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>
+            <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>
               <button
                 type='submit'
-                className='w-16 h-10 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                className='inline-flex h-10 w-16 items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
                 {editEvent.isLoading ||
                 editRecurringEvent.isLoading ||
                 editEventRecurranceData.isLoading ? (

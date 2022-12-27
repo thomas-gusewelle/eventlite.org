@@ -25,6 +25,7 @@ import { ModalTitle } from "../components/modal/modalTitle";
 import { shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
 import { AlertContext } from "../providers/alertProvider";
+import { BtnPurple } from "../components/btn/btnPurple";
 
 const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   cursor,
@@ -139,6 +140,25 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
       </div>
     );
   }
+
+  if (getScheduleQuery.data?.items.length == 0) {
+    return (
+      <div>
+        <SectionHeading>Schedule</SectionHeading>
+        <div className='ali mt-10 flex flex-col items-center justify-center gap-3'>
+          <h3 className='w-96 text-center text-2xl md:w-auto'>
+            There are no events. Please add an event to schedule.
+          </h3>
+          <div className='flex justify-center'>
+            <BtnPurple func={() => router.push("/events/addevent")}>
+              Add Events
+            </BtnPurple>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>

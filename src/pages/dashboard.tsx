@@ -44,18 +44,14 @@ const Dashboard = () => {
             </div>
             <div className=''>
               {event.positions.map((position) => {
-                let positionNum = [];
-                for (let i = 1; i <= position.numberNeeded; i++) {
-                  positionNum.push(i);
-                }
-                return positionNum.map((num, index) => (
+                return (
                   <div
                     className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
-                    key={position.id + index}>
+                    key={position.id}>
                     <span className='py-3 px-3 font-medium'>
                       {position.Role.name}
                     </span>
-                    {position.User[index] ? (
+                    {position.User ? (
                       <div
                         className={`flex h-full py-1 px-3 text-center ${
                           position.userResponse == null && "bg-gray-100"
@@ -63,7 +59,7 @@ const Dashboard = () => {
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                        <PicNameRowSmall user={position?.User[index]} />
+                        <PicNameRowSmall user={position?.User} />
                       </div>
                     ) : (
                       <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
@@ -71,7 +67,7 @@ const Dashboard = () => {
                       </div>
                     )}
                   </div>
-                ));
+                );
               })}
             </div>
           </div>

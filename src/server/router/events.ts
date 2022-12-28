@@ -60,11 +60,7 @@ export const eventsRouter = createRouter()
           positions: {
             include: {
               Role: true,
-              User: {
-                where: {
-                  id: ctx.session?.user.id,
-                },
-              },
+              User: true,
             },
           },
         },
@@ -192,7 +188,6 @@ export const eventsRouter = createRouter()
             name: z.string(),
             organizationId: z.string().optional(),
           }),
-          quantity: z.number(),
         })
         .array(),
     }),
@@ -212,7 +207,6 @@ export const eventsRouter = createRouter()
           locationsId: input.eventLocation.id,
           positions: {
             create: input.positions.map((item) => ({
-              numberNeeded: item.quantity,
               roleId: item.position.id,
             })),
           },
@@ -421,7 +415,6 @@ export const eventsRouter = createRouter()
             roleName: z.string(),
             organizationId: z.string().optional(),
           }),
-          quantity: z.number(),
         })
         .array(),
       updatePositions: z
@@ -432,7 +425,6 @@ export const eventsRouter = createRouter()
             roleName: z.string(),
             organizationId: z.string().optional(),
           }),
-          quantity: z.number(),
         })
         .array(),
       deletePositions: z.string().array(),
@@ -454,7 +446,6 @@ export const eventsRouter = createRouter()
               id: item.eventPositionId,
             },
             data: {
-              numberNeeded: item.quantity,
               Role: {
                 connect: {
                   id: item.position.roleId,
@@ -474,7 +465,6 @@ export const eventsRouter = createRouter()
           locationsId: input.eventLocation.id,
           positions: {
             create: input.newPositions.map((item) => ({
-              numberNeeded: item.quantity,
               roleId: item.position.roleId,
             })),
           },
@@ -486,636 +476,635 @@ export const eventsRouter = createRouter()
       return events;
     },
   })
-  .mutation("editRecurringEvent", {
-    input: z.object({
-      name: z.string(),
-      eventTime: z.date(),
-      organization: z.string(),
-      recurringId: z.string().optional(),
-      eventLocation: z.object({
-        id: z.string(),
-        name: z.string(),
-        organizationId: z.string(),
-      }),
-      positions: z
-        .object({
-          eventPositionId: z.string().nullable().optional(),
-          position: z.object({
-            roleId: z.string(),
-            roleName: z.string(),
-            organizationId: z.string().optional(),
-          }),
-          quantity: z.number(),
-        })
-        .array(),
-      newDates: z.date().array(),
-    }),
-    async resolve({ input }) {
-      const exisitingEvents = await prisma?.event.findMany({
-        where: {
-          recurringId: input.recurringId,
-        },
-        include: {
-          positions: {
-            include: { Role: true, User: true },
-          },
-        },
-        orderBy: { datetime: "asc" },
-      });
-      // finding if there are same, more, or less new dates than current events
-      if (exisitingEvents == undefined) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "There are no existing events that match this one",
-        });
-      }
+  // .mutation("editRecurringEvent", {
+  //   input: z.object({
+  //     name: z.string(),
+  //     eventTime: z.date(),
+  //     organization: z.string(),
+  //     recurringId: z.string().optional(),
+  //     eventLocation: z.object({
+  //       id: z.string(),
+  //       name: z.string(),
+  //       organizationId: z.string(),
+  //     }),
+  //     positions: z
+  //       .object({
+  //         eventPositionId: z.string().nullable().optional(),
+  //         position: z.object({
+  //           roleId: z.string(),
+  //           roleName: z.string(),
+  //           organizationId: z.string().optional(),
+  //         }),
+  //       })
+  //       .array(),
+  //     newDates: z.date().array(),
+  //   }),
+  //   async resolve({ input }) {
+  //     const exisitingEvents = await prisma?.event.findMany({
+  //       where: {
+  //         recurringId: input.recurringId,
+  //       },
+  //       include: {
+  //         positions: {
+  //           include: { Role: true, User: true },
+  //         },
+  //       },
+  //       orderBy: { datetime: "asc" },
+  //     });
+  //     // finding if there are same, more, or less new dates than current events
+  //     if (exisitingEvents == undefined) {
+  //       throw new TRPCError({
+  //         code: "BAD_REQUEST",
+  //         message: "There are no existing events that match this one",
+  //       });
+  //     }
 
-      // They are the same
-      if (exisitingEvents.length == input.newDates.length) {
-        if (exisitingEvents[0] == undefined) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "The first existing event does not exist.",
-          });
-        }
+  //     // They are the same
+  //     if (exisitingEvents.length == input.newDates.length) {
+  //       if (exisitingEvents[0] == undefined) {
+  //         throw new TRPCError({
+  //           code: "BAD_REQUEST",
+  //           message: "The first existing event does not exist.",
+  //         });
+  //       }
 
-        const differentPositionsId = exisitingEvents[0].positions.filter(
-          (item) =>
-            !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
-        );
+  //       const differentPositionsId = exisitingEvents[0].positions.filter(
+  //         (item) =>
+  //           !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
+  //       );
 
-        const _promises = await Promise.all(
-          exisitingEvents.map(async (oldEvent, index) => {
-            let date = input.newDates[index];
-            if (date == undefined) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Date does not exist.",
-              });
-            }
+  //       const _promises = await Promise.all(
+  //         exisitingEvents.map(async (oldEvent, index) => {
+  //           let date = input.newDates[index];
+  //           if (date == undefined) {
+  //             throw new TRPCError({
+  //               code: "BAD_REQUEST",
+  //               message: "Date does not exist.",
+  //             });
+  //           }
 
-            if (differentPositionsId.length == 0) {
-              const updateNumbers = input.positions.filter((item) => {
-                const indexOf = oldEvent.positions.findIndex(
-                  (obj) => obj.roleId == item.position.roleId
-                );
-                if (indexOf == -1) {
-                  return;
-                }
-                return (
-                  oldEvent.positions[indexOf]?.numberNeeded != item.quantity
-                );
-              });
-              console.log("this is the old event", oldEvent.positions);
-              console.log("This is the update numebrs", updateNumbers);
+  //           if (differentPositionsId.length == 0) {
+  //             const updateNumbers = input.positions.filter((item) => {
+  //               const indexOf = oldEvent.positions.findIndex(
+  //                 (obj) => obj.roleId == item.position.roleId
+  //               );
+  //               if (indexOf == -1) {
+  //                 return;
+  //               }
+  //               return (
+  //                 oldEvent.positions[indexOf]?.numberNeeded != item.quantity
+  //               );
+  //             });
+  //             console.log("this is the old event", oldEvent.positions);
+  //             console.log("This is the update numebrs", updateNumbers);
 
-              if (updateNumbers.length > 0) {
-                await Promise.all(
-                  updateNumbers.map(async (update) => {
-                    let oldNumObj = oldEvent.positions.find(
-                      (old) => old.Role.id == update.position.roleId
-                    );
+  //             if (updateNumbers.length > 0) {
+  //               await Promise.all(
+  //                 updateNumbers.map(async (update) => {
+  //                   let oldNumObj = oldEvent.positions.find(
+  //                     (old) => old.Role.id == update.position.roleId
+  //                   );
 
-                    if (oldNumObj == undefined) {
-                      throw new TRPCError({
-                        code: "BAD_REQUEST",
-                        message: "Numbers on old positions does not exist.",
-                      });
-                    }
-                    if (update.quantity < oldNumObj.numberNeeded) {
-                      let difference = update.quantity - oldNumObj.numberNeeded;
-                      const removeItems = oldNumObj.User.slice(0, difference);
-                      await prisma?.eventPositions.update({
-                        where: { id: oldNumObj.id },
-                        data: {
-                          User: {
-                            disconnect: removeItems.map((item) => ({
-                              id: item.id,
-                            })),
-                          },
-                        },
-                      });
-                    }
-                    await prisma?.eventPositions.updateMany({
-                      where: {
-                        eventId: oldEvent.id,
-                        roleId: update.position.roleId,
-                      },
-                      data: {
-                        numberNeeded: update.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+  //                   if (oldNumObj == undefined) {
+  //                     throw new TRPCError({
+  //                       code: "BAD_REQUEST",
+  //                       message: "Numbers on old positions does not exist.",
+  //                     });
+  //                   }
+  //                   if (update.quantity < oldNumObj.numberNeeded) {
+  //                     let difference = update.quantity - oldNumObj.numberNeeded;
+  //                     const removeItems = oldNumObj.User.slice(0, difference);
+  //                     await prisma?.eventPositions.update({
+  //                       where: { id: oldNumObj.id },
+  //                       data: {
+  //                         User: {
+  //                           disconnect: removeItems.map((item) => ({
+  //                             id: item.id,
+  //                           })),
+  //                         },
+  //                       },
+  //                     });
+  //                   }
+  //                   await prisma?.eventPositions.updateMany({
+  //                     where: {
+  //                       eventId: oldEvent.id,
+  //                       roleId: update.position.roleId,
+  //                     },
+  //                     data: {
+  //                       numberNeeded: update.quantity,
+  //                     },
+  //                   });
+  //                 })
+  //               );
+  //             }
 
-              const newPositions = input.positions.filter(
-                (item) => item.eventPositionId == null
-              );
+  //             const newPositions = input.positions.filter(
+  //               (item) => item.eventPositionId == null
+  //             );
 
-              const event = await prisma?.event.update({
-                data: {
-                  name: input.name,
-                  recurringId: input?.recurringId,
-                  datetime: replaceTime(date, input.eventTime),
-                  organizationId: input.organization,
-                  locationsId: input.eventLocation.id,
-                  positions: {
-                    create: newPositions.map((position) => ({
-                      numberNeeded: position.quantity,
-                      roleId: position.position.roleId,
-                    })),
-                  },
-                },
-                where: {
-                  id: oldEvent.id,
-                },
-              });
-            }
+  //             const event = await prisma?.event.update({
+  //               data: {
+  //                 name: input.name,
+  //                 recurringId: input?.recurringId,
+  //                 datetime: replaceTime(date, input.eventTime),
+  //                 organizationId: input.organization,
+  //                 locationsId: input.eventLocation.id,
+  //                 positions: {
+  //                   create: newPositions.map((position) => ({
+  //                     numberNeeded: position.quantity,
+  //                     roleId: position.position.roleId,
+  //                   })),
+  //                 },
+  //               },
+  //               where: {
+  //                 id: oldEvent.id,
+  //               },
+  //             });
+  //           }
 
-            if (differentPositionsId.length > 0) {
-              await prisma?.eventPositions.deleteMany({
-                where: {
-                  eventId: oldEvent.id,
-                  roleId: {
-                    in: differentPositionsId.map((item) => item.roleId),
-                  },
-                },
-              });
+  //           if (differentPositionsId.length > 0) {
+  //             await prisma?.eventPositions.deleteMany({
+  //               where: {
+  //                 eventId: oldEvent.id,
+  //                 roleId: {
+  //                   in: differentPositionsId.map((item) => item.roleId),
+  //                 },
+  //               },
+  //             });
 
-              const updateNumbers = input.positions.filter((item) => {
-                const indexOf = oldEvent.positions.findIndex(
-                  (obj) => obj.roleId == item.position.roleId
-                );
-                if (indexOf == -1) {
-                  return;
-                }
-                return (
-                  oldEvent.positions[indexOf]?.numberNeeded != item.quantity
-                );
-              });
+  //             const updateNumbers = input.positions.filter((item) => {
+  //               const indexOf = oldEvent.positions.findIndex(
+  //                 (obj) => obj.roleId == item.position.roleId
+  //               );
+  //               if (indexOf == -1) {
+  //                 return;
+  //               }
+  //               return (
+  //                 oldEvent.positions[indexOf]?.numberNeeded != item.quantity
+  //               );
+  //             });
 
-              if (updateNumbers.length > 0) {
-                await Promise.all(
-                  updateNumbers.map(async (update) => {
-                    let oldNumObj = oldEvent.positions.find(
-                      (old) => old.Role.id == update.position.roleId
-                    );
-                    console.log("OldNum", oldNumObj);
-                    if (oldNumObj == undefined) {
-                      throw new TRPCError({ code: "BAD_REQUEST" });
-                    }
-                    if (update.quantity < oldNumObj.numberNeeded) {
-                      let difference = update.quantity - oldNumObj.numberNeeded;
-                      const removeItems = oldNumObj.User.slice(0, difference);
-                      await prisma?.eventPositions.update({
-                        where: { id: oldNumObj.id },
-                        data: {
-                          User: {
-                            disconnect: removeItems.map((item) => ({
-                              id: item.id,
-                            })),
-                          },
-                        },
-                      });
-                    }
-                    await prisma?.eventPositions.updateMany({
-                      where: {
-                        eventId: oldEvent.id,
-                        roleId: update.position.roleId,
-                      },
-                      data: {
-                        numberNeeded: update.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+  //             if (updateNumbers.length > 0) {
+  //               await Promise.all(
+  //                 updateNumbers.map(async (update) => {
+  //                   let oldNumObj = oldEvent.positions.find(
+  //                     (old) => old.Role.id == update.position.roleId
+  //                   );
+  //                   console.log("OldNum", oldNumObj);
+  //                   if (oldNumObj == undefined) {
+  //                     throw new TRPCError({ code: "BAD_REQUEST" });
+  //                   }
+  //                   if (update.quantity < oldNumObj.numberNeeded) {
+  //                     let difference = update.quantity - oldNumObj.numberNeeded;
+  //                     const removeItems = oldNumObj.User.slice(0, difference);
+  //                     await prisma?.eventPositions.update({
+  //                       where: { id: oldNumObj.id },
+  //                       data: {
+  //                         User: {
+  //                           disconnect: removeItems.map((item) => ({
+  //                             id: item.id,
+  //                           })),
+  //                         },
+  //                       },
+  //                     });
+  //                   }
+  //                   await prisma?.eventPositions.updateMany({
+  //                     where: {
+  //                       eventId: oldEvent.id,
+  //                       roleId: update.position.roleId,
+  //                     },
+  //                     data: {
+  //                       numberNeeded: update.quantity,
+  //                     },
+  //                   });
+  //                 })
+  //               );
+  //             }
 
-              let newPositions = input.positions.filter(
-                (item) => item.eventPositionId == null
-              );
+  //             let newPositions = input.positions.filter(
+  //               (item) => item.eventPositionId == null
+  //             );
 
-              const event = await prisma?.event.update({
-                data: {
-                  name: input.name,
-                  recurringId: input?.recurringId,
-                  datetime: replaceTime(date, input.eventTime),
-                  organizationId: input.organization,
-                  locationsId: input.eventLocation.id,
-                  positions: {
-                    create: newPositions.map((item) => ({
-                      numberNeeded: item.quantity,
-                      roleId: item.position.roleId,
-                    })),
-                  },
-                },
-                where: {
-                  id: oldEvent.id,
-                },
-              });
-            }
-          })
-        );
-        return _promises;
-      }
+  //             const event = await prisma?.event.update({
+  //               data: {
+  //                 name: input.name,
+  //                 recurringId: input?.recurringId,
+  //                 datetime: replaceTime(date, input.eventTime),
+  //                 organizationId: input.organization,
+  //                 locationsId: input.eventLocation.id,
+  //                 positions: {
+  //                   create: newPositions.map((item) => ({
+  //                     numberNeeded: item.quantity,
+  //                     roleId: item.position.roleId,
+  //                   })),
+  //                 },
+  //               },
+  //               where: {
+  //                 id: oldEvent.id,
+  //               },
+  //             });
+  //           }
+  //         })
+  //       );
+  //       return _promises;
+  //     }
 
-      //new dates is longer so new events will be created
-      if (exisitingEvents.length < input.newDates.length) {
-        if (exisitingEvents[0] == undefined) {
-          throw new TRPCError({ code: "BAD_REQUEST" });
-        }
+  //     //new dates is longer so new events will be created
+  //     if (exisitingEvents.length < input.newDates.length) {
+  //       if (exisitingEvents[0] == undefined) {
+  //         throw new TRPCError({ code: "BAD_REQUEST" });
+  //       }
 
-        const differentPositionsId = exisitingEvents[0].positions.filter(
-          (item) =>
-            !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
-        );
+  //       const differentPositionsId = exisitingEvents[0].positions.filter(
+  //         (item) =>
+  //           !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
+  //       );
 
-        // this takes care of all of the exisitng events
-        const _promises = await Promise.all(
-          exisitingEvents.map(async (oldEvent, index) => {
-            let date = input.newDates[index];
-            if (date == undefined) {
-              throw new TRPCError({ code: "BAD_REQUEST" });
-            }
+  //       // this takes care of all of the exisitng events
+  //       const _promises = await Promise.all(
+  //         exisitingEvents.map(async (oldEvent, index) => {
+  //           let date = input.newDates[index];
+  //           if (date == undefined) {
+  //             throw new TRPCError({ code: "BAD_REQUEST" });
+  //           }
 
-            if (differentPositionsId.length == 0) {
-              const updateNumbers = input.positions.filter((item) => {
-                const indexOf = oldEvent.positions.findIndex(
-                  (obj) => obj.roleId == item.position.roleId
-                );
-                if (indexOf == -1) {
-                  return;
-                }
-                return (
-                  oldEvent.positions[indexOf]?.numberNeeded != item.quantity
-                );
-              });
+  //           if (differentPositionsId.length == 0) {
+  //             const updateNumbers = input.positions.filter((item) => {
+  //               const indexOf = oldEvent.positions.findIndex(
+  //                 (obj) => obj.roleId == item.position.roleId
+  //               );
+  //               if (indexOf == -1) {
+  //                 return;
+  //               }
+  //               return (
+  //                 oldEvent.positions[indexOf]?.numberNeeded != item.quantity
+  //               );
+  //             });
 
-              if (updateNumbers.length > 0) {
-                await Promise.all(
-                  updateNumbers.map(async (update) => {
-                    let oldNumObj = oldEvent.positions.find(
-                      (old) => old.Role.id == update.position.roleId
-                    );
-                    console.log("OldNum", oldNumObj);
-                    if (oldNumObj == undefined) {
-                      throw new TRPCError({ code: "BAD_REQUEST" });
-                    }
-                    if (update.quantity < oldNumObj.numberNeeded) {
-                      let difference = update.quantity - oldNumObj.numberNeeded;
-                      const removeItems = oldNumObj.User.slice(0, difference);
-                      await prisma?.eventPositions.update({
-                        where: { id: oldNumObj.id },
-                        data: {
-                          User: {
-                            disconnect: removeItems.map((item) => ({
-                              id: item.id,
-                            })),
-                          },
-                        },
-                      });
-                    }
-                    await prisma?.eventPositions.updateMany({
-                      where: {
-                        eventId: oldEvent.id,
-                        roleId: update.position.roleId,
-                      },
-                      data: {
-                        numberNeeded: update.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+  //             if (updateNumbers.length > 0) {
+  //               await Promise.all(
+  //                 updateNumbers.map(async (update) => {
+  //                   let oldNumObj = oldEvent.positions.find(
+  //                     (old) => old.Role.id == update.position.roleId
+  //                   );
+  //                   console.log("OldNum", oldNumObj);
+  //                   if (oldNumObj == undefined) {
+  //                     throw new TRPCError({ code: "BAD_REQUEST" });
+  //                   }
+  //                   if (update.quantity < oldNumObj.numberNeeded) {
+  //                     let difference = update.quantity - oldNumObj.numberNeeded;
+  //                     const removeItems = oldNumObj.User.slice(0, difference);
+  //                     await prisma?.eventPositions.update({
+  //                       where: { id: oldNumObj.id },
+  //                       data: {
+  //                         User: {
+  //                           disconnect: removeItems.map((item) => ({
+  //                             id: item.id,
+  //                           })),
+  //                         },
+  //                       },
+  //                     });
+  //                   }
+  //                   await prisma?.eventPositions.updateMany({
+  //                     where: {
+  //                       eventId: oldEvent.id,
+  //                       roleId: update.position.roleId,
+  //                     },
+  //                     data: {
+  //                       numberNeeded: update.quantity,
+  //                     },
+  //                   });
+  //                 })
+  //               );
+  //             }
 
-              const newPositions = input.positions.filter(
-                (item) => item.eventPositionId == null
-              );
+  //             const newPositions = input.positions.filter(
+  //               (item) => item.eventPositionId == null
+  //             );
 
-              const event = await prisma?.event.update({
-                data: {
-                  name: input.name,
-                  recurringId: input?.recurringId,
-                  datetime: replaceTime(date, input.eventTime),
-                  organizationId: input.organization,
-                  locationsId: input.eventLocation.id,
-                  positions: {
-                    create: newPositions.map((position) => ({
-                      numberNeeded: position.quantity,
-                      roleId: position.position.roleId,
-                    })),
-                  },
-                },
-                where: {
-                  id: oldEvent.id,
-                },
-              });
-            }
+  //             const event = await prisma?.event.update({
+  //               data: {
+  //                 name: input.name,
+  //                 recurringId: input?.recurringId,
+  //                 datetime: replaceTime(date, input.eventTime),
+  //                 organizationId: input.organization,
+  //                 locationsId: input.eventLocation.id,
+  //                 positions: {
+  //                   create: newPositions.map((position) => ({
+  //                     numberNeeded: position.quantity,
+  //                     roleId: position.position.roleId,
+  //                   })),
+  //                 },
+  //               },
+  //               where: {
+  //                 id: oldEvent.id,
+  //               },
+  //             });
+  //           }
 
-            if (differentPositionsId.length > 0) {
-              await prisma?.eventPositions.deleteMany({
-                where: {
-                  eventId: oldEvent.id,
-                  roleId: {
-                    in: differentPositionsId.map((item) => item.roleId),
-                  },
-                },
-              });
+  //           if (differentPositionsId.length > 0) {
+  //             await prisma?.eventPositions.deleteMany({
+  //               where: {
+  //                 eventId: oldEvent.id,
+  //                 roleId: {
+  //                   in: differentPositionsId.map((item) => item.roleId),
+  //                 },
+  //               },
+  //             });
 
-              const updateNumbers = input.positions.filter((item) => {
-                const indexOf = oldEvent.positions.findIndex(
-                  (obj) => obj.roleId == item.position.roleId
-                );
-                if (indexOf == -1) {
-                  return;
-                }
-                return (
-                  oldEvent.positions[indexOf]?.numberNeeded != item.quantity
-                );
-              });
+  //             const updateNumbers = input.positions.filter((item) => {
+  //               const indexOf = oldEvent.positions.findIndex(
+  //                 (obj) => obj.roleId == item.position.roleId
+  //               );
+  //               if (indexOf == -1) {
+  //                 return;
+  //               }
+  //               return (
+  //                 oldEvent.positions[indexOf]?.numberNeeded != item.quantity
+  //               );
+  //             });
 
-              if (updateNumbers.length > 0) {
-                await Promise.all(
-                  updateNumbers.map(async (update) => {
-                    let oldNumObj = oldEvent.positions.find(
-                      (old) => old.Role.id == update.position.roleId
-                    );
-                    console.log("OldNum", oldNumObj);
-                    if (oldNumObj == undefined) {
-                      throw new TRPCError({ code: "BAD_REQUEST" });
-                    }
-                    if (update.quantity < oldNumObj.numberNeeded) {
-                      let difference = update.quantity - oldNumObj.numberNeeded;
-                      const removeItems = oldNumObj.User.slice(0, difference);
-                      await prisma?.eventPositions.update({
-                        where: { id: oldNumObj.id },
-                        data: {
-                          User: {
-                            disconnect: removeItems.map((item) => ({
-                              id: item.id,
-                            })),
-                          },
-                        },
-                      });
-                    }
-                    await prisma?.eventPositions.updateMany({
-                      where: {
-                        eventId: oldEvent.id,
-                        roleId: update.position.roleId,
-                      },
-                      data: {
-                        numberNeeded: update.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+  //             if (updateNumbers.length > 0) {
+  //               await Promise.all(
+  //                 updateNumbers.map(async (update) => {
+  //                   let oldNumObj = oldEvent.positions.find(
+  //                     (old) => old.Role.id == update.position.roleId
+  //                   );
+  //                   console.log("OldNum", oldNumObj);
+  //                   if (oldNumObj == undefined) {
+  //                     throw new TRPCError({ code: "BAD_REQUEST" });
+  //                   }
+  //                   if (update.quantity < oldNumObj.numberNeeded) {
+  //                     let difference = update.quantity - oldNumObj.numberNeeded;
+  //                     const removeItems = oldNumObj.User.slice(0, difference);
+  //                     await prisma?.eventPositions.update({
+  //                       where: { id: oldNumObj.id },
+  //                       data: {
+  //                         User: {
+  //                           disconnect: removeItems.map((item) => ({
+  //                             id: item.id,
+  //                           })),
+  //                         },
+  //                       },
+  //                     });
+  //                   }
+  //                   await prisma?.eventPositions.updateMany({
+  //                     where: {
+  //                       eventId: oldEvent.id,
+  //                       roleId: update.position.roleId,
+  //                     },
+  //                     data: {
+  //                       numberNeeded: update.quantity,
+  //                     },
+  //                   });
+  //                 })
+  //               );
+  //             }
 
-              let newPositions = input.positions.filter(
-                (item) => item.eventPositionId == null
-              );
+  //             let newPositions = input.positions.filter(
+  //               (item) => item.eventPositionId == null
+  //             );
 
-              const event = await prisma?.event.update({
-                data: {
-                  name: input.name,
-                  recurringId: input?.recurringId,
-                  datetime: replaceTime(date, input.eventTime),
-                  organizationId: input.organization,
-                  locationsId: input.eventLocation.id,
-                  positions: {
-                    create: newPositions.map((item) => ({
-                      numberNeeded: item.quantity,
-                      roleId: item.position.roleId,
-                    })),
-                  },
-                },
-                where: {
-                  id: oldEvent.id,
-                },
-              });
-            }
-          })
-        );
+  //             const event = await prisma?.event.update({
+  //               data: {
+  //                 name: input.name,
+  //                 recurringId: input?.recurringId,
+  //                 datetime: replaceTime(date, input.eventTime),
+  //                 organizationId: input.organization,
+  //                 locationsId: input.eventLocation.id,
+  //                 positions: {
+  //                   create: newPositions.map((item) => ({
+  //                     numberNeeded: item.quantity,
+  //                     roleId: item.position.roleId,
+  //                   })),
+  //                 },
+  //               },
+  //               where: {
+  //                 id: oldEvent.id,
+  //               },
+  //             });
+  //           }
+  //         })
+  //       );
 
-        //this takes care of the new events
-        const numOfNew = input.newDates.length - exisitingEvents.length;
-        const newEvents = input.newDates.slice(-numOfNew);
+  //       //this takes care of the new events
+  //       const numOfNew = input.newDates.length - exisitingEvents.length;
+  //       const newEvents = input.newDates.slice(-numOfNew);
 
-        const _createdEvents = await Promise.all(
-          newEvents.map(async (date) => {
-            await prisma?.event.create({
-              data: {
-                name: input.name,
-                datetime: replaceTime(date, input.eventTime),
-                organizationId: input.organization,
-                recurringId: input.recurringId,
-                locationsId: input.eventLocation.id,
-                positions: {
-                  create: input.positions.map((item) => ({
-                    numberNeeded: item.quantity,
-                    roleId: item.position.roleId,
-                  })),
-                },
-              },
-            });
-          })
-        );
-        return [..._promises, ..._createdEvents];
-      }
+  //       const _createdEvents = await Promise.all(
+  //         newEvents.map(async (date) => {
+  //           await prisma?.event.create({
+  //             data: {
+  //               name: input.name,
+  //               datetime: replaceTime(date, input.eventTime),
+  //               organizationId: input.organization,
+  //               recurringId: input.recurringId,
+  //               locationsId: input.eventLocation.id,
+  //               positions: {
+  //                 create: input.positions.map((item) => ({
+  //                   numberNeeded: item.quantity,
+  //                   roleId: item.position.roleId,
+  //                 })),
+  //               },
+  //             },
+  //           });
+  //         })
+  //       );
+  //       return [..._promises, ..._createdEvents];
+  //     }
 
-      //new dates is shorter so last events will be deleted
-      if (exisitingEvents.length > input.newDates.length) {
-        if (exisitingEvents[0] == undefined) {
-          throw new TRPCError({ code: "BAD_REQUEST" });
-        }
+  //     //new dates is shorter so last events will be deleted
+  //     if (exisitingEvents.length > input.newDates.length) {
+  //       if (exisitingEvents[0] == undefined) {
+  //         throw new TRPCError({ code: "BAD_REQUEST" });
+  //       }
 
-        const differentPositionsId = exisitingEvents[0].positions.filter(
-          (item) =>
-            !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
-        );
+  //       const differentPositionsId = exisitingEvents[0].positions.filter(
+  //         (item) =>
+  //           !input.positions.map((inp) => inp.eventPositionId).includes(item.id)
+  //       );
 
-        const numToDelete = input.newDates.length - exisitingEvents.length;
-        const eventsToDelete = exisitingEvents.slice(numToDelete);
+  //       const numToDelete = input.newDates.length - exisitingEvents.length;
+  //       const eventsToDelete = exisitingEvents.slice(numToDelete);
 
-        const _deletes = await prisma?.event.deleteMany({
-          where: {
-            id: {
-              in: eventsToDelete.map((event) => event.id),
-            },
-          },
-        });
+  //       const _deletes = await prisma?.event.deleteMany({
+  //         where: {
+  //           id: {
+  //             in: eventsToDelete.map((event) => event.id),
+  //           },
+  //         },
+  //       });
 
-        const _promises = await Promise.all(
-          input.newDates.map(async (newDate, index) => {
-            let date = input.newDates[index];
-            if (date == undefined) {
-              throw new TRPCError({ code: "BAD_REQUEST" });
-            }
+  //       const _promises = await Promise.all(
+  //         input.newDates.map(async (newDate, index) => {
+  //           let date = input.newDates[index];
+  //           if (date == undefined) {
+  //             throw new TRPCError({ code: "BAD_REQUEST" });
+  //           }
 
-            if (differentPositionsId.length == 0) {
-              const updateNumbers = input.positions.filter((item) => {
-                const indexOf = exisitingEvents[index]!.positions.findIndex(
-                  (obj) => obj.roleId == item.position.roleId
-                );
-                if (indexOf == -1) {
-                  return;
-                }
-                return (
-                  exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
-                  item.quantity
-                );
-              });
+  //           if (differentPositionsId.length == 0) {
+  //             const updateNumbers = input.positions.filter((item) => {
+  //               const indexOf = exisitingEvents[index]!.positions.findIndex(
+  //                 (obj) => obj.roleId == item.position.roleId
+  //               );
+  //               if (indexOf == -1) {
+  //                 return;
+  //               }
+  //               return (
+  //                 exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
+  //                 item.quantity
+  //               );
+  //             });
 
-              if (updateNumbers.length > 0) {
-                await Promise.all(
-                  updateNumbers.map(async (update) => {
-                    let oldNumObj = exisitingEvents[index]!.positions.find(
-                      (old) => old.Role.id == update.position.roleId
-                    );
-                    console.log("OldNum", oldNumObj);
-                    if (oldNumObj == undefined) {
-                      throw new TRPCError({ code: "BAD_REQUEST" });
-                    }
-                    if (update.quantity < oldNumObj.numberNeeded) {
-                      let difference = update.quantity - oldNumObj.numberNeeded;
-                      const removeItems = oldNumObj.User.slice(0, difference);
-                      await prisma?.eventPositions.update({
-                        where: { id: oldNumObj.id },
-                        data: {
-                          User: {
-                            disconnect: removeItems.map((item) => ({
-                              id: item.id,
-                            })),
-                          },
-                        },
-                      });
-                    }
-                    await prisma?.eventPositions.updateMany({
-                      where: {
-                        eventId: exisitingEvents[index]!.id,
-                        roleId: update.position.roleId,
-                      },
-                      data: {
-                        numberNeeded: update.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+  //             if (updateNumbers.length > 0) {
+  //               await Promise.all(
+  //                 updateNumbers.map(async (update) => {
+  //                   let oldNumObj = exisitingEvents[index]!.positions.find(
+  //                     (old) => old.Role.id == update.position.roleId
+  //                   );
+  //                   console.log("OldNum", oldNumObj);
+  //                   if (oldNumObj == undefined) {
+  //                     throw new TRPCError({ code: "BAD_REQUEST" });
+  //                   }
+  //                   if (update.quantity < oldNumObj.numberNeeded) {
+  //                     let difference = update.quantity - oldNumObj.numberNeeded;
+  //                     const removeItems = oldNumObj.User.slice(0, difference);
+  //                     await prisma?.eventPositions.update({
+  //                       where: { id: oldNumObj.id },
+  //                       data: {
+  //                         User: {
+  //                           disconnect: removeItems.map((item) => ({
+  //                             id: item.id,
+  //                           })),
+  //                         },
+  //                       },
+  //                     });
+  //                   }
+  //                   await prisma?.eventPositions.updateMany({
+  //                     where: {
+  //                       eventId: exisitingEvents[index]!.id,
+  //                       roleId: update.position.roleId,
+  //                     },
+  //                     data: {
+  //                       numberNeeded: update.quantity,
+  //                     },
+  //                   });
+  //                 })
+  //               );
+  //             }
 
-              const newPositions = input.positions.filter(
-                (item) => item.eventPositionId == null
-              );
+  //             const newPositions = input.positions.filter(
+  //               (item) => item.eventPositionId == null
+  //             );
 
-              const event = await prisma?.event.update({
-                data: {
-                  name: input.name,
-                  recurringId: input?.recurringId,
-                  datetime: replaceTime(date, input.eventTime),
-                  organizationId: input.organization,
-                  locationsId: input.eventLocation.id,
-                  positions: {
-                    create: newPositions.map((position) => ({
-                      numberNeeded: position.quantity,
-                      roleId: position.position.roleId,
-                    })),
-                  },
-                },
-                where: {
-                  id: exisitingEvents[index]!.id,
-                },
-              });
-            }
+  //             const event = await prisma?.event.update({
+  //               data: {
+  //                 name: input.name,
+  //                 recurringId: input?.recurringId,
+  //                 datetime: replaceTime(date, input.eventTime),
+  //                 organizationId: input.organization,
+  //                 locationsId: input.eventLocation.id,
+  //                 positions: {
+  //                   create: newPositions.map((position) => ({
+  //                     numberNeeded: position.quantity,
+  //                     roleId: position.position.roleId,
+  //                   })),
+  //                 },
+  //               },
+  //               where: {
+  //                 id: exisitingEvents[index]!.id,
+  //               },
+  //             });
+  //           }
 
-            if (differentPositionsId.length > 0) {
-              await prisma?.eventPositions.deleteMany({
-                where: {
-                  eventId: exisitingEvents[index]!.id,
-                  roleId: {
-                    in: differentPositionsId.map((item) => item.roleId),
-                  },
-                },
-              });
+  //           if (differentPositionsId.length > 0) {
+  //             await prisma?.eventPositions.deleteMany({
+  //               where: {
+  //                 eventId: exisitingEvents[index]!.id,
+  //                 roleId: {
+  //                   in: differentPositionsId.map((item) => item.roleId),
+  //                 },
+  //               },
+  //             });
 
-              const updateNumbers = input.positions.filter((item) => {
-                const indexOf = exisitingEvents[index]!.positions.findIndex(
-                  (obj) => obj.roleId == item.position.roleId
-                );
-                if (indexOf == -1) {
-                  return;
-                }
-                return (
-                  exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
-                  item.quantity
-                );
-              });
+  //             const updateNumbers = input.positions.filter((item) => {
+  //               const indexOf = exisitingEvents[index]!.positions.findIndex(
+  //                 (obj) => obj.roleId == item.position.roleId
+  //               );
+  //               if (indexOf == -1) {
+  //                 return;
+  //               }
+  //               return (
+  //                 exisitingEvents[index]!.positions[indexOf]?.numberNeeded !=
+  //                 item.quantity
+  //               );
+  //             });
 
-              if (updateNumbers.length > 0) {
-                await Promise.all(
-                  updateNumbers.map(async (update) => {
-                    let oldNumObj = exisitingEvents[index]!.positions.find(
-                      (old) => old.Role.id == update.position.roleId
-                    );
-                    console.log("OldNum", oldNumObj);
-                    if (oldNumObj == undefined) {
-                      throw new TRPCError({ code: "BAD_REQUEST" });
-                    }
-                    if (update.quantity < oldNumObj.numberNeeded) {
-                      let difference = update.quantity - oldNumObj.numberNeeded;
-                      const removeItems = oldNumObj.User.slice(0, difference);
-                      await prisma?.eventPositions.update({
-                        where: { id: oldNumObj.id },
-                        data: {
-                          User: {
-                            disconnect: removeItems.map((item) => ({
-                              id: item.id,
-                            })),
-                          },
-                        },
-                      });
-                    }
-                    await prisma?.eventPositions.updateMany({
-                      where: {
-                        eventId: exisitingEvents[index]!.id,
-                        roleId: update.position.roleId,
-                      },
-                      data: {
-                        numberNeeded: update.quantity,
-                      },
-                    });
-                  })
-                );
-              }
+  //             if (updateNumbers.length > 0) {
+  //               await Promise.all(
+  //                 updateNumbers.map(async (update) => {
+  //                   let oldNumObj = exisitingEvents[index]!.positions.find(
+  //                     (old) => old.Role.id == update.position.roleId
+  //                   );
+  //                   console.log("OldNum", oldNumObj);
+  //                   if (oldNumObj == undefined) {
+  //                     throw new TRPCError({ code: "BAD_REQUEST" });
+  //                   }
+  //                   if (update.quantity < oldNumObj.numberNeeded) {
+  //                     let difference = update.quantity - oldNumObj.numberNeeded;
+  //                     const removeItems = oldNumObj.User.slice(0, difference);
+  //                     await prisma?.eventPositions.update({
+  //                       where: { id: oldNumObj.id },
+  //                       data: {
+  //                         User: {
+  //                           disconnect: removeItems.map((item) => ({
+  //                             id: item.id,
+  //                           })),
+  //                         },
+  //                       },
+  //                     });
+  //                   }
+  //                   await prisma?.eventPositions.updateMany({
+  //                     where: {
+  //                       eventId: exisitingEvents[index]!.id,
+  //                       roleId: update.position.roleId,
+  //                     },
+  //                     data: {
+  //                       numberNeeded: update.quantity,
+  //                     },
+  //                   });
+  //                 })
+  //               );
+  //             }
 
-              let newPositions = input.positions.filter(
-                (item) => item.eventPositionId == null
-              );
+  //             let newPositions = input.positions.filter(
+  //               (item) => item.eventPositionId == null
+  //             );
 
-              const event = await prisma?.event.update({
-                data: {
-                  name: input.name,
-                  recurringId: input?.recurringId,
-                  datetime: replaceTime(date, input.eventTime),
-                  organizationId: input.organization,
-                  locationsId: input.eventLocation.id,
-                  positions: {
-                    create: newPositions.map((item) => ({
-                      numberNeeded: item.quantity,
-                      roleId: item.position.roleId,
-                    })),
-                  },
-                },
-                where: {
-                  id: exisitingEvents[index]!.id,
-                },
-              });
-            }
-          })
-        );
-      }
-    },
-  })
+  //             const event = await prisma?.event.update({
+  //               data: {
+  //                 name: input.name,
+  //                 recurringId: input?.recurringId,
+  //                 datetime: replaceTime(date, input.eventTime),
+  //                 organizationId: input.organization,
+  //                 locationsId: input.eventLocation.id,
+  //                 positions: {
+  //                   create: newPositions.map((item) => ({
+  //                     numberNeeded: item.quantity,
+  //                     roleId: item.position.roleId,
+  //                   })),
+  //                 },
+  //               },
+  //               where: {
+  //                 id: exisitingEvents[index]!.id,
+  //               },
+  //             });
+  //           }
+  //         })
+  //       );
+  //     }
+  //   },
+  // })
   .mutation("deleteEventById", {
     input: z.object({ id: z.string(), deleteRecurring: z.boolean() }),
     async resolve({ input }) {

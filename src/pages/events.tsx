@@ -23,6 +23,14 @@ import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
+type stateData = (Event & {
+  Locations: Locations | null;
+  positions: (EventPositions & {
+    User: User | null;
+    Role: Role;
+  })[];
+})[];
+
 const EventsPage = () => {
   const utils = trpc.useContext();
   const router = useRouter();
@@ -32,35 +40,9 @@ const EventsPage = () => {
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
 
   const [pageNum, setPageNum] = useState(1);
-  const [paginatedData, setpagiantedData] = useState<
-    PaginateData<
-      (Event & {
-        Locations: Locations | null;
-        positions: (EventPositions & {
-          User: User[];
-          Role: Role;
-        })[];
-      })[]
-    >
-  >();
-  const [events, setEvents] = useState<
-    (Event & {
-      Locations: Locations | null;
-      positions: (EventPositions & {
-        User: User[];
-        Role: Role;
-      })[];
-    })[]
-  >([]);
-  const [eventsPagianted, setEventsPaginated] = useState<
-    (Event & {
-      Locations: Locations | null;
-      positions: (EventPositions & {
-        User: User[];
-        Role: Role;
-      })[];
-    })[]
-  >([]);
+  const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
+  const [events, setEvents] = useState<stateData>([]);
+  const [eventsPagianted, setEventsPaginated] = useState<stateData>([]);
 
   useEffect(() => {
     if (events != undefined) {
@@ -138,12 +120,10 @@ const EventsPage = () => {
           event.positions.some((pos) =>
             pos.Role.name.toLowerCase().includes(key)
           ) ||
-          event.positions.some((pos) =>
-            pos.User.some(
-              (user) =>
-                user.firstName?.toLowerCase().includes(key) ||
-                user.lastName?.toLowerCase().includes(key)
-            )
+          event.positions.some(
+            (pos) =>
+              pos.User?.firstName?.toLowerCase().includes(key) ||
+              pos.User?.lastName?.toLowerCase().includes(key)
           )
         );
       });
@@ -290,18 +270,14 @@ const EventsPage = () => {
             </div>
             <div className=''>
               {event.positions.map((position) => {
-                let positionNum = [];
-                for (let i = 1; i <= position.numberNeeded; i++) {
-                  positionNum.push(i);
-                }
-                return positionNum.map((num, index) => (
+                return (
                   <div
                     className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
-                    key={position.id + index}>
+                    key={position.id}>
                     <span className='py-3 px-3 font-medium'>
                       {position.Role.name}
                     </span>
-                    {position.User[index] ? (
+                    {position.User ? (
                       <div
                         className={`flex h-full py-1 px-3 text-center ${
                           position.userResponse == null && "bg-gray-100"
@@ -309,7 +285,7 @@ const EventsPage = () => {
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                        <PicNameRowSmall user={position?.User[index]} />
+                        <PicNameRowSmall user={position?.User} />
                       </div>
                     ) : (
                       <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
@@ -317,7 +293,7 @@ const EventsPage = () => {
                       </div>
                     )}
                   </div>
-                ));
+                );
               })}
             </div>
           </div>

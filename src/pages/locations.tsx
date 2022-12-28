@@ -10,6 +10,7 @@ import { BtnSave } from "../components/btn/btnSave";
 import { CircularProgress } from "../components/circularProgress";
 import { SearchBar } from "../components/form/SearchBar";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar, SidebarLayout } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
@@ -145,6 +146,55 @@ const LocationsPage = () => {
       <div className='flex justify-center'>
         <CircularProgress />
       </div>
+    );
+  }
+
+  if (locations.data?.length == 0) {
+    return (
+      <>
+        <NoDataLayout
+          heading='Locations'
+          btnText='Add Location'
+          func={() => setEditOpen(true)}
+        />
+        <Modal open={editOpen} setOpen={setEditOpen}>
+          <>
+            <form onSubmit={submit}>
+              <ModalBody>
+                <ModalTitle
+                  text={editId == null ? "Add Location" : "Edit Location"}
+                />
+                <div className='mt-2'>
+                  <label
+                    htmlFor='name'
+                    className='block text-sm font-medium text-gray-700'>
+                    Location Name
+                  </label>
+                  <input
+                    type='text'
+                    id='name'
+                    {...register("name", { required: true, minLength: 3 })}
+                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                  />
+                  {errors.name && (
+                    <span className='text-red-500'>
+                      Location Name is Required
+                    </span>
+                  )}
+                </div>
+              </ModalBody>
+              <BottomButtons>
+                <BtnSave type={"submit"} />
+                <BtnCancel
+                  onClick={() => {
+                    setEditOpen(false);
+                  }}
+                />
+              </BottomButtons>
+            </form>
+          </>
+        </Modal>
+      </>
     );
   }
 

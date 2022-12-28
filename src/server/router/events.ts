@@ -32,6 +32,49 @@ export const eventsRouter = createRouter()
       });
     },
   })
+  .query("getUpcomingEventsByUser", {
+    input: z.object({
+      limit: z.number().optional(),
+      page: z.number(),
+    }),
+    async resolve({ ctx, input }) {
+      console.log(ctx.session?.user);
+
+      const positions = await prisma?.eventPositions.findMany({
+        where: {
+          // User: ctx.session?.user.id,
+          User: {},
+        },
+      });
+      console.log(positions);
+      const limit: number = input.limit ?? 3;
+      return await prisma?.event.findMany({
+        where: {
+          datetime: {
+            gte: roundHourDown(),
+          },
+        },
+
+        include: {
+          Locations: true,
+          positions: {
+            include: {
+              Role: true,
+              User: {
+                where: {
+                  id: ctx.session?.user.id,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          datetime: "asc",
+        },
+        take: limit,
+      });
+    },
+  })
   .query("getPastEventsByOrganization", {
     async resolve({ ctx }) {
       const org = await prisma?.user.findFirst({

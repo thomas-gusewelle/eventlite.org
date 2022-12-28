@@ -12,9 +12,12 @@ import { PaginationBar } from "../components/layout/pagination-bar";
 import { paginate } from "../utils/paginate";
 import { PaginateData } from "../../types/paginate";
 import { AlertContext } from "../providers/alertProvider";
+import { NoDataLayout } from "../components/layout/no-data-layout";
+import { useRouter } from "next/router";
 
 const PeoplePage = () => {
   const alertContext = useContext(AlertContext);
+  const router = useRouter();
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
   const [peopleUnPageList, setPeopleUnPageList] =
     useState<(User & { roles: Role[] })[]>();
@@ -110,6 +113,16 @@ const PeoplePage = () => {
       <div className='flex justify-center'>
         <CircularProgress />
       </div>
+    );
+  }
+
+  if (people.data?.length == 0) {
+    return (
+      <NoDataLayout
+        heading='Users'
+        btnText='Add User'
+        func={() => router.push("/people/adduser")}
+      />
     );
   }
 

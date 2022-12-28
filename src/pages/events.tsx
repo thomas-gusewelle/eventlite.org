@@ -1,4 +1,5 @@
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
+import { useRouter } from "next/router";
 import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
@@ -8,6 +9,7 @@ import { CircularProgress } from "../components/circularProgress";
 import { shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
@@ -21,10 +23,9 @@ import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
-const filter = (e: string) => {};
-
 const EventsPage = () => {
   const utils = trpc.useContext();
+  const router = useRouter();
   const alertContext = useContext(AlertContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
@@ -170,6 +171,16 @@ const EventsPage = () => {
       <div className='flex justify-center'>
         <CircularProgress />
       </div>
+    );
+  }
+
+  if (eventsQuery.data?.length == 0) {
+    return (
+      <NoDataLayout
+        heading='Events'
+        btnText='Add Event'
+        func={() => router.push("/events/addevent")}
+      />
     );
   }
 

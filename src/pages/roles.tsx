@@ -10,6 +10,7 @@ import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnSave } from "../components/btn/btnSave";
 import { CircularProgress } from "../components/circularProgress";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar, SidebarLayout } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
@@ -146,6 +147,53 @@ const Roles = () => {
       <div className='flex justify-center'>
         <CircularProgress />
       </div>
+    );
+  }
+
+  if (roles.data?.length == 0) {
+    return (
+      <>
+        <NoDataLayout
+          heading='Roles'
+          btnText='Add Roles'
+          func={() => setEditOpen(true)}
+        />
+        <Modal open={editOpen} setOpen={setEditOpen}>
+          <>
+            <form onSubmit={submit}>
+              <ModalBody>
+                <ModalTitle text={editId == null ? "Add Role" : "Edit Role"} />
+                <div className='mt-2'>
+                  <label
+                    htmlFor='name'
+                    className='block text-sm font-medium text-gray-700'>
+                    Role Name
+                  </label>
+                  <input
+                    type='text'
+                    id='name'
+                    {...register("name", { required: true, minLength: 3 })}
+                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                  />
+                  {errors.name && (
+                    <span className='text-red-500'>
+                      Location Name is Required
+                    </span>
+                  )}
+                </div>
+              </ModalBody>
+              <BottomButtons>
+                <BtnSave type={"submit"} />
+                <BtnCancel
+                  onClick={() => {
+                    setEditOpen(false);
+                  }}
+                />
+              </BottomButtons>
+            </form>
+          </>
+        </Modal>
+      </>
     );
   }
 

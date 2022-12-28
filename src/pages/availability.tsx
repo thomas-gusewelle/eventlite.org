@@ -33,7 +33,6 @@ const AvailabilityPage = () => {
   );
 
   useEffect(() => {
-    console.log("THis is the dates: ", dates);
     if (dates != undefined) {
       const _paginated = paginate(dates, pageNum);
       setpagiantedData(_paginated);
@@ -98,6 +97,7 @@ const AvailabilityPage = () => {
       </div>
     );
   }
+
   return (
     <>
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
@@ -149,53 +149,44 @@ const AvailabilityPage = () => {
           </div>
         ) : (
           <>
-            {dates.length <= 0 && (
-              <div className='flex justify-center'>
-                <BtnPurple func={() => setModalOpen(true)}>Add Dates</BtnPurple>
-              </div>
-            )}
-            {dates.length >= 1 && (
-              <>
-                <div className='w-full'>
-                  <table className='w-full table-auto text-left'>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pagiantedData.data.map((date, index) => {
-                        const options: TableOptionsDropdown = [
-                          {
-                            name: "Delete",
-                            function: () => {
-                              deleteDateMutation.mutate(date.id);
-                            },
-                          },
-                        ];
+            <div className='w-full'>
+              <table className='w-full table-auto text-left'>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pagiantedData.data.map((date, index) => {
+                    const options: TableOptionsDropdown = [
+                      {
+                        name: "Delete",
+                        function: () => {
+                          deleteDateMutation.mutate(date.id);
+                        },
+                      },
+                    ];
 
-                        return (
-                          <tr key={index} className='border-t last:border-b'>
-                            <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
-                              {longDate(date.date)}
-                            </td>
-                            <td className=''>
-                              <TableDropdown options={options} />
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-                <PaginationBar
-                  setPageNum={setPageNum}
-                  pageNum={pageNum}
-                  paginateData={pagiantedData}
-                />
-              </>
-            )}
+                    return (
+                      <tr key={index} className='border-t last:border-b'>
+                        <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
+                          {longDate(date.date)}
+                        </td>
+                        <td className=''>
+                          <TableDropdown options={options} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <PaginationBar
+              setPageNum={setPageNum}
+              pageNum={pageNum}
+              paginateData={pagiantedData}
+            />
           </>
         )}
       </>

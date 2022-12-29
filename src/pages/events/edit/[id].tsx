@@ -46,33 +46,28 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
       });
     },
     onSuccess(data) {
-      console.log("This is the data", data);
       if (!rec && data != undefined) methods.reset(formatEventData(data));
       if (data?.recurringId) setAlreadyRec(true);
     },
   });
 
   const recurringId = rec ? eventQuery.data?.recurringId || "" : "";
-  useEffect(() => {
-    console.log("recurring id: ", recurringId);
-  }, [recurringId]);
+
   const EventRecurrance = trpc.useQuery(
     ["events.getEventRecurranceData", recurringId],
     {
       enabled: !!recurringId,
       cacheTime: 0,
       onSuccess(data) {
-        console.log("Event Recurrance data", data);
         if (data) {
           if (eventQuery.data == undefined) return;
-          console.log(
-            "This is the reset data: ",
-            formatEventData(eventQuery.data, data)
-          );
           methods.reset(formatEventData(eventQuery.data, data));
         }
       },
     }
+  );
+  const createEventReccuranceData = trpc.useMutation(
+    "events.createEventReccurance"
   );
   const editEventRecurranceData = trpc.useMutation(
     "events.EditEventReccuranceData"
@@ -136,7 +131,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     const deletePositions = eventQuery.data.positions.filter((item) => {
       return data.positions.every((d) => d.eventPositionId != item.id);
     });
-    if (rec == false) {
+    if (data.isRepeating == false && rec == false) {
       editEvent.mutate(
         {
           id: id,
@@ -152,7 +147,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               roleName: item.position.name,
               organizationId: item.position.organizationId,
             },
-            quantity: item.quantity,
           })),
           updatePositions: updatePositions.map((item) => ({
             eventPositionId: item.eventPositionId!,
@@ -161,7 +155,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               roleName: item.position.name,
               organizationId: item.position.organizationId,
             },
-            quantity: item.quantity,
           })),
           deletePositions: deletePositions.map((item) => item.id),
         },
@@ -179,19 +172,17 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
       );
     }
 
-    if (rec == true) {
+    if (data.isRepeating == true || rec == true) {
       const newDates = findFutureDates(data);
-      if (
-        newDates == undefined ||
-        newDates == null ||
-        eventQuery.data.recurringId == null
-      )
-        return;
+
+      if (newDates == undefined || newDates == null) return;
+
       editRecurringEvent.mutate(
         {
+          id: eventQuery.data.id,
           name: data.name,
           eventTime: data.eventTime,
-          recurringId: eventQuery.data.recurringId,
+          recurringId: eventQuery.data.recurringId || undefined,
           positions: data.positions.map((position) => ({
             eventPositionId: position.eventPositionId,
             position: {
@@ -199,7 +190,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               roleName: position.position.name,
               organizationId: position.position.organizationId,
             },
-            quantity: position.quantity,
           })),
           eventLocation: data.eventLocation,
           organization: eventQuery.data.organizationId,
@@ -212,15 +202,25 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               message: `There was an error updating you event. Please try again. ${error.message}`,
             });
           },
-          onSuccess() {
+          // TODO: create new eventReccuranceData for event that was not already recuring
+          onSuccess(returnedData) {
             let _data: any = data;
-            _data["recurringId"] = recurringId;
 
-            editEventRecurranceData.mutate(_data as EventRecurrance, {
-              onSuccess() {
-                router.push("/events");
-              },
-            });
+            _data["recurringId"] =
+              recurringId == "" ? returnedData![0]?.recurringId : recurringId;
+            if (recurringId == "") {
+              createEventReccuranceData.mutate(_data as EventRecurrance, {
+                onSuccess() {
+                  router.push("/events");
+                },
+              });
+            } else {
+              editEventRecurranceData.mutate(_data as EventRecurrance, {
+                onSuccess() {
+                  router.push("/events");
+                },
+              });
+            }
           },
         }
       );
@@ -246,7 +246,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           <ModalBody>
             <ModalTitle
               text={
-                "Modifying exisiting positions will remove all scheduled users. Would you like to proceed?"
+                "Modifying exisiting positions will remove scheduled users. Would you like to proceed?"
               }
             />
             <BottomButtons>

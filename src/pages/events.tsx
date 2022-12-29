@@ -105,10 +105,6 @@ const EventsPage = () => {
     if (e.length > 0) {
       let key = e.toLowerCase();
       const filter = eventsQuery.data?.filter((event) => {
-        console.log(
-          "This is the date string: ",
-          event.datetime.toLocaleString("default", { month: "long" })
-        );
         return (
           event.name.toLowerCase().includes(key) ||
           event.Locations?.name.toLowerCase().includes(key) ||
@@ -127,7 +123,7 @@ const EventsPage = () => {
           )
         );
       });
-      console.log("This is the filter", filter);
+
       if (filter == undefined) return;
       setPageNum(1);
       setEvents(filter);

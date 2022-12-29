@@ -1,6 +1,6 @@
 import { sidebar } from "../components/layout/sidebar";
 import { trpc } from "../utils/trpc";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AlertContext } from "../providers/alertProvider";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { SectionHeading } from "../components/headers/SectionHeading";
@@ -20,11 +20,20 @@ type stateData = (Event & {
   })[];
 })[];
 
+// TODO: fix spacing issue when one event is approve and the other is not
+
 const Dashboard = () => {
   const user = useContext(UserContext);
   const utils = trpc.useContext();
   const alertContext = useContext(AlertContext);
   const [eventsData, setEventsData] = useState<stateData>([]);
+  // render, setRender is being used to force rerending of nested eventsData on mutate
+  const [render, setRender] = useState(true);
+
+  useEffect(() => {
+    console.log("event data: ", eventsData);
+  }, [eventsData]);
+
   const eventsQuery = trpc.useQuery(
     ["events.getUpcomingEventsByUser", { page: 1 }],
 
@@ -51,10 +60,46 @@ const Dashboard = () => {
       eventsQuery.refetch();
     },
     onMutate(variables) {
-      console.log(variables);
+      if (variables.positionId == undefined) return;
+      // returns the event item we are working with
+      let item = eventsData.find((item) =>
+        item.positions.map((pos) => pos.id).includes(variables.positionId!)
+      );
+      // Findes index in posiiton list
+      let posIndex = item?.positions.findIndex(
+        (item) => item.id == variables?.positionId
+      );
+
+      //Checks undifined cases
+      if (posIndex == -1 || posIndex == undefined) return;
+      if (
+        item == undefined ||
+        item?.positions == undefined ||
+        item?.positions[posIndex]?.userResponse === undefined
+      )
+        return;
+
+      // Sets value based on user choice
+      if (variables.response == "APPROVE") {
+        item.positions[posIndex]!.userResponse = true;
+      } else if (variables.response == "DENY") {
+        item.positions[posIndex]!.userResponse = false;
+      } else {
+        item.positions[posIndex]!.userResponse = null;
+      }
+
+      // all other events in the list
+      const others = eventsData.filter((event) => event.id != item?.id);
+      setEventsData(
+        [item, ...others].sort(
+          (a, b) => a.datetime.getTime() - b.datetime.getTime()
+        )
+      );
+      // forces rerender to work around nested object
+      setRender(!render);
     },
     onSuccess() {
-      utils.queryClient.cancelQueries();
+      // utils.queryClient.cancelQueries();
       eventsQuery.refetch();
     },
   });
@@ -74,7 +119,6 @@ const Dashboard = () => {
           let userResponse = event.positions.find(
             (item) => item.userId == user?.id
           );
-          console.log(userResponse);
           return (
             <div
               key={event.id}
@@ -137,23 +181,10 @@ const Dashboard = () => {
                   />
                 </div>
               )}
-              <button
-                onClick={() =>
-                  userResponseMutation.mutate({
-                    positionId: userResponse?.id,
-                    response: "NULL",
-                  })
-                }>
-                reset
-              </button>
             </div>
           );
         })}
       </div>
-      <button
-        onClick={() => alertContext.setSuccess({ state: true, message: "" })}>
-        Approve
-      </button>
     </>
   );
 };

@@ -157,24 +157,6 @@ export const scheduleRouter = createRouter()
       userId: z.string(),
     }),
     async resolve({ input }) {
-      const position = await prisma?.eventPositions.findFirst({
-        where: {
-          id: input.posisitionId,
-        },
-        select: {
-          User: true,
-          Event: {
-            select: {
-              positions: {
-                select: {
-                  User: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
       return await prisma?.eventPositions.update({
         where: {
           id: input.posisitionId,

@@ -30,10 +30,6 @@ const Dashboard = () => {
   // render, setRender is being used to force rerending of nested eventsData on mutate
   const [render, setRender] = useState(true);
 
-  useEffect(() => {
-    console.log("event data: ", eventsData);
-  }, [eventsData]);
-
   const eventsQuery = trpc.useQuery(
     ["events.getUpcomingEventsByUser", { page: 1 }],
 

@@ -167,6 +167,7 @@ export const scheduleRouter = createRouter()
               id: input.userId,
             },
           },
+          userResponse: null,
         },
       });
     },

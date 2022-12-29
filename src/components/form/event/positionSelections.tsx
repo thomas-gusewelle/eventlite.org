@@ -70,9 +70,6 @@ export const PositionsSelector = () => {
         <div className='col-span-4'>
           <label className=''>Position</label>
         </div>
-        <div className='col-span-2'>
-          <label className=''>Quantity</label>
-        </div>
       </div>
 
       <div className='mt-1 grid gap-y-6'>

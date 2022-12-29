@@ -120,49 +120,54 @@ const Dashboard = () => {
             (item) => item.userId == user?.id
           );
           return (
-            <div
-              key={event.id}
-              className='flex flex-col rounded-lg border border-gray-300 pt-4 shadow'>
-              <div className='mb-4 flex flex-col px-3'>
-                <h3 className='text-xl font-bold'>{event.name}</h3>
+            <div key={event.id} className='flex flex-col border-gray-300 pt-4'>
+              <div
+                className={`rounded-t-lg pt-2 ${
+                  userResponse?.userResponse == null
+                    ? ""
+                    : "rounded-b-lg border-b"
+                } round border-t border-r border-l shadow`}>
+                <div className='mb-4 flex flex-col px-3'>
+                  <h3 className='text-xl font-bold'>{event.name}</h3>
 
-                <span className='text-lg font-medium'>
-                  {event.Locations?.name}
-                </span>
-                <span>{shortDate(event.datetime)}</span>
-                <span>{shortTime(event.datetime)}</span>
-              </div>
-              <div className=''>
-                {event.positions.map((position) => {
-                  return (
-                    <div
-                      className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
-                      key={position.id}>
-                      <span className='py-3 px-3 font-medium'>
-                        {position.Role.name}
-                      </span>
-                      {position.User ? (
-                        <div
-                          className={`flex h-full py-1 px-3 text-center ${
-                            position.userResponse == null && "bg-gray-100"
-                          }
+                  <span className='text-lg font-medium'>
+                    {event.Locations?.name}
+                  </span>
+                  <span>{shortDate(event.datetime)}</span>
+                  <span>{shortTime(event.datetime)}</span>
+                </div>
+                <div className=''>
+                  {event.positions.map((position) => {
+                    return (
+                      <div
+                        className='grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0'
+                        key={position.id}>
+                        <span className='py-3 px-3 font-medium'>
+                          {position.Role.name}
+                        </span>
+                        {position.User ? (
+                          <div
+                            className={`flex h-full py-1 px-3 text-center ${
+                              position.userResponse == null && "bg-gray-100"
+                            }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                          <PicNameRowSmall user={position?.User} />
-                        </div>
-                      ) : (
-                        <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
-                          Not Scheduled
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                            <PicNameRowSmall user={position?.User} />
+                          </div>
+                        ) : (
+                          <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
+                            Not Scheduled
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               {/* User approval section */}
               {userResponse?.userResponse == null && (
-                <div className='grid grid-cols-2'>
+                <div className='grid grid-cols-2 overflow-hidden rounded-b-lg border-b border-r border-l'>
                   <BtnApprove
                     func={() =>
                       userResponseMutation.mutate({

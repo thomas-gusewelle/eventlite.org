@@ -29,7 +29,6 @@ export type EventFormValues = {
   positions: {
     eventPositionId?: string;
     position: { organizationId?: string | undefined; id: string; name: string };
-    quantity: number;
   }[];
   eventLocation: Locations;
 };

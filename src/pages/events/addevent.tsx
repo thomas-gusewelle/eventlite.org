@@ -19,7 +19,6 @@ import { sidebar } from "../../components/layout/sidebar";
 import { ErrorAlert } from "../../components/alerts/errorAlert";
 import { AlertContext } from "../../providers/alertProvider";
 
-// TODO: implement error context
 const AddEvent = () => {
   const utils = trpc.useContext();
   const router = useRouter();

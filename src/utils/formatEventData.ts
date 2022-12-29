@@ -30,7 +30,6 @@ export function formatEventData(
           name: position.Role.name,
           id: position.Role.id,
         },
-        quantity: position.numberNeeded,
       })),
       eventLocation: {
         id: input.Locations?.id || "",
@@ -73,7 +72,6 @@ export function formatEventData(
         name: position.Role.name,
         id: position.Role.id,
       },
-      quantity: position.numberNeeded,
     })),
     eventLocation: {
       id: input.Locations?.id || "",

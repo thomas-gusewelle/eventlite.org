@@ -41,7 +41,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   const [selectedPeople, setSelectedPeople] = useState<
     {
-      userId: string;
+      userId: string | null;
       dateTime: Date;
     }[]
   >();
@@ -61,15 +61,12 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     {
       keepPreviousData: true,
       onSuccess(data) {
-        console.log("this is the data: ", data);
-        let _selectedPeople: { userId: string; dateTime: Date }[] = [];
+        let _selectedPeople: { userId: string | null; dateTime: Date }[] = [];
         data.items.map((item) =>
           item.positions.map((pos) =>
-            pos.User.map((user) => {
-              _selectedPeople.push({
-                userId: user.id,
-                dateTime: item.datetime,
-              });
+            _selectedPeople.push({
+              userId: pos.userId,
+              dateTime: item.datetime,
             })
           )
         );
@@ -242,11 +239,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                     <span>{shortTime(event.datetime)}</span>
                   </div>
                   <div>
-                    {event.positions.map((position) => {
-                      let positionNum = [];
-                      for (let i = 1; i <= position.numberNeeded; i++) {
-                        positionNum.push(i);
-                      }
+                    {event.positions.map((position, index) => {
                       return (
                         <div
                           className='grid grid-cols-3 border-t last:border-b last:pb-0'
@@ -255,104 +248,102 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                             {position.Role.name}
                           </span>
                           <div className='col-span-2'>
-                            {positionNum.map((num, index) => (
-                              <>
-                                <Controller
-                                  key={num + index}
-                                  name={position.id + index}
-                                  defaultValue={
-                                    {
-                                      name: fullName(
-                                        position.User[index]?.firstName,
-                                        position.User[index]?.lastName
-                                      ),
-                                      userResponce: position.userResponse,
-                                      userId: position.User[index]?.id,
-                                    } || { name: "Not Scheuled" }
-                                  }
-                                  control={methods.control}
-                                  render={({ field, fieldState }) => (
-                                    <ScheduleSelect
-                                      selected={field.value}
-                                      setSelected={(value) => {
-                                        field.onChange(value);
+                            <>
+                              <Controller
+                                key={index}
+                                name={position.id + index}
+                                defaultValue={
+                                  {
+                                    name: fullName(
+                                      position.User?.firstName,
+                                      position.User?.lastName
+                                    ),
+                                    userResponce: position.userResponse,
+                                    userId: position.User?.id,
+                                  } || { name: "Not Scheuled" }
+                                }
+                                control={methods.control}
+                                render={({ field, fieldState }) => (
+                                  <ScheduleSelect
+                                    selected={field.value}
+                                    setSelected={(value) => {
+                                      field.onChange(value);
 
-                                        if (field.value.userId != null) {
-                                          removeUserFromPosition.mutate(
-                                            {
-                                              userId: field.value.userId,
-                                              eventPositionId: position.id,
-                                            },
-                                            {
-                                              onSuccess() {
-                                                if (value.name == null) return;
-                                                scheduleUserMutation.mutate({
-                                                  posisitionId: position.id,
-                                                  userId: value.userId,
-                                                });
-                                              },
-                                            }
-                                          );
-                                        }
-                                        if (value.name == null) return;
-                                        if (field.value.userId == null) {
-                                          scheduleUserMutation.mutate({
-                                            posisitionId: position.id,
-                                            userId: value.userId,
-                                          });
-                                        }
-
-                                        setSelectedPeople([
-                                          ...(selectedPeople || [
-                                            {
-                                              userId: "",
-                                              dateTime: new Date(),
-                                            },
-                                          ]),
+                                      if (field.value.userId != null) {
+                                        removeUserFromPosition.mutate(
                                           {
-                                            userId: value.userId,
-                                            dateTime: event.datetime,
+                                            userId: field.value.userId,
+                                            eventPositionId: position.id,
                                           },
-                                        ]);
-                                      }}
-                                      list={
-                                        poepleList
-                                          .filter(
-                                            (person) =>
-                                              !person.availability
-                                                .map((ava) =>
-                                                  ava.date.toDateString()
-                                                )
-                                                .includes(
-                                                  event.datetime.toDateString()
-                                                ) &&
-                                              person.roles
-                                                .map((role) => role.id)
-                                                .includes(position.roleId) &&
-                                              !selectedPeople
-                                                ?.filter(
-                                                  (date) =>
-                                                    date.dateTime ==
-                                                    event.datetime
-                                                )
-                                                .map((selPer) => selPer.userId)
-                                                .includes(person.id)
-                                          )
-                                          .map((user) => ({
-                                            name: fullName(
-                                              user.firstName,
-                                              user.lastName
-                                            ),
-                                            userId: user.id,
-                                            positionId: position.id,
-                                            show: true,
-                                          })) || [{ name: "" }]
+                                          {
+                                            onSuccess() {
+                                              if (value.name == null) return;
+                                              scheduleUserMutation.mutate({
+                                                posisitionId: position.id,
+                                                userId: value.userId,
+                                              });
+                                            },
+                                          }
+                                        );
                                       }
-                                    />
-                                  )}
-                                />
-                              </>
-                            ))}
+                                      if (value.name == null) return;
+                                      if (field.value.userId == null) {
+                                        scheduleUserMutation.mutate({
+                                          posisitionId: position.id,
+                                          userId: value.userId,
+                                        });
+                                      }
+
+                                      setSelectedPeople([
+                                        ...(selectedPeople || [
+                                          {
+                                            userId: "",
+                                            dateTime: new Date(),
+                                          },
+                                        ]),
+                                        {
+                                          userId: value.userId,
+                                          dateTime: event.datetime,
+                                        },
+                                      ]);
+                                    }}
+                                    list={
+                                      poepleList
+                                        .filter(
+                                          (person) =>
+                                            !person.availability
+                                              .map((ava) =>
+                                                ava.date.toDateString()
+                                              )
+                                              .includes(
+                                                event.datetime.toDateString()
+                                              ) &&
+                                            person.roles
+                                              .map((role) => role.id)
+                                              .includes(position.roleId) &&
+                                            !selectedPeople
+                                              ?.filter(
+                                                (date) =>
+                                                  date.dateTime ==
+                                                  event.datetime
+                                              )
+                                              .map((selPer) => selPer.userId)
+                                              .includes(person.id)
+                                        )
+                                        .map((user) => ({
+                                          name: fullName(
+                                            user.firstName,
+                                            user.lastName
+                                          ),
+                                          userId: user.id,
+                                          positionId: position.id,
+                                          show: true,
+                                        })) || [{ name: "" }]
+                                    }
+                                  />
+                                )}
+                              />
+                            </>
                           </div>
                         </div>
                       );

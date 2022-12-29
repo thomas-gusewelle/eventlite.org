@@ -42,17 +42,22 @@ export const eventsRouter = createRouter()
 
       const positions = await prisma?.eventPositions.findMany({
         where: {
-          // User: ctx.session?.user.id,
-          User: {},
+          User: {
+            id: ctx.session?.user.id,
+          },
         },
       });
-      console.log(positions);
+
       const limit: number = input.limit ?? 3;
       return await prisma?.event.findMany({
         where: {
+          id: {
+            in: positions?.map((item) => item.eventId ?? ""),
+          },
           datetime: {
             gte: roundHourDown(),
           },
+          positions: {},
         },
 
         include: {
@@ -69,6 +74,53 @@ export const eventsRouter = createRouter()
         },
         take: limit,
       });
+    },
+  })
+  .mutation("updateUserresponse", {
+    input: z.object({
+      response: z.union([
+        z.literal("APPROVE"),
+        z.literal("DENY"),
+        z.literal("NULL"),
+      ]),
+      positionId: z.string().optional(),
+    }),
+    async resolve({ input }) {
+      // Check if position ID exists and throw if it does not
+      if (input.positionId == undefined) {
+        throw new TRPCError({
+          message: "Position ID is undefined",
+          code: "BAD_REQUEST",
+        });
+      }
+      if (input.response == "APPROVE") {
+        return await prisma?.eventPositions.update({
+          where: {
+            id: input.positionId,
+          },
+          data: {
+            userResponse: true,
+          },
+        });
+      } else if (input.response == "DENY") {
+        return await prisma?.eventPositions.update({
+          where: {
+            id: input.positionId,
+          },
+          data: {
+            userResponse: false,
+          },
+        });
+      } else if (input.response == "NULL") {
+        return await prisma?.eventPositions.update({
+          where: {
+            id: input.positionId,
+          },
+          data: {
+            userResponse: null,
+          },
+        });
+      }
     },
   })
   .query("getPastEventsByOrganization", {

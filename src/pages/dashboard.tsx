@@ -100,7 +100,6 @@ const Dashboard = () => {
     },
     onSuccess() {
       // utils.queryClient.cancelQueries();
-      eventsQuery.refetch();
     },
   });
 

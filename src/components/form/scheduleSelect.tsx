@@ -87,43 +87,33 @@ export const ScheduleSelect: React.FC<{
                     </Link>
                   </div>
                 ) : (
-                  <>
-                    {filteredPeople.map((item, index) => {
-                      if (item.show != false) {
-                        return (
-                          <Combobox.Option
-                            key={index}
-                            className={({ active }) =>
-                              `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                active ? "bg-indigo-100" : "text-gray-900"
-                              }`
-                            }
-                            value={item}>
-                            {({ selected }) => (
-                              <>
-                                <span
-                                  className={`block truncate ${
-                                    selected
-                                      ? "font-medium text-indigo-700"
-                                      : "font-normal"
-                                  }`}>
-                                  {item.name}
-                                </span>
-                              </>
-                            )}
-                          </Combobox.Option>
-                        );
-                      }
-                    })}
-                    <div className='relative cursor-default select-none py-2 px-4 text-gray-700 hover:bg-indigo-100'>
-                      <Link href={"/people/adduser"}>
-                        <a className='flex items-center gap-3 '>
-                          <MdAddCircleOutline size={22} color={"green"} />
-                          Add a User
-                        </a>
-                      </Link>
-                    </div>
-                  </>
+                  filteredPeople.map((item, index) => {
+                    if (item.show != false) {
+                      return (
+                        <Combobox.Option
+                          key={index}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                              active ? "bg-indigo-100" : "text-gray-900"
+                            }`
+                          }
+                          value={item}>
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected
+                                    ? "font-medium text-indigo-700"
+                                    : "font-normal"
+                                }`}>
+                                {item.name}
+                              </span>
+                            </>
+                          )}
+                        </Combobox.Option>
+                      );
+                    }
+                  })
                 )}
               </Combobox.Options>
             </Transition>

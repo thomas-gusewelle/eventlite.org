@@ -11,6 +11,7 @@ import { BtnApprove } from "../components/btn/btnApprove";
 import { BtnDeny } from "../components/btn/btnDeny";
 import { UserContext } from "../providers/userProvider";
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
+import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -26,6 +27,7 @@ const Dashboard = () => {
   const user = useContext(UserContext);
   const utils = trpc.useContext();
   const alertContext = useContext(AlertContext);
+  const [availabilityModal, setAvailabilityModal] = useState(false);
   const [eventsData, setEventsData] = useState<stateData>([]);
   // render, setRender is being used to force rerending of nested eventsData on mutate
   const [render, setRender] = useState(true);
@@ -102,8 +104,14 @@ const Dashboard = () => {
 
   return (
     <>
+      <DashboardAvaililityModal
+        open={availabilityModal}
+        setOpen={setAvailabilityModal}
+      />
       <div className='grid gap-3 sm:grid-cols-3'>
-        <BtnPurple func={() => {}}>test</BtnPurple>
+        <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
+          Update Availability
+        </BtnPurple>
         <BtnPurple func={() => {}}>test</BtnPurple>
         <BtnPurple func={() => {}}>test</BtnPurple>
       </div>

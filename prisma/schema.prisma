@@ -19,6 +19,7 @@ model User {
   eventPositions EventPositions[]
   email          String           @unique
   emailVerified  DateTime?
+  phoneNumber    String?
   image          String?
   // accounts       Account[]
   // sessions       Session[]

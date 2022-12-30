@@ -14,10 +14,12 @@ import { PaginateData } from "../../types/paginate";
 import { AlertContext } from "../providers/alertProvider";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { useRouter } from "next/router";
+import { UserContext } from "../providers/userProvider";
 
 const PeoplePage = () => {
   const alertContext = useContext(AlertContext);
   const router = useRouter();
+  const user = useContext(UserContext);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
   const [peopleUnPageList, setPeopleUnPageList] =
     useState<(User & { roles: Role[] })[]>();
@@ -180,8 +182,13 @@ const PeoplePage = () => {
                 {
                   name: "Edit",
                   href: `/people/edit/${person.id}`,
+                  show: user?.status == "ADMIN" || user?.status == "MANAGER",
                 },
-                { name: "Delete", function: () => onDelete(person) },
+                {
+                  name: "Delete",
+                  function: () => onDelete(person),
+                  show: user?.status == "ADMIN" || user?.status == "MANAGER",
+                },
               ];
 
               return (

@@ -85,9 +85,11 @@ export const DashboardAvaililityModal: React.FC<{
 
   if (existingDates.isLoading) {
     return (
-      <div>
-        <CircularProgress />
-      </div>
+      <Modal open={open} setOpen={setOpen}>
+        <div className='flex min-h-[200px] min-w-[200px] items-center justify-center'>
+          <CircularProgress />
+        </div>
+      </Modal>
     );
   }
 

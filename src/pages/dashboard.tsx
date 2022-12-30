@@ -50,7 +50,7 @@ const Dashboard = () => {
       },
     }
   );
-  const userResponseMutation = trpc.useMutation("events.updateUserresponse", {
+  const userResponseMutation = trpc.useMutation("events.updateUserResponse", {
     onError(error, variables, context) {
       alertContext.setError({
         state: true,

@@ -77,7 +77,7 @@ export const eventsRouter = createRouter()
       });
     },
   })
-  .mutation("updateUserresponse", {
+  .mutation("updateUserResponse", {
     input: z.object({
       response: z.union([
         z.literal("APPROVE"),

@@ -13,6 +13,7 @@ import { UserContext } from "../providers/userProvider";
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
 import { TableDropdown } from "../components/menus/tableDropdown";
+import { CircularProgress } from "../components/circularProgress";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -117,113 +118,122 @@ const Dashboard = () => {
       <div className='mt-8 flex justify-center'>
         <SectionHeading>Upcoming Events</SectionHeading>
       </div>
-      <div className='my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3'>
-        {eventsData.map((event) => {
-          let userResponse = event.positions.find(
-            (item) => item.userId == user?.id
-          );
-          return (
-            <div key={event.id} className='flex flex-col border-gray-300 pt-4'>
-              <div
-                className={`rounded-t-lg pt-2 ${
-                  userResponse?.userResponse == null
-                    ? ""
-                    : "rounded-b-lg border-b"
-                } round border-t border-r border-l shadow`}>
-                <div className='mb-4 flex flex-col px-3'>
-                  <div className='flex justify-between'>
-                    <h3 className='text-xl font-bold'>{event.name}</h3>
-                    {userResponse?.userResponse != null && (
-                      <TableDropdown
-                        options={[
-                          {
-                            name: `Change Availability to ${
-                              userResponse.userResponse == true
-                                ? "False"
-                                : "True"
-                            }`,
-                            function: () =>
-                              userResponseMutation.mutate({
-                                positionId: userResponse?.id,
-                                response:
-                                  userResponse?.userResponse == true
-                                    ? "DENY"
-                                    : "APPROVE",
-                              }),
-                          },
-                          {
-                            name: "Change Availability to Unknown",
-                            function: () =>
-                              userResponseMutation.mutate({
-                                positionId: userResponse?.id,
-                                response: "NULL",
-                              }),
-                          },
-                        ]}
-                      />
-                    )}
-                  </div>
 
-                  <span className='text-lg font-medium'>
-                    {event.Locations?.name}
-                  </span>
-                  <span>{shortDate(event.datetime)}</span>
-                  <span>{shortTime(event.datetime)}</span>
-                </div>
-                <div className=''>
-                  {event.positions.map((position) => {
-                    return (
-                      <div
-                        className='grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0'
-                        key={position.id}>
-                        <span className='py-3 px-3 font-medium'>
-                          {position.Role.name}
-                        </span>
-                        {position.User ? (
-                          <div
-                            className={`flex h-full py-1 px-3 text-center ${
-                              position.userResponse == null && "bg-gray-100"
-                            }
+      {eventsQuery.isLoading || eventsQuery.isRefetching ? (
+        <div className='my-6 flex justify-center'>
+          <CircularProgress />
+        </div>
+      ) : (
+        <div className='my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3'>
+          {eventsData.map((event) => {
+            let userResponse = event.positions.find(
+              (item) => item.userId == user?.id
+            );
+            return (
+              <div
+                key={event.id}
+                className='flex flex-col border-gray-300 pt-4'>
+                <div
+                  className={`rounded-t-lg pt-2 ${
+                    userResponse?.userResponse == null
+                      ? ""
+                      : "rounded-b-lg border-b"
+                  } round border-t border-r border-l shadow`}>
+                  <div className='mb-4 flex flex-col px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='text-xl font-bold'>{event.name}</h3>
+                      {userResponse?.userResponse != null && (
+                        <TableDropdown
+                          options={[
+                            {
+                              name: `Change Availability to ${
+                                userResponse.userResponse == true
+                                  ? "False"
+                                  : "True"
+                              }`,
+                              function: () =>
+                                userResponseMutation.mutate({
+                                  positionId: userResponse?.id,
+                                  response:
+                                    userResponse?.userResponse == true
+                                      ? "DENY"
+                                      : "APPROVE",
+                                }),
+                            },
+                            {
+                              name: "Change Availability to Unknown",
+                              function: () =>
+                                userResponseMutation.mutate({
+                                  positionId: userResponse?.id,
+                                  response: "NULL",
+                                }),
+                            },
+                          ]}
+                        />
+                      )}
+                    </div>
+
+                    <span className='text-lg font-medium'>
+                      {event.Locations?.name}
+                    </span>
+                    <span>{shortDate(event.datetime)}</span>
+                    <span>{shortTime(event.datetime)}</span>
+                  </div>
+                  <div className=''>
+                    {event.positions.map((position) => {
+                      return (
+                        <div
+                          className='grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0'
+                          key={position.id}>
+                          <span className='py-3 px-3 font-medium'>
+                            {position.Role.name}
+                          </span>
+                          {position.User ? (
+                            <div
+                              className={`flex h-full py-1 px-3 text-center ${
+                                position.userResponse == null && "bg-gray-100"
+                              }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                            <PicNameRowSmall user={position?.User} />
-                          </div>
-                        ) : (
-                          <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
-                            Not Scheduled
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                              <PicNameRowSmall user={position?.User} />
+                            </div>
+                          ) : (
+                            <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
+                              Not Scheduled
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
+                {/* User approval section */}
+                {userResponse?.userResponse == null && (
+                  <div className='grid grid-cols-2 overflow-hidden rounded-b-lg border-b border-r border-l'>
+                    <BtnApprove
+                      func={() =>
+                        userResponseMutation.mutate({
+                          response: "APPROVE",
+                          positionId: userResponse?.id,
+                        })
+                      }
+                    />
+                    <BtnDeny
+                      func={() =>
+                        userResponseMutation.mutate({
+                          response: "DENY",
+                          positionId: userResponse?.id,
+                        })
+                      }
+                    />
+                  </div>
+                )}
               </div>
-              {/* User approval section */}
-              {userResponse?.userResponse == null && (
-                <div className='grid grid-cols-2 overflow-hidden rounded-b-lg border-b border-r border-l'>
-                  <BtnApprove
-                    func={() =>
-                      userResponseMutation.mutate({
-                        response: "APPROVE",
-                        positionId: userResponse?.id,
-                      })
-                    }
-                  />
-                  <BtnDeny
-                    func={() =>
-                      userResponseMutation.mutate({
-                        response: "DENY",
-                        positionId: userResponse?.id,
-                      })
-                    }
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 };

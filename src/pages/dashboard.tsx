@@ -109,17 +109,15 @@ const Dashboard = () => {
         open={availabilityModal}
         setOpen={setAvailabilityModal}
       />
-      <div className='grid gap-3 sm:grid-cols-3'>
+      <div className='flex justify-center'>
         <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
         </BtnPurple>
-        <BtnPurple func={() => {}}>test</BtnPurple>
-        <BtnPurple func={() => {}}>test</BtnPurple>
       </div>
       <div className='mt-8 flex justify-center'>
         <SectionHeading>Upcoming Events</SectionHeading>
       </div>
-      <div className='my-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
+      <div className='my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3'>
         {eventsData.map((event) => {
           let userResponse = event.positions.find(
             (item) => item.userId == user?.id

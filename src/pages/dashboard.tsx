@@ -12,6 +12,7 @@ import { BtnDeny } from "../components/btn/btnDeny";
 import { UserContext } from "../providers/userProvider";
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
+import { TableDropdown } from "../components/menus/tableDropdown";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -132,7 +133,38 @@ const Dashboard = () => {
                     : "rounded-b-lg border-b"
                 } round border-t border-r border-l shadow`}>
                 <div className='mb-4 flex flex-col px-3'>
-                  <h3 className='text-xl font-bold'>{event.name}</h3>
+                  <div className='flex justify-between'>
+                    <h3 className='text-xl font-bold'>{event.name}</h3>
+                    {userResponse?.userResponse != null && (
+                      <TableDropdown
+                        options={[
+                          {
+                            name: `Change Availability to ${
+                              userResponse.userResponse == true
+                                ? "False"
+                                : "True"
+                            }`,
+                            function: () =>
+                              userResponseMutation.mutate({
+                                positionId: userResponse?.id,
+                                response:
+                                  userResponse?.userResponse == true
+                                    ? "DENY"
+                                    : "APPROVE",
+                              }),
+                          },
+                          {
+                            name: "Change Availability to Unknown",
+                            function: () =>
+                              userResponseMutation.mutate({
+                                positionId: userResponse?.id,
+                                response: "NULL",
+                              }),
+                          },
+                        ]}
+                      />
+                    )}
+                  </div>
 
                   <span className='text-lg font-medium'>
                     {event.Locations?.name}

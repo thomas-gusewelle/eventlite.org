@@ -25,7 +25,6 @@ import { ModalTitle } from "../components/modal/modalTitle";
 import { shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
 import { AlertContext } from "../providers/alertProvider";
-import { BtnPurple } from "../components/btn/btnPurple";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 
 const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({

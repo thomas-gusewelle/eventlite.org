@@ -55,6 +55,7 @@ export const DashboardAvaililityModal: React.FC<{
       onSuccess() {
         setOpen(false);
         opts.refetchQueries(["avalibility.getUserAvalibilityByID"]);
+        opts.refetchQueries(["events.getUpcomingEventsByUser"]);
       },
     }
   );

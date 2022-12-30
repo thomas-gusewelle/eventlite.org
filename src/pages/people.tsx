@@ -182,7 +182,10 @@ const PeoplePage = () => {
                 {
                   name: "Edit",
                   href: `/people/edit/${person.id}`,
-                  show: user?.status == "ADMIN" || user?.status == "MANAGER",
+                  show:
+                    user?.status == "ADMIN" ||
+                    user?.status == "MANAGER" ||
+                    person.id == user?.id,
                 },
                 {
                   name: "Delete",

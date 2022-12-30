@@ -157,43 +157,6 @@ export const scheduleRouter = createRouter()
       userId: z.string(),
     }),
     async resolve({ input }) {
-      const position = await prisma?.eventPositions.findFirst({
-        where: {
-          id: input.posisitionId,
-        },
-        select: {
-          numberNeeded: true,
-          User: true,
-          Event: {
-            select: {
-              positions: {
-                select: {
-                  User: true,
-                },
-              },
-            },
-          },
-        },
-      });
-      if (position?.User.length == position?.numberNeeded) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Maxiumum number of users for posisition already scheduled.",
-        });
-      }
-
-      let eventUsers: string[] = [];
-      position?.Event?.positions.map((pos) =>
-        pos.User.map((user) => {
-          eventUsers.push(user.id);
-        })
-      );
-      if (eventUsers.includes(input.userId)) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "User is already schedule for this position",
-        });
-      }
       return await prisma?.eventPositions.update({
         where: {
           id: input.posisitionId,
@@ -204,6 +167,7 @@ export const scheduleRouter = createRouter()
               id: input.userId,
             },
           },
+          userResponse: null,
         },
       });
     },
@@ -220,9 +184,7 @@ export const scheduleRouter = createRouter()
         },
         data: {
           User: {
-            disconnect: {
-              id: input.userId,
-            },
+            disconnect: true,
           },
         },
       });

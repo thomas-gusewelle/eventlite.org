@@ -130,15 +130,14 @@ model EventReccurance {
 
 //each event has its own positions to faciliate different people being scheduled for different events
 model EventPositions {
-  id      String  @id @default(cuid())
-  Event   Event?  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId String?
-  Role    Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  roleId  String
-  User    User[]
-
+  id           String   @id @default(cuid())
+  Event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId      String
+  Role         Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId       String
+  User         User?    @relation(fields: [userId], references: [id])
+  userId       String?
   userResponse Boolean?
-  numberNeeded Int      @default(1)
 
   @@index([eventId, roleId])
 }

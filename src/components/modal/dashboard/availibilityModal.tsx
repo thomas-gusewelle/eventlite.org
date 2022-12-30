@@ -43,7 +43,9 @@ export const DashboardAvaililityModal: React.FC<{
       if (!data) return;
       console.log(data);
 
-      setDates(data.map((item) => item.date));
+      setDates(
+        data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
+      );
     },
   });
 

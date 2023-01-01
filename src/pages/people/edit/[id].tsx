@@ -13,6 +13,8 @@ import { FirstNameInput } from "../../../components/form/firstNameInput";
 import { LastNameInput } from "../../../components/form/lastNameInput";
 import { EmailInput } from "../../../components/form/emailInput";
 import { UserStatusInputSelector } from "../../../components/form/userStatusInputSelector";
+import { PhoneInput } from "../../../components/form/phoneInput";
+import { removeDashes } from "../../../utils/formatPhoneNumber";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
@@ -64,13 +66,13 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
 
   const submit = methods.handleSubmit((data) => {
     data["roles"] = selectedRoles;
-    console.log(data);
 
     editUser.mutate({
       id: id,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
+      phone: removeDashes(data.phone),
       role: data.roles,
       status: data.status,
     });
@@ -107,6 +109,9 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
             </div>
             <div className='col-span-6 sm:col-span-4'>
               <EmailInput />
+            </div>
+            <div className='col-span-6 sm:col-span-4'>
+              <PhoneInput />
             </div>
             <div className='col-span-6 sm:col-span-3'>
               <label className='block text-sm font-medium text-gray-700'>

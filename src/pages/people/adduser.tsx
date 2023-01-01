@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { useForm } from "react-hook-form";
 import { MultiSelect } from "../../components/form/multiSelect";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { Role, UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../components/circularProgress";
@@ -13,10 +13,17 @@ const AddUser = () => {
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useUser();
+  // used to track if user is adding or deleting characters from phone #
+  const phoneLength = useRef<number>(0);
+  const [phoneFieldDirection, setPhoneFieldDirection] = useState<{
+    length: number;
+    direction: "ADD" | "SUBTRACT";
+  }>({ length: 0, direction: "ADD" });
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
   const [roleList, setRoleList] = useState<any[]>([]);
@@ -46,7 +53,8 @@ const AddUser = () => {
 
   const submit = handleSubmit((data) => {
     data["roles"] = selectedRoles;
-
+    console.log(data);
+    return;
     addUser.mutate({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -133,6 +141,53 @@ const AddUser = () => {
             {errors.email && (
               <span className='text-red-500'>
                 {errors.email.message as any}
+              </span>
+            )}
+          </div>
+          <div className='col-span-6 sm:col-span-4'>
+            <label
+              htmlFor='email-address'
+              className='block text-sm font-medium text-gray-700'>
+              Phone
+            </label>
+            <input
+              type='tel'
+              {...register("phone", {
+                validate: {
+                  length: (value: string) => {
+                    return value.replace("-", "").length == 10;
+                  },
+                },
+                onChange: (e) => {
+                  const eLength = e.target.value.length;
+                  if (eLength == 12) return;
+                  let add = true;
+                  if (eLength > phoneLength.current) {
+                    add = true;
+                    phoneLength.current = eLength;
+                  } else {
+                    add = false;
+                    phoneLength.current = eLength;
+                  }
+
+                  if (add) {
+                    if (
+                      e.target.value.length == 3 ||
+                      e.target.value.length == 7
+                    ) {
+                      e.target.value = e.target.value.concat("-");
+                    }
+                  }
+                },
+              })}
+              maxLength={12}
+              id='phone'
+              autoComplete='phone'
+              className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+            />
+            {errors.phone && (
+              <span className='text-red-500'>
+                Please enter a valid phone number with no hyphens.
               </span>
             )}
           </div>

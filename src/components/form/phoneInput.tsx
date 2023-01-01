@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { formatPhoneNumber } from "../../utils/formatPhoneNumber";
 
 export const PhoneInput = () => {
   const phoneLength = useRef(0);
@@ -22,7 +23,7 @@ export const PhoneInput = () => {
         rules={{
           validate: {
             length: (value: string) => {
-              return value.replace("-", "").length == 10;
+              return value.replace(/-/g, "").trim().length == 10;
             },
           },
         }}
@@ -34,7 +35,16 @@ export const PhoneInput = () => {
               {...field}
               onChange={(e) => {
                 const eLength = e.target.value.length;
+                // checks if number is full length and prohibits extra input
                 if (eLength == 13) return;
+                // makes sure input is a number but allows for delation of first number
+                if (
+                  Number.isNaN(parseInt(e.target.value)) &&
+                  e.target.value != ""
+                )
+                  return;
+
+                //uses ref to track input length to determine if user is deleting or inputing new characters
                 let add = true;
                 if (eLength > phoneLength.current) {
                   add = true;
@@ -43,16 +53,11 @@ export const PhoneInput = () => {
                   add = false;
                   phoneLength.current = eLength;
                 }
-
                 if (add) {
-                  if (
-                    e.target.value.length == 3 ||
-                    e.target.value.length == 7
-                  ) {
-                    e.target.value = e.target.value.concat("-");
-                  }
+                  field.onChange(formatPhoneNumber(e.target.value));
+                } else {
+                  field.onChange(e.target.value);
                 }
-                field.onChange(e.target.value);
               }}
               id='phone'
               autoComplete='phone'
@@ -60,7 +65,7 @@ export const PhoneInput = () => {
             />
             {fieldState.error && (
               <span className='text-red-500'>
-                Please enter a valid phone number with no hyphens.
+                Please enter a valid phone number (###-###-####)
               </span>
             )}
           </>

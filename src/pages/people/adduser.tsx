@@ -116,7 +116,7 @@ const AddUser = () => {
             </div>
             <div className='hidden sm:col-span-3 sm:block'></div>
             <div className='sm:ropw col-span-6 sm:col-span-3'>
-              <RoleInputSelector userRoles={roleList} />
+              <RoleInputSelector userRoles={userRoles} />
             </div>
           </div>
           <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>

@@ -14,12 +14,16 @@ import { LastNameInput } from "../../../components/form/lastNameInput";
 import { EmailInput } from "../../../components/form/emailInput";
 import { UserStatusInputSelector } from "../../../components/form/userStatusInputSelector";
 import { PhoneInput } from "../../../components/form/phoneInput";
-import { removeDashes } from "../../../utils/formatPhoneNumber";
+import {
+  formatPhoneNumber,
+  removeDashes,
+} from "../../../utils/formatPhoneNumber";
+import { UserFormValues } from "../../../../types/userFormValues";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useUser();
-  const methods = useForm();
+  const methods = useForm<UserFormValues>();
 
   const [isLoading, setIsLoading] = useState(true);
   const alertContext = useContext(AlertContext);
@@ -48,7 +52,9 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   });
   const userQuery = trpc.useQuery(["user.getUserByID", id], {
     onSuccess(data) {
+      console.log(data);
       if (data != null) {
+        data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
         methods.reset(data);
         setSelectedRoles(data?.roles);
         setIsLoading(false);
@@ -72,7 +78,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
-      phone: removeDashes(data.phone),
+      phone: removeDashes(data.phoneNumber ?? ""),
       role: data.roles,
       status: data.status,
     });

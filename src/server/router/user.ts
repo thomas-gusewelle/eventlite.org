@@ -114,6 +114,7 @@ export const userRouter = createRouter()
       firstName: z.string(),
       lastName: z.string(),
       email: z.string(),
+      phone: z.string().length(10).optional(),
       role: z.object({ id: z.string(), name: z.string() }).array(),
       status: z.string(),
     }),
@@ -129,6 +130,7 @@ export const userRouter = createRouter()
           firstName: input.firstName,
           lastName: input.lastName,
           email: input.email,
+          phoneNumber: input.phone,
           roles: {
             connect: input.role.map((role) => ({
               id: role.id,

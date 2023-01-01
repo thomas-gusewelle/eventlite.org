@@ -15,6 +15,7 @@ import { LastNameInput } from "../../components/form/lastNameInput";
 import { EmailInput } from "../../components/form/emailInput";
 import { UserStatusInputSelector } from "../../components/form/userStatusInputSelector";
 import { removeDashes } from "../../utils/formatPhoneNumber";
+import { UserFormValues } from "../../../types/userFormValues";
 const AddUser = () => {
   const router = useRouter();
   const alertContext = useContext(AlertContext);
@@ -25,7 +26,7 @@ const AddUser = () => {
     length: number;
     direction: "ADD" | "SUBTRACT";
   }>({ length: 0, direction: "ADD" });
-  const methods = useForm();
+  const methods = useForm<UserFormValues>();
 
   const [roleList, setRoleList] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
@@ -64,7 +65,7 @@ const AddUser = () => {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
-      phone: removeDashes(data.phone),
+      phone: removeDashes(data.phoneNumber ?? ""),
       role: data.roles,
       status: data.status,
     });

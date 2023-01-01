@@ -1,7 +1,8 @@
 import { UserStatus } from ".prisma/client";
 import { useFormContext } from "react-hook-form";
 
-export const RoleInputSelector: React.FC<{ userRoles: UserStatus[] }> = ({
+// component to select user status {ADMIN | USER | MANAGER}
+export const UserStatusInputSelector: React.FC<{ userRoles: UserStatus[] }> = ({
   userRoles,
 }) => {
   const {

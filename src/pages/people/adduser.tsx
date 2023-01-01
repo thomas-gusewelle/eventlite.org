@@ -13,7 +13,7 @@ import { PhoneInput } from "../../components/form/phoneInput";
 import { FirstNameInput } from "../../components/form/firstNameInput";
 import { LastNameInput } from "../../components/form/lastNameInput";
 import { EmailInput } from "../../components/form/emailInput";
-import { RoleInputSelector } from "../../components/form/roleInputSelector";
+import { UserStatusInputSelector } from "../../components/form/userStatusInputSelector";
 import { removeDashes } from "../../utils/formatPhoneNumber";
 const AddUser = () => {
   const router = useRouter();
@@ -116,7 +116,7 @@ const AddUser = () => {
             </div>
             <div className='hidden sm:col-span-3 sm:block'></div>
             <div className='sm:ropw col-span-6 sm:col-span-3'>
-              <RoleInputSelector userRoles={userRoles} />
+              <UserStatusInputSelector userRoles={userRoles} />
             </div>
           </div>
           <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>

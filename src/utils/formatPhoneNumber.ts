@@ -10,3 +10,7 @@ export function formatPhoneNumber(e: string): string {
   }
   return e;
 }
+
+export function removeDashes(num: string): string {
+  return num.replace(/-/g, "");
+}

@@ -48,6 +48,55 @@ export const userRouter = createRouter()
       });
     },
   })
+  // mutation is here to facilate updating by logged in user
+  // checks to see if user is MANAGER or ADMIN or the same user as is logged in
+  // if not it throughs an error
+  .mutation("updateUserByID", {
+    input: z.object({
+      id: z.string(),
+      firstName: z.string(),
+      lastName: z.string(),
+      email: z.string(),
+      phone: z.string().length(10).optional(),
+      role: z.object({ id: z.string(), name: z.string() }).array(),
+      status: z.string(),
+    }),
+
+    async resolve({ ctx, input }) {
+      const user = await prisma?.user.findFirst({
+        where: { id: ctx.session?.user.id },
+        select: { status: true },
+      });
+      if (ctx.session?.user.id != input.id && user?.status == "USER") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Error. Not Approved.",
+        });
+      }
+
+      const allRoles = await prisma?.role.findMany({});
+      const disconnectRoles = allRoles?.filter((role) =>
+        input.role.every((i) => i.id !== role.id)
+      );
+
+      return await prisma?.user.update({
+        data: {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          phoneNumber: input.phone,
+          roles: {
+            connect: input.role.map((role) => ({
+              id: role.id,
+            })),
+            disconnect: disconnectRoles?.map((role) => ({ id: role.id })),
+          },
+          status: input.status as UserStatus,
+        },
+        where: { id: input.id },
+      });
+    },
+  })
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
       where: { id: ctx.session?.user.id },
@@ -55,7 +104,7 @@ export const userRouter = createRouter()
         status: true,
       },
     });
-    if (user?.status != "ADMIN") {
+    if (user?.status == "USER") {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next();
@@ -108,41 +157,7 @@ export const userRouter = createRouter()
       });
     },
   })
-  .mutation("updateUserByID", {
-    input: z.object({
-      id: z.string(),
-      firstName: z.string(),
-      lastName: z.string(),
-      email: z.string(),
-      phone: z.string().length(10).optional(),
-      role: z.object({ id: z.string(), name: z.string() }).array(),
-      status: z.string(),
-    }),
 
-    async resolve({ input }) {
-      const allRoles = await prisma?.role.findMany({});
-      const disconnectRoles = allRoles?.filter((role) =>
-        input.role.every((i) => i.id !== role.id)
-      );
-
-      return await prisma?.user.update({
-        data: {
-          firstName: input.firstName,
-          lastName: input.lastName,
-          email: input.email,
-          phoneNumber: input.phone,
-          roles: {
-            connect: input.role.map((role) => ({
-              id: role.id,
-            })),
-            disconnect: disconnectRoles?.map((role) => ({ id: role.id })),
-          },
-          status: input.status as UserStatus,
-        },
-        where: { id: input.id },
-      });
-    },
-  })
   .mutation("deleteUserByID", {
     input: z.string(),
     async resolve({ input }) {

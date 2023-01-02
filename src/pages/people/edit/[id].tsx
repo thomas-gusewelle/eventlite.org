@@ -19,6 +19,7 @@ import {
   removeDashes,
 } from "../../../utils/formatPhoneNumber";
 import { UserFormValues } from "../../../../types/userFormValues";
+import { BtnCancel } from "../../../components/btn/btnCancel";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
@@ -134,10 +135,12 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
               <UserStatusInputSelector userRoles={userRoles} />
             </div>
           </div>
-          <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>
+          <div className='flex justify-end gap-3 bg-gray-50 px-4 py-3 text-right sm:px-6'>
+            <button></button>
+            <BtnCancel onClick={() => router.back()} />
             <button
               type='submit'
-              className='inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
+              className='flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-[.1rem] px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
               Save
             </button>
           </div>

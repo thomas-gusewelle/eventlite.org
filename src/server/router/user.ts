@@ -57,7 +57,7 @@ export const userRouter = createRouter()
       firstName: z.string(),
       lastName: z.string(),
       email: z.string(),
-      phone: z.string().length(10).optional(),
+      phone: z.string().optional(),
       role: z.object({ id: z.string(), name: z.string() }).array(),
       status: z.string(),
     }),

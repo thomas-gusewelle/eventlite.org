@@ -177,7 +177,7 @@ const PeoplePage = () => {
               const options: TableOptionsDropdown = [
                 {
                   name: "View Profile",
-                  href: `/people/edit/${person.id}`,
+                  href: `/people/view/${person.id}`,
                 },
                 {
                   name: "Edit",

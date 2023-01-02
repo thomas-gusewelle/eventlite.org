@@ -34,6 +34,22 @@ const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"], {
     onSuccess: (data) => {
       if (data) {
+        // sorts users by status with inactive at the end
+        data = data.sort((a, b) => {
+          if (
+            (a.status == "ADMIN" || a.status == "USER") &&
+            b.status == "INACTIVE"
+          ) {
+            return -1;
+          } else if (
+            (b.status == "ADMIN" || b.status == "USER") &&
+            a.status == "INACTIVE"
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         setPeopleUnPageList(data);
       }
     },

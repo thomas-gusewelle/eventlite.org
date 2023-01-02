@@ -62,8 +62,8 @@ const AddUser = () => {
 
     // return;
     addUser.mutate({
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
       email: data.email,
       phone: removeDashes(data.phoneNumber ?? ""),
       role: data.roles,

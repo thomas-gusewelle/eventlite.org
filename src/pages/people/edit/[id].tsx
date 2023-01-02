@@ -76,8 +76,8 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
 
     editUser.mutate({
       id: id,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
       email: data.email,
       phone: removeDashes(data.phoneNumber ?? ""),
       role: data.roles,

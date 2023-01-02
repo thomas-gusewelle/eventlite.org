@@ -35,10 +35,11 @@ model User {
 }
 
 model UserSettings {
-  id                 String @id @default(cuid())
-  User               User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String @unique
-  scheduleShowAmount Int    @default(4)
+  id                     String  @id @default(cuid())
+  User                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String  @unique
+  scheduleShowAmount     Int     @default(4)
+  showInactiveInSchedule Boolean @default(false)
 }
 
 enum UserStatus {

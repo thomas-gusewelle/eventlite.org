@@ -70,12 +70,13 @@ const PeoplePage = () => {
 
   const filter = (e: string) => {
     if (e.length > 0) {
-      let key = e.toLowerCase();
+      const key = e.toLowerCase();
       const filter = people.data?.filter((person) => {
         return (
           person.firstName?.toLowerCase().includes(key) ||
           person.lastName?.toLowerCase().includes(key) ||
-          person.email?.toLowerCase().includes(key)
+          person.email?.toLowerCase().includes(key) ||
+          person.roles.some((role) => role.name.toLowerCase().includes(key))
         );
       });
       if (filter) {

@@ -23,6 +23,7 @@ export const PhoneInput = () => {
         rules={{
           validate: {
             length: (value: string) => {
+              if (value == "") return true;
               return value.replace(/-/g, "").trim().length == 10;
             },
           },

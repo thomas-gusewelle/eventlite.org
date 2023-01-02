@@ -45,7 +45,7 @@ const AddUser = () => {
       roles.refetch();
     },
   });
-  const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
+  const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
   const addUser = trpc.useMutation(["user.addUser"], {
     onSuccess: () => router.push("/people"),
     onError(error, variables, context) {

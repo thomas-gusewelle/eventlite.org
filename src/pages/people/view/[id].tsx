@@ -75,9 +75,7 @@ const ViewProfile = ({ id }: { id: string }) => {
             <span className='mt-1'>{userQuery.data?.status}</span>
           </div>
         </div>
-        {(user?.status == "ADMIN" ||
-          user?.status == "MANAGER" ||
-          user?.id == id) && (
+        {(user?.status == "ADMIN" || user?.id == id) && (
           <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>
             <button
               type='button'

@@ -67,7 +67,7 @@ export const userRouter = createRouter()
         where: { id: ctx.session?.user.id },
         select: { status: true },
       });
-      if (ctx.session?.user.id != input.id && user?.status == "USER") {
+      if (ctx.session?.user.id != input.id && user?.status != "ADMIN") {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Error. Not Approved.",

@@ -43,8 +43,8 @@ model UserSettings {
 
 enum UserStatus {
   USER
-  MANAGER
   ADMIN
+  INACTIVE
 }
 
 model Availability {

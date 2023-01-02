@@ -32,6 +32,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 }) => {
   const utils = trpc.useContext();
   const router = useRouter();
+  const userContext = useContext(UserContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
@@ -336,7 +337,11 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                                           ),
                                           userId: user.id,
                                           positionId: position.id,
-                                          show: true,
+                                          show:
+                                            (user.status != "INACTIVE" ||
+                                              userContext?.UserSettings
+                                                ?.showInactiveInSchedule) ??
+                                            true,
                                         })) || [{ name: "" }]
                                     }
                                   />

@@ -42,7 +42,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       roles.refetch();
     },
   });
-  const userRoles: UserStatus[] = ["USER", "MANAGER", "ADMIN"];
+  const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
   const editUser = trpc.useMutation("user.updateUserByID", {
     onError(error, variables, context) {
       alertContext.setError({

@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { BtnPurple } from "../btn/btnPurple";
+import { CardHeader } from "./cardHeader";
 
 export const OrganizationSelect = ({
   setStep,
@@ -10,12 +11,8 @@ export const OrganizationSelect = ({
 }) => {
   return (
     <>
-      <h2
-        tabIndex={0}
-        className='text-center text-2xl font-extrabold leading-6 text-gray-800'>
-        Do you need to create or find an organization?
-      </h2>
-      <div className='mt-8 flex flex-col justify-center gap-6'>
+      <CardHeader>Do you need to create or find an organization?</CardHeader>
+      <div className='mt-8 flex flex-col justify-center gap-6 sm:flex-row'>
         <div className='flex justify-center'>
           <BtnPurple
             func={() => {

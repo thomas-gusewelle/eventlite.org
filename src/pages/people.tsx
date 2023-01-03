@@ -14,10 +14,13 @@ import { PaginateData } from "../../types/paginate";
 import { AlertContext } from "../providers/alertProvider";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { useRouter } from "next/router";
+import { UserContext } from "../providers/userProvider";
+import { EmailChangeModal } from "../components/modal/emailChangeConfirm";
 
 const PeoplePage = () => {
   const alertContext = useContext(AlertContext);
   const router = useRouter();
+  const user = useContext(UserContext);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
   const [peopleUnPageList, setPeopleUnPageList] =
     useState<(User & { roles: Role[] })[]>();
@@ -32,6 +35,22 @@ const PeoplePage = () => {
   const people = trpc.useQuery(["user.getUsersByOrganization"], {
     onSuccess: (data) => {
       if (data) {
+        // sorts users by status with inactive at the end
+        data = data.sort((a, b) => {
+          if (
+            (a.status == "ADMIN" || a.status == "USER") &&
+            b.status == "INACTIVE"
+          ) {
+            return -1;
+          } else if (
+            (b.status == "ADMIN" || b.status == "USER") &&
+            a.status == "INACTIVE"
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         setPeopleUnPageList(data);
       }
     },
@@ -68,12 +87,13 @@ const PeoplePage = () => {
 
   const filter = (e: string) => {
     if (e.length > 0) {
-      let key = e.toLowerCase();
+      const key = e.toLowerCase();
       const filter = people.data?.filter((person) => {
         return (
           person.firstName?.toLowerCase().includes(key) ||
           person.lastName?.toLowerCase().includes(key) ||
-          person.email?.toLowerCase().includes(key)
+          person.email?.toLowerCase().includes(key) ||
+          person.roles.some((role) => role.name.toLowerCase().includes(key))
         );
       });
       if (filter) {
@@ -175,13 +195,18 @@ const PeoplePage = () => {
               const options: TableOptionsDropdown = [
                 {
                   name: "View Profile",
-                  href: `/people/edit/${person.id}`,
+                  href: `/people/view/${person.id}`,
                 },
                 {
                   name: "Edit",
                   href: `/people/edit/${person.id}`,
+                  show: user?.status == "ADMIN" || person.id == user?.id,
                 },
-                { name: "Delete", function: () => onDelete(person) },
+                {
+                  name: "Delete",
+                  function: () => onDelete(person),
+                  show: user?.status == "ADMIN",
+                },
               ];
 
               return (

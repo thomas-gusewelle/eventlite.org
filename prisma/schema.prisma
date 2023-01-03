@@ -12,13 +12,14 @@ datasource db {
 
 model User {
   id             String           @id @default(cuid())
-  firstName      String?
-  lastName       String?
+  firstName      String
+  lastName       String
   status         UserStatus       @default(USER)
   roles          Role[]
   eventPositions EventPositions[]
-  email          String?          @unique
+  email          String           @unique
   emailVerified  DateTime?
+  phoneNumber    String?
   image          String?
   // accounts       Account[]
   // sessions       Session[]
@@ -34,16 +35,17 @@ model User {
 }
 
 model UserSettings {
-  id                 String @id @default(cuid())
-  User               User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String @unique
-  scheduleShowAmount Int    @default(4)
+  id                     String  @id @default(cuid())
+  User                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String  @unique
+  scheduleShowAmount     Int     @default(4)
+  showInactiveInSchedule Boolean @default(false)
 }
 
 enum UserStatus {
   USER
-  MANAGER
   ADMIN
+  INACTIVE
 }
 
 model Availability {

@@ -21,7 +21,6 @@ const PeoplePage = () => {
   const alertContext = useContext(AlertContext);
   const router = useRouter();
   const user = useContext(UserContext);
-  const [emailEditModal, setEmailEditModal] = useState(true);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
   const [peopleUnPageList, setPeopleUnPageList] =
     useState<(User & { roles: Role[] })[]>();
@@ -149,9 +148,6 @@ const PeoplePage = () => {
 
   return (
     <>
-      {emailEditModal && (
-        <EmailChangeModal open={emailEditModal} setOpen={setEmailEditModal} />
-      )}
       {/* MD Top Bar */}
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Users</SectionHeading>

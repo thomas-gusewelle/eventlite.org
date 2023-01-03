@@ -21,6 +21,7 @@ import {
 import { UserFormValues } from "../../../../types/userFormValues";
 import { BtnCancel } from "../../../components/btn/btnCancel";
 import { EmailChangeModal } from "../../../components/modal/emailChangeConfirm";
+import { BtnSave } from "../../../components/btn/btnSave";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
@@ -162,13 +163,8 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
             </div>
           </div>
           <div className='flex justify-end gap-3 bg-gray-50 px-4 py-3 text-right sm:px-6'>
-            <button></button>
             <BtnCancel onClick={() => router.back()} />
-            <button
-              type='submit'
-              className='flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-[.1rem] px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
-              Save
-            </button>
+            <BtnSave></BtnSave>
           </div>
         </form>
       </FormProvider>

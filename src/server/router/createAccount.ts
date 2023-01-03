@@ -7,7 +7,7 @@ export const createAccountRouter = createRouter().query("searchForOrg", {
     return await prisma?.organization.findMany({
       where: {
         name: {
-          search: input,
+          search: `%${input.replace(/ /g, " | ")}%`,
         },
       },
     });

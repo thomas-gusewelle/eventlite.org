@@ -4,6 +4,7 @@ import { OrganizationSelect } from "../components/create-account-flow/steps/orga
 import StepCounter from "../components/create-account-flow/components/stepCounter";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateAccountForm } from "../../types/createAccountFormValues";
+import { FindOrganization } from "../components/create-account-flow/steps/findOrganization";
 
 // TODO: create org search and find
 const SignIn = () => {
@@ -20,8 +21,9 @@ const SignIn = () => {
       <div className='flex flex-col items-center justify-center'>
         <div className='mt-16 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
           <FormProvider {...methods}>
-            <form>
+            <form onSubmit={submit}>
               <Steps step={step} setStep={setStep} />
+              <button type='submit'>Simbut</button>
             </form>
           </FormProvider>
         </div>
@@ -46,8 +48,10 @@ const Steps = ({
         <OrganizationSelect setStep={setStep} setOrgSetting={setOrgSetting} />
       );
     case 2:
-      if (orgSetting == "FIND") return <div></div>;
+      if (orgSetting == "FIND") return <FindOrganization setStep={setStep} />;
       else if (orgSetting == "CREATE") return <div></div>;
+    case 3:
+      return <div></div>;
     default:
       return <div></div>;
   }

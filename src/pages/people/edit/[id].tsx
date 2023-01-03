@@ -164,7 +164,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
           </div>
           <div className='flex justify-end gap-3 bg-gray-50 px-4 py-3 text-right sm:px-6'>
             <BtnCancel onClick={() => router.back()} />
-            <BtnSave></BtnSave>
+            <BtnSave type='submit'></BtnSave>
           </div>
         </form>
       </FormProvider>

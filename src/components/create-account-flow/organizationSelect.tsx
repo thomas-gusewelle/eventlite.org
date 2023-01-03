@@ -10,11 +10,11 @@ export const OrganizationSelect = ({
 }) => {
   return (
     <>
-      <p
+      <h2
         tabIndex={0}
         className='text-center text-2xl font-extrabold leading-6 text-gray-800'>
         Do you need to create or find an organization?
-      </p>
+      </h2>
       <div className='mt-8 flex flex-col justify-center gap-6'>
         <div className='flex justify-center'>
           <BtnPurple

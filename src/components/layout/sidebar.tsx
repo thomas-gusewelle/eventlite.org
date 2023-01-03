@@ -234,9 +234,11 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                       <circle cx={12} cy={7} r={4} />
                                       <path d='M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2' />
                                     </svg>
-                                    <span className='ml-2 text-sm'>
-                                      My Profile
-                                    </span>
+                                    <Link href={`/people/view/${data.id}`}>
+                                      <span className='ml-2 text-sm'>
+                                        My Profile
+                                      </span>
+                                    </Link>
                                   </div>
                                 </li>
                                 <li className='mt-2 flex w-full cursor-pointer items-center justify-between text-gray-600 hover:text-indigo-700'>

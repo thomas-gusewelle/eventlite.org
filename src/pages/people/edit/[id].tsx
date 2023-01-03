@@ -26,7 +26,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useUser();
   const methods = useForm<UserFormValues>();
-  const [emailEditModal, setEmailEditModal] = useState(true);
+  const [emailEditModal, setEmailEditModal] = useState(false);
   const [formData, setFormData] = useState<UserFormValues | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);

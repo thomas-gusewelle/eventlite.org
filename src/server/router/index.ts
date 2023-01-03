@@ -8,6 +8,7 @@ import { locationRouter } from "./locations";
 import { eventsRouter } from "./events";
 import { scheduleRouter } from "./schedule";
 import { avalibiltyRouter } from "./availability";
+import { createAccountRouter } from "./createAccount";
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -16,7 +17,8 @@ export const appRouter = createRouter()
   .merge("locations.", locationRouter)
   .merge("events.", eventsRouter)
   .merge("schedule.", scheduleRouter)
-  .merge("avalibility.", avalibiltyRouter);
+  .merge("avalibility.", avalibiltyRouter)
+  .merge("createAccount.", createAccountRouter);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

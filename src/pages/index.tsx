@@ -38,13 +38,18 @@ const Home: NextPage = () => {
         />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div>Index</div>
-      <Link href={"/dashboard"}>
-        <a>Dashboard</a>
-      </Link>
-      <Link href={"/signin"}>
-        <a>SignIn</a>
-      </Link>
+      <div className='grid'>
+        <div>Index</div>
+        <Link href={"/dashboard"}>
+          <a>Dashboard</a>
+        </Link>
+        <Link href={"/signin"}>
+          <a>SignIn</a>
+        </Link>
+        <Link href={"/create-account"}>
+          <a>Create Account</a>
+        </Link>
+      </div>
     </>
   );
 };

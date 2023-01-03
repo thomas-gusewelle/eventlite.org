@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
 import { MultiSelect } from "../../../components/form/multiSelect";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../../components/circularProgress";
@@ -20,11 +20,14 @@ import {
 } from "../../../utils/formatPhoneNumber";
 import { UserFormValues } from "../../../../types/userFormValues";
 import { BtnCancel } from "../../../components/btn/btnCancel";
+import { EmailChangeModal } from "../../../components/modal/emailChangeConfirm";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useUser();
   const methods = useForm<UserFormValues>();
+  const [emailEditModal, setEmailEditModal] = useState(true);
+  const [formData, setFormData] = useState<UserFormValues | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const alertContext = useContext(AlertContext);
@@ -71,7 +74,18 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
     refetchOnWindowFocus: false,
   });
 
-  const submit = methods.handleSubmit((data) => {
+  // Checks to see if email has changed since loading.
+  // If so there is a confirmation that this does not change the login email
+  const preSubmit = methods.handleSubmit((data) => {
+    setFormData(data);
+    if (data.email != userQuery.data?.email) {
+      setEmailEditModal(true);
+    } else {
+      submit(data);
+    }
+  });
+
+  const submit = (data: UserFormValues) => {
     data["roles"] = selectedRoles;
 
     editUser.mutate({
@@ -84,7 +98,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       status: data.status,
     });
     router.push("/people");
-  });
+  };
 
   if (!user) {
     router.push("/signin");
@@ -101,11 +115,23 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <>
+      {emailEditModal && (
+        <EmailChangeModal
+          open={emailEditModal}
+          setOpen={setEmailEditModal}
+          cancelOnClick={() => setEmailEditModal(false)}
+          saveOnClick={() => {
+            if (formData == null) return;
+            submit(formData);
+            setEmailEditModal(false);
+          }}
+        />
+      )}
       <FormProvider {...methods}>
         <div className='mb-8'>
           <SectionHeading>Edit User</SectionHeading>
         </div>
-        <form onSubmit={submit} className='shadow'>
+        <form onSubmit={preSubmit} className='shadow'>
           <div className='mb-6 grid grid-cols-6 gap-6 px-6'>
             <div className='col-span-6 sm:col-span-3'>
               <FirstNameInput />

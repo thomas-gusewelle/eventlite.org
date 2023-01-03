@@ -1,16 +1,19 @@
-import { FormEvent, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { useRouter } from "next/router";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { OrganizationSelect } from "../components/create-account-flow/organizationSelect";
+import StepCounter from "../components/create-account-flow/stepCounter";
 
+// TODO: create org search and find
 const SignIn = () => {
   const router = useRouter();
-
+  const [step, setStep] = useState(1);
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
+      <StepCounter signUpState={step} totalNum={5} />
       <div className='flex flex-col items-center justify-center'>
         <div className='mt-16 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
-          <Steps />
+          <Steps step={step} setStep={setStep} />
         </div>
       </div>
     </div>
@@ -19,8 +22,13 @@ const SignIn = () => {
 
 export default SignIn;
 
-const Steps = () => {
-  const [step, setStep] = useState(1);
+const Steps = ({
+  step,
+  setStep,
+}: {
+  step: number;
+  setStep: Dispatch<SetStateAction<number>>;
+}) => {
   const [orgSetting, setOrgSetting] = useState<"FIND" | "CREATE" | null>(null);
   switch (step) {
     case 1:

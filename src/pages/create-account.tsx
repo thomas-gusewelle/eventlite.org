@@ -1,8 +1,7 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { useRouter } from "next/router";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
-import { OrganizationSelect } from "../components/create-account-flow/organizationSelect";
-import StepCounter from "../components/create-account-flow/stepCounter";
+import { OrganizationSelect } from "../components/create-account-flow/steps/organizationSelect";
+import StepCounter from "../components/create-account-flow/components/stepCounter";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateAccountForm } from "../../types/createAccountFormValues";
 

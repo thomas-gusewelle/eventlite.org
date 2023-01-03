@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import { BtnPurple } from "../btn/btnPurple";
-import { CardHeader } from "./cardHeader";
+import { BtnPurple } from "../../btn/btnPurple";
+import { CardHeader } from "../components/cardHeader";
 
 export const OrganizationSelect = ({
   setStep,

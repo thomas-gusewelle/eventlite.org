@@ -10,11 +10,8 @@ export const OrganizationSelect = ({
 }) => {
   return (
     <>
-      {" "}
       <p
         tabIndex={0}
-        role='heading'
-        aria-label='Login to your account'
         className='text-center text-2xl font-extrabold leading-6 text-gray-800'>
         Do you need to create or find an organization?
       </p>

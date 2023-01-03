@@ -3,7 +3,7 @@ export const BtnPurple = ({
   func,
 }: {
   children: any;
-  func: () => void;
+  func?: () => void;
 }) => {
   return (
     <button

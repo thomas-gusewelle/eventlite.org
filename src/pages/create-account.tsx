@@ -14,7 +14,7 @@ import { CardHeader } from "../components/create-account-flow/components/cardHea
 // TODO: create org search and find
 const SignIn = () => {
   const router = useRouter();
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
 
   const submit = methods.handleSubmit((data) => {

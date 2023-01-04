@@ -3,7 +3,6 @@ import Link from "next/link";
 import Head from "next/head";
 import { getUser, supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
-import { BiCommentX } from "react-icons/bi";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);

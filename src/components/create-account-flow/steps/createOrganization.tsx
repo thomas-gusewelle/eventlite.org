@@ -1,6 +1,9 @@
 import { Dispatch, SetStateAction, useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { formatPhoneNumber } from "../../../utils/formatPhoneNumber";
+import {
+  formatPhoneNumber,
+  removeDashes,
+} from "../../../utils/formatPhoneNumber";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
 import { ErrorSpan } from "../../errors/errorSpan";
@@ -17,16 +20,27 @@ export const CreateOrganization = ({
     register,
     control,
     setError,
+    clearErrors,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext();
+
+  const orgName: string = watch("orgName");
+  const orgPhone: string = watch("orgPhoneNumber");
   return (
     <>
       <CardHeader>Create Organization</CardHeader>
       <section>
         <div className='mt-3'>
           <label className='form-label'>Organization Name</label>
-          <input type='text' className='input-field' {...register("orgName")} />
+          <input
+            type='text'
+            className='input-field'
+            defaultValue={""}
+            {...register("orgName")}
+          />
+          {errors.orgName && <ErrorSpan>{errors.orgName.message}</ErrorSpan>}
         </div>
         {/* <div className='mt-3'>
           <label className='form-label'>Website</label>
@@ -98,7 +112,7 @@ export const CreateOrganization = ({
                 />
                 {fieldState.error && (
                   <span className='text-red-500'>
-                    Please enter a valid phone number (###-###-####)
+                    {fieldState.error.message}
                   </span>
                 )}
               </>
@@ -110,11 +124,42 @@ export const CreateOrganization = ({
           className='mt-6 flex items-center justify-center gap-6'>
           <BtnNeutral
             func={() => {
+              clearErrors("orgName");
+              clearErrors("orgPhoneNumber");
               setStep(1);
             }}>
             Back
           </BtnNeutral>
-          <BtnPurple func={() => {}}>Next</BtnPurple>
+          <BtnPurple
+            func={() => {
+              // validate input of fields
+              if (orgName?.length == 0 || orgName == undefined) {
+                setError("orgName", {
+                  type: "required",
+                  message: "Organization name required",
+                });
+              } else {
+                clearErrors("orgName");
+              }
+              if (removeDashes(orgPhone ?? "").length != 10) {
+                setError("orgPhoneNumber", {
+                  type: "required",
+                  message: "Phone Number Required",
+                });
+              } else {
+                clearErrors("orgPhoneNumber");
+              }
+
+              //proceed to next Step
+              if (
+                orgName?.length > 0 &&
+                removeDashes(orgPhone ?? "").length == 10
+              ) {
+                setStep(3);
+              }
+            }}>
+            Next
+          </BtnPurple>
         </div>
       </section>
     </>

@@ -3,6 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { formatPhoneNumber } from "../../../utils/formatPhoneNumber";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
+import { ErrorSpan } from "../../errors/errorSpan";
 import { CardHeader } from "../components/cardHeader";
 
 // TODO: finish validation of URL and error reporting
@@ -27,13 +28,14 @@ export const CreateOrganization = ({
           <label className='form-label'>Organization Name</label>
           <input type='text' className='input-field' {...register("orgName")} />
         </div>
-        <div className='mt-3'>
+        {/* <div className='mt-3'>
           <label className='form-label'>Website</label>
           <div className=' relative'>
             <input
               type='text'
               className='input-field pl-20'
               {...register("orgWebsite", {
+                required: true,
                 pattern:
                   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
               })}
@@ -42,9 +44,9 @@ export const CreateOrganization = ({
             <div className='translate absolute top-1/2 left-0 -translate-y-1/2 rounded-l-lg bg-gray-200 py-2 px-3 text-gray-600'>
               https://
             </div>
-            {/* {errors.} */}
           </div>
-        </div>
+          {errors.orgWebsite && <ErrorSpan>Enter a valid URL</ErrorSpan>}
+        </div> */}
         <div className='mt-3'>
           <label className='form-label'>Phone</label>
           <Controller

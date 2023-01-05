@@ -92,7 +92,6 @@ export const organizationRouter = createRouter()
       const { data, error } = await _supabase.auth.api.deleteUser(
         ctx.session?.user.id
       );
-      console.log(data, error);
 
       return organization;
     },

@@ -239,119 +239,125 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                     <span>{shortTime(event.datetime)}</span>
                   </div>
                   <div>
-                    {event.positions.map((position, index) => {
-                      return (
-                        <div
-                          className='grid grid-cols-3 border-t last:border-b last:pb-0'
-                          key={position.id}>
-                          <span className='flex items-center px-6 font-medium'>
-                            {position.Role.name}
-                          </span>
-                          <div className='col-span-2'>
-                            <>
-                              <Controller
-                                key={index}
-                                name={position.id + index}
-                                defaultValue={
-                                  {
-                                    name: fullName(
-                                      position.User?.firstName,
-                                      position.User?.lastName
-                                    ),
-                                    userResponce: position.userResponse,
-                                    userId: position.User?.id,
-                                  } || { name: "Not Scheuled" }
-                                }
-                                control={methods.control}
-                                render={({ field, fieldState }) => (
-                                  <ScheduleSelect
-                                    selected={field.value}
-                                    setSelected={(value) => {
-                                      field.onChange(value);
+                    {event.positions
+                      .sort((a, b) => {
+                        if (a.Role.name < b.Role.name) return -1;
+                        else if (a.Role.name > b.Role.name) return 1;
+                        else return 0;
+                      })
+                      .map((position, index) => {
+                        return (
+                          <div
+                            className='grid grid-cols-3 border-t last:border-b last:pb-0'
+                            key={position.id}>
+                            <span className='flex items-center px-6 font-medium'>
+                              {position.Role.name}
+                            </span>
+                            <div className='col-span-2'>
+                              <>
+                                <Controller
+                                  key={index}
+                                  name={position.id + index}
+                                  defaultValue={
+                                    {
+                                      name: fullName(
+                                        position.User?.firstName,
+                                        position.User?.lastName
+                                      ),
+                                      userResponce: position.userResponse,
+                                      userId: position.User?.id,
+                                    } || { name: "Not Scheuled" }
+                                  }
+                                  control={methods.control}
+                                  render={({ field, fieldState }) => (
+                                    <ScheduleSelect
+                                      selected={field.value}
+                                      setSelected={(value) => {
+                                        field.onChange(value);
 
-                                      if (field.value.userId != null) {
-                                        removeUserFromPosition.mutate(
-                                          {
-                                            userId: field.value.userId,
-                                            eventPositionId: position.id,
-                                          },
-                                          {
-                                            onSuccess() {
-                                              if (value.name == null) return;
-                                              scheduleUserMutation.mutate({
-                                                posisitionId: position.id,
-                                                userId: value.userId,
-                                              });
+                                        if (field.value.userId != null) {
+                                          removeUserFromPosition.mutate(
+                                            {
+                                              userId: field.value.userId,
+                                              eventPositionId: position.id,
                                             },
-                                          }
-                                        );
-                                      }
-                                      if (value.name == null) return;
-                                      if (field.value.userId == null) {
-                                        scheduleUserMutation.mutate({
-                                          posisitionId: position.id,
-                                          userId: value.userId,
-                                        });
-                                      }
+                                            {
+                                              onSuccess() {
+                                                if (value.name == null) return;
+                                                scheduleUserMutation.mutate({
+                                                  posisitionId: position.id,
+                                                  userId: value.userId,
+                                                });
+                                              },
+                                            }
+                                          );
+                                        }
+                                        if (value.name == null) return;
+                                        if (field.value.userId == null) {
+                                          scheduleUserMutation.mutate({
+                                            posisitionId: position.id,
+                                            userId: value.userId,
+                                          });
+                                        }
 
-                                      setSelectedPeople([
-                                        ...(selectedPeople || [
+                                        setSelectedPeople([
+                                          ...(selectedPeople || [
+                                            {
+                                              userId: "",
+                                              dateTime: new Date(),
+                                            },
+                                          ]),
                                           {
-                                            userId: "",
-                                            dateTime: new Date(),
+                                            userId: value.userId,
+                                            dateTime: event.datetime,
                                           },
-                                        ]),
-                                        {
-                                          userId: value.userId,
-                                          dateTime: event.datetime,
-                                        },
-                                      ]);
-                                    }}
-                                    list={
-                                      poepleList
-                                        .filter(
-                                          (person) =>
-                                            !person.availability
-                                              .map((ava) =>
-                                                ava.date.toDateString()
-                                              )
-                                              .includes(
-                                                event.datetime.toDateString()
-                                              ) &&
-                                            person.roles
-                                              .map((role) => role.id)
-                                              .includes(position.roleId) &&
-                                            !selectedPeople
-                                              ?.filter(
-                                                (date) =>
-                                                  date.dateTime ==
-                                                  event.datetime
-                                              )
-                                              .map((selPer) => selPer.userId)
-                                              .includes(person.id)
-                                        )
-                                        .map((user) => ({
-                                          name: fullName(
-                                            user.firstName,
-                                            user.lastName
-                                          ),
-                                          userId: user.id,
-                                          positionId: position.id,
-                                          show:
-                                            (user.status != "INACTIVE" ||
-                                              userContext?.UserSettings
-                                                ?.showInactiveInSchedule) ??
-                                            true,
-                                        })) || [{ name: "" }]
-                                    }
-                                  />
-                                )}
-                              />
-                            </>
+                                        ]);
+                                      }}
+                                      list={
+                                        poepleList
+                                          .filter(
+                                            (person) =>
+                                              !person.availability
+                                                .map((ava) =>
+                                                  ava.date.toDateString()
+                                                )
+                                                .includes(
+                                                  event.datetime.toDateString()
+                                                ) &&
+                                              person.roles
+                                                .map((role) => role.id)
+                                                .includes(position.roleId) &&
+                                              !selectedPeople
+                                                ?.filter(
+                                                  (date) =>
+                                                    date.dateTime ==
+                                                    event.datetime
+                                                )
+                                                .map((selPer) => selPer.userId)
+                                                .includes(person.id)
+                                          )
+                                          .map((user) => ({
+                                            name: fullName(
+                                              user.firstName,
+                                              user.lastName
+                                            ),
+                                            userId: user.id,
+                                            positionId: position.id,
+                                            show:
+                                              (user.status != "INACTIVE" ||
+                                                userContext?.UserSettings
+                                                  ?.showInactiveInSchedule) ??
+                                              true,
+                                          })) || [{ name: "" }]
+                                      }
+                                    />
+                                  )}
+                                />
+                              </>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </div>
               ))}

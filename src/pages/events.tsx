@@ -265,32 +265,38 @@ const EventsPage = () => {
               <span>{shortTime(event.datetime)}</span>
             </div>
             <div className=''>
-              {event.positions.map((position) => {
-                return (
-                  <div
-                    className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
-                    key={position.id}>
-                    <span className='py-3 px-3 font-medium'>
-                      {position.Role.name}
-                    </span>
-                    {position.User ? (
-                      <div
-                        className={`flex h-full py-1 px-3 text-center ${
-                          position.userResponse == null && "bg-gray-100"
-                        }
+              {event.positions
+                .sort((a, b) => {
+                  if (a.Role.name < b.Role.name) return -1;
+                  else if (a.Role.name > b.Role.name) return 1;
+                  else return 0;
+                })
+                .map((position) => {
+                  return (
+                    <div
+                      className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
+                      key={position.id}>
+                      <span className='py-3 px-3 font-medium'>
+                        {position.Role.name}
+                      </span>
+                      {position.User ? (
+                        <div
+                          className={`flex h-full py-1 px-3 text-center ${
+                            position.userResponse == null && "bg-gray-100"
+                          }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
-                        <PicNameRowSmall user={position?.User} />
-                      </div>
-                    ) : (
-                      <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
-                        Not Scheduled
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                          <PicNameRowSmall user={position?.User} />
+                        </div>
+                      ) : (
+                        <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
+                          Not Scheduled
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
             </div>
           </div>
         ))}

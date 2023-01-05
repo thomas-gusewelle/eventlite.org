@@ -1,4 +1,10 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { useRouter } from "next/router";
 import { OrganizationSelect } from "../components/create-account-flow/steps/organizationSelect";
 import StepCounter from "../components/create-account-flow/components/stepCounter";
@@ -10,15 +16,69 @@ import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
 import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { CardHeader } from "../components/create-account-flow/components/cardHeader";
+import { trpc } from "../utils/trpc";
+import { AlertContext } from "../providers/alertProvider";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // TODO: create org search and find
 const SignIn = () => {
   const router = useRouter();
+  const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
+  const createOrg = trpc.useMutation("organization.createOrg", {
+    onError(error, variables, context) {
+      setError({
+        state: true,
+        message: `Error creating organization. Message: ${error.message}`,
+      });
+    },
+  });
+  const createUser = trpc.useMutation("user.addUser", {
+    onError(error, variables, context) {
+      setError({
+        state: true,
+        message: `Error creating user. Message: ${error.message}`,
+      });
+    },
+  });
 
-  const submit = methods.handleSubmit((data) => {
+  const submit = methods.handleSubmit(async (data) => {
     console.log(data);
+
+    //if no OrgID == create organization
+    if (data.orgID == undefined || data?.orgID == "") {
+      const user = await supabaseClient.auth.signUp({
+        email: data.email,
+        password: data.password,
+      });
+
+      console.log(user);
+
+      if (user.user?.id == undefined || user.error) {
+        console.log("here");
+        setError({ state: true, message: "Unable to create user" });
+        return;
+      }
+      createOrg.mutate(
+        {
+          id: user.user?.id,
+          orgName: data.orgName,
+          orgPhoneNumber: data.orgPhoneNumber,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          status: "ADMIN",
+        },
+        {
+          onSuccess(retunredData, variables, context) {
+            router.push("/dashboard");
+          },
+        }
+      );
+    }
+    //if OrgID add user as unapproved user
   });
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>

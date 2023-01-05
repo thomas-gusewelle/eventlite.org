@@ -14,6 +14,7 @@ import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { CircularProgress } from "../components/circularProgress";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -33,6 +34,8 @@ const Dashboard = () => {
   const [eventsData, setEventsData] = useState<stateData>([]);
   // render, setRender is being used to force rerending of nested eventsData on mutate
   const [render, setRender] = useState(true);
+
+  const tempDelete = trpc.useMutation("organization.deleteOrg");
 
   const eventsQuery = trpc.useQuery(
     ["events.getUpcomingEventsByUser", { page: 1 }],
@@ -112,6 +115,12 @@ const Dashboard = () => {
       <div className='flex justify-center'>
         <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
+        </BtnPurple>
+        <BtnPurple
+          func={() => {
+            tempDelete.mutate();
+          }}>
+          Delete Org
         </BtnPurple>
       </div>
       <div className='mt-8 flex justify-center'>

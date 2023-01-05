@@ -25,30 +25,40 @@ export const scheduleRouter = createRouter()
     async resolve({ input, ctx }) {
       const limit: number = input.limit ?? 50;
       const { cursor } = input;
-      const testItems = await prisma?.event.findMany({
-        where: {
-          datetime: { gte: new Date() },
-        },
-        take: 4,
-        orderBy: {
-          datetime: "asc",
-        },
-        include: {
-          Locations: true,
-          positions: {
-            include: {
-              Role: true,
-              User: true,
-            },
-          },
-        },
-        cursor: cursor ? { id: cursor } : undefined,
-      });
+      // const testItems = await prisma?.event.findMany({
+      //   where: {
+      //     datetime: { gte: new Date() },
+      //   },
+      //   take: 4,
+      //   orderBy: {
+      //     datetime: "asc",
+      //   },
+      //   include: {
+      //     Locations: true,
+      //     positions: {
+      //       include: {
+      //         Role: true,
+      //         User: true,
+      //       },
+      //     },
+      //   },
+      //   cursor: cursor ? { id: cursor } : undefined,
+      // });
       // console.log("this is the test: ", testItems);
+
+      const org = await prisma?.user.findFirst({
+        where: {
+          id: ctx.session?.user.id,
+        },
+        select: {
+          organizationId: true,
+        },
+      });
 
       const items = await prisma?.event.findMany({
         take: limit + 1,
         where: {
+          organizationId: org?.organizationId,
           datetime: {
             gte: new Date(),
           },
@@ -71,6 +81,7 @@ export const scheduleRouter = createRouter()
       const lastItems = await prisma?.event.findMany({
         take: -limit - 1,
         where: {
+          organizationId: org?.organizationId,
           datetime: {
             gte: new Date(),
           },
@@ -105,15 +116,6 @@ export const scheduleRouter = createRouter()
           lastCursor = lastItems[0];
         }
       }
-
-      const org = await prisma?.user.findFirst({
-        where: {
-          id: ctx.session?.user.id,
-        },
-        select: {
-          organizationId: true,
-        },
-      });
 
       // This json parsing is a dirty way of deep cloning the array to keep a mutation from happening on line 130
       let gteTime = JSON.parse(JSON.stringify(items));

@@ -97,6 +97,7 @@ export const userRouter = createRouter()
       });
     },
   })
+
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
       where: { id: ctx.session?.user.id },

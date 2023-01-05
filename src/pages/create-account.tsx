@@ -6,16 +6,13 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/router";
-import { OrganizationSelect } from "../components/create-account-flow/steps/organizationSelect";
 import StepCounter from "../components/create-account-flow/components/stepCounter";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateAccountForm } from "../../types/createAccountFormValues";
-import { FindOrganization } from "../components/create-account-flow/steps/findOrganization";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
 import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
-import { CardHeader } from "../components/create-account-flow/components/cardHeader";
 import { trpc } from "../utils/trpc";
 import { AlertContext } from "../providers/alertProvider";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";

@@ -1,7 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { BtnNeutral } from "../../btn/btnNeutral";
-import { BtnPurple } from "../../btn/btnPurple";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { EmailInput } from "../../form/emailInput";
 import { FirstNameInput } from "../../form/firstNameInput";

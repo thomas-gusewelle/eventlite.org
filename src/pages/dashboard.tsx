@@ -35,7 +35,7 @@ const Dashboard = () => {
   // render, setRender is being used to force rerending of nested eventsData on mutate
   const [render, setRender] = useState(true);
 
-  const tempDelete = trpc.useMutation("organization.deleteOrg");
+  // const tempDelete = trpc.useMutation("organization.deleteOrg");
 
   const eventsQuery = trpc.useQuery(
     ["events.getUpcomingEventsByUser", { page: 1 }],
@@ -116,12 +116,12 @@ const Dashboard = () => {
         <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
         </BtnPurple>
-        <BtnPurple
+        {/* <BtnPurple
           func={() => {
             tempDelete.mutate();
           }}>
           Delete Org
-        </BtnPurple>
+        </BtnPurple> */}
       </div>
       <div className='mt-8 flex justify-center'>
         <SectionHeading>Upcoming Events</SectionHeading>

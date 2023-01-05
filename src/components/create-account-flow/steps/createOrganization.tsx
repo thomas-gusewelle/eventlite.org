@@ -122,15 +122,17 @@ export const CreateOrganization = ({
         <div
           onClick={(e) => e.preventDefault()}
           className='mt-6 flex items-center justify-center gap-6'>
-          <BtnNeutral
+          {/* <BtnNeutral
             func={() => {
               clearErrors("orgName");
               clearErrors("orgPhoneNumber");
               setStep(1);
             }}>
             Back
-          </BtnNeutral>
+          </BtnNeutral> */}
+
           <BtnPurple
+            fullWidth={true}
             func={() => {
               // validate input of fields
               if (orgName?.length == 0 || orgName == undefined) {
@@ -155,7 +157,7 @@ export const CreateOrganization = ({
                 orgName?.length > 0 &&
                 removeDashes(orgPhone ?? "").length == 10
               ) {
-                setStep(3);
+                setStep(2);
               }
             }}>
             Next

@@ -14,7 +14,7 @@ const StepCounter = ({
 
   return (
     <>
-      <div className='mx-auto mb-4 flex items-center justify-center'>
+      <div className='mx-auto mb-6 flex items-center justify-center'>
         {loop.map((item) => (
           <>
             <div
@@ -30,12 +30,6 @@ const StepCounter = ({
           </>
         ))}
       </div>
-      <p className='text-center text-white'>
-        Already have an account?{" "}
-        <Link href={"/signin"}>
-          <a className='underline'>Sign In</a>
-        </Link>
-      </p>
     </>
   );
 };

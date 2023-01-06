@@ -112,16 +112,20 @@ const Dashboard = () => {
         open={availabilityModal}
         setOpen={setAvailabilityModal}
       />
-      <div className='flex justify-center'>
+      <div className='flex justify-center gap-3'>
         <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
         </BtnPurple>
         {/* <BtnPurple
-          func={() => {
-            tempDelete.mutate();
-          }}>
-          Delete Org
-        </BtnPurple> */}
+            func={() => {
+              tempChaneId.mutate("clcjps52w0001n4atodvditg3", {
+                onSuccess(data, variables, context) {
+                  console.log(data);
+                },
+              });
+            }}>
+            update Id
+          </BtnPurple> */}
       </div>
       <div className='mt-8 flex justify-center'>
         <SectionHeading>Upcoming Events</SectionHeading>

@@ -18,7 +18,6 @@ import { AlertContext } from "../providers/alertProvider";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 
-// TODO: create org search and find
 const SignIn = () => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);

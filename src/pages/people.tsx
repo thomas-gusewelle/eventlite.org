@@ -18,7 +18,7 @@ import { UserContext } from "../providers/userProvider";
 import { EmailChangeModal } from "../components/modal/emailChangeConfirm";
 
 const PeoplePage = () => {
-  const alertContext = useContext(AlertContext);
+  const { setError } = useContext(AlertContext);
   const router = useRouter();
   const user = useContext(UserContext);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
@@ -56,9 +56,17 @@ const PeoplePage = () => {
     },
   });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
+  const createInvite = trpc.useMutation("createAccount.createInviteLink", {
+    onError(error, variables, context) {
+      setError({
+        state: true,
+        message: `Error creating invite code. ${error.message}`,
+      });
+    },
+  });
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
     onError: (error) => {
-      alertContext.setError({
+      setError({
         message: `Sorry. There was an issue deleting the user. Message: ${error}`,
         state: true,
       });
@@ -76,7 +84,7 @@ const PeoplePage = () => {
     if (adminCount.data == undefined) return;
 
     if (adminCount.data <= 1 && person.status == "ADMIN") {
-      alertContext.setError({
+      setError({
         message: "Error. You must have at least one admin account.",
         state: true,
       });
@@ -193,6 +201,11 @@ const PeoplePage = () => {
           <tbody>
             {peopleList.map((person, index) => {
               const options: TableOptionsDropdown = [
+                {
+                  name: "Invite user",
+                  function: () => createInvite.mutate({ userId: person.id }),
+                  show: !person.hasLogin,
+                },
                 {
                   name: "View Profile",
                   href: `/people/view/${person.id}`,

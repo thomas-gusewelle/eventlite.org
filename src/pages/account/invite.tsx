@@ -117,7 +117,7 @@ const InvitePage = () => {
   if (!id || typeof id !== "string") {
     return <div>No Id Provided</div>;
   }
-  return <Invite id={id} />;
+  return <Invite id={decodeURIComponent(id)} />;
 };
 
 export default InvitePage;

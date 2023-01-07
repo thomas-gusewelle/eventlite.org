@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "./context";
 import sgMail from "@sendgrid/mail";
+import { InviteLink } from "@prisma/client";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -35,20 +36,37 @@ export const createAccountRouter = createRouter()
       });
     },
   })
+  //creates or finds code to send to user
   .mutation("createInviteLink", {
     input: z.object({
       userId: z.string(),
     }),
     async resolve({ input }) {
-      const link = await prisma?.inviteLink.create({
-        data: {
-          user: {
-            connect: {
-              id: input.userId,
+      let link: InviteLink | null | undefined = undefined;
+      //tries to create the link and if it cannot then it finds the existing link and resends the link.
+      try {
+        link = await prisma?.inviteLink.create({
+          data: {
+            user: {
+              connect: {
+                id: input.userId,
+              },
             },
           },
-        },
-      });
+        });
+      } catch (error) {
+        link = await prisma?.inviteLink.findFirst({
+          where: { userId: input.userId },
+        });
+      }
+
+      if (link == undefined || link == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Error creating or retrieving invite code.",
+        });
+      }
+
       const user = await prisma?.user.findFirst({
         where: { id: input.userId },
         include: {
@@ -61,7 +79,7 @@ export const createAccountRouter = createRouter()
           message: "User does not exist",
         });
       }
-      console.log(process.env.SENDGRID_API_KEY!);
+
       sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
         await sgMail.send({
@@ -70,7 +88,9 @@ export const createAccountRouter = createRouter()
           subject: `Join ${user?.Organization?.name}'s Team`,
           html: `<div>
           <h1>Join ${user.Organization?.name}'s Team</h1>
-          <a href="#">LINK HERE</a>
+          <a href="/account/invite?code=${encodeURIComponent(
+            link.id
+          )}">LINK HERE</a>
           </div>`,
         });
       } catch (error) {

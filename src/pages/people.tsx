@@ -90,7 +90,7 @@ const PeoplePage = () => {
       });
       return;
     }
-    deleteUser.mutate(person.id);
+    deleteUser.mutate({ id: person.id, hasLogin: person.hasLogin });
   };
 
   const filter = (e: string) => {

@@ -31,6 +31,7 @@ export const createAccountRouter = createRouter()
       }
       return await prisma?.user.findFirst({
         where: { id: invite.userId },
+        include: { Organization: true },
       });
     },
   })
@@ -86,7 +87,7 @@ export const createAccountRouter = createRouter()
   // creates the user then updates the database userID and deletes the inviteLink entry
   .mutation("createInviteLogin", {
     input: z.object({
-      oldId: z.string().uuid(),
+      oldId: z.string(),
       email: z.string().email(),
       password: z.string(),
       confirmPassword: z.string(),
@@ -118,6 +119,7 @@ export const createAccountRouter = createRouter()
         },
         data: {
           id: user?.id,
+          hasLogin: true,
         },
       });
       const deleteLink = await prisma?.inviteLink.delete({

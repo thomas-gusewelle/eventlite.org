@@ -3,6 +3,7 @@ import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { UserStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { createClient } from "@supabase/supabase-js";
 
 export const userRouter = createRouter()
   .query("getUser", {
@@ -158,12 +159,36 @@ export const userRouter = createRouter()
       });
     },
   })
-
+  // takes in user id and hasLogin -> deletes user and user login
   .mutation("deleteUserByID", {
-    input: z.string(),
+    input: z.object({
+      id: z.string().uuid(),
+      hasLogin: z.boolean(),
+    }),
     async resolve({ input }) {
-      return await prisma?.user.delete({
-        where: { id: input },
+      console.log(input);
+      const user = await prisma?.user.delete({
+        where: { id: input.id },
       });
+
+      if (user == undefined) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+      }
+
+      if (input.hasLogin) {
+        const _supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_PRIVATE!
+        );
+
+        const deleteUser = await _supabase.auth.api.deleteUser(input.id);
+        if (deleteUser.error) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Unable to delete user login",
+          });
+        }
+        return deleteUser;
+      }
     },
   });

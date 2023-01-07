@@ -13,17 +13,15 @@ import { trpc } from "../../utils/trpc";
 
 type FormFields = { email: string; password: string; passwordConfirm: string };
 
-const Invite = ({ id }: { id: string }) => {
+const Invite = ({ code }: { code: string }) => {
   const methods = useForm<FormFields>();
   const router = useRouter();
-  const iconSize = 20;
-  const [showPassword, setShowPassword] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const password = methods.watch("password");
   const confirmPassword = methods.watch("passwordConfirm");
 
   const getUserFromCode = trpc.useQuery(
-    ["createAccount.getUserFromInvite", id],
+    ["createAccount.getUserFromInvite", code],
     {
       onSuccess(data) {
         console.log(data);
@@ -53,7 +51,7 @@ const Invite = ({ id }: { id: string }) => {
       oldId: getUserFromCode.data?.id,
       password: data.password,
       confirmPassword: data.passwordConfirm,
-      inviteId: id,
+      inviteId: code,
     });
   });
 
@@ -63,6 +61,10 @@ const Invite = ({ id }: { id: string }) => {
         <CircularProgress />
       </div>
     );
+  }
+
+  if (getUserFromCode.data == undefined) {
+    return <div>Error getting user</div>;
   }
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
@@ -101,7 +103,7 @@ const Invite = ({ id }: { id: string }) => {
         </div>
       </div>
       <p className='text-center text-white'>
-        Already have an account?{" "}
+        Already have an account?
         <Link href={"/signin"}>
           <a className='underline'>Sign In</a>
         </Link>
@@ -112,12 +114,12 @@ const Invite = ({ id }: { id: string }) => {
 
 const InvitePage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { code } = router.query;
 
-  if (!id || typeof id !== "string") {
+  if (!code || typeof code !== "string") {
     return <div>No Id Provided</div>;
   }
-  return <Invite id={decodeURIComponent(id)} />;
+  return <Invite code={decodeURIComponent(code)} />;
 };
 
 export default InvitePage;

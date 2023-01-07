@@ -24,7 +24,7 @@ export const PasswordField = ({
       <div className='relative'>
         <input
           type={showPassword ? "text" : "password"}
-          id='passwordConfirm'
+          id={isConfirm ? "passwordConfirm" : "password"}
           {...register(isConfirm ? "passwordConfirm" : "password", {
             required: {
               value: true,

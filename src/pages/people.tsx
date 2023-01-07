@@ -70,7 +70,6 @@ const PeoplePage = () => {
         message: `Sorry. There was an issue deleting the user. Message: ${error}`,
         state: true,
       });
-      console.log(error);
     },
     onSuccess: () => {
       people.refetch();

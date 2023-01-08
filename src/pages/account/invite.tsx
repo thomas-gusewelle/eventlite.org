@@ -1,12 +1,8 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { DetailedHTMLProps, FormHTMLAttributes, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-
 import { BtnPurple } from "../../components/btn/btnPurple";
 import { CircularProgress } from "../../components/circularProgress";
-import { ErrorSpan } from "../../components/errors/errorSpan";
 import { EmailInput } from "../../components/form/emailInput";
 import { PasswordField } from "../../components/form/password";
 import { trpc } from "../../utils/trpc";
@@ -16,7 +12,6 @@ type FormFields = { email: string; password: string; passwordConfirm: string };
 const Invite = ({ code }: { code: string }) => {
   const methods = useForm<FormFields>();
   const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null);
   const password = methods.watch("password");
   const confirmPassword = methods.watch("passwordConfirm");
 
@@ -34,9 +29,7 @@ const Invite = ({ code }: { code: string }) => {
     },
     onSuccess(data, variables, context) {
       router.push(
-        `/account/confirmemail?email=${encodeURI(
-          getUserFromCode.data?.email ?? ""
-        )}`
+        `/account/confirmemail?email=${getUserFromCode.data?.email ?? ""}`
       );
     },
   });
@@ -66,6 +59,7 @@ const Invite = ({ code }: { code: string }) => {
   if (getUserFromCode.data == undefined) {
     return <div>Error getting user</div>;
   }
+
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
       <h2 className='mb-12 text-center text-4xl font-bold text-white'>
@@ -75,7 +69,7 @@ const Invite = ({ code }: { code: string }) => {
       <div className='flex flex-col items-center justify-center'>
         <div className='mb-3 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
           <FormProvider {...methods}>
-            <form ref={formRef} onSubmit={submit}>
+            <form onSubmit={submit}>
               <EmailInput />
               <PasswordField />
               <PasswordField isConfirm={true} />
@@ -105,7 +99,7 @@ const Invite = ({ code }: { code: string }) => {
       <p className='text-center text-white'>
         Already have an account?
         <Link href={"/signin"}>
-          <a className='underline'>Sign In</a>
+          <a className='ml-1 underline'>Sign In</a>
         </Link>
       </p>
     </div>

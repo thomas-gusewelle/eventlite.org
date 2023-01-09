@@ -38,7 +38,7 @@ export const createAccountRouter = createRouter()
     },
   })
   //creates or finds code to send to user
-  .mutation("createInviteLink", {
+  .mutation("createInviteLinkWithID", {
     input: z.object({
       userId: z.string(),
     }),
@@ -103,6 +103,7 @@ export const createAccountRouter = createRouter()
       return link;
     },
   })
+
   .mutation("resendConfirm", {
     input: z.object({
       email: z.string().email(),

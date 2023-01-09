@@ -50,7 +50,7 @@ const AddUser = () => {
       });
     },
   });
-  const inviteUser = trpc.useMutation("createAccount.createInviteLink", {
+  const inviteUser = trpc.useMutation("createAccount.createInviteLinkWithID", {
     onError(error, variables, context) {
       setError({
         state: true,

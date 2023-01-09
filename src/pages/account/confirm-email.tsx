@@ -2,8 +2,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { BtnPurple } from "../../components/btn/btnPurple";
 import { CardHeader } from "../../components/create-account-flow/components/cardHeader";
+import { trpc } from "../../utils/trpc";
 
 const ConfirmEmail = ({ email }: { email: string }) => {
+  const resendEmail = trpc.useMutation("createAccount.resendConfirm");
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
       <h2 className='mb-12 text-center text-4xl font-bold text-white'></h2>
@@ -17,7 +19,11 @@ const ConfirmEmail = ({ email }: { email: string }) => {
               button to confirm your email. If you do not see the email you can
               click the button below to resend the email.
             </p>
-            <BtnPurple>Resend Confirmation</BtnPurple>
+            <BtnPurple
+              fullWidth={true}
+              func={() => resendEmail.mutate({ email: email })}>
+              Resend Confirmation
+            </BtnPurple>
           </>
         </div>
       </div>

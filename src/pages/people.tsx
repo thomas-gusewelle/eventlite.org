@@ -16,6 +16,7 @@ import { NoDataLayout } from "../components/layout/no-data-layout";
 import { useRouter } from "next/router";
 import { UserContext } from "../providers/userProvider";
 import { EmailChangeModal } from "../components/modal/emailChangeConfirm";
+import { BtnAdd } from "../components/btn/btnAdd";
 
 const PeoplePage = () => {
   const { setError } = useContext(AlertContext);
@@ -56,14 +57,17 @@ const PeoplePage = () => {
     },
   });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
-  const createInvite = trpc.useMutation("createAccount.createInviteLink", {
-    onError(error, variables, context) {
-      setError({
-        state: true,
-        message: `Error creating invite code. ${error.message}`,
-      });
-    },
-  });
+  const createInvite = trpc.useMutation(
+    "createAccount.createInviteLinkWithID",
+    {
+      onError(error, variables, context) {
+        setError({
+          state: true,
+          message: `Error creating invite code. ${error.message}`,
+        });
+      },
+    }
+  );
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
     onError: (error) => {
       setError({
@@ -122,11 +126,6 @@ const PeoplePage = () => {
     }
   }, [pageNum, peopleUnPageList]);
 
-  const addOptions: TableOptionsDropdown = [
-    { name: "Add User", href: "/people/adduser" },
-    { name: "Invite User", href: "#" },
-  ];
-
   if (people.error) {
     return <div>{people.error.message}</div>;
   }
@@ -159,7 +158,7 @@ const PeoplePage = () => {
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Users</SectionHeading>
         <div className='flex justify-end'>
-          <AddDropdownMenu options={addOptions} />
+          <BtnAdd onClick={() => router.push("/people/adduser")} />
         </div>
         <div className='col-span-2'>
           <input
@@ -182,7 +181,8 @@ const PeoplePage = () => {
             placeholder='Search'
           />
           {/* <SearchBar /> */}
-          <AddDropdownMenu options={addOptions} />
+
+          <BtnAdd onClick={() => router.push("/people/adduser")} />
         </div>
       </div>
 

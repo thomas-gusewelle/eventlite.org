@@ -17,6 +17,7 @@ import { UserStatusInputSelector } from "../../components/form/userStatusInputSe
 import { removeDashes } from "../../utils/formatPhoneNumber";
 import { UserFormValues } from "../../../types/userFormValues";
 import { BtnPurple } from "../../components/btn/btnPurple";
+import { BtnPurpleDropdown } from "../../components/btn/btnPurpleDropdown";
 const AddUser = () => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
@@ -137,17 +138,30 @@ const AddUser = () => {
               <UserStatusInputSelector userRoles={userRoles} />
             </div>
           </div>
-          <div className='flex justify-center gap-6 bg-gray-50 px-4 py-3 text-right sm:justify-end sm:px-6'>
-            <BtnPurple type='submit'>Create</BtnPurple>
-            <BtnPurple type='button' func={() => {}}>
+          <div className='flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6'>
+            <BtnPurpleDropdown
+              btnFunction={() => {
+                invite.current = true;
+                submit();
+              }}
+              options={[
+                {
+                  name: "Create",
+                  function: () => {
+                    invite.current = false;
+                    submit();
+                  },
+                },
+                {
+                  name: "Create and Invite",
+                  function: () => {
+                    invite.current = true;
+                    submit();
+                  },
+                },
+              ]}>
               Create and Invite
-            </BtnPurple>
-
-            {/* <button
-              type='submit'
-              className='inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
-              Save
-            </button> */}
+            </BtnPurpleDropdown>
           </div>
         </form>
       </FormProvider>

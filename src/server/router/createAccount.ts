@@ -89,7 +89,7 @@ export const createAccountRouter = createRouter()
           subject: `Join ${user?.Organization?.name}'s Team`,
           html: `<div>
           <h1>Join ${user.Organization?.name}'s Team</h1>
-          <a href="/account/invite?code=${encodeURIComponent(
+          <a href="https://themelios-schedule.vercel.app/account/invite?code=${encodeURIComponent(
             link.id
           )}">LINK HERE</a>
           </div>`,

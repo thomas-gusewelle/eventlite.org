@@ -23,6 +23,7 @@ import { AlertProvider } from "../../providers/alertProvider";
 import { ErrorAlert } from "../alerts/errorAlert";
 import { SuccdssAlert } from "../alerts/successAlert";
 import Image from "next/future/image";
+import { useWindowWidth } from "../../hooks/useWindowWidth";
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: string; href: string; icon: IconType }[] = [
@@ -41,10 +42,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
   const [show, setShow] = useState(false);
   const [profile, setProfile] = useState(false);
-  const [menu, setMenu] = useState(false);
-  const [menu1, setMenu1] = useState(false);
-  const [menu2, setMenu2] = useState(false);
-  const [menu3, setMenu3] = useState(false);
+  const windowWidth = useWindowWidth();
 
   const router = useRouter();
   const signOutRouter = () => {
@@ -54,15 +52,18 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
   const user = useContext(UserContext);
   const { data } = trpc.useQuery(["user.getUser"]);
-
+  // uses window width to set show to false on tranisiting from mobile to full screen
   useEffect(() => {
-    if (show) {
+    if (windowWidth > 1024) {
+      setShow(false);
+    }
+    if (show && windowWidth) {
       document.body.style.overflow = "hidden";
     }
     if (!show) {
       document.body.style.overflow = "auto";
     }
-  }, [show]);
+  }, [show, windowWidth]);
 
   return (
     <UserProvider>

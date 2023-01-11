@@ -51,13 +51,19 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   };
 
   const user = useContext(UserContext);
+
   const { data } = trpc.useQuery(["user.getUser"]);
+  useEffect(() => {
+    if (data == null || data == undefined) {
+      router.push("/");
+    }
+  }, [data]);
   // uses window width to set show to false on tranisiting from mobile to full screen
   useEffect(() => {
     if (windowWidth > 1024) {
       setShow(false);
     }
-    if (show && windowWidth) {
+    if (show) {
       document.body.style.overflow = "hidden";
     }
     if (!show) {
@@ -93,7 +99,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       </g>
                     </svg>
                   </div>
-                  {/* <img  src='/images/logo1.svg'></img> */}
+                  {/* <img src='/images/logo1.svg'></img> */}
                   <h1 className='text-2xl font-bold tracking-wide'>
                     Themelios
                   </h1>
@@ -323,29 +329,48 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       </div>
                     </div>
                   </div>
-                  <div
-                    className='visible relative mr-8 text-gray-600 lg:hidden'
-                    onClick={() => setShow(!show)}>
+                  <div className='visible relative mr-8 ml-4 flex w-full items-center justify-between text-gray-600 lg:hidden'>
+                    <div
+                      className='flex cursor-pointer gap-3 text-indigo-600'
+                      onClick={() => router.push("/")}>
+                      <svg
+                        width={40}
+                        fill='currentColor'
+                        id='Layer_2'
+                        xmlns='http://www.w3.org/2000/svg'
+                        viewBox='0 0 950 596.2'>
+                        <g id='Layer_1-2'>
+                          <path d='m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z' />
+                        </g>
+                      </svg>
+
+                      <h1 className='text-2xl font-bold tracking-wide'>
+                        Themelios
+                      </h1>
+                    </div>
                     {show ? (
                       " "
                     ) : (
-                      <svg
-                        aria-label='Main Menu'
-                        aria-haspopup='true'
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='icon icon-tabler icon-tabler-menu cursor-pointer'
-                        width={30}
-                        height={30}
-                        viewBox='0 0 24 24'
-                        strokeWidth='1.5'
-                        stroke='currentColor'
-                        fill='none'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'>
-                        <path stroke='none' d='M0 0h24v24H0z' />
-                        <line x1={4} y1={8} x2={20} y2={8} />
-                        <line x1={4} y1={16} x2={20} y2={16} />
-                      </svg>
+                      <>
+                        <svg
+                          onClick={() => setShow(!show)}
+                          aria-label='Main Menu'
+                          aria-haspopup='true'
+                          xmlns='http://www.w3.org/2000/svg'
+                          className='icon icon-tabler icon-tabler-menu cursor-pointer'
+                          width={30}
+                          height={30}
+                          viewBox='0 0 24 24'
+                          strokeWidth='1.5'
+                          stroke='currentColor'
+                          fill='none'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'>
+                          <path stroke='none' d='M0 0h24v24H0z' />
+                          <line x1={4} y1={8} x2={20} y2={8} />
+                          <line x1={4} y1={16} x2={20} y2={16} />
+                        </svg>
+                      </>
                     )}
                   </div>
                 </nav>
@@ -365,7 +390,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                 </div>
               </div>
             </div>
-          </div>{" "}
+          </div>
         </>
       )}
     </UserProvider>

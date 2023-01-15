@@ -42,7 +42,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   ];
 
   const [show, setShow] = useState(false);
-  const [profile, setProfile] = useState(false);
+
   const windowWidth = useWindowWidth();
 
   const router = useRouter();

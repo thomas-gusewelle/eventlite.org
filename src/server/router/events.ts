@@ -35,11 +35,7 @@ export const eventsRouter = createRouter()
   })
   //Gets the upcoming events and the events that need approval
   .query("getUpcomingEventsByUser", {
-    input: z.object({
-      limit: z.number().optional(),
-      page: z.number(),
-    }),
-    async resolve({ ctx, input }) {
+    async resolve({ ctx }) {
       console.log(ctx.session?.user);
 
       // Finds the positions that have already been aggreed to
@@ -48,7 +44,12 @@ export const eventsRouter = createRouter()
           User: {
             id: ctx.session?.user.id,
           },
-          userResponse: true,
+          OR: [
+            {
+              userResponse: true,
+            },
+            { userResponse: false },
+          ],
         },
       });
 

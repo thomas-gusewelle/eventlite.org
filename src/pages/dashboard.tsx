@@ -14,9 +14,6 @@ import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { CircularProgress } from "../components/circularProgress";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
-import { BtnNeutral } from "../components/btn/btnNeutral";
-import { useRouter } from "next/router";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -30,20 +27,13 @@ type stateData = (Event & {
 
 const Dashboard = () => {
   const user = useContext(UserContext);
-  const utils = trpc.useContext();
-  const router = useRouter();
   const alertContext = useContext(AlertContext);
   const [availabilityModal, setAvailabilityModal] = useState(false);
   const [eventsData, setEventsData] = useState<stateData>([]);
   const [approvalEventsData, setApprovalEventsData] = useState<stateData>([]);
-  const [page, setPage] = useState(1);
-  // render, setRender is being used to force rerending of nested eventsData on mutate
-  const [render, setRender] = useState(true);
-
-  // const tempDelete = trpc.useMutation("organization.deleteOrg");
 
   const eventsQuery = trpc.useQuery(
-    ["events.getUpcomingEventsByUser", { page: page }],
+    ["events.getUpcomingEventsByUser"],
 
     {
       onSuccess(data) {
@@ -75,10 +65,26 @@ const Dashboard = () => {
     // TODO make this work with moving from needs approval to upcoming
     onMutate(variables) {
       if (variables.positionId == undefined) return;
+
       // returns the event item we are working with
-      let item = eventsData.find((item) =>
-        item.positions.map((pos) => pos.id).includes(variables.positionId!)
-      );
+      // pulls the item from the eventData if moved to unknown
+      // puls the item from approval list if changing to False or True
+      let item:
+        | (Event & {
+            Locations: Locations | null;
+            positions: (EventPositions & { User: User | null; Role: Role })[];
+          })
+        | undefined = undefined;
+      if (variables.response == "NULL") {
+        item = eventsData.find((item) =>
+          item.positions.map((pos) => pos.id).includes(variables.positionId!)
+        );
+      } else {
+        item = approvalEventsData.find((item) =>
+          item.positions.map((pos) => pos.id).includes(variables.positionId!)
+        );
+      }
+
       // Findes index in posiiton list
       let posIndex = item?.positions.findIndex(
         (item) => item.id == variables?.positionId
@@ -102,15 +108,24 @@ const Dashboard = () => {
         item.positions[posIndex]!.userResponse = null;
       }
 
-      // all other events in the list
-      const others = eventsData.filter((event) => event.id != item?.id);
-      setEventsData(
-        [item, ...others].sort(
-          (a, b) => a.datetime.getTime() - b.datetime.getTime()
-        )
-      );
-      // forces rerender to work around nested object
-      setRender(!render);
+      if (variables.response == "NULL") {
+        setApprovalEventsData(
+          [item, ...approvalEventsData].sort(
+            (a, b) => a.datetime.getTime() - b.datetime.getTime()
+          )
+        );
+        setEventsData(eventsData.filter((event) => event.id != item?.id));
+      } else {
+        // all other events in the list
+        setApprovalEventsData(
+          approvalEventsData.filter((event) => event.id != item?.id)
+        );
+        setEventsData(
+          [item, ...eventsData].sort(
+            (a, b) => a.datetime.getTime() - b.datetime.getTime()
+          )
+        );
+      }
     },
     onSuccess() {
       // utils.queryClient.cancelQueries();
@@ -135,16 +150,6 @@ const Dashboard = () => {
         <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
         </BtnPurple>
-        {/* <BtnPurple
-            func={() => {
-              tempChaneId.mutate("clcjps52w0001n4atodvditg3", {
-                onSuccess(data, variables, context) {
-                  console.log(data);
-                },
-              });
-            }}>
-            update Id
-          </BtnPurple> */}
       </div>
 
       {approvalEventsData.length > 0 && (
@@ -288,22 +293,7 @@ const Dashboard = () => {
                       <TableDropdown
                         options={[
                           {
-                            name: `Change Availability to ${
-                              userResponse.userResponse == true
-                                ? "False"
-                                : "True"
-                            }`,
-                            function: () =>
-                              userResponseMutation.mutate({
-                                positionId: userResponse?.id,
-                                response:
-                                  userResponse?.userResponse == true
-                                    ? "DENY"
-                                    : "APPROVE",
-                              }),
-                          },
-                          {
-                            name: "Change Availability to Unknown",
+                            name: "Undo",
                             function: () =>
                               userResponseMutation.mutate({
                                 positionId: userResponse?.id,
@@ -350,27 +340,6 @@ const Dashboard = () => {
                   })}
                 </div>
               </div>
-              {/* User approval section */}
-              {userResponse?.userResponse == null && (
-                <div className='grid grid-cols-2 overflow-hidden rounded-b-lg border-b border-r border-l'>
-                  <BtnApprove
-                    func={() =>
-                      userResponseMutation.mutate({
-                        response: "APPROVE",
-                        positionId: userResponse?.id,
-                      })
-                    }
-                  />
-                  <BtnDeny
-                    func={() =>
-                      userResponseMutation.mutate({
-                        response: "DENY",
-                        positionId: userResponse?.id,
-                      })
-                    }
-                  />
-                </div>
-              )}
             </div>
           );
         })}

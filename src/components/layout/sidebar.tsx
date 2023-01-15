@@ -88,7 +88,9 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             <div className='flex-no-wrap flex'>
               {/* Sidebar starts */}
               <div className='absolute hidden max-h-full min-h-screen w-64 bg-gray-100 shadow lg:relative lg:block'>
-                <div className='flex h-16 w-full items-center gap-3 px-4 text-indigo-600'>
+                <div
+                  onClick={() => router.push("/dashboard")}
+                  className='flex h-16 w-full cursor-pointer items-center gap-3 px-4 text-indigo-600'>
                   <div className='w-10'>
                     <svg
                       fill='currentColor'
@@ -145,7 +147,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <div className='flex h-full w-full flex-col justify-between'>
                     <div>
                       <div className='flex items-center justify-start px-4'>
-                        <div className='flex h-16 w-full items-center gap-4 text-indigo-600'>
+                        <div className='flex h-16 w-full items-center gap-3 text-indigo-600'>
                           <div className='w-10'>
                             <svg
                               fill='currentColor'

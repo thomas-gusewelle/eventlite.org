@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useEffect, useState } from "react";
+import { Fragment, ReactElement, useContext, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import {
@@ -21,6 +21,10 @@ import { AlertProvider } from "../../providers/alertProvider";
 import { ErrorAlert } from "../alerts/errorAlert";
 import { SuccdssAlert } from "../alerts/successAlert";
 import { useWindowWidth } from "../../hooks/useWindowWidth";
+import { Menu, Transition } from "@headlessui/react";
+import { BiChevronDown, BiChevronRight } from "react-icons/bi";
+import { TableOptionsDropdown } from "../../../types/tableMenuOptions";
+import { classNames } from "../../utils/classnames";
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const sideLinks: { name: string; href: string; icon: IconType }[] = [
@@ -226,6 +230,62 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               {fullName(data.firstName, data.lastName)}
                             </p>
                           </div>
+                          <Menu
+                            as='div'
+                            className={"relative inline-block text-left"}>
+                            <Menu.Button className='inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100'>
+                              <BiChevronRight aria-hidden='true' />
+                            </Menu.Button>
+                            <Transition
+                              as={Fragment}
+                              enter='transition ease-out duration-100'
+                              enterFrom='transform opacity-0 scale-95'
+                              enterTo='transform opacity-100 scale-100'
+                              leave='transition ease-in duration-75'
+                              leaveFrom='transform opacity-100 scale-100'
+                              leaveTo='transform opacity-0 scale-95'>
+                              <Menu.Items className='absolute left-[125%] bottom-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                                <div className='py-1'>
+                                  <Menu.Item key={0}>
+                                    {({ active }) => (
+                                      <button className='w-full text-left'>
+                                        <Link href={`/people/view/${data.id}`}>
+                                          <a
+                                            onClick={() => setShow(false)}
+                                            className={classNames(
+                                              active
+                                                ? "bg-gray-100 text-gray-900"
+                                                : "text-gray-700",
+                                              "block px-4 py-2 text-sm"
+                                            )}>
+                                            View Profile
+                                          </a>
+                                        </Link>
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                  <Menu.Item key={1}>
+                                    {({ active }) => (
+                                      <button className='w-full text-left'>
+                                        <Link href={"/api/auth/logout"}>
+                                          <a
+                                            onClick={() => setShow(false)}
+                                            className={classNames(
+                                              active
+                                                ? "bg-gray-100 text-gray-900"
+                                                : "text-gray-700",
+                                              "block px-4 py-2 text-sm"
+                                            )}>
+                                            Sign Out
+                                          </a>
+                                        </Link>
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                </div>
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
                         </div>
                       </div>
                     </div>
@@ -240,64 +300,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <div className='hidden w-full pr-6 lg:flex'>
                     <div className='hidden w-full lg:flex'>
                       <div className='flex w-full items-center justify-end pl-8'>
-                        <div
-                          className='relative flex cursor-pointer items-center'
-                          onClick={() => setProfile(!profile)}>
+                        <div className='relative flex cursor-pointer items-center'>
                           <div className='rounded-full'>
-                            {profile ? (
-                              <ul className='absolute left-0 mt-12 w-full rounded border-r bg-white p-2 shadow sm:mt-16 '>
-                                <li className='flex w-full cursor-pointer items-center justify-between text-gray-600 hover:text-indigo-700'>
-                                  <div className='flex items-center'>
-                                    <svg
-                                      xmlns='http://www.w3.org/2000/svg'
-                                      className='icon icon-tabler icon-tabler-user'
-                                      width={18}
-                                      height={18}
-                                      viewBox='0 0 24 24'
-                                      strokeWidth='1.5'
-                                      stroke='currentColor'
-                                      fill='none'
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'>
-                                      <path stroke='none' d='M0 0h24v24H0z' />
-                                      <circle cx={12} cy={7} r={4} />
-                                      <path d='M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2' />
-                                    </svg>
-                                    <Link href={`/people/view/${data.id}`}>
-                                      <span className='ml-2 text-sm'>
-                                        My Profile
-                                      </span>
-                                    </Link>
-                                  </div>
-                                </li>
-                                <li className='mt-2 flex w-full cursor-pointer items-center justify-between text-gray-600 hover:text-indigo-700'>
-                                  <div className='flex items-center'>
-                                    <svg
-                                      xmlns='http://www.w3.org/2000/svg'
-                                      className='icon icon-tabler icon-tabler-logout'
-                                      width={20}
-                                      height={20}
-                                      viewBox='0 0 24 24'
-                                      strokeWidth='1.5'
-                                      stroke='currentColor'
-                                      fill='none'
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'>
-                                      <path stroke='none' d='M0 0h24v24H0z' />
-                                      <path d='M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2' />
-                                      <path d='M7 12h14l-3 -3m0 6l3 -3' />
-                                    </svg>
-                                    <Link href={"/api/auth/logout"}>
-                                      <span className='ml-2 text-sm'>
-                                        Sign out
-                                      </span>
-                                    </Link>
-                                  </div>
-                                </li>
-                              </ul>
-                            ) : (
-                              ""
-                            )}
                             <div className='relative'>
                               <Avatar user={data} />
                             </div>
@@ -305,23 +309,60 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                           <p className='mx-3 text-sm text-gray-800'>
                             {fullName(data.firstName, data.lastName)}
                           </p>
-                          <div className='cursor-pointer text-gray-600'>
-                            <svg
-                              aria-haspopup='true'
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='icon icon-tabler icon-tabler-chevron-down'
-                              width={20}
-                              height={20}
-                              viewBox='0 0 24 24'
-                              strokeWidth='1.5'
-                              stroke='currentColor'
-                              fill='none'
-                              strokeLinecap='round'
-                              strokeLinejoin='round'>
-                              <path stroke='none' d='M0 0h24v24H0z' />
-                              <polyline points='6 9 12 15 18 9' />
-                            </svg>
-                          </div>
+                          <Menu
+                            as='div'
+                            className={"relative inline-block text-left"}>
+                            <Menu.Button className='inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100'>
+                              <BiChevronDown aria-hidden='true' />
+                            </Menu.Button>
+                            <Transition
+                              as={Fragment}
+                              enter='transition ease-out duration-100'
+                              enterFrom='transform opacity-0 scale-95'
+                              enterTo='transform opacity-100 scale-100'
+                              leave='transition ease-in duration-75'
+                              leaveFrom='transform opacity-100 scale-100'
+                              leaveTo='transform opacity-0 scale-95'>
+                              <Menu.Items className='absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                                <div className='py-1'>
+                                  <Menu.Item key={0}>
+                                    {({ active }) => (
+                                      <button className='w-full text-left'>
+                                        <Link href={`/people/view/${data.id}`}>
+                                          <a
+                                            className={classNames(
+                                              active
+                                                ? "bg-gray-100 text-gray-900"
+                                                : "text-gray-700",
+                                              "block px-4 py-2 text-sm"
+                                            )}>
+                                            View Profile
+                                          </a>
+                                        </Link>
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                  <Menu.Item key={1}>
+                                    {({ active }) => (
+                                      <button className='w-full text-left'>
+                                        <Link href={"/api/auth/logout"}>
+                                          <a
+                                            className={classNames(
+                                              active
+                                                ? "bg-gray-100 text-gray-900"
+                                                : "text-gray-700",
+                                              "block px-4 py-2 text-sm"
+                                            )}>
+                                            Sign Out
+                                          </a>
+                                        </Link>
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                </div>
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
                         </div>
                       </div>
                     </div>

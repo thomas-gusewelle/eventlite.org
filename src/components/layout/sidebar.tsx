@@ -13,16 +13,13 @@ import { FaChurch } from "react-icons/fa";
 import Link from "next/link";
 import { IconType } from "react-icons";
 import { Avatar } from "../profile/avatar";
-import { useUser } from "@supabase/auth-helpers-react";
 import { trpc } from "../../utils/trpc";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { fullName } from "../../utils/fullName";
 import Head from "next/head";
 import { UserContext, UserProvider } from "../../providers/userProvider";
 import { AlertProvider } from "../../providers/alertProvider";
 import { ErrorAlert } from "../alerts/errorAlert";
 import { SuccdssAlert } from "../alerts/successAlert";
-import Image from "next/future/image";
 import { useWindowWidth } from "../../hooks/useWindowWidth";
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {

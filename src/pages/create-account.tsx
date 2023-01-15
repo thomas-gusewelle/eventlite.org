@@ -106,7 +106,7 @@ const SignIn = () => {
         </div>
       </div>
       <p className='text-center text-white'>
-        Already have an account?{" "}
+        Already have an account?
         <Link href={"/signin"}>
           <a className='underline'>Sign In</a>
         </Link>

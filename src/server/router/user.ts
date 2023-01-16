@@ -162,7 +162,7 @@ export const userRouter = createRouter()
   // takes in user id and hasLogin -> deletes user and user login
   .mutation("deleteUserByID", {
     input: z.object({
-      id: z.string().uuid(),
+      id: z.string(),
       hasLogin: z.boolean(),
     }),
     async resolve({ input }) {

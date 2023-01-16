@@ -5,6 +5,7 @@ import { createRouter } from "./context";
 import sgMail from "@sendgrid/mail";
 import { InviteLink } from "@prisma/client";
 import { createClient, Session } from "@supabase/supabase-js";
+import { inviteCodeEmailString } from "../../emails/inviteCode";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -87,12 +88,7 @@ export const createAccountRouter = createRouter()
           to: "tombome119@gmail.com",
           from: "tgusewelle@gkwmedia.com",
           subject: `Join ${user?.Organization?.name}'s Team`,
-          html: `<div>
-          <h1>Join ${user.Organization?.name}'s Team</h1>
-          <a href="https://themelios-schedule.vercel.app/account/invite?code=${encodeURIComponent(
-            link.id
-          )}">LINK HERE</a>
-          </div>`,
+          html: inviteCodeEmailString(user.Organization?.name, link.id),
         });
       } catch (error) {
         throw new TRPCError({

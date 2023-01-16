@@ -8,6 +8,7 @@ import { CircularProgress } from "../components/circularProgress";
 import { longDate } from "../components/dateTime/dates";
 import { NewSingleSelect } from "../components/form/singleSelect";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
@@ -95,6 +96,25 @@ const AvailabilityPage = () => {
       <div className='flex justify-center'>
         <CircularProgress />
       </div>
+    );
+  }
+
+  if (pagiantedData.data.length <= 0) {
+    return (
+      <>
+        <AvaililityModal
+          userId={userSelected.id}
+          open={modalOpen}
+          setOpen={setModalOpen}
+          exisitingDates={dates}
+          setExisitingDates={setDates}
+        />
+        <NoDataLayout
+          heading={"Unavailable Dates"}
+          func={() => setModalOpen(true)}
+          btnText={"Add Unavailable Dates"}
+        />
+      </>
     );
   }
 

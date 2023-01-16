@@ -26,20 +26,15 @@ import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 import { TableOptionsDropdown } from "../../../types/tableMenuOptions";
 import { classNames } from "../../utils/classnames";
 
+type SideLink = {
+  name: string;
+  href: string;
+  show: boolean;
+  icon: IconType;
+}[];
+
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
-  const sideLinks: { name: string; href: string; icon: IconType }[] = [
-    { name: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard },
-    { name: "Schedule", href: "/schedule?cursor=", icon: MdSchedule },
-    { name: "Events", href: "/events", icon: MdEvent },
-    {
-      name: "Availability",
-      href: "/availability",
-      icon: MdPermContactCalendar,
-    },
-    { name: "People", href: "/people", icon: MdPeopleAlt },
-    { name: "Locations", href: "/locations", icon: FaChurch },
-    { name: "Roles", href: "/roles", icon: MdWorkspaces },
-  ];
+  const [sideLinks, setSideLinks] = useState<SideLink>([]);
 
   const [show, setShow] = useState(false);
 
@@ -53,7 +48,45 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
   const user = useContext(UserContext);
 
-  const { data } = trpc.useQuery(["user.getUser"]);
+  const { data } = trpc.useQuery(["user.getUser"], {
+    onSuccess(data) {
+      if (data == undefined) return;
+      setSideLinks([
+        {
+          name: "Dashboard",
+          href: "/dashboard",
+          show: true,
+          icon: MdSpaceDashboard,
+        },
+        {
+          name: "Schedule",
+          href: "/schedule?cursor=",
+          show: data?.status == "ADMIN",
+          icon: MdSchedule,
+        },
+        { name: "Events", href: "/events", show: true, icon: MdEvent },
+        {
+          name: "Availability",
+          href: "/availability",
+          show: true,
+          icon: MdPermContactCalendar,
+        },
+        { name: "People", href: "/people", show: true, icon: MdPeopleAlt },
+        {
+          name: "Locations",
+          href: "/locations",
+          show: data.status == "ADMIN",
+          icon: FaChurch,
+        },
+        {
+          name: "Roles",
+          href: "/roles",
+          show: data.status == "ADMIN",
+          icon: MdWorkspaces,
+        },
+      ]);
+    },
+  });
   useEffect(() => {
     if (data == null || data == undefined) {
       router.push("/");
@@ -108,26 +141,30 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   </h1>
                 </div>
                 <ul className=' py-6'>
-                  {sideLinks.map((link, index) => (
-                    <Link key={index} href={link.href as any}>
-                      <a onClick={() => setShow(false)}>
-                        <li
-                          key={index}
-                          className={`${
-                            router.asPath == link.href
-                              ? "text-indigo-700"
-                              : "text-gray-500"
-                          } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}>
-                          <div className='flex items-center'>
-                            <div>
-                              <link.icon size={20}></link.icon>
-                            </div>
-                            <span className='ml-2'>{link.name}</span>
-                          </div>
-                        </li>
-                      </a>
-                    </Link>
-                  ))}
+                  {sideLinks.map((link, index) => {
+                    if (link.show) {
+                      return (
+                        <Link key={index} href={link.href as any}>
+                          <a onClick={() => setShow(false)}>
+                            <li
+                              key={index}
+                              className={`${
+                                router.asPath == link.href
+                                  ? "text-indigo-700"
+                                  : "text-gray-500"
+                              } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}>
+                              <div className='flex items-center'>
+                                <div>
+                                  <link.icon size={20}></link.icon>
+                                </div>
+                                <span className='ml-2'>{link.name}</span>
+                              </div>
+                            </li>
+                          </a>
+                        </Link>
+                      );
+                    }
+                  })}
                 </ul>
               </div>
               {/*Mobile responsive sidebar*/}

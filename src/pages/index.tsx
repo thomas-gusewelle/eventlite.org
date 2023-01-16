@@ -3,7 +3,6 @@ import Link from "next/link";
 import Head from "next/head";
 import { getUser, supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
-import { BiCommentX } from "react-icons/bi";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -38,13 +37,18 @@ const Home: NextPage = () => {
         />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div>Index</div>
-      <Link href={"/dashboard"}>
-        <a>Dashboard</a>
-      </Link>
-      <Link href={"/signin"}>
-        <a>SignIn</a>
-      </Link>
+      <div className='grid'>
+        <div>Index</div>
+        <Link href={"/dashboard"}>
+          <a>Dashboard</a>
+        </Link>
+        <Link href={"/signin"}>
+          <a>SignIn</a>
+        </Link>
+        <Link href={"/create-account"}>
+          <a>Create Account</a>
+        </Link>
+      </div>
     </>
   );
 };

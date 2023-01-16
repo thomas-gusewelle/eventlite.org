@@ -3,17 +3,46 @@
 @tailwind utilities;
 
 /* These two selectors are to customize the datepciker for the unavilable dates selector to facilitate allowing for picking multiple dates. The first removes the styling when selected and the second makes the hjighlight styling custom */
-
-div.customDate>div>div>div.react-datepicker__month-container>div.react-datepicker__month>.react-datepicker__week>.react-datepicker__day--keyboard-selected {
-    border: 2px solid linear-gradient( 174deg, rgba(255, 165, 0, 0.7357317927170868) 32%, rgba(249, 239, 170, 1) 100%);
-    border-radius: 0.3rem;
-    color: black;
-    background: white;
+@layer components {
+  .input-field {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm;
+  }
+  .form-label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+}
+div.customDate
+  > div
+  > div
+  > div.react-datepicker__month-container
+  > div.react-datepicker__month
+  > .react-datepicker__week
+  > .react-datepicker__day--keyboard-selected {
+  border: 2px solid
+    linear-gradient(
+      174deg,
+      rgba(255, 165, 0, 0.7357317927170868) 32%,
+      rgba(249, 239, 170, 1) 100%
+    );
+  border-radius: 0.3rem;
+  color: black;
+  background: white;
 }
 
-div.customDate>div>div>div.react-datepicker__month-container>div.react-datepicker__month>.react-datepicker__week>.react-datepicker__day--highlighted {
-    border: 2px solid linear-gradient( 174deg, rgba(255, 165, 0, 0.7357317927170868) 32%, rgba(249, 239, 170, 1) 100%);
-    border-radius: 0.3rem;
-    color: white;
-    background: rgb(239 68 68) !important;
+div.customDate
+  > div
+  > div
+  > div.react-datepicker__month-container
+  > div.react-datepicker__month
+  > .react-datepicker__week
+  > .react-datepicker__day--highlighted {
+  border: 2px solid
+    linear-gradient(
+      174deg,
+      rgba(255, 165, 0, 0.7357317927170868) 32%,
+      rgba(249, 239, 170, 1) 100%
+    );
+  border-radius: 0.3rem;
+  color: white;
+  background: rgb(239 68 68) !important;
 }

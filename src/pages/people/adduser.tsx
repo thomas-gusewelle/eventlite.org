@@ -16,29 +16,26 @@ import { EmailInput } from "../../components/form/emailInput";
 import { UserStatusInputSelector } from "../../components/form/userStatusInputSelector";
 import { removeDashes } from "../../utils/formatPhoneNumber";
 import { UserFormValues } from "../../../types/userFormValues";
+import { BtnPurple } from "../../components/btn/btnPurple";
+import { BtnPurpleDropdown } from "../../components/btn/btnPurpleDropdown";
 const AddUser = () => {
   const router = useRouter();
-  const alertContext = useContext(AlertContext);
+  const { setError } = useContext(AlertContext);
   const user = useUser();
   // used to track if user is adding or deleting characters from phone #
-  const phoneLength = useRef<number>(0);
-  const [phoneFieldDirection, setPhoneFieldDirection] = useState<{
-    length: number;
-    direction: "ADD" | "SUBTRACT";
-  }>({ length: 0, direction: "ADD" });
+  const invite = useRef(false);
   const methods = useForm<UserFormValues>();
 
   const [roleList, setRoleList] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const roles = trpc.useQuery(["role.getRolesByOrganization"], {
     onSuccess(data) {
-      console.log(data);
       if (data) {
         setRoleList(data);
       }
     },
     onError(err) {
-      alertContext.setError({
+      setError({
         state: true,
         message: `Error fetching user roles: Message: ${err.message}`,
       });
@@ -47,28 +44,49 @@ const AddUser = () => {
   });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
   const addUser = trpc.useMutation(["user.addUser"], {
-    onSuccess: () => router.push("/people"),
     onError(error, variables, context) {
-      alertContext.setError({
+      setError({
         state: true,
         message: `Error adding user. Please try again.`,
+      });
+    },
+  });
+  const inviteUser = trpc.useMutation("createAccount.createInviteLinkWithID", {
+    onError(error, variables, context) {
+      setError({
+        state: true,
+        message: `Failed to create invite code. Message: ${error.message}`,
       });
     },
   });
 
   const submit = methods.handleSubmit((data) => {
     data["roles"] = selectedRoles;
-    console.log(data);
 
     // return;
-    addUser.mutate({
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      email: data.email,
-      phone: removeDashes(data.phoneNumber ?? ""),
-      role: data.roles,
-      status: data.status,
-    });
+    addUser.mutate(
+      {
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email,
+        phone: removeDashes(data.phoneNumber ?? ""),
+        role: data.roles,
+        status: data.status,
+      },
+      {
+        onSuccess(data, variables, context) {
+          // if user clicked creae and invite then send the invite link
+          if (invite.current == true && data) {
+            inviteUser.mutate(
+              { userId: data.id },
+              { onSuccess: () => router.push("/people") }
+            );
+          } else {
+            router.push("/people");
+          }
+        },
+      }
+    );
   });
 
   if (!user) {
@@ -120,12 +138,30 @@ const AddUser = () => {
               <UserStatusInputSelector userRoles={userRoles} />
             </div>
           </div>
-          <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>
-            <button
-              type='submit'
-              className='inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
-              Save
-            </button>
+          <div className='flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6'>
+            <BtnPurpleDropdown
+              btnFunction={() => {
+                invite.current = true;
+                submit();
+              }}
+              options={[
+                {
+                  name: "Create",
+                  function: () => {
+                    invite.current = false;
+                    submit();
+                  },
+                },
+                {
+                  name: "Create and Invite",
+                  function: () => {
+                    invite.current = true;
+                    submit();
+                  },
+                },
+              ]}>
+              Create and Invite
+            </BtnPurpleDropdown>
           </div>
         </form>
       </FormProvider>

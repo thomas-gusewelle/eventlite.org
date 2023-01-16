@@ -33,32 +33,35 @@ export const eventsRouter = createRouter()
       });
     },
   })
+  //Gets the upcoming events and the events that need approval
   .query("getUpcomingEventsByUser", {
-    input: z.object({
-      limit: z.number().optional(),
-      page: z.number(),
-    }),
-    async resolve({ ctx, input }) {
+    async resolve({ ctx }) {
       console.log(ctx.session?.user);
 
-      const positions = await prisma?.eventPositions.findMany({
+      // Finds the positions that have already been aggreed to
+      const upcomingPositions = await prisma?.eventPositions.findMany({
         where: {
           User: {
             id: ctx.session?.user.id,
           },
+          OR: [
+            {
+              userResponse: true,
+            },
+            { userResponse: false },
+          ],
         },
       });
 
-      const limit: number = input.limit ?? 3;
-      return await prisma?.event.findMany({
+      // const limit: number = input.limit ?? 3;
+      const upcoming = await prisma?.event.findMany({
         where: {
           id: {
-            in: positions?.map((item) => item.eventId ?? ""),
+            in: upcomingPositions?.map((item) => item.eventId ?? ""),
           },
           datetime: {
             gte: roundHourDown(),
           },
-          positions: {},
         },
 
         include: {
@@ -73,8 +76,44 @@ export const eventsRouter = createRouter()
         orderBy: {
           datetime: "asc",
         },
-        take: limit,
       });
+
+      // Finds the positions that have still need to be approved
+      const approvalPositions = await prisma?.eventPositions.findMany({
+        where: {
+          User: {
+            id: ctx.session?.user.id,
+          },
+          userResponse: null,
+        },
+      });
+
+      // const limit: number = input.limit ?? 3;
+      const needApproval = await prisma?.event.findMany({
+        where: {
+          id: {
+            in: approvalPositions?.map((item) => item.eventId ?? ""),
+          },
+          datetime: {
+            gte: roundHourDown(),
+          },
+        },
+
+        include: {
+          Locations: true,
+          positions: {
+            include: {
+              Role: true,
+              User: true,
+            },
+          },
+        },
+        orderBy: {
+          datetime: "asc",
+        },
+      });
+
+      return { upcoming: upcoming, needApproval: needApproval };
     },
   })
   .mutation("updateUserResponse", {

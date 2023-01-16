@@ -16,9 +16,10 @@ import { NoDataLayout } from "../components/layout/no-data-layout";
 import { useRouter } from "next/router";
 import { UserContext } from "../providers/userProvider";
 import { EmailChangeModal } from "../components/modal/emailChangeConfirm";
+import { BtnAdd } from "../components/btn/btnAdd";
 
 const PeoplePage = () => {
-  const alertContext = useContext(AlertContext);
+  const { setError } = useContext(AlertContext);
   const router = useRouter();
   const user = useContext(UserContext);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
@@ -56,13 +57,23 @@ const PeoplePage = () => {
     },
   });
   const adminCount = trpc.useQuery(["user.getAmdminCount"]);
+  const createInvite = trpc.useMutation(
+    "createAccount.createInviteLinkWithID",
+    {
+      onError(error, variables, context) {
+        setError({
+          state: true,
+          message: `Error creating invite code. ${error.message}`,
+        });
+      },
+    }
+  );
   const deleteUser = trpc.useMutation("user.deleteUserByID", {
     onError: (error) => {
-      alertContext.setError({
+      setError({
         message: `Sorry. There was an issue deleting the user. Message: ${error}`,
         state: true,
       });
-      console.log(error);
     },
     onSuccess: () => {
       people.refetch();
@@ -76,13 +87,13 @@ const PeoplePage = () => {
     if (adminCount.data == undefined) return;
 
     if (adminCount.data <= 1 && person.status == "ADMIN") {
-      alertContext.setError({
+      setError({
         message: "Error. You must have at least one admin account.",
         state: true,
       });
       return;
     }
-    deleteUser.mutate(person.id);
+    deleteUser.mutate({ id: person.id, hasLogin: person.hasLogin });
   };
 
   const filter = (e: string) => {
@@ -114,11 +125,6 @@ const PeoplePage = () => {
       setPeopleList(paginated.data);
     }
   }, [pageNum, peopleUnPageList]);
-
-  const addOptions: TableOptionsDropdown = [
-    { name: "Add User", href: "/people/adduser" },
-    { name: "Invite User", href: "#" },
-  ];
 
   if (people.error) {
     return <div>{people.error.message}</div>;
@@ -152,7 +158,7 @@ const PeoplePage = () => {
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Users</SectionHeading>
         <div className='flex justify-end'>
-          <AddDropdownMenu options={addOptions} />
+          <BtnAdd onClick={() => router.push("/people/adduser")} />
         </div>
         <div className='col-span-2'>
           <input
@@ -175,7 +181,8 @@ const PeoplePage = () => {
             placeholder='Search'
           />
           {/* <SearchBar /> */}
-          <AddDropdownMenu options={addOptions} />
+
+          <BtnAdd onClick={() => router.push("/people/adduser")} />
         </div>
       </div>
 
@@ -193,6 +200,11 @@ const PeoplePage = () => {
           <tbody>
             {peopleList.map((person, index) => {
               const options: TableOptionsDropdown = [
+                {
+                  name: "Invite user",
+                  function: () => createInvite.mutate({ userId: person.id }),
+                  show: !person.hasLogin,
+                },
                 {
                   name: "View Profile",
                   href: `/people/view/${person.id}`,

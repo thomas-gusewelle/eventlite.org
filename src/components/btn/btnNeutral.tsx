@@ -1,6 +1,16 @@
-export const BtnNeutral: React.FC<{ children: any }> = ({ children }) => {
+import { FormEvent, ReactNode } from "react";
+
+export const BtnNeutral: React.FC<{
+  children: ReactNode;
+  func?: () => void;
+  fullWidth?: boolean;
+}> = ({ children, func, fullWidth = false }) => {
   return (
-    <button className='flex items-center justify-center bg-gray-100 px-3 py-[.1rem] rounded-lg hover:bg-gray-200 transition-all 200ms ease-in-out'>
+    <button
+      onClick={func}
+      className={`200ms flex w-full items-center justify-center rounded-lg bg-gray-100 px-4 py-2 transition-all ease-in-out hover:bg-gray-200 ${
+        fullWidth ? "" : "sm:w-auto"
+      }`}>
       {children}
     </button>
   );

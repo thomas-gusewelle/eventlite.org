@@ -143,7 +143,7 @@ export const createAccountRouter = createRouter()
         await sgMail.send({
           to: "tombome119@gmail.com",
           from: "tgusewelle@gkwmedia.com",
-          subject: `Join ${user?.Organization?.name}'s Team`,
+          subject: `Confirm Your Email`,
           html: confirmEmailEmailString(link),
         });
       } catch (error) {

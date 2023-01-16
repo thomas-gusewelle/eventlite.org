@@ -6,6 +6,7 @@ import sgMail from "@sendgrid/mail";
 import { InviteLink } from "@prisma/client";
 import { createClient, Session } from "@supabase/supabase-js";
 import { inviteCodeEmailString } from "../../emails/inviteCode";
+import { confirmEmailEmailString } from "../../emails/confirmEmail";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -143,10 +144,7 @@ export const createAccountRouter = createRouter()
           to: "tombome119@gmail.com",
           from: "tgusewelle@gkwmedia.com",
           subject: `Join ${user?.Organization?.name}'s Team`,
-          html: `<div>
-          <h1>Join ${user?.Organization?.name}'s Team</h1>
-          <a href="${link}">Confirm Email</a>
-          </div>`,
+          html: confirmEmailEmailString(link),
         });
       } catch (error) {
         throw new TRPCError({

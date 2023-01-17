@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BtnPurple } from "../../components/btn/btnPurple";
+import { LoginCard } from "../../components/create-account-flow/components/card";
 import { CardHeader } from "../../components/create-account-flow/components/cardHeader";
 import { loginFlowLayout } from "../../components/layout/login-flow-layout";
 import { trpc } from "../../utils/trpc";
@@ -9,23 +10,20 @@ const ConfirmEmail = ({ email }: { email: string }) => {
   const resendEmail = trpc.useMutation("createAccount.resendConfirm");
   return (
     <>
-      <div className='flex flex-col items-center justify-center'>
-        <div className='mb-3 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
-          <>
-            <CardHeader>Please confirm your email</CardHeader>
-            <p className='my-6 text-center'>
-              Please check your email for a confirmation email and click the
-              button to confirm your email. If you do not see the email you can
-              click the button below to resend the email.
-            </p>
-            <BtnPurple
-              fullWidth={true}
-              func={() => resendEmail.mutate({ email: email })}>
-              Resend Confirmation
-            </BtnPurple>
-          </>
-        </div>
-      </div>
+      <LoginCard>
+        <CardHeader>Please confirm your email</CardHeader>
+        <p className='my-6 text-center'>
+          Please check your email for a confirmation email and click the button
+          to confirm your email. If you do not see the email you can click the
+          button below to resend the email.
+        </p>
+        <BtnPurple
+          fullWidth={true}
+          func={() => resendEmail.mutate({ email: email })}>
+          Resend Confirmation
+        </BtnPurple>
+      </LoginCard>
+
       <p className='text-center text-white'>
         Already have an account?
         <Link href={"/signin"}>

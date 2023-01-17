@@ -78,11 +78,11 @@ const SignIn = () => {
   });
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
-      <h2 className='mb-12 text-center text-4xl font-bold text-white'>
-        Welcome to Themelios Schedule
-      </h2>
-      <StepCounter signUpState={step} totalNum={2} />
       <div className='flex flex-col items-center justify-center'>
+        <h2 className='mb-12 text-center text-4xl font-bold text-white'>
+          Welcome to Themelios Schedule
+        </h2>
+        <StepCounter signUpState={step} totalNum={2} />
         <div className='mb-3 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
           <FormProvider {...methods}>
             <form onSubmit={submit}>

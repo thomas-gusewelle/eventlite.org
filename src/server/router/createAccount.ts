@@ -7,6 +7,7 @@ import { InviteLink } from "@prisma/client";
 import { createClient, Session } from "@supabase/supabase-js";
 import { inviteCodeEmailString } from "../../emails/inviteCode";
 import { confirmEmailEmailString } from "../../emails/confirmEmail";
+import { createSupaServerClient } from "../../utils/serverSupaClient";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -198,5 +199,43 @@ export const createAccountRouter = createRouter()
         where: { id: input.inviteId },
       });
       return user;
+    },
+  })
+  .mutation("generateResetPassword", {
+    input: z.object({
+      email: z.string().email(),
+    }),
+    async resolve({ input }) {
+      const _supabase = createSupaServerClient();
+      _supabase.auth.api.resetPasswordForEmail(input.email, {
+        redirectTo: `http://localhost:3000/account/reset-password?email=${input.email}`,
+      });
+    },
+  })
+  // takes in email and passwords. Find the user from public.users and updated the auth password
+  .mutation("resetPassword", {
+    input: z.object({
+      email: z.string().email(),
+      password: z.string(),
+      passwordConfirm: z.string(),
+    }),
+    async resolve({ input }) {
+      if (input.password != input.passwordConfirm) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Passwords do not match.",
+        });
+      }
+
+      const user = await prisma?.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user == null || user == undefined) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+      const _supabase = createSupaServerClient();
+      _supabase.auth.api.updateUserById(user.id, { password: input.password });
     },
   });

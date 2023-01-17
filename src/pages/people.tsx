@@ -158,7 +158,9 @@ const PeoplePage = () => {
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Users</SectionHeading>
         <div className='flex justify-end'>
-          <BtnAdd onClick={() => router.push("/people/adduser")} />
+          {user?.status == "ADMIN" && (
+            <BtnAdd onClick={() => router.push("/people/adduser")} />
+          )}
         </div>
         <div className='col-span-2'>
           <input
@@ -182,7 +184,9 @@ const PeoplePage = () => {
           />
           {/* <SearchBar /> */}
 
-          <BtnAdd onClick={() => router.push("/people/adduser")} />
+          {user?.status === "ADMIN" && (
+            <BtnAdd onClick={() => router.push("/people/adduser")} />
+          )}
         </div>
       </div>
 
@@ -203,7 +207,7 @@ const PeoplePage = () => {
                 {
                   name: "Invite user",
                   function: () => createInvite.mutate({ userId: person.id }),
-                  show: !person.hasLogin,
+                  show: !person.hasLogin && user?.status == "ADMIN",
                 },
                 {
                   name: "View Profile",

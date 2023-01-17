@@ -23,9 +23,9 @@ const Home: NextPage = () => {
   const loggedUser = supabaseClient.auth.user();
   const router = useRouter();
 
-  if (loggedUser) {
-    router.push("/dashboard");
-  }
+  // if (loggedUser) {
+  //   router.push("/dashboard");
+  // }
 
   return (
     <>

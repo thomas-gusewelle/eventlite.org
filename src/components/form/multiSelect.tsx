@@ -9,7 +9,8 @@ export const MultiSelect: React.FC<{
   setSelected: Function;
   list: any[];
   setList: Function;
-}> = ({ selected, setSelected, list, setList }) => {
+  disabled?: boolean;
+}> = ({ selected, setSelected, list, setList, disabled = false }) => {
   const removeSelected = (item: any, e: FormEvent) => {
     e.stopPropagation();
     setSelected(selected.filter((e) => e.id != item.id));
@@ -34,21 +35,30 @@ export const MultiSelect: React.FC<{
   if (!list) return <div></div>;
 
   return (
-    <div className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 border rounded-md'>
+    <div className='mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
       <Listbox
+        disabled={disabled}
         value={selected}
         onChange={(person) => addSelected(person)}
         multiple>
         <div className='relative mt-1 '>
           <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
-            <div className='flex flex-wrap gap-2 min-h-[1rem]'>
+            <div className='flex min-h-[1rem] flex-wrap gap-2'>
               {selected.map((item) => (
                 <div
-                  className='flex gap-2 items-center py-1 px-2 rounded bg-indigo-100'
+                  className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
                   key={item.id}
-                  onClick={(e) => removeSelected(item, e)}>
+                  onClick={(e) => {
+                    if (disabled) return;
+                    removeSelected(item, e);
+                  }}>
                   {item.name}
-                  <AiOutlineCloseCircle size={15} className='cursor-pointer' />
+                  {disabled == false && (
+                    <AiOutlineCloseCircle
+                      size={15}
+                      className='cursor-pointer'
+                    />
+                  )}
                 </div>
               ))}
             </div>

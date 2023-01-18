@@ -91,7 +91,11 @@ const AvailabilityPage = () => {
     }
   );
 
-  if (pagiantedData == undefined || getUsersQuery.isLoading) {
+  if (
+    pagiantedData == undefined ||
+    getUsersQuery.isLoading ||
+    getUserAvailibilityQuery.isLoading
+  ) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />
@@ -99,7 +103,7 @@ const AvailabilityPage = () => {
     );
   }
 
-  if (pagiantedData.data.length <= 0) {
+  if (pagiantedData.data.length <= 0 && user?.status != "ADMIN") {
     return (
       <>
         <AvaililityModal
@@ -109,11 +113,65 @@ const AvailabilityPage = () => {
           exisitingDates={dates}
           setExisitingDates={setDates}
         />
+
         <NoDataLayout
           heading={"Unavailable Dates"}
           func={() => setModalOpen(true)}
           btnText={"Add Unavailable Dates"}
         />
+      </>
+    );
+  }
+
+  if (pagiantedData.data.length <= 0 && user?.status == "ADMIN") {
+    return (
+      <>
+        <AvaililityModal
+          userId={userSelected.id}
+          open={modalOpen}
+          setOpen={setModalOpen}
+          exisitingDates={dates}
+          setExisitingDates={setDates}
+        />
+        <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
+          <SectionHeading>Unavaliable Dates</SectionHeading>
+          <div className='flex justify-end'>
+            <BtnAdd onClick={() => setModalOpen(true)} />
+            {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
+          </div>
+          {user?.status == "ADMIN" && (
+            <div className='col-span-2'>
+              <NewSingleSelect
+                selected={userSelected}
+                setSelected={setUserSelected}
+                list={peopleList}
+                label={(item) => fullName(item.firstName, item.lastName)}
+              />
+            </div>
+          )}
+        </div>
+        <div className='mb-8 hidden justify-between md:flex'>
+          <SectionHeading>Unavailable Dates</SectionHeading>
+          <div className='flex gap-4'>
+            {user?.status == "ADMIN" && (
+              <div className='min-w-[10rem]'>
+                <NewSingleSelect
+                  selected={userSelected}
+                  setSelected={setUserSelected}
+                  list={peopleList}
+                  label={(item) => fullName(item.firstName, item.lastName)}
+                />
+              </div>
+            )}
+            <BtnAdd onClick={() => setModalOpen(true)} />
+            {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <BtnPurple func={() => setModalOpen(true)}>
+            Add Unavailable Dates
+          </BtnPurple>
+        </div>
       </>
     );
   }

@@ -1,10 +1,15 @@
+import { ReactNode } from "react";
+import { CircularProgressSmall } from "../circularProgress";
+
 export const BtnPurple = ({
   children,
   func,
   type = "button",
   fullWidth = false,
+  isLoading = false,
 }: {
-  children: any;
+  isLoading?: boolean;
+  children: ReactNode;
   func?: () => void;
   type?: "button" | "submit" | "reset";
   fullWidth?: boolean;
@@ -17,7 +22,7 @@ export const BtnPurple = ({
         fullWidth ? "" : "sm:w-auto"
       }`}
       onClick={func}>
-      {children}
+      {isLoading ? <CircularProgressSmall /> : children}
     </button>
   );
 };

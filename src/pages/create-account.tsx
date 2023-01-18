@@ -17,6 +17,8 @@ import { trpc } from "../utils/trpc";
 import { AlertContext } from "../providers/alertProvider";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
+import { LoginCard } from "../components/create-account-flow/components/card";
+import { loginFlowLayout } from "../components/layout/login-flow-layout";
 
 const SignIn = () => {
   const router = useRouter();
@@ -77,13 +79,13 @@ const SignIn = () => {
     }
   });
   return (
-    <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
-      <h2 className='mb-12 text-center text-4xl font-bold text-white'>
-        Welcome to Themelios Schedule
-      </h2>
-      <StepCounter signUpState={step} totalNum={2} />
-      <div className='flex flex-col items-center justify-center'>
-        <div className='mb-3 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
+    <>
+      <>
+        <h2 className='mb-12 text-center text-4xl font-bold text-white'>
+          Welcome to Themelios Schedule
+        </h2>
+        <StepCounter signUpState={step} totalNum={2} />
+        <LoginCard>
           <FormProvider {...methods}>
             <form onSubmit={submit}>
               <Steps step={step} setStep={setStep} />
@@ -103,18 +105,19 @@ const SignIn = () => {
               )}
             </form>
           </FormProvider>
-        </div>
-      </div>
+        </LoginCard>
+      </>
       <p className='text-center text-white'>
         Already have an account?
         <Link href={"/signin"}>
-          <a className='underline'>Sign In</a>
+          <a className='ml-1 underline'>Sign In</a>
         </Link>
       </p>
-    </div>
+    </>
   );
 };
 
+SignIn.getLayout = loginFlowLayout;
 export default SignIn;
 
 const Steps = ({

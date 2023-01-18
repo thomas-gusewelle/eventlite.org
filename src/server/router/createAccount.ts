@@ -7,6 +7,8 @@ import { InviteLink } from "@prisma/client";
 import { createClient, Session } from "@supabase/supabase-js";
 import { inviteCodeEmailString } from "../../emails/inviteCode";
 import { confirmEmailEmailString } from "../../emails/confirmEmail";
+import { createSupaServerClient } from "../../utils/serverSupaClient";
+import { resetPasswordEmail } from "../../emails/resetPassword";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -198,5 +200,74 @@ export const createAccountRouter = createRouter()
         where: { id: input.inviteId },
       });
       return user;
+    },
+  })
+  // Checks to ensure the user exists and then sends email
+  .mutation("generateResetPassword", {
+    input: z.object({
+      email: z.string().email(),
+    }),
+    async resolve({ input }) {
+      const user = await prisma?.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user == undefined || user == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with that email does not exist.",
+        });
+      }
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+      try {
+        await sgMail.send({
+          to: input.email,
+          from: "tgusewelle@gkwmedia.com",
+          subject: `Reset Password`,
+          html: resetPasswordEmail(input.email),
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send password reset email",
+        });
+      }
+    },
+  })
+  // takes in email and passwords. Find the user from public.users and updated the auth password
+  .mutation("resetPassword", {
+    input: z.object({
+      email: z.string().email(),
+      password: z.string(),
+      passwordConfirm: z.string(),
+    }),
+    async resolve({ input }) {
+      if (input.password != input.passwordConfirm) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Passwords do not match.",
+        });
+      }
+
+      const user = await prisma?.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user == null || user == undefined) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+      const _supabase = createSupaServerClient();
+      const update = await _supabase.auth.api.updateUserById(user.id, {
+        password: input.password,
+      });
+      if (update.error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error updating the password.",
+        });
+      }
+      return update;
     },
   });

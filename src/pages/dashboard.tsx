@@ -154,7 +154,6 @@ const Dashboard = () => {
 
       {approvalEventsData.length > 0 && (
         <>
-          {" "}
           <div className='mt-8 flex justify-center'>
             <SectionHeading>Needs Approval</SectionHeading>
           </div>
@@ -176,35 +175,6 @@ const Dashboard = () => {
                     <div className='mb-4 flex flex-col px-3'>
                       <div className='flex justify-between'>
                         <h3 className='text-xl font-bold'>{event.name}</h3>
-                        {userResponse?.userResponse != null && (
-                          <TableDropdown
-                            options={[
-                              {
-                                name: `Change Availability to ${
-                                  userResponse.userResponse == true
-                                    ? "False"
-                                    : "True"
-                                }`,
-                                function: () =>
-                                  userResponseMutation.mutate({
-                                    positionId: userResponse?.id,
-                                    response:
-                                      userResponse?.userResponse == true
-                                        ? "DENY"
-                                        : "APPROVE",
-                                  }),
-                              },
-                              {
-                                name: "Change Availability to Unknown",
-                                function: () =>
-                                  userResponseMutation.mutate({
-                                    positionId: userResponse?.id,
-                                    response: "NULL",
-                                  }),
-                              },
-                            ]}
-                          />
-                        )}
                       </div>
 
                       <span className='text-lg font-medium'>
@@ -233,9 +203,7 @@ const Dashboard = () => {
                                 <PicNameRowSmall user={position?.User} />
                               </div>
                             ) : (
-                              <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
-                                Not Scheduled
-                              </div>
+                              <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'></div>
                             )}
                           </div>
                         );
@@ -335,9 +303,7 @@ const Dashboard = () => {
                                 <PicNameRowSmall user={position?.User} />
                               </div>
                             ) : (
-                              <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
-                                Not Scheduled
-                              </div>
+                              <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'></div>
                             )}
                           </div>
                         );

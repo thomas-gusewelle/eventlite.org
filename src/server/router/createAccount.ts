@@ -8,6 +8,7 @@ import { createClient, Session } from "@supabase/supabase-js";
 import { inviteCodeEmailString } from "../../emails/inviteCode";
 import { confirmEmailEmailString } from "../../emails/confirmEmail";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
+import { resetPasswordEmail } from "../../emails/resetPassword";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -206,10 +207,20 @@ export const createAccountRouter = createRouter()
       email: z.string().email(),
     }),
     async resolve({ input }) {
-      const _supabase = createSupaServerClient();
-      _supabase.auth.api.resetPasswordForEmail(input.email, {
-        redirectTo: `http://localhost:3000/account/reset-password?email=${input.email}`,
-      });
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+      try {
+        await sgMail.send({
+          to: input.email,
+          from: "tgusewelle@gkwmedia.com",
+          subject: `Reset Password`,
+          html: resetPasswordEmail(input.email),
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send password reset email",
+        });
+      }
     },
   })
   // takes in email and passwords. Find the user from public.users and updated the auth password
@@ -236,6 +247,15 @@ export const createAccountRouter = createRouter()
         throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
       }
       const _supabase = createSupaServerClient();
-      _supabase.auth.api.updateUserById(user.id, { password: input.password });
+      const update = await _supabase.auth.api.updateUserById(user.id, {
+        password: input.password,
+      });
+      if (update.error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error updating the password.",
+        });
+      }
+      return update;
     },
   });

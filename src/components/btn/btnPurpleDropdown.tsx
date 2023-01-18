@@ -77,7 +77,7 @@ export const BtnPurpleDropdown = ({
                     <Menu.Item key={index}>
                       {({ active }) => (
                         <button
-                          onClick={() => option.function?.()}
+                          onClick={() => option.function}
                           className={classNames(
                             active
                               ? "bg-gray-100 text-gray-900"

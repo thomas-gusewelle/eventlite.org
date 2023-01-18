@@ -202,11 +202,23 @@ export const createAccountRouter = createRouter()
       return user;
     },
   })
+  // Checks to ensure the user exists and then sends email
   .mutation("generateResetPassword", {
     input: z.object({
       email: z.string().email(),
     }),
     async resolve({ input }) {
+      const user = await prisma?.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user == undefined || user == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with that email does not exist.",
+        });
+      }
       sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
         await sgMail.send({

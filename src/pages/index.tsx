@@ -3,6 +3,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { getUser, supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
+import { navbar } from "../components/marketing-site/layout/navbar";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -19,38 +20,14 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-const Home: NextPage = () => {
-  const loggedUser = supabaseClient.auth.user();
-  const router = useRouter();
-
-  // if (loggedUser) {
-  //   router.push("/dashboard");
-  // }
-
+const Home = () => {
   return (
     <>
-      <Head>
-        <title>Themelios Schedule</title>
-        <meta
-          name='description'
-          content='Themelios Schedule - An app for volunteer scheduling'
-        />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <div className='grid'>
-        <div>Index</div>
-        <Link href={"/dashboard"}>
-          <a>Dashboard</a>
-        </Link>
-        <Link href={"/signin"}>
-          <a>SignIn</a>
-        </Link>
-        <Link href={"/create-account"}>
-          <a>Create Account</a>
-        </Link>
-      </div>
+      <section id='hero-section' className='container mx-auto flex'></section>
     </>
   );
 };
+
+Home.getLayout = navbar;
 
 export default Home;

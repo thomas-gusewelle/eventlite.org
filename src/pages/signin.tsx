@@ -1,10 +1,12 @@
-import { router } from "@trpc/server";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { LoginCard } from "../components/create-account-flow/components/card";
+import { CardHeader } from "../components/create-account-flow/components/cardHeader";
+import Link from "next/link";
+import { BtnPurple } from "../components/btn/btnPurple";
 
 const SignIn = () => {
   const router = useRouter();
@@ -30,22 +32,18 @@ const SignIn = () => {
     <>
       <VerticalLogo />
       <LoginCard>
-        <p
-          tabIndex={0}
-          role='heading'
-          aria-label='Login to your account'
-          className='text-2xl font-extrabold leading-6 text-gray-800'>
-          Login to your account
-        </p>
-        <p className='mt-4 text-sm font-medium leading-none text-gray-500'>
-          Dont have account?
-          <span
-            tabIndex={0}
-            role='link'
-            aria-label='Sign up here'
-            className='ml-1 cursor-pointer text-sm font-medium leading-none text-gray-800 underline'>
-            Sign up here
-          </span>
+        <CardHeader>Login to your account</CardHeader>
+        <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
+          Need to setup your organization?
+          <Link href={"/create-account"}>
+            <span
+              tabIndex={0}
+              role='link'
+              aria-label='Sign up here'
+              className='ml-1 cursor-pointer text-sm font-medium leading-none text-gray-800 underline'>
+              Sign up here
+            </span>
+          </Link>
         </p>
 
         <form className='mt-6' onSubmit={signIn}>
@@ -61,7 +59,7 @@ const SignIn = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className='mt-6  w-full'>
+          <div className='mt-3  w-full'>
             <label className='text-sm font-medium leading-none text-gray-800'>
               Password
             </label>
@@ -89,13 +87,22 @@ const SignIn = () => {
             </div>
           </div>
           <div className='mt-8'>
-            <button
-              type='submit'
-              aria-label='create my account'
-              className='w-full rounded border bg-indigo-700 py-4 text-sm font-semibold leading-none text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2'>
-              Sign In
-            </button>
+            <BtnPurple fullWidth={true} type='submit'>
+              Sign in
+            </BtnPurple>
           </div>
+          <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
+            Forgot your password?
+            <Link href={"/account/forgot-password"}>
+              <span
+                tabIndex={0}
+                role='link'
+                aria-label='Sign up here'
+                className='ml-1 cursor-pointer text-sm font-medium leading-none text-gray-800 underline'>
+                Click here
+              </span>
+            </Link>
+          </p>
         </form>
       </LoginCard>
     </>

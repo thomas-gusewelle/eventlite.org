@@ -110,7 +110,7 @@ const SignIn = () => {
       <p className='text-center text-white'>
         Already have an account?
         <Link href={"/signin"}>
-          <a className='underline'>Sign In</a>
+          <a className='ml-1 underline'>Sign In</a>
         </Link>
       </p>
     </>

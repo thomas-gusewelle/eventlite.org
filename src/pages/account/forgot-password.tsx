@@ -55,7 +55,10 @@ const ForgotPasswordPage = () => {
 
           <EmailInput />
           <div className='mt-6'>
-            <BtnPurple type='submit' fullWidth={true}>
+            <BtnPurple
+              isLoading={generateEmail.isLoading}
+              type='submit'
+              fullWidth={true}>
               Submit
             </BtnPurple>
           </div>

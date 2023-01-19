@@ -36,7 +36,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                 </g>
               </svg>
             </div>
-            <h1 className='text-2xl font-bold tracking-wide'>Themelios</h1>
+            <h1 className='text-2xl font-bold tracking-wide'>EventLite.org</h1>
           </div>
 
           <ul className='relative mr-6 flex cursor-pointer items-center gap-3'>

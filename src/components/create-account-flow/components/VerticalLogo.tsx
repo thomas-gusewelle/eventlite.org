@@ -1,6 +1,6 @@
 export const VerticalLogo = () => {
   return (
-    <div className='mb-12'>
+    <div className='mb-12 flex flex-col items-center'>
       <svg
         width={188}
         height={32}
@@ -12,7 +12,7 @@ export const VerticalLogo = () => {
         />
       </svg>
       <h1 className='mt-2 text-center text-4xl font-bold tracking-wide text-white'>
-        Themelios
+        EventLite.org
       </h1>
     </div>
   );

@@ -120,7 +120,9 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                 </svg>
               </div>
               {/* <img src='/images/logo1.svg'></img> */}
-              <h1 className='text-2xl font-bold tracking-wide'>Themelios</h1>
+              <h1 className='text-2xl font-bold tracking-wide'>
+                EventLite.org
+              </h1>
             </div>
             <ul className=' py-6'>
               {sideLinks.map((link, index) => {
@@ -162,7 +164,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
               className='absolute h-full w-full bg-gray-800 opacity-50 lg:hidden'
               onClick={() => setShow(!show)}
             />
-            <div className='absolute z-40 h-full w-64 bg-gray-100 pb-4 shadow transition duration-150 ease-in-out sm:relative md:w-96 lg:hidden'>
+            <div className='absolute z-40 h-full w-72 bg-gray-100 pb-4 shadow transition duration-150 ease-in-out sm:relative md:w-96 lg:hidden'>
               <div className='flex h-full w-full flex-col justify-between'>
                 <div>
                   <div className='flex items-center justify-start px-4'>
@@ -180,7 +182,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       </div>
                       {/* <img  src='/images/logo1.svg'></img> */}
                       <h1 className='text-2xl font-bold tracking-wide'>
-                        Themelios
+                        EventLite.org
                       </h1>
                       {/* <svg
                             xmlns='http://www.w3.org/2000/svg'
@@ -408,7 +410,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   </svg>
 
                   <h1 className='text-2xl font-bold tracking-wide'>
-                    Themelios
+                    EventLite.org
                   </h1>
                 </div>
                 {show ? (

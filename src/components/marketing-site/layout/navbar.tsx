@@ -41,7 +41,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
 
           <ul className='relative mr-6 flex cursor-pointer items-center gap-3'>
             <li>
-              <BtnPurple func={() => router.push("/create-acount")}>
+              <BtnPurple func={() => router.push("/create-account")}>
                 Sign Up
               </BtnPurple>
             </li>

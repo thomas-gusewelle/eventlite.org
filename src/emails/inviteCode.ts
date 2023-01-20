@@ -30,7 +30,7 @@ export function inviteCodeEmailString(
                   margin: 0;
                 "
               >
-                Themelios
+                EventLite.org
               </h1>
             </div>
           </a>

@@ -88,7 +88,7 @@ export const createAccountRouter = createRouter()
       sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
         await sgMail.send({
-          to: "tombome119@gmail.com",
+          to: user.email,
           from: "tgusewelle@gkwmedia.com",
           subject: `Join ${user?.Organization?.name}'s Team`,
           html: inviteCodeEmailString(user.Organization?.name, link.id),
@@ -143,7 +143,7 @@ export const createAccountRouter = createRouter()
       try {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
         await sgMail.send({
-          to: "tombome119@gmail.com",
+          to: user.email,
           from: "tgusewelle@gkwmedia.com",
           subject: `Confirm Your Email`,
           html: confirmEmailEmailString(link),
@@ -222,8 +222,8 @@ export const createAccountRouter = createRouter()
       sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
         await sgMail.send({
-          to: input.email,
-          from: "tgusewelle@gkwmedia.com",
+          to: user.email,
+          from: "accounts@eventlite.org",
           subject: `Reset Password`,
           html: resetPasswordEmail(input.email),
         });

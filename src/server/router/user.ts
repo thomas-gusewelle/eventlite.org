@@ -10,7 +10,7 @@ export const userRouter = createRouter()
     async resolve({ ctx }) {
       const userInfo = await prisma?.user.findFirst({
         where: {
-          id: ctx.session?.user.id,
+          id: ctx.session?.user.id ?? "",
         },
         include: {
           UserSettings: true,

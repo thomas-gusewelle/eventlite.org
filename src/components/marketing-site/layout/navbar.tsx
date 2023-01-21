@@ -53,7 +53,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
       </nav>
       {/* Navigation ends */}
 
-      <div className='pb-42 h-full bg-white sm:pt-10 2xl:pb-10'>
+      <div className='h-full bg-white pb-12 sm:pt-10 2xl:pb-10'>
         <div className='h-full w-full rounded'>
           <>{children}</>
         </div>

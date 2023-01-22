@@ -155,9 +155,9 @@ const Home = () => {
             Scheduling <span className='text-indigo-200'>without the fear</span>
           </h2>
           <p className='mt-3 text-indigo-200'>
-            Getting your guests onto your show is as easy as sending them a
-            link. No more leaked join codes - you can see who&apos;s joining by
-            their Twitch username.
+            Keep tracking of your volunteers availability can be a chore.
+            EventLite works by allowing your volunteers to set their
+            availability without you having to worry.
           </p>
           <div className='mt-6 flex items-start gap-3'>
             <div>

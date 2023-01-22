@@ -69,7 +69,7 @@ const Home = () => {
               Keep everyone
               <span className='text-indigo-200'> in the loop</span>
             </h2>
-            <p className='mt-3 text-indigo-100'>
+            <p className='mt-3 text-indigo-200'>
               No more hoping your volunteers read their emails or keeping track
               of the schedule with a spreadsheet. Simply create an event and
               schedule your volunteers keeping everyone in the loop.
@@ -500,7 +500,7 @@ const AvailabilityTab = () => {
   }, []);
 
   return (
-    <div className='mt-4 w-full'>
+    <div className='mt-6 w-full rounded-lg bg-white px-3 py-3 text-black shadow'>
       <table className='w-full table-auto text-left'>
         <thead>
           <tr>
@@ -527,7 +527,7 @@ const AvailabilityTab = () => {
 
             return (
               <tr key={index} className='border-t last:border-b'>
-                <td className='py-4 text-base leading-4 text-white md:text-xl'>
+                <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
                   {longDate(date.date)}
                 </td>
                 <td className=''>

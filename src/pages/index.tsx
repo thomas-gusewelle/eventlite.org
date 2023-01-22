@@ -13,7 +13,12 @@ import { BtnDeny } from "../components/btn/btnDeny";
 import { useState } from "react";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
-import { MdAccountCircle } from "react-icons/md";
+import {
+  MdAccountCircle,
+  MdSchedule,
+  MdOutlineFilterAlt,
+} from "react-icons/md";
+import { RiPagesFill } from "react-icons/ri";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -54,94 +59,44 @@ const Home = () => {
 
         <div className='mt-6 shadow'>
           <Image alt='' src={"/images/hero-image.jpg"} className='w-full' />
-          {/* <Tab.Group>
-            <Tab.List className='flex space-x-1 rounded-xl bg-neutral-200/50 p-1'>
-              <Tab
-                className={({ selected }) =>
-                  classNames(
-                    "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-indigo-600",
-                    "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
-                    selected
-                      ? "bg-white shadow"
-                      : "text-neutral-300 hover:bg-white/[0.12] hover:text-white"
-                  )
-                }>
-                Events
-              </Tab>
-              <Tab
-                className={({ selected }) =>
-                  classNames(
-                    "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-indigo-600",
-                    "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
-                    selected
-                      ? "bg-white shadow"
-                      : "text-neutral-400 hover:bg-white/[0.12] hover:text-white"
-                  )
-                }>
-                People
-              </Tab>
-              <Tab
-                className={({ selected }) =>
-                  classNames(
-                    "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-indigo-600",
-                    "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
-                    selected
-                      ? "bg-white shadow"
-                      : "text-neutral-400 hover:bg-white/[0.12] hover:text-white"
-                  )
-                }>
-                Availability
-              </Tab>
-            </Tab.List>
-            <Tab.Panels>
-              <Tab.Panel>
-                <EventsTab />
-              </Tab.Panel>
-              <Tab.Panel>
-                <PoepleTab />
-              </Tab.Panel>
-              <Tab.Panel>
-                <AvailabilityTab />
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group> */}
         </div>
       </section>
-      <section className=' mt-6 grid bg-indigo-700 px-8 py-6'>
+      <section className=' mt-9 bg-indigo-700 px-8 py-9'>
         {/* Panel 1 */}
-        <div className='container mx-auto grid text-white sm:grid-cols-2'>
-          <div>
-            <h2 className='text-3xl font-bold'>
-              Keep everyone in the <span className='text-indigo-700'>loop</span>
+        <div className='container mx-auto grid text-white md:grid-cols-2'>
+          <div className='mb-3'>
+            <h2 className='text-4xl font-bold'>
+              Keep everyone
+              <span className='text-indigo-200'> in the loop</span>
             </h2>
-            <p className='mt-3 text-neutral-100'>
-              Getting your guests onto your show is as easy as sending them a
-              link. No more leaked join codes - you can see who&apos;s joining
-              by their Twitch username.
+            <p className='mt-3 text-indigo-100'>
+              No more hoping your volunteers read their emails or keeping track
+              of the schedule with a spreadsheet. Simply create an event and
+              schedule your volunteers keeping everyone in the loop.
             </p>
-            <div className='mt-6 flex items-start gap-3'>
-              <MdAccountCircle size={iconSize} className='text-indigo-600' />
+            <div className=' mt-6 flex items-start gap-3'>
+              <div>
+                <MdSchedule size={iconSize} />
+              </div>
               <div>
                 <h3 className='text-xl font-bold'>
-                  High definition by default
+                  Instant scheduling by default
                 </h3>
-                <p>
-                  HD isn&apos;t optional for our creators. We support up to
-                  1080p at 60fps for every caller (if you have the bandwidth for
-                  it).
+                <p className='text-indigo-200'>
+                  Your volunteers see their schedule the moment you schedule
+                  them. Allowing them to easy approve any new scheduled events.
                 </p>
               </div>
             </div>
             <div className='mt-6 flex items-start gap-3'>
-              <MdAccountCircle size={iconSize} className='text-indigo-600' />
               <div>
-                <h3 className='text-xl font-bold'>
-                  High definition by default
-                </h3>
-                <p>
-                  HD isn&apos;t optional for our creators. We support up to
-                  1080p at 60fps for every caller (if you have the bandwidth for
-                  it).
+                <RiPagesFill size={iconSize} />
+              </div>
+              <div>
+                <h3 className='text-xl font-bold'>On the same page</h3>
+                <p className='text-indigo-200'>
+                  Your entire team can see your events, ensuring that everyone
+                  is on the same page.
                 </p>
               </div>
             </div>
@@ -150,39 +105,55 @@ const Home = () => {
         </div>
       </section>
       {/* Panel 2 */}
-      <section>
-        <div className='mt-9'>
-          <h2 className='text-3xl font-bold'>
-            Keep everyone in the <span className='text-indigo-700'>loop</span>
-          </h2>
-          <p className='mt-3 text-neutral-800'>
-            Getting your guests onto your show is as easy as sending them a
-            link. No more leaked join codes - you can see who&apos;s joining by
-            their Twitch username.
-          </p>
-          <div className='mt-6 flex items-start gap-3'>
-            <MdAccountCircle size={iconSize} className='text-indigo-600' />
-            <div>
-              <h3 className='text-xl font-bold'>High definition by default</h3>
-              <p>
-                HD isn&apos;t optional for our creators. We support up to 1080p
-                at 60fps for every caller (if you have the bandwidth for it).
-              </p>
+      <section className=' mt-6 px-8 py-6'>
+        <div className='container mx-auto grid md:grid-cols-2'>
+          <div>
+            <h2 className='text-4xl font-bold'>
+              Centered on <span className='text-indigo-700'>people</span>
+            </h2>
+            <p className='mt-3 text-neutral-800'>
+              People are at the core of what we do. With EventLite we make
+              managing your team as simple and easy as possible.
+            </p>
+            <div className='mt-6 flex items-start gap-3'>
+              <div>
+                <MdOutlineFilterAlt
+                  size={iconSize}
+                  className='text-indigo-600'
+                />
+              </div>
+              <div>
+                <h3 className='text-xl font-bold'>
+                  Smart filtering made simple
+                </h3>
+                <p>
+                  HD isn&apos;t optional for our creators. We support up to
+                  1080p at 60fps for every caller (if you have the bandwidth for
+                  it).
+                </p>
+              </div>
             </div>
-          </div>
-          <div className='mt-6 flex items-start gap-3'>
-            <MdAccountCircle size={iconSize} className='text-indigo-600' />
-            <div>
-              <h3 className='text-xl font-bold'>High definition by default</h3>
-              <p>
-                HD isn&apos;t optional for our creators. We support up to 1080p
-                at 60fps for every caller (if you have the bandwidth for it).
-              </p>
+            <div className='mt-6 flex items-start gap-3'>
+              <div>
+                <MdAccountCircle size={iconSize} className='text-indigo-600' />
+              </div>
+              <div>
+                <h3 className='text-xl font-bold'>
+                  High definition by default
+                </h3>
+                <p>
+                  HD isn&apos;t optional for our creators. We support up to
+                  1080p at 60fps for every caller (if you have the bandwidth for
+                  it).
+                </p>
+              </div>
             </div>
           </div>
           <PoepleTab />
         </div>
-        {/* Panel 3 */}
+      </section>
+      {/* Panel 3 */}
+      <section className=' mt-6 px-8 py-6'>
         <div className='mt-9'>
           <h2 className='text-3xl font-bold'>
             Keep everyone in the <span className='text-indigo-700'>loop</span>
@@ -227,12 +198,14 @@ const EventsTab = () => {
   const [eventUserResponse, setEventUserResponse] = useState<boolean | null>(
     null
   );
+  const [name, setName] = useState("Your Name");
   return (
-    <div className='flex flex-col border-gray-300 pt-4'>
+    <div className='relative flex flex-col border-gray-300 pt-4'>
+      <div className='absolute -right-10 top-3 rotate-[10deg] rounded-lg bg-indigo-200 px-4 py-2 text-black'>
+        Approve your schedule
+      </div>
       <div
-        className={`rounded-t-lg pt-2 ${
-          eventUserResponse == null ? "" : "rounded-b-lg border-b"
-        } round border-t border-r border-l shadow`}>
+        className={`round overflow-hidden rounded-lg border bg-white pt-2 text-black shadow`}>
         <div className='mb-4 flex flex-col px-3'>
           <div className='flex justify-between'>
             <h3 className='text-xl font-bold'>Event Name</h3>
@@ -258,8 +231,8 @@ const EventsTab = () => {
               id: 1,
               Role: { name: "Audio" },
               User: {
-                firstName: "Betty",
-                lastName: "Green",
+                firstName: "Your",
+                lastName: "Name",
                 id: "",
                 status: "USER" as UserStatus,
                 email: "",
@@ -274,7 +247,7 @@ const EventsTab = () => {
             },
             {
               id: 2,
-              Role: { name: "Audio" },
+              Role: { name: "Video" },
               User: {
                 firstName: "John",
                 lastName: "Manning",
@@ -292,7 +265,7 @@ const EventsTab = () => {
             },
             {
               id: 3,
-              Role: { name: "Audio" },
+              Role: { name: "Slides" },
               User: {
                 firstName: "Kathy",
                 lastName: "Lee",
@@ -309,9 +282,50 @@ const EventsTab = () => {
               userResponse: true,
             },
           ].map((position) => {
+            // TODO: implement input field for entering name
+            if (position.id == 1) {
+              return (
+                <div
+                  className='grid grid-cols-[1fr_1.5fr] items-center border-t last:pb-0'
+                  key={position.id}>
+                  <span className='py-3 px-3 font-medium'>
+                    {position.Role.name}
+                  </span>
+                  {position.User ? (
+                    <div
+                      className={`flex h-full py-1 px-3 text-center ${
+                        position.userResponse == null && "bg-gray-100"
+                      }
+            ${position.userResponse == true && "bg-green-200"}
+            ${position.userResponse == false && "bg-red-200"}
+  `}>
+                      {/* <PicNameRowSmall user={position?.User} /> */}
+                      <div className='flex items-center'>
+                        <div className=' flex aspect-square h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white'>
+                          {name
+                            .split(" ")
+                            .map((i) => i[0])
+                            .join("")
+                            .toLocaleUpperCase()}
+                        </div>
+                        <input
+                          className='ml-2 flex-wrap overflow-visible bg-gray-100'
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </div>
+
+                      {/* <div contentEditable>{name}</div> */}
+                    </div>
+                  ) : (
+                    <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'></div>
+                  )}
+                </div>
+              );
+            }
             return (
               <div
-                className='grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0'
+                className='grid grid-cols-[1fr_1.5fr] items-center border-t last:pb-0'
                 key={position.id}>
                 <span className='py-3 px-3 font-medium'>
                   {position.Role.name}
@@ -336,14 +350,14 @@ const EventsTab = () => {
       </div>
       {eventUserResponse == null && (
         <div className='mt-3 grid grid-cols-2 gap-3 overflow-hidden'>
-          <div className='grid w-full overflow-hidden rounded-lg'>
+          <div className='grid w-full overflow-hidden rounded-lg shadow'>
             <BtnApprove
               func={() => {
                 setEventUserResponse(true);
               }}
             />
           </div>
-          <div className='grid w-full overflow-hidden rounded-xl'>
+          <div className='grid w-full overflow-hidden rounded-xl shadow'>
             <BtnDeny
               func={() => {
                 setEventUserResponse(false);

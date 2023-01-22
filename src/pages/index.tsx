@@ -10,7 +10,7 @@ import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
 import { UserStatus } from "@prisma/client";
 import { BtnApprove } from "../components/btn/btnApprove";
 import { BtnDeny } from "../components/btn/btnDeny";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import {
@@ -65,7 +65,7 @@ const Home = () => {
         {/* Panel 1 */}
         <div className='container mx-auto grid text-white md:grid-cols-2'>
           <div className='mb-3'>
-            <h2 className='text-4xl font-bold'>
+            <h2 className='text-3xl font-extrabold'>
               Keep everyone
               <span className='text-indigo-200'> in the loop</span>
             </h2>
@@ -93,7 +93,7 @@ const Home = () => {
                 <RiPagesFill size={iconSize} />
               </div>
               <div>
-                <h3 className='text-xl font-bold'>On the same page</h3>
+                <h3 className='text-xl font-bold'>Everyone on the same page</h3>
                 <p className='text-indigo-200'>
                   Your entire team can see your events, ensuring that everyone
                   is on the same page.
@@ -108,7 +108,7 @@ const Home = () => {
       <section className=' mt-6 px-8 py-6'>
         <div className='container mx-auto grid md:grid-cols-2'>
           <div>
-            <h2 className='text-4xl font-bold'>
+            <h2 className='text-3xl font-extrabold'>
               Centered on <span className='text-indigo-700'>people</span>
             </h2>
             <p className='mt-3 text-neutral-800'>
@@ -127,9 +127,8 @@ const Home = () => {
                   Smart filtering made simple
                 </h3>
                 <p>
-                  HD isn&apos;t optional for our creators. We support up to
-                  1080p at 60fps for every caller (if you have the bandwidth for
-                  it).
+                  Finding who you need shouldn&apos;t be hard. We make searching
+                  for people as simple as possible.
                 </p>
               </div>
             </div>
@@ -138,13 +137,10 @@ const Home = () => {
                 <MdAccountCircle size={iconSize} className='text-indigo-600' />
               </div>
               <div>
-                <h3 className='text-xl font-bold'>
-                  High definition by default
-                </h3>
+                <h3 className='text-xl font-bold'>Easily manage roles</h3>
                 <p>
-                  HD isn&apos;t optional for our creators. We support up to
-                  1080p at 60fps for every caller (if you have the bandwidth for
-                  it).
+                  Managing volunteer roles should be easy. Simly select the
+                  roles and never have to think about it again.
                 </p>
               </div>
             </div>
@@ -153,18 +149,20 @@ const Home = () => {
         </div>
       </section>
       {/* Panel 3 */}
-      <section className=' mt-6 px-8 py-6'>
-        <div className='mt-9'>
+      <section className=' mt-6 bg-indigo-700 px-8 py-9 text-white'>
+        <div className=''>
           <h2 className='text-3xl font-bold'>
-            Keep everyone in the <span className='text-indigo-700'>loop</span>
+            Scheduling <span className='text-indigo-200'>without the fear</span>
           </h2>
-          <p className='mt-3 text-neutral-800'>
+          <p className='mt-3 text-indigo-200'>
             Getting your guests onto your show is as easy as sending them a
             link. No more leaked join codes - you can see who&apos;s joining by
             their Twitch username.
           </p>
           <div className='mt-6 flex items-start gap-3'>
-            <MdAccountCircle size={iconSize} className='text-indigo-600' />
+            <div>
+              <MdAccountCircle size={iconSize} className='text-indigo-600' />
+            </div>
             <div>
               <h3 className='text-xl font-bold'>High definition by default</h3>
               <p>
@@ -174,7 +172,9 @@ const Home = () => {
             </div>
           </div>
           <div className='mt-6 flex items-start gap-3'>
-            <MdAccountCircle size={iconSize} className='text-indigo-600' />
+            <div>
+              <MdAccountCircle size={iconSize} className='text-indigo-600' />
+            </div>
             <div>
               <h3 className='text-xl font-bold'>High definition by default</h3>
               <p>
@@ -183,7 +183,7 @@ const Home = () => {
               </p>
             </div>
           </div>
-          {/* <AvailabilityTab /> */}
+          <AvailabilityTab />
         </div>
       </section>
     </>
@@ -481,18 +481,24 @@ const PoepleTab = () => {
 };
 
 const AvailabilityTab = () => {
-  const numOccurances = Math.floor(Math.random() * 5) + 2;
-  let array: { date: Date }[] = [];
-  for (let i = 1; i <= numOccurances; i++) {
-    const randomFuture = Math.floor(Math.random() * 10) * 7;
-    const date = new Date();
-    date.setDate(randomFuture);
-    const newDate = new Date(date.setDate(date.getDate() - date.getDay()));
-    array.push({ date: newDate });
-  }
-  const [dates, setDates] = useState(
-    array.sort((a, b) => a.date.getTime() - b.date.getTime())
-  );
+  const [dates, setDates] = useState<
+    {
+      date: Date;
+    }[]
+  >([]);
+  useEffect(() => {
+    const numOccurances = Math.floor(Math.random() * 2) + 3;
+    let array: { date: Date }[] = [];
+    for (let i = 1; i <= numOccurances; i++) {
+      const randomFuture = Math.floor(Math.random() * 10) * 7;
+      const date = new Date();
+      date.setDate(randomFuture);
+      const newDate = new Date(date.setDate(date.getDate() - date.getDay()));
+      array.push({ date: newDate });
+    }
+    setDates(array.sort((a, b) => a.date.getTime() - b.date.getTime()));
+  }, []);
+
   return (
     <div className='mt-4 w-full'>
       <table className='w-full table-auto text-left'>
@@ -521,7 +527,7 @@ const AvailabilityTab = () => {
 
             return (
               <tr key={index} className='border-t last:border-b'>
-                <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
+                <td className='py-4 text-base leading-4 text-white md:text-xl'>
                   {longDate(date.date)}
                 </td>
                 <td className=''>

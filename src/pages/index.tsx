@@ -10,7 +10,7 @@ import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
 import { UserStatus } from "@prisma/client";
 import { BtnApprove } from "../components/btn/btnApprove";
 import { BtnDeny } from "../components/btn/btnDeny";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import {
@@ -39,11 +39,12 @@ const eventData = {};
 
 const Home = () => {
   const iconSize = 50;
+
   return (
     <>
       <section
         id='hero-section'
-        className='container mx-auto grid px-8 lg:grid-cols-2'>
+        className='container mx-auto grid px-3 lg:grid-cols-2'>
         <div>
           <div id='hero-text-container' className='mt-6  text-4xl font-bold'>
             <h1>Volunteer scheduling</h1>
@@ -61,28 +62,28 @@ const Home = () => {
           <Image alt='' src={"/images/hero-image.jpg"} className='w-full' />
         </div>
       </section>
-      <section className=' mt-9 bg-indigo-700 px-8 py-9'>
+      <section className=' mt-9 bg-gray-100 py-9 text-gray-900'>
         {/* Panel 1 */}
-        <div className='container mx-auto grid text-white md:grid-cols-2'>
+        <div className='container mx-auto grid px-3 md:grid-cols-2'>
           <div className='mb-3'>
             <h2 className='text-3xl font-extrabold'>
               Keep everyone
-              <span className='text-indigo-200'> in the loop</span>
+              <span className='text-indigo-700'> in the loop</span>
             </h2>
-            <p className='mt-3 text-indigo-200'>
+            <p className='mt-1 text-gray-500'>
               No more hoping your volunteers read their emails or keeping track
               of the schedule with a spreadsheet. Simply create an event and
               schedule your volunteers keeping everyone in the loop.
             </p>
             <div className=' mt-6 flex items-start gap-3'>
               <div>
-                <MdSchedule size={iconSize} />
+                <MdSchedule size={iconSize} className='text-indigo-700' />
               </div>
               <div>
                 <h3 className='text-xl font-bold'>
                   Instant scheduling by default
                 </h3>
-                <p className='text-indigo-200'>
+                <p className='text-gray-500'>
                   Your volunteers see their schedule the moment you schedule
                   them. Allowing them to easy approve any new scheduled events.
                 </p>
@@ -90,11 +91,11 @@ const Home = () => {
             </div>
             <div className='mt-6 flex items-start gap-3'>
               <div>
-                <RiPagesFill size={iconSize} />
+                <RiPagesFill size={iconSize} className='text-indigo-700' />
               </div>
               <div>
                 <h3 className='text-xl font-bold'>Everyone on the same page</h3>
-                <p className='text-indigo-200'>
+                <p className='text-gray-500'>
                   Your entire team can see your events, ensuring that everyone
                   is on the same page.
                 </p>
@@ -155,9 +156,8 @@ const Home = () => {
             Scheduling <span className='text-indigo-200'>without the fear</span>
           </h2>
           <p className='mt-3 text-indigo-200'>
-            Keep tracking of your volunteers availability can be a chore.
-            EventLite works by allowing your volunteers to set their
-            availability without you having to worry.
+            Keep tracking of availability can be a chore. EventLite allows your
+            volunteers to set their availability without you having to worry.
           </p>
           <div className='mt-6 flex items-start gap-3'>
             <div>
@@ -199,6 +199,7 @@ const EventsTab = () => {
     null
   );
   const [name, setName] = useState("Your Name");
+
   return (
     <div className='relative flex flex-col border-gray-300 pt-4'>
       <div className='absolute -right-10 top-3 rotate-[10deg] rounded-lg bg-indigo-200 px-4 py-2 text-black'>
@@ -308,14 +309,22 @@ const EventsTab = () => {
                             .join("")
                             .toLocaleUpperCase()}
                         </div>
-                        <input
-                          className='ml-2 flex-wrap overflow-visible bg-gray-100'
+                        {/* <input
+                          className='wrap ml-2 flex-wrap overflow-visible bg-gray-100'
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                        />
+                        /> */}
+                        {/* TODO: make this work better. On blur is sort of a fix. I would love to have an input that wraps like the div does */}
+                        <div
+                          onBlur={(e) => {
+                            console.log(e);
+                            setName(e.currentTarget.textContent ?? "");
+                          }}
+                          className='ml-2'
+                          contentEditable>
+                          {name}
+                        </div>
                       </div>
-
-                      {/* <div contentEditable>{name}</div> */}
                     </div>
                   ) : (
                     <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'></div>

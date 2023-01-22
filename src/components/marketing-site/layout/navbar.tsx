@@ -38,7 +38,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
             </div>
             <h1 className='text-2xl font-bold tracking-wide'>EventLite.org</h1>
           </div>
-
+          {/* 
           <ul className='relative mr-6 flex cursor-pointer items-center gap-3'>
             <li>
               <BtnPurple func={() => router.push("/create-account")}>
@@ -48,7 +48,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
             <li>
               <BtnNeutral func={() => router.push("/signin")}>Login</BtnNeutral>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </nav>
       {/* Navigation ends */}

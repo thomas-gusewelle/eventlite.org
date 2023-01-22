@@ -41,6 +41,9 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const user = useContext(UserContext);
 
   useEffect(() => {
+    if (user == undefined) {
+      router.push("/");
+    }
     if (user != undefined) {
       setSideLinks([
         {

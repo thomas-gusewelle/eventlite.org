@@ -321,7 +321,8 @@ const EventsTab = () => {
                             setName(e.currentTarget.textContent ?? "");
                           }}
                           className='ml-2'
-                          contentEditable>
+                          contentEditable
+                          suppressContentEditableWarning>
                           {name}
                         </div>
                       </div>

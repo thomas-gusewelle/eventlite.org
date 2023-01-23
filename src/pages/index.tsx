@@ -62,7 +62,7 @@ const Home = () => {
           <Image alt='' src={"/images/hero-image.jpg"} className='w-full' />
         </div>
       </section>
-      <section className=' mt-9 bg-gray-100 py-9 text-gray-900'>
+      <section className=' mt-9 overflow-x-hidden bg-gray-100 py-9 text-gray-900'>
         {/* Panel 1 */}
         <div className='container mx-auto grid px-3 md:grid-cols-2'>
           <div className='mb-3'>
@@ -106,7 +106,7 @@ const Home = () => {
         </div>
       </section>
       {/* Panel 2 */}
-      <section className=' mt-6 px-8 py-6'>
+      <section className=' mt-6 px-2 py-6'>
         <div className='container mx-auto grid md:grid-cols-2'>
           <div>
             <h2 className='text-3xl font-extrabold'>
@@ -156,7 +156,7 @@ const Home = () => {
             Scheduling <span className='text-indigo-700'>without the fear</span>
           </h2>
           <p className='mt-3 text-gray-600'>
-            Keep tracking of availability can be a chore. EventLite allows your
+            Keeping track of availability can be a chore. EventLite allows your
             volunteers to set their availability without you having to worry.
           </p>
           <div className='mt-6 flex items-start gap-3'>
@@ -164,10 +164,10 @@ const Home = () => {
               <MdAccountCircle size={iconSize} className='text-indigo-600' />
             </div>
             <div>
-              <h3 className='text-xl font-bold'>High definition by default</h3>
+              <h3 className='text-xl font-bold'>Simple and Easy</h3>
               <p className='text-gray-600'>
-                HD isn&apos;t optional for our creators. We support up to 1080p
-                at 60fps for every caller (if you have the bandwidth for it).
+                Availability shouldn&apos;t be difficult. Setting your
+                availability is as simple as selecting dates on a calendar.
               </p>
             </div>
           </div>
@@ -176,10 +176,10 @@ const Home = () => {
               <MdAccountCircle size={iconSize} className='text-indigo-600' />
             </div>
             <div>
-              <h3 className='text-xl font-bold '>High definition by default</h3>
+              <h3 className='text-xl font-bold '>Strong admin controls</h3>
               <p className='text-gray-600'>
-                HD isn&apos;t optional for our creators. We support up to 1080p
-                at 60fps for every caller (if you have the bandwidth for it).
+                Have that one person that doesn&apos;t use computers? We allow
+                you to see and manage availability for all your volunteers.
               </p>
             </div>
           </div>

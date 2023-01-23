@@ -98,7 +98,9 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                   </div>
                   <ul className='relative mr-6 flex cursor-pointer flex-col gap-3 md:flex-row md:items-center'>
                     {links.map((link, index) => (
-                      <li key={index}>
+                      <li
+                        key={index}
+                        className='w-fit rounded-lg px-2 font-medium transition-all duration-200 ease-in-out hover:bg-gray-100/10 hover:ring-1 hover:ring-white'>
                         <Link href={link.href}>{link.name}</Link>
                       </li>
                     ))}
@@ -121,9 +123,11 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
           </AnimatePresence>
           {/* Desktop Nav */}
           <div className='hidden md:block'>
-            <ul className='flex gap-6 lg:gap-9'>
+            <ul className='flex gap-3 lg:gap-6'>
               {links.map((link, index) => (
-                <li key={index} className='font-medium text-gray-900'>
+                <li
+                  key={index}
+                  className='rounded-lg px-3 font-medium text-gray-900 transition-all duration-200 ease-in-out hover:bg-gray-600/10 hover:ring-1 hover:ring-gray-200'>
                   <Link href={link.href}>{link.name}</Link>
                 </li>
               ))}

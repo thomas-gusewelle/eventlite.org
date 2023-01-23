@@ -226,15 +226,35 @@ const Home = () => {
 
       {/* Roadmap Section */}
       <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-9 text-white'>
-        <div className='mx-auto max-w-3xl px-2 text-center text-lg xl:max-w-4xl'>
+        <div className='mx-auto max-w-xl px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>
             What&apos;s coming soon
           </h2>
           <p className='mt-3 sm:mt-0'>
-            Managing your own calendar can be hard. Managing a team of
-            volunteers is even harder. We built EventLite to make managing and
-            scheduling volunteers as simple as possible.
+            Volunteer scheduling is just the beginning. Take a look at the
+            amazing things we have planned for the future.
           </p>
+        </div>
+        <div className='flex flex-col items-center'>
+          <div className='my-2 h-16 w-[1px] bg-white' />
+          <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
+            1
+          </div>
+          <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Mobile App</h3>
+        </div>
+        <div className='flex flex-col items-center'>
+          <div className='my-2 h-16 w-[1px] bg-white' />
+          <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
+            2
+          </div>
+          <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Team Messaging</h3>
+        </div>
+        <div className='flex flex-col items-center'>
+          <div className='my-2 h-16 w-[1px] bg-white' />
+          <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
+            3
+          </div>
+          <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Forms</h3>
         </div>
       </section>
     </>

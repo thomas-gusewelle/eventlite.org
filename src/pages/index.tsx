@@ -49,7 +49,7 @@ const Home = () => {
         <div className='mx-auto max-w-lg lg:max-w-2xl 2xl:max-w-2xl'>
           <div
             id='hero-text-container'
-            className='mt-6 text-5xl font-bold tracking-wide 2xl:text-6xl'>
+            className='mt-6 text-4xl font-bold tracking-wide md:text-5xl 2xl:text-6xl'>
             <h1>
               Volunteer scheduling{" "}
               <span className='text-indigo-600'>organized and simple</span>
@@ -217,6 +217,9 @@ const Home = () => {
           <AvailabilityTab />
         </div>
       </section>
+
+      {/* Roadmap Section */}
+      <section className='h-96 bg-gradient-to-tl from-indigo-500 to-indigo-900'></section>
     </>
   );
 };

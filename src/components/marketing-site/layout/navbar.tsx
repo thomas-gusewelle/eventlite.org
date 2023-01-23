@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { MdMenu, MdClose } from "react-icons/md";
+import { MdMenu, MdClose, MdCopyright } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import Link from "next/link";
@@ -136,11 +136,15 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
       </nav>
       {/* Navigation ends */}
 
-      <div className='h-full bg-white pb-12 sm:pt-10 2xl:pb-10'>
+      <div className='h-full bg-white sm:pt-10'>
         <div className='h-full w-full rounded'>
           <>{children}</>
         </div>
       </div>
+      <footer className='flex items-center justify-center gap-3 py-6 shadow'>
+        <MdCopyright />
+        <span>2023 EventLight.org, All Rights Reserved</span>
+      </footer>
     </>
   );
 };

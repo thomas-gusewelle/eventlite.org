@@ -1,8 +1,6 @@
 import { getUser } from "@supabase/auth-helpers-nextjs";
 import { navbar } from "../components/marketing-site/layout/navbar";
 import { BtnPurple } from "../components/btn/btnPurple";
-import { Tab } from "@headlessui/react";
-import { classNames } from "../utils/classnames";
 import Image from "next/future/image";
 import { longDate, shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
@@ -44,35 +42,54 @@ const Home = () => {
 
   return (
     <>
+      {/* Hero */}
       <section
         id='hero-section'
-        className='container mx-auto grid px-3 lg:grid-cols-2 lg:items-center lg:gap-6'>
-        <div>
+        className='container mx-auto grid px-3 lg:items-center lg:gap-6 xl:grid-cols-2'>
+        <div className='mx-auto max-w-lg lg:max-w-2xl 2xl:max-w-2xl'>
           <div
             id='hero-text-container'
-            className='mt-6 text-4xl font-bold md:text-center'>
+            className='mt-6 text-5xl font-bold tracking-wide 2xl:text-6xl'>
             <h1>
               Volunteer scheduling{" "}
               <span className='text-indigo-600'>organized and simple</span>
             </h1>
           </div>
-          <p className='my-3 md:text-center'>
+          <p className='my-3 lg:text-center xl:text-left '>
             Higher quality, lower latency, creator focused video calls. Ping is
             the best way to bring your guests into OBS.
           </p>
 
-          <BtnPurple fullWidth>Join the Beta Now</BtnPurple>
+          <button
+            type={"button"}
+            tabIndex={1}
+            className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 xl:w-auto`}>
+            Join the Beta Now
+          </button>
         </div>
 
         <div className='mt-6 shadow'>
           <Image alt='' src={"/images/hero-image.jpg"} className='w-full' />
         </div>
       </section>
-      <section className='mt-9 overflow-x-hidden bg-gray-100 py-9 text-gray-900'>
-        {/* Panel 1 */}
+
+      {/* Divider */}
+      <section className='mx-auto max-w-3xl px-2 pb-9 pt-24 text-center text-lg text-gray-900 xl:max-w-4xl'>
+        <h2 className='text-4xl font-bold xl:text-5xl'>
+          EventLite. Built for volunteer teams
+        </h2>
+        <p className='mt-3 sm:mt-0'>
+          Managing your own calendar can be hard. Managing a team of volunteers
+          is even harder. We built EventLite to make managing and scheduling
+          volunteers as simple as possible.
+        </p>
+      </section>
+
+      {/* Panel 1 */}
+      <section className='mt-9 overflow-x-hidden bg-gray-100 py-9 text-lg text-gray-900 shadow'>
         <div className='container mx-auto grid px-3 md:grid-cols-2 md:items-center md:gap-6'>
           <div className='mb-3'>
-            <h2 className='text-3xl font-extrabold'>
+            <h2 className='text-3xl font-extrabold xl:text-4xl'>
               Keep everyone
               <span className='text-indigo-700'> in the loop</span>
             </h2>
@@ -111,11 +128,12 @@ const Home = () => {
           <EventsTab />
         </div>
       </section>
+
       {/* Panel 2 */}
-      <section className='mt-6 px-2 py-6'>
+      <section className=' px-2 pt-12 pb-6 text-lg shadow'>
         <div className='container mx-auto grid md:grid-cols-2 md:items-center md:gap-6'>
           <div className='md:col-start-2 md:col-end-2'>
-            <h2 className='text-3xl font-extrabold'>
+            <h2 className='text-3xl font-extrabold xl:text-4xl'>
               Centered on <span className='text-indigo-700'>people</span>
             </h2>
             <p className='mt-1 text-gray-600'>
@@ -152,18 +170,19 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className='md:col-start-1 md:col-end-1'>
+          <div className='md:col-start-1 md:col-end-1 md:row-start-1'>
             <PoepleTab />
           </div>
         </div>
       </section>
+
       {/* Panel 3 */}
-      <section className=' mt-6 bg-gray-100 px-2 py-9 text-gray-800'>
+      <section className=' bg-gray-100 px-2 pb-9 pt-12 text-lg text-gray-800 shadow'>
         <div className='container mx-auto grid md:grid-cols-2 md:items-center md:gap-6'>
           <div>
-            <h2 className='text-3xl font-bold'>
-              Scheduling{" "}
-              <span className='text-indigo-700'>without the fear</span>
+            <h2 className='text-3xl font-bold xl:text-4xl'>
+              Scheduling
+              <span className='text-indigo-700'> without the fear</span>
             </h2>
             <p className='mt-3 text-gray-600'>
               Keeping track of availability can be a chore. EventLite allows

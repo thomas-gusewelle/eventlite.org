@@ -19,6 +19,7 @@ import {
   MdOutlineFilterAlt,
 } from "react-icons/md";
 import { RiPagesFill } from "react-icons/ri";
+import { useWindowWidth } from "../hooks/useWindowWidth";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -39,32 +40,37 @@ const eventData = {};
 
 const Home = () => {
   const iconSize = 50;
+  const windowWidth = useWindowWidth();
 
   return (
     <>
       <section
         id='hero-section'
-        className='container mx-auto grid px-3 lg:grid-cols-2'>
+        className='container mx-auto grid px-3 lg:grid-cols-2 lg:items-center lg:gap-6'>
         <div>
-          <div id='hero-text-container' className='mt-6  text-4xl font-bold'>
-            <h1>Volunteer scheduling</h1>
-            <h1 className='text-indigo-600'>organized and simple</h1>
+          <div
+            id='hero-text-container'
+            className='mt-6 text-4xl font-bold md:text-center'>
+            <h1>
+              Volunteer scheduling{" "}
+              <span className='text-indigo-600'>organized and simple</span>
+            </h1>
           </div>
           <p className='my-3 md:text-center'>
             Higher quality, lower latency, creator focused video calls. Ping is
             the best way to bring your guests into OBS.
           </p>
 
-          <BtnPurple fullWidth={true}>Join the Beta Now</BtnPurple>
+          <BtnPurple fullWidth>Join the Beta Now</BtnPurple>
         </div>
 
         <div className='mt-6 shadow'>
           <Image alt='' src={"/images/hero-image.jpg"} className='w-full' />
         </div>
       </section>
-      <section className=' mt-9 overflow-x-hidden bg-gray-100 py-9 text-gray-900'>
+      <section className='mt-9 overflow-x-hidden bg-gray-100 py-9 text-gray-900'>
         {/* Panel 1 */}
-        <div className='container mx-auto grid px-3 md:grid-cols-2'>
+        <div className='container mx-auto grid px-3 md:grid-cols-2 md:items-center md:gap-6'>
           <div className='mb-3'>
             <h2 className='text-3xl font-extrabold'>
               Keep everyone
@@ -106,9 +112,9 @@ const Home = () => {
         </div>
       </section>
       {/* Panel 2 */}
-      <section className=' mt-6 px-2 py-6'>
-        <div className='container mx-auto grid md:grid-cols-2'>
-          <div>
+      <section className='mt-6 px-2 py-6'>
+        <div className='container mx-auto grid md:grid-cols-2 md:items-center md:gap-6'>
+          <div className='md:col-start-2 md:col-end-2'>
             <h2 className='text-3xl font-extrabold'>
               Centered on <span className='text-indigo-700'>people</span>
             </h2>
@@ -146,41 +152,47 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <PoepleTab />
+          <div className='md:col-start-1 md:col-end-1'>
+            <PoepleTab />
+          </div>
         </div>
       </section>
       {/* Panel 3 */}
       <section className=' mt-6 bg-gray-100 px-2 py-9 text-gray-800'>
-        <div className=''>
-          <h2 className='text-3xl font-bold'>
-            Scheduling <span className='text-indigo-700'>without the fear</span>
-          </h2>
-          <p className='mt-3 text-gray-600'>
-            Keeping track of availability can be a chore. EventLite allows your
-            volunteers to set their availability without you having to worry.
-          </p>
-          <div className='mt-6 flex items-start gap-3'>
-            <div>
-              <MdAccountCircle size={iconSize} className='text-indigo-600' />
+        <div className='container mx-auto grid md:grid-cols-2 md:items-center md:gap-6'>
+          <div>
+            <h2 className='text-3xl font-bold'>
+              Scheduling{" "}
+              <span className='text-indigo-700'>without the fear</span>
+            </h2>
+            <p className='mt-3 text-gray-600'>
+              Keeping track of availability can be a chore. EventLite allows
+              your volunteers to set their availability without you having to
+              worry.
+            </p>
+            <div className='mt-6 flex items-start gap-3'>
+              <div>
+                <MdAccountCircle size={iconSize} className='text-indigo-600' />
+              </div>
+              <div>
+                <h3 className='text-xl font-bold'>Simple and Easy</h3>
+                <p className='text-gray-600'>
+                  Availability shouldn&apos;t be difficult. Setting your
+                  availability is as simple as selecting dates on a calendar.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className='text-xl font-bold'>Simple and Easy</h3>
-              <p className='text-gray-600'>
-                Availability shouldn&apos;t be difficult. Setting your
-                availability is as simple as selecting dates on a calendar.
-              </p>
-            </div>
-          </div>
-          <div className='mt-6 flex items-start gap-3'>
-            <div>
-              <MdAccountCircle size={iconSize} className='text-indigo-600' />
-            </div>
-            <div>
-              <h3 className='text-xl font-bold '>Strong admin controls</h3>
-              <p className='text-gray-600'>
-                Have that one person that doesn&apos;t use computers? We allow
-                you to see and manage availability for all your volunteers.
-              </p>
+            <div className='mt-6 flex items-start gap-3'>
+              <div>
+                <MdAccountCircle size={iconSize} className='text-indigo-600' />
+              </div>
+              <div>
+                <h3 className='text-xl font-bold '>Strong admin controls</h3>
+                <p className='text-gray-600'>
+                  Have that one person that doesn&apos;t use computers? We allow
+                  you to see and manage availability for all your volunteers.
+                </p>
+              </div>
             </div>
           </div>
           <AvailabilityTab />

@@ -1,10 +1,10 @@
-import { ReactElement } from "react";
-import Link from "next/link";
+import { ReactElement, useState } from "react";
 import { IconType } from "react-icons";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { MdMenu, MdClose } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
 import { BtnNeutral } from "../../btn/btnNeutral";
-import { useRouter } from "next/router";
 
 type SideLink = {
   name: string;
@@ -15,6 +15,7 @@ type SideLink = {
 
 const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
   const router = useRouter();
+  const [showMobile, setShowMobile] = useState(false);
   return (
     <>
       <Head>
@@ -23,7 +24,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
 
       {/* Navigation starts */}
       <nav className='relative z-10 flex h-16 items-center justify-end bg-white shadow lg:items-stretch lg:justify-between'>
-        <div className='container mx-auto flex w-full items-center justify-between pl-8'>
+        <div className='container relative mx-auto flex w-full items-center justify-between px-2'>
           <div className='flex items-center gap-3 text-indigo-600'>
             <div className='w-10'>
               <svg
@@ -37,6 +38,39 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
               </svg>
             </div>
             <h1 className='text-2xl font-bold tracking-wide'>EventLite.org</h1>
+          </div>
+          <div
+            className={`${
+              showMobile ? "absolute top-0 min-h-[30%] w-full bg-gray-200" : ""
+            }`}>
+            {!showMobile && (
+              <MdMenu
+                size={40}
+                className='text-gray-500'
+                onClick={() => setShowMobile(true)}
+              />
+            )}
+            {showMobile && (
+              <div className='relative rounded-lg py-12 shadow'>
+                <MdClose
+                  size={40}
+                  onClick={() => setShowMobile(false)}
+                  className='absolute top-2 right-2'
+                />
+                <ul className='relative mr-6 cursor-pointer items-center gap-3'>
+                  <li>
+                    <BtnPurple func={() => router.push("/create-account")}>
+                      Sign Up
+                    </BtnPurple>
+                  </li>
+                  <li>
+                    <BtnNeutral func={() => router.push("/signin")}>
+                      Login
+                    </BtnNeutral>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
           {/* 
           <ul className='relative mr-6 flex cursor-pointer items-center gap-3'>

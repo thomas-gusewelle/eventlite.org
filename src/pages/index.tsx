@@ -70,7 +70,7 @@ const Home = () => {
               Keep everyone
               <span className='text-indigo-700'> in the loop</span>
             </h2>
-            <p className='mt-1 text-gray-500'>
+            <p className='text-gray-660 mt-1'>
               No more hoping your volunteers read their emails or keeping track
               of the schedule with a spreadsheet. Simply create an event and
               schedule your volunteers keeping everyone in the loop.
@@ -83,7 +83,7 @@ const Home = () => {
                 <h3 className='text-xl font-bold'>
                   Instant scheduling by default
                 </h3>
-                <p className='text-gray-500'>
+                <p className='text-gray-660'>
                   Your volunteers see their schedule the moment you schedule
                   them. Allowing them to easy approve any new scheduled events.
                 </p>
@@ -95,7 +95,7 @@ const Home = () => {
               </div>
               <div>
                 <h3 className='text-xl font-bold'>Everyone on the same page</h3>
-                <p className='text-gray-500'>
+                <p className='text-gray-660'>
                   Your entire team can see your events, ensuring that everyone
                   is on the same page.
                 </p>
@@ -112,7 +112,7 @@ const Home = () => {
             <h2 className='text-3xl font-extrabold'>
               Centered on <span className='text-indigo-700'>people</span>
             </h2>
-            <p className='mt-3 text-neutral-800'>
+            <p className='mt-1 text-gray-600'>
               People are at the core of what we do. With EventLite we make
               managing your team as simple and easy as possible.
             </p>
@@ -127,7 +127,7 @@ const Home = () => {
                 <h3 className='text-xl font-bold'>
                   Smart filtering made simple
                 </h3>
-                <p>
+                <p className='text-gray-600'>
                   Finding who you need shouldn&apos;t be hard. We make searching
                   for people as simple as possible.
                 </p>
@@ -139,7 +139,7 @@ const Home = () => {
               </div>
               <div>
                 <h3 className='text-xl font-bold'>Easily manage roles</h3>
-                <p>
+                <p className='text-gray-600'>
                   Managing volunteer roles should be easy. Simly select the
                   roles and never have to think about it again.
                 </p>
@@ -150,12 +150,12 @@ const Home = () => {
         </div>
       </section>
       {/* Panel 3 */}
-      <section className=' mt-6 bg-indigo-700 px-8 py-9 text-white'>
+      <section className=' mt-6 bg-gray-100 px-2 py-9 text-gray-800'>
         <div className=''>
           <h2 className='text-3xl font-bold'>
-            Scheduling <span className='text-indigo-200'>without the fear</span>
+            Scheduling <span className='text-indigo-700'>without the fear</span>
           </h2>
-          <p className='mt-3 text-indigo-200'>
+          <p className='mt-3 text-gray-600'>
             Keep tracking of availability can be a chore. EventLite allows your
             volunteers to set their availability without you having to worry.
           </p>
@@ -165,7 +165,7 @@ const Home = () => {
             </div>
             <div>
               <h3 className='text-xl font-bold'>High definition by default</h3>
-              <p>
+              <p className='text-gray-600'>
                 HD isn&apos;t optional for our creators. We support up to 1080p
                 at 60fps for every caller (if you have the bandwidth for it).
               </p>
@@ -176,8 +176,8 @@ const Home = () => {
               <MdAccountCircle size={iconSize} className='text-indigo-600' />
             </div>
             <div>
-              <h3 className='text-xl font-bold'>High definition by default</h3>
-              <p>
+              <h3 className='text-xl font-bold '>High definition by default</h3>
+              <p className='text-gray-600'>
                 HD isn&apos;t optional for our creators. We support up to 1080p
                 at 60fps for every caller (if you have the bandwidth for it).
               </p>
@@ -202,7 +202,7 @@ const EventsTab = () => {
 
   return (
     <div className='relative flex flex-col border-gray-300 pt-4'>
-      <div className='absolute -right-10 top-3 rotate-[10deg] rounded-lg bg-indigo-200 px-4 py-2 text-black'>
+      <div className='absolute -right-5 top-3 rotate-[10deg] rounded-lg bg-indigo-200 px-4 py-2 text-black'>
         Approve your schedule
       </div>
       <div
@@ -316,14 +316,13 @@ const EventsTab = () => {
                         /> */}
                         {/* TODO: make this work better. On blur is sort of a fix. I would love to have an input that wraps like the div does */}
                         <div
-                          onBlur={(e) => {
-                            console.log(e);
-                            setName(e.currentTarget.textContent ?? "");
-                          }}
+                          onInput={(e) =>
+                            setName(e.currentTarget.textContent ?? "")
+                          }
                           className='ml-2'
                           contentEditable
                           suppressContentEditableWarning>
-                          {name}
+                          Your Name
                         </div>
                       </div>
                     </div>
@@ -510,7 +509,7 @@ const AvailabilityTab = () => {
   }, []);
 
   return (
-    <div className='mt-6 w-full rounded-lg bg-white px-3 py-3 text-black shadow'>
+    <div className='mt-6 w-full rounded-lg bg-white px-3 py-6 text-black shadow'>
       <table className='w-full table-auto text-left'>
         <thead>
           <tr>

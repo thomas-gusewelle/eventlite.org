@@ -9,13 +9,6 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useWindowWidth } from "../../../hooks/useWindowWidth";
 
-type SideLink = {
-  name: string;
-  href: string;
-  show: boolean;
-  icon: IconType;
-}[];
-
 const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
   const router = useRouter();
   const [showMobile, setShowMobile] = useState(false);

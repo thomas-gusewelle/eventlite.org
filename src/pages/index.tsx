@@ -219,7 +219,18 @@ const Home = () => {
       </section>
 
       {/* Roadmap Section */}
-      <section className='h-96 bg-gradient-to-tl from-indigo-500 to-indigo-900'></section>
+      <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-9 text-white'>
+        <div className='mx-auto max-w-3xl px-2 text-center text-lg xl:max-w-4xl'>
+          <h2 className='text-4xl font-bold xl:text-5xl'>
+            What&apos;s coming soon
+          </h2>
+          <p className='mt-3 sm:mt-0'>
+            Managing your own calendar can be hard. Managing a team of
+            volunteers is even harder. We built EventLite to make managing and
+            scheduling volunteers as simple as possible.
+          </p>
+        </div>
+      </section>
     </>
   );
 };
@@ -343,13 +354,12 @@ const EventsTab = () => {
                             .join("")
                             .toLocaleUpperCase()}
                         </div>
-                        {/* <input
-                          className='wrap ml-2 flex-wrap overflow-visible bg-gray-100'
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        /> */}
-                        {/* TODO: make this work better. On blur is sort of a fix. I would love to have an input that wraps like the div does */}
+
                         <div
+                          onClick={(e) => {
+                            e.currentTarget.textContent = "";
+                            setName("");
+                          }}
                           onInput={(e) =>
                             setName(e.currentTarget.textContent ?? "")
                           }

@@ -15,9 +15,12 @@ import {
   MdAccountCircle,
   MdSchedule,
   MdOutlineFilterAlt,
+  MdEditCalendar,
+  MdAdminPanelSettings,
 } from "react-icons/md";
 import { RiPagesFill } from "react-icons/ri";
 import { useWindowWidth } from "../hooks/useWindowWidth";
+import { AnimatePresence, motion } from "framer-motion";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -191,7 +194,7 @@ const Home = () => {
             </p>
             <div className='mt-6 flex items-start gap-3'>
               <div>
-                <MdAccountCircle size={iconSize} className='text-indigo-600' />
+                <MdEditCalendar size={iconSize} className='text-indigo-600' />
               </div>
               <div>
                 <h3 className='text-xl font-bold'>Simple and Easy</h3>
@@ -203,7 +206,10 @@ const Home = () => {
             </div>
             <div className='mt-6 flex items-start gap-3'>
               <div>
-                <MdAccountCircle size={iconSize} className='text-indigo-600' />
+                <MdAdminPanelSettings
+                  size={iconSize}
+                  className='text-indigo-600'
+                />
               </div>
               <div>
                 <h3 className='text-xl font-bold '>Strong admin controls</h3>
@@ -247,24 +253,35 @@ const EventsTab = () => {
 
   return (
     <div className='relative flex flex-col border-gray-300 pt-4'>
-      <div className='absolute -right-5 top-3 rotate-[10deg] rounded-lg bg-indigo-200 px-4 py-2 text-black'>
-        Approve your schedule
-      </div>
+      <AnimatePresence>
+        {eventUserResponse == null && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='absolute -right-5 top-3 rotate-[10deg] rounded-lg bg-indigo-200 px-4 py-2 text-black'>
+            Approve your schedule
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div
         className={`round overflow-hidden rounded-lg border bg-white pt-2 text-black shadow`}>
         <div className='mb-4 flex flex-col px-3'>
           <div className='flex justify-between'>
             <h3 className='text-xl font-bold'>Event Name</h3>
-            {eventUserResponse != null && (
-              <TableDropdown
-                options={[
-                  {
-                    name: "Undo",
-                    function: () => setEventUserResponse(null),
-                  },
-                ]}
-              />
-            )}
+            <AnimatePresence>
+              {eventUserResponse != null && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <TableDropdown
+                    options={[
+                      {
+                        name: "Undo",
+                        function: () => setEventUserResponse(null),
+                      },
+                    ]}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <span className='text-lg font-medium'>Location Name</span>
@@ -357,8 +374,10 @@ const EventsTab = () => {
 
                         <div
                           onClick={(e) => {
-                            e.currentTarget.textContent = "";
-                            setName("");
+                            if (name == "Your Name") {
+                              e.currentTarget.textContent = "";
+                              setName("");
+                            }
                           }}
                           onInput={(e) =>
                             setName(e.currentTarget.textContent ?? "")

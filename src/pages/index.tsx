@@ -21,6 +21,10 @@ import {
 import { RiPagesFill } from "react-icons/ri";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { AnimatePresence, motion } from "framer-motion";
+import Lottie from "lottie-react";
+import MessageLottie from "../../public/lottie/message.json";
+import FormLottie from "../../public/lottie/form2.json";
+import App3 from "../../public/lottie/app4.json";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -58,7 +62,7 @@ const Home = () => {
               <span className='text-indigo-600'>organized and simple</span>
             </h1>
           </div>
-          <p className='my-3 lg:text-center xl:text-left '>
+          <p className='my-3 text-lg lg:text-center xl:text-left'>
             Higher quality, lower latency, creator focused video calls. Ping is
             the best way to bring your guests into OBS.
           </p>
@@ -77,9 +81,9 @@ const Home = () => {
       </section>
 
       {/* Divider */}
-      <section className='mx-auto max-w-3xl px-2 pb-9 pt-24 text-center text-lg text-gray-900 xl:max-w-4xl'>
+      <section className='mx-auto max-w-3xl px-2 pb-9 pt-36 text-center text-lg text-gray-900 xl:max-w-4xl'>
         <h2 className='text-4xl font-bold xl:text-5xl'>
-          EventLite. Built for volunteer teams
+          Built for volunteer teams
         </h2>
         <p className='mt-3 sm:mt-0'>
           Managing your own calendar can be hard. Managing a team of volunteers
@@ -89,7 +93,7 @@ const Home = () => {
       </section>
 
       {/* Panel 1 */}
-      <section className='mt-9 overflow-x-hidden bg-gray-100 py-9 text-lg text-gray-900 shadow'>
+      <section className='mt-9 overflow-x-hidden bg-gray-100 py-16 text-lg text-gray-900 shadow '>
         <div className='container mx-auto grid px-3 md:grid-cols-2 md:items-center md:gap-6'>
           <div className='mb-3'>
             <h2 className='text-3xl font-extrabold xl:text-4xl'>
@@ -133,7 +137,7 @@ const Home = () => {
       </section>
 
       {/* Panel 2 */}
-      <section className=' px-2 pt-12 pb-6 text-lg shadow'>
+      <section className=' px-2 py-16 text-lg shadow'>
         <div className='container mx-auto grid md:grid-cols-2 md:items-center md:gap-6'>
           <div className='md:col-start-2 md:col-end-2'>
             <h2 className='text-3xl font-extrabold xl:text-4xl'>
@@ -180,7 +184,7 @@ const Home = () => {
       </section>
 
       {/* Panel 3 */}
-      <section className=' bg-gray-100 px-2 pb-9 pt-12 text-lg text-gray-800 shadow'>
+      <section className=' bg-gray-100 px-2 py-16 text-lg text-gray-800 shadow'>
         <div className='container mx-auto grid md:grid-cols-2 md:items-center md:gap-6'>
           <div>
             <h2 className='text-3xl font-bold xl:text-4xl'>
@@ -225,7 +229,7 @@ const Home = () => {
       </section>
 
       {/* Roadmap Section */}
-      <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-9 text-white'>
+      <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 text-white'>
         <div className='mx-auto max-w-xl px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>
             What&apos;s coming soon
@@ -241,13 +245,17 @@ const Home = () => {
             1
           </div>
           <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Mobile App</h3>
+          {/* <Lottie animationData={App2} loop={0} initialSegment={[0, 65]} /> */}
+          <Lottie animationData={App3} loop={1} />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
           <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
             2
           </div>
+
           <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Team Messaging</h3>
+          <Lottie animationData={MessageLottie} loop={0} />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -255,6 +263,7 @@ const Home = () => {
             3
           </div>
           <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Forms</h3>
+          <Lottie animationData={FormLottie} className='w-[90%]' />
         </div>
       </section>
     </>

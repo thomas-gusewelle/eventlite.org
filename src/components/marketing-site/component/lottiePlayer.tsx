@@ -5,9 +5,11 @@ import { useInView } from "react-intersection-observer";
 export const LottiePlayer = ({
   animationData,
   loop,
+  divClasses,
 }: {
   animationData: unknown;
   loop?: number;
+  divClasses?: string;
 }) => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
   const { ref, inView } = useInView({ threshold: 0.25 });
@@ -22,7 +24,7 @@ export const LottiePlayer = ({
   }, [inView]);
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className={divClasses}>
       <Lottie
         animationData={animationData}
         loop={loop}

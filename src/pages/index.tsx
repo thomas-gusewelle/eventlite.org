@@ -21,10 +21,10 @@ import {
 import { RiPagesFill } from "react-icons/ri";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { AnimatePresence, motion } from "framer-motion";
-import Lottie from "lottie-react";
 import MessageLottie from "../../public/lottie/message.json";
 import FormLottie from "../../public/lottie/form2.json";
 import App3 from "../../public/lottie/app4.json";
+import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 
 export async function getServerSideProps(context: any) {
@@ -76,8 +76,9 @@ const Home = () => {
           </button>
         </div>
 
-        <div className='mt-6 shadow'>
-          <Image alt='' src={"/images/hero-image.jpg"} className='w-full' />
+        <div className=''>
+          {/* <Image alt='' src={"/images/hero-image.jpg"} className='w-full' /> */}
+          <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
         </div>
       </section>
 
@@ -245,7 +246,7 @@ const Home = () => {
           <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
             1
           </div>
-          <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Mobile App</h3>
+          <h3 className='mt-3 text-2xl font-bold xl:text-2xl'>Mobile App</h3>
           {/* <Lottie animationData={App2} loop={0} initialSegment={[0, 65]} /> */}
 
           <LottiePlayer animationData={App3} loop={1} />
@@ -256,18 +257,24 @@ const Home = () => {
             2
           </div>
 
-          <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Team Messaging</h3>
+          <h3 className='mt-3 text-2xl font-bold xl:text-2xl'>
+            Team Messaging
+          </h3>
           {/* <Lottie animationData={MessageLottie} loop={0} /> */}
-          <LottiePlayer animationData={MessageLottie} loop={0} />
+          <LottiePlayer
+            animationData={MessageLottie}
+            loop={0}
+            divClasses='mx-auto'
+          />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
           <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
             3
           </div>
-          <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Forms</h3>
+          <h3 className='mt-3 text-2xl font-bold xl:text-2xl'>Forms</h3>
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
-          <LottiePlayer animationData={FormLottie} />
+          <LottiePlayer animationData={FormLottie} divClasses='w-[90%] mt-6' />
         </div>
       </section>
     </>

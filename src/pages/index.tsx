@@ -25,6 +25,7 @@ import Lottie from "lottie-react";
 import MessageLottie from "../../public/lottie/message.json";
 import FormLottie from "../../public/lottie/form2.json";
 import App3 from "../../public/lottie/app4.json";
+import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -246,7 +247,8 @@ const Home = () => {
           </div>
           <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Mobile App</h3>
           {/* <Lottie animationData={App2} loop={0} initialSegment={[0, 65]} /> */}
-          <Lottie animationData={App3} loop={1} />
+
+          <LottiePlayer animationData={App3} loop={1} />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -255,7 +257,8 @@ const Home = () => {
           </div>
 
           <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Team Messaging</h3>
-          <Lottie animationData={MessageLottie} loop={0} />
+          {/* <Lottie animationData={MessageLottie} loop={0} /> */}
+          <LottiePlayer animationData={MessageLottie} loop={0} />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -263,7 +266,8 @@ const Home = () => {
             3
           </div>
           <h3 className='mt-3 text-xl font-bold xl:text-2xl'>Forms</h3>
-          <Lottie animationData={FormLottie} className='w-[90%]' />
+          {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
+          <LottiePlayer animationData={FormLottie} />
         </div>
       </section>
     </>

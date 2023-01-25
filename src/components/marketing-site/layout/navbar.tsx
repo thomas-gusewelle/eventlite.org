@@ -15,8 +15,8 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
   const windowWidth = useWindowWidth();
   const links = [
     { name: "Home", href: "" },
-    { name: "Features", href: "" },
-    { name: "Roadmap", href: "" },
+    { name: "Features", href: "#features" },
+    { name: "Roadmap", href: "#roadmap" },
   ];
   // Takes window width and automatically closes mobile menu on resize
   useEffect(() => {
@@ -115,13 +115,14 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
             )}
           </AnimatePresence>
           {/* Desktop Nav */}
-          <div className='hidden md:block'>
+          <div className='hidden scroll-smooth md:block'>
             <ul className='flex gap-3 lg:gap-6'>
               {links.map((link, index) => (
                 <li
                   key={index}
                   className='rounded-lg px-3 font-medium text-gray-900 transition-all duration-200 ease-in-out hover:bg-gray-600/10 hover:ring-1 hover:ring-gray-200'>
                   <Link href={link.href}>{link.name}</Link>
+                  {/* <a href={link.href}>{link.name}</a> */}
                 </li>
               ))}
             </ul>

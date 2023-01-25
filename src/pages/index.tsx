@@ -54,7 +54,7 @@ const Home = () => {
       {/* Hero */}
       <section
         id='hero-section'
-        className='container mx-auto grid px-3 text-center lg:items-center lg:gap-6 lg:text-left xl:grid-cols-2'>
+        className='container mx-auto grid px-3 text-center lg:grid-cols-2 lg:items-center lg:gap-6 lg:text-left'>
         <div className='mx-auto max-w-lg lg:max-w-2xl 2xl:max-w-2xl'>
           <div
             id='hero-text-container'
@@ -64,7 +64,7 @@ const Home = () => {
               <span className='text-indigo-600'>organized and simple</span>
             </h1>
           </div>
-          <p className='my-3 text-lg lg:text-center xl:text-left'>
+          <p className='my-3 text-lg'>
             Higher quality, lower latency, creator focused video calls. Ping is
             the best way to bring your guests into OBS.
           </p>
@@ -90,7 +90,7 @@ const Home = () => {
 
       {/* Divider */}
       <section className='mx-auto max-w-3xl px-2 pb-9 pt-16 text-center text-lg text-gray-900 xl:max-w-4xl'>
-        <h2 className='text-4xl font-bold xl:text-5xl'>
+        <h2 id='features' className='text-4xl font-bold xl:text-5xl'>
           Built for volunteer teams
         </h2>
         <p className='mt-3 text-gray-600 sm:mt-0'>
@@ -237,12 +237,14 @@ const Home = () => {
       </section>
 
       {/* Roadmap Section */}
-      <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-2 text-lg text-white'>
+      <section
+        id='roadmap'
+        className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-2 text-lg text-white'>
         <div className='mx-auto grid max-w-xl px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>
             What&apos;s coming soon
           </h2>
-          <p className='mt-3 text-gray-300 sm:mt-0'>
+          <p className='mt-0 text-gray-300 sm:mt-3 '>
             Volunteer scheduling is just the beginning. Take a look at the
             amazing things we have planned for the future.
           </p>

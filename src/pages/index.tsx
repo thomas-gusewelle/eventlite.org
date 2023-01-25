@@ -89,8 +89,10 @@ const Home = () => {
       </section>
 
       {/* Divider */}
-      <section className='mx-auto max-w-3xl px-2 pb-9 pt-16 text-center text-lg text-gray-900 xl:max-w-4xl'>
-        <h2 id='features' className='text-4xl font-bold xl:text-5xl'>
+      <section
+        id='features'
+        className='mx-auto max-w-3xl px-2 pb-9 pt-16 text-center text-lg text-gray-900 xl:max-w-4xl'>
+        <h2 className='text-4xl font-bold xl:text-5xl'>
           Built for volunteer teams
         </h2>
         <p className='mt-3 text-gray-600 sm:mt-0'>

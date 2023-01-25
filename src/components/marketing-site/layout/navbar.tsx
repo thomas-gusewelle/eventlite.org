@@ -92,6 +92,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <ul className='relative mr-6 flex cursor-pointer flex-col gap-3 md:flex-row md:items-center'>
                     {links.map((link, index) => (
                       <li
+                        onClick={() => setShowMobile(false)}
                         key={index}
                         className='w-fit rounded-lg px-2 font-medium transition-all duration-200 ease-in-out hover:bg-gray-100/10 hover:ring-1 hover:ring-white'>
                         <Link href={link.href}>{link.name}</Link>

@@ -238,7 +238,7 @@ const Home = () => {
 
       {/* Roadmap Section */}
       <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-2 text-lg text-white'>
-        <div className='mx-auto max-w-xl px-2 text-center text-lg'>
+        <div className='mx-auto grid max-w-xl px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>
             What&apos;s coming soon
           </h2>
@@ -253,13 +253,17 @@ const Home = () => {
             1
           </div>
           <h3 className='mt-6 text-3xl font-bold xl:text-4xl'>Mobile App</h3>
-          <p className='pt-6 text-center text-gray-300'>
+          <p className='max-w-lg pt-6 text-center text-gray-300'>
             Our first step in revolutionizing your process is to create a mobile
             app that allows you and your volunteers to interact from anywhere,
             at anytime, simply and easily.
           </p>
 
-          <LottiePlayer animationData={App3} loop={1} />
+          <LottiePlayer
+            animationData={App3}
+            loop={1}
+            divClasses='w-[90%] md:w-[50%] lg:w-[26rem]'
+          />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -270,7 +274,7 @@ const Home = () => {
           <h3 className='mt-6 text-2xl font-bold xl:text-2xl'>
             Team Messaging
           </h3>
-          <p className='pt-6 text-center text-gray-300'>
+          <p className='max-w-lg pt-6 text-center text-gray-300'>
             Communication in teams can be difficult. Our next step is to simplfy
             your teams communication by offering team messaging that syncs
             across our website and mobile app.
@@ -288,13 +292,16 @@ const Home = () => {
             3
           </div>
           <h3 className='mt-6 text-2xl font-bold xl:text-2xl'>Forms</h3>
-          <p className='pt-6 text-center text-gray-300'>
+          <p className='max-w-lg pt-6 text-center text-gray-300'>
             The future of EventLite will see multiple apps implemented within
             our system to meet the demands of every organization. EventLite
             Forms will be the first of this.
           </p>
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
-          <LottiePlayer animationData={FormLottie} divClasses='w-[90%] mt-6' />
+          <LottiePlayer
+            animationData={FormLottie}
+            divClasses='w-[90%] md:w-[70%] lg:w-[50%] xl:w-[30%] mt-6'
+          />
         </div>
       </section>
     </>

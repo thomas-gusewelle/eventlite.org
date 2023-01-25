@@ -7,7 +7,7 @@ import { UserProvider } from "@supabase/auth-helpers-react";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import "../styles/globals.css";
 import { NextPage } from "next";
-import { ReactElement, ReactNode } from "react";
+import { ReactNode } from "react";
 import { AppProps } from "next/app";
 import { UserProvider as LoginProvider } from "../providers/userProvider";
 import Head from "next/head";

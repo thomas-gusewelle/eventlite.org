@@ -24,6 +24,7 @@ import FormLottie from "../../public/lottie/form2.json";
 import App3 from "../../public/lottie/app4.json";
 import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -44,7 +45,7 @@ const eventData = {};
 
 const Home = () => {
   const iconSize = 50;
-  const windowWidth = useWindowWidth();
+  const router = useRouter();
 
   return (
     <>
@@ -66,6 +67,7 @@ const Home = () => {
           </p>
 
           <button
+            onClick={() => router.push("/create-account")}
             type={"button"}
             tabIndex={1}
             className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 lg:w-auto`}>
@@ -329,6 +331,7 @@ const Home = () => {
         <div className='mx-auto grid max-w-md gap-6 px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>Ready to join?</h2>
           <button
+            onClick={() => router.push("/create-account")}
             type={"button"}
             tabIndex={1}
             className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 xl:w-auto`}>

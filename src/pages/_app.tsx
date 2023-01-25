@@ -10,6 +10,7 @@ import { NextPage } from "next";
 import { ReactElement, ReactNode } from "react";
 import { AppProps } from "next/app";
 import { UserProvider as LoginProvider } from "../providers/userProvider";
+import Head from "next/head";
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactNode) => ReactNode;
@@ -26,9 +27,14 @@ const MyApp = ({
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
   const layout = getLayout(<Component {...pageProps} />);
   return (
-    <UserProvider supabaseClient={supabaseClient}>
-      <LoginProvider>{layout}</LoginProvider>
-    </UserProvider>
+    <>
+      <Head>
+        <title>EventLite.org</title>
+      </Head>
+      <UserProvider supabaseClient={supabaseClient}>
+        <LoginProvider>{layout}</LoginProvider>
+      </UserProvider>
+    </>
   );
 };
 

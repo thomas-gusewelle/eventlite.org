@@ -52,7 +52,7 @@ const Home = () => {
       {/* Hero */}
       <section
         id='hero-section'
-        className='container mx-auto grid px-3 text-center lg:grid-cols-2 lg:items-center lg:gap-6 lg:text-left'>
+        className='container mx-auto grid px-3 text-left sm:text-center lg:grid-cols-2 lg:items-center lg:gap-6 lg:text-left'>
         <div className='mx-auto max-w-lg lg:max-w-2xl 2xl:max-w-2xl'>
           <div
             id='hero-text-container'

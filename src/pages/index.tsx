@@ -17,6 +17,7 @@ import {
   MdOutlineFilterAlt,
   MdEditCalendar,
   MdAdminPanelSettings,
+  MdAutoDelete,
 } from "react-icons/md";
 import { RiPagesFill } from "react-icons/ri";
 import { useWindowWidth } from "../hooks/useWindowWidth";
@@ -53,7 +54,7 @@ const Home = () => {
       {/* Hero */}
       <section
         id='hero-section'
-        className='container mx-auto grid px-3 lg:items-center lg:gap-6 xl:grid-cols-2'>
+        className='container mx-auto grid px-3 text-center lg:items-center lg:gap-6 lg:text-left xl:grid-cols-2'>
         <div className='mx-auto max-w-lg lg:max-w-2xl 2xl:max-w-2xl'>
           <div
             id='hero-text-container'
@@ -78,12 +79,17 @@ const Home = () => {
 
         <div className=''>
           {/* <Image alt='' src={"/images/hero-image.jpg"} className='w-full' /> */}
-          <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
+          <motion.div
+            initial={{ opacity: 0.1, height: 500 }}
+            animate={{ opacity: 1, height: "auto" }}
+            transition={{ duration: 1 }}>
+            <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
+          </motion.div>
         </div>
       </section>
 
       {/* Divider */}
-      <section className='mx-auto max-w-3xl px-2 pb-9 pt-36 text-center text-lg text-gray-900 xl:max-w-4xl'>
+      <section className='mx-auto max-w-3xl px-2 pb-9 pt-16 text-center text-lg text-gray-900 xl:max-w-4xl'>
         <h2 className='text-4xl font-bold xl:text-5xl'>
           Built for volunteer teams
         </h2>

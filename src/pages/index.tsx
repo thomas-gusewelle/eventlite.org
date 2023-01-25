@@ -1,7 +1,5 @@
 import { getUser } from "@supabase/auth-helpers-nextjs";
 import { navbar } from "../components/marketing-site/layout/navbar";
-import { BtnPurple } from "../components/btn/btnPurple";
-import Image from "next/future/image";
 import { longDate, shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
 import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
@@ -17,7 +15,6 @@ import {
   MdOutlineFilterAlt,
   MdEditCalendar,
   MdAdminPanelSettings,
-  MdAutoDelete,
 } from "react-icons/md";
 import { RiPagesFill } from "react-icons/ri";
 import { useWindowWidth } from "../hooks/useWindowWidth";
@@ -58,7 +55,7 @@ const Home = () => {
         <div className='mx-auto max-w-lg lg:max-w-2xl 2xl:max-w-2xl'>
           <div
             id='hero-text-container'
-            className='mt-6 text-4xl font-bold tracking-wide md:text-5xl 2xl:text-6xl'>
+            className='mt-6 text-4xl font-bold tracking-wide sm:text-5xl 2xl:text-6xl'>
             <h1>
               Volunteer scheduling{" "}
               <span className='text-indigo-600'>organized and simple</span>
@@ -72,20 +69,18 @@ const Home = () => {
           <button
             type={"button"}
             tabIndex={1}
-            className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 xl:w-auto`}>
+            className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 lg:w-auto`}>
             Join the Beta Now
           </button>
         </div>
 
-        <div className=''>
-          {/* <Image alt='' src={"/images/hero-image.jpg"} className='w-full' /> */}
-          <motion.div
-            initial={{ opacity: 0.1, height: 500 }}
-            animate={{ opacity: 1, height: "auto" }}
-            transition={{ duration: 1 }}>
-            <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0.1, height: 500 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ duration: 1 }}
+          className='mx-auto max-w-lg'>
+          <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
+        </motion.div>
       </section>
 
       {/* Divider */}
@@ -238,6 +233,17 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Feedback Driven Section */}
+      <section className='py-16'>
+        <div className='mx-auto grid max-w-xl px-2 text-center text-lg'>
+          <h2 className='text-4xl font-bold xl:text-5xl'>Feedback driven</h2>
+          <p className='mt-0 max-w-prose text-gray-600 sm:mt-3'>
+            Feedback is at the heart of what we do and we encourage regular
+            feedback to shape the development of EventLite.
+          </p>
+        </div>
+      </section>
+
       {/* Roadmap Section */}
       <section
         id='roadmap'
@@ -246,7 +252,7 @@ const Home = () => {
           <h2 className='text-4xl font-bold xl:text-5xl'>
             What&apos;s coming soon
           </h2>
-          <p className='mt-0 text-gray-300 sm:mt-3 '>
+          <p className='mt-0 text-gray-300 sm:mt-3'>
             Volunteer scheduling is just the beginning. Take a look at the
             amazing things we have planned for the future.
           </p>
@@ -306,6 +312,19 @@ const Home = () => {
             animationData={FormLottie}
             divClasses='w-[90%] md:w-[70%] lg:w-[50%] xl:w-[30%] mt-6'
           />
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className='bg-gray-100 py-16'>
+        <div className='mx-auto grid max-w-md gap-6 px-2 text-center text-lg'>
+          <h2 className='text-4xl font-bold xl:text-5xl'>Ready to join?</h2>
+          <button
+            type={"button"}
+            tabIndex={1}
+            className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 xl:w-auto`}>
+            Join the Beta Now
+          </button>
         </div>
       </section>
     </>

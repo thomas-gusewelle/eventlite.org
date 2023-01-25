@@ -143,9 +143,25 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
           <>{children}</>
         </div>
       </div>
-      <footer className='flex items-center justify-center gap-3 py-6 shadow'>
-        <MdCopyright />
-        <span>2023 EventLight.org, All Rights Reserved</span>
+      <footer className='flex flex-col items-center justify-center gap-3 py-6 shadow lg:flex-row lg:justify-around'>
+        <div className='flex items-center gap-3 text-indigo-600'>
+          <div className='w-10'>
+            <svg
+              fill='currentColor'
+              id='Layer_2'
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 950 596.2'>
+              <g id='Layer_1-2'>
+                <path d='m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z' />
+              </g>
+            </svg>
+          </div>
+          <h1 className='text-2xl font-bold tracking-wide'>EventLite.org</h1>
+        </div>
+        <div className='flex items-center gap-3'>
+          <MdCopyright />
+          <span>2023 EventLight.org, All Rights Reserved</span>
+        </div>
       </footer>
     </>
   );

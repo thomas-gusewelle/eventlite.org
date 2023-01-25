@@ -102,7 +102,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                       <BtnPurple
                         fullWidth
                         func={() => router.push("/create-account")}>
-                        Sign Up
+                        Join the Beta
                       </BtnPurple>
                     </li>
                     <li>
@@ -123,14 +123,13 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                   key={index}
                   className='rounded-lg px-3 font-medium text-gray-900 transition-all duration-200 ease-in-out hover:bg-gray-600/10 hover:ring-1 hover:ring-gray-200'>
                   <Link href={link.href}>{link.name}</Link>
-                  {/* <a href={link.href}>{link.name}</a> */}
                 </li>
               ))}
             </ul>
           </div>
           <div className='item-center hidden gap-3 md:flex '>
             <BtnPurple func={() => router.push("/create-account")}>
-              Sign Up
+              Join the Beta
             </BtnPurple>
             <BtnNeutral func={() => router.push("/signin")}>Login</BtnNeutral>
           </div>

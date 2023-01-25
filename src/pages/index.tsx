@@ -616,7 +616,7 @@ const AvailabilityTab = () => {
       <table className='w-full table-auto text-left'>
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Date</th>
             <th>Actions</th>
           </tr>
         </thead>

@@ -93,7 +93,7 @@ const Home = () => {
         <h2 className='text-4xl font-bold xl:text-5xl'>
           Built for volunteer teams
         </h2>
-        <p className='mt-3 sm:mt-0'>
+        <p className='mt-3 text-gray-600 sm:mt-0'>
           Managing your own calendar can be hard. Managing a team of volunteers
           is even harder. We built EventLite to make managing and scheduling
           volunteers as simple as possible.
@@ -108,7 +108,7 @@ const Home = () => {
               Keep everyone
               <span className='text-indigo-700'> in the loop</span>
             </h2>
-            <p className='text-gray-660 mt-1'>
+            <p className='mt-1 text-gray-600'>
               No more hoping your volunteers read their emails or keeping track
               of the schedule with a spreadsheet. Simply create an event and
               schedule your volunteers keeping everyone in the loop.
@@ -121,7 +121,7 @@ const Home = () => {
                 <h3 className='text-xl font-bold'>
                   Instant scheduling by default
                 </h3>
-                <p className='text-gray-660'>
+                <p className='text-gray-600'>
                   Your volunteers see their schedule the moment you schedule
                   them. Allowing them to easy approve any new scheduled events.
                 </p>
@@ -133,7 +133,7 @@ const Home = () => {
               </div>
               <div>
                 <h3 className='text-xl font-bold'>Everyone on the same page</h3>
-                <p className='text-gray-660'>
+                <p className='text-gray-600'>
                   Your entire team can see your events, ensuring that everyone
                   is on the same page.
                 </p>
@@ -237,12 +237,12 @@ const Home = () => {
       </section>
 
       {/* Roadmap Section */}
-      <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 text-white'>
+      <section className='bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-2 text-lg text-white'>
         <div className='mx-auto max-w-xl px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>
             What&apos;s coming soon
           </h2>
-          <p className='mt-3 sm:mt-0'>
+          <p className='mt-3 text-gray-300 sm:mt-0'>
             Volunteer scheduling is just the beginning. Take a look at the
             amazing things we have planned for the future.
           </p>
@@ -252,8 +252,12 @@ const Home = () => {
           <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
             1
           </div>
-          <h3 className='mt-3 text-2xl font-bold xl:text-2xl'>Mobile App</h3>
-          {/* <Lottie animationData={App2} loop={0} initialSegment={[0, 65]} /> */}
+          <h3 className='mt-6 text-3xl font-bold xl:text-4xl'>Mobile App</h3>
+          <p className='pt-6 text-center text-gray-300'>
+            Our first step in revolutionizing your process is to create a mobile
+            app that allows you and your volunteers to interact from anywhere,
+            at anytime, simply and easily.
+          </p>
 
           <LottiePlayer animationData={App3} loop={1} />
         </div>
@@ -263,9 +267,14 @@ const Home = () => {
             2
           </div>
 
-          <h3 className='mt-3 text-2xl font-bold xl:text-2xl'>
+          <h3 className='mt-6 text-2xl font-bold xl:text-2xl'>
             Team Messaging
           </h3>
+          <p className='pt-6 text-center text-gray-300'>
+            Communication in teams can be difficult. Our next step is to simplfy
+            your teams communication by offering team messaging that syncs
+            across our website and mobile app.
+          </p>
           {/* <Lottie animationData={MessageLottie} loop={0} /> */}
           <LottiePlayer
             animationData={MessageLottie}
@@ -278,7 +287,12 @@ const Home = () => {
           <div className='flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900'>
             3
           </div>
-          <h3 className='mt-3 text-2xl font-bold xl:text-2xl'>Forms</h3>
+          <h3 className='mt-6 text-2xl font-bold xl:text-2xl'>Forms</h3>
+          <p className='pt-6 text-center text-gray-300'>
+            The future of EventLite will see multiple apps implemented within
+            our system to meet the demands of every organization. EventLite
+            Forms will be the first of this.
+          </p>
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
           <LottiePlayer animationData={FormLottie} divClasses='w-[90%] mt-6' />
         </div>

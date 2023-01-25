@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import {
@@ -31,8 +32,20 @@ export const CreateOrganization = ({
   return (
     <>
       <CardHeader>Create Organization</CardHeader>
+      <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
+        Already have an account?
+        <Link href={"/signin"}>
+          <span
+            tabIndex={0}
+            role='link'
+            aria-label='Sign up here'
+            className='ml-1 cursor-pointer text-sm font-medium leading-none text-gray-800 underline'>
+            Sign in
+          </span>
+        </Link>
+      </p>
       <section>
-        <div className='mt-3'>
+        <div className='mt-6'>
           <label className='form-label'>Organization Name</label>
           <input
             type='text'
@@ -61,7 +74,7 @@ export const CreateOrganization = ({
           </div>
           {errors.orgWebsite && <ErrorSpan>Enter a valid URL</ErrorSpan>}
         </div> */}
-        <div className='mt-3'>
+        <div className=''>
           <label className='form-label'>Phone</label>
           <Controller
             name='orgPhoneNumber'

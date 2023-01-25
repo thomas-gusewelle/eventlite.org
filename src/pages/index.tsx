@@ -62,8 +62,7 @@ const Home = () => {
             </h1>
           </div>
           <p className='my-3 text-lg'>
-            Higher quality, lower latency, creator focused video calls. Ping is
-            the best way to bring your guests into OBS.
+            Streamlining volunteer scheduling, for maximum impact.
           </p>
 
           <button
@@ -91,9 +90,10 @@ const Home = () => {
           Built for volunteer teams
         </h2>
         <p className='mt-3 text-gray-600 sm:mt-0'>
-          Managing your own calendar can be hard. Managing a team of volunteers
-          is even harder. We built EventLite to make managing and scheduling
-          volunteers as simple as possible.
+          Managing your own schedule can be a daunting, but coordinating a team
+          is an even greater challenge. That&apos;s why we created EventLite -
+          to simplify the process of managing and scheduling volunteers, making
+          it effortless for you to focus on what matters most.
         </p>
       </section>
 
@@ -106,9 +106,9 @@ const Home = () => {
               <span className='text-indigo-700'> in the loop</span>
             </h2>
             <p className='mt-1 text-gray-600'>
-              No more hoping your volunteers read their emails or keeping track
-              of the schedule with a spreadsheet. Simply create an event and
-              schedule your volunteers keeping everyone in the loop.
+              EventLite makes volunteer scheduling easy. No more spreadsheets or
+              hoping volunteers check emails. Schedule and inform everyone with
+              ease.
             </p>
             <div className=' mt-6 flex items-start gap-3'>
               <div>
@@ -119,8 +119,8 @@ const Home = () => {
                   Instant scheduling by default
                 </h3>
                 <p className='text-gray-600'>
-                  Your volunteers see their schedule the moment you schedule
-                  them. Allowing them to easy approve any new scheduled events.
+                  Volunteers can view and approve schedules in real-time, making
+                  scheduling more efficient.
                 </p>
               </div>
             </div>
@@ -149,8 +149,8 @@ const Home = () => {
               Centered on <span className='text-indigo-700'>people</span>
             </h2>
             <p className='mt-1 text-gray-600'>
-              People are at the core of what we do. With EventLite we make
-              managing your team as simple and easy as possible.
+              People are at the core of what we do. EventLite simplifies team
+              management, putting people first.
             </p>
             <div className='mt-6 flex items-start gap-3'>
               <div>
@@ -164,8 +164,9 @@ const Home = () => {
                   Smart filtering made simple
                 </h3>
                 <p className='text-gray-600'>
-                  Finding who you need shouldn&apos;t be hard. We make searching
-                  for people as simple as possible.
+                  Finding who you need shouldn&apos;t be hard. EventLite
+                  simplifies searching for the right people, saving you time and
+                  energy.
                 </p>
               </div>
             </div>
@@ -176,8 +177,9 @@ const Home = () => {
               <div>
                 <h3 className='text-xl font-bold'>Easily manage roles</h3>
                 <p className='text-gray-600'>
-                  Managing volunteer roles should be easy. Simly select the
-                  roles and never have to think about it again.
+                  With EventLite, you can easily assign and manage volunteer
+                  roles with just a few clicks, and never have to worry about it
+                  again.
                 </p>
               </div>
             </div>
@@ -209,7 +211,8 @@ const Home = () => {
                 <h3 className='text-xl font-bold'>Simple and Easy</h3>
                 <p className='text-gray-600'>
                   Availability shouldn&apos;t be difficult. Setting your
-                  availability is as simple as selecting dates on a calendar.
+                  availability is as straightforward as selecting dates on a
+                  calendar.
                 </p>
               </div>
             </div>
@@ -223,8 +226,9 @@ const Home = () => {
               <div>
                 <h3 className='text-xl font-bold '>Strong admin controls</h3>
                 <p className='text-gray-600'>
-                  Have that one person that doesn&apos;t use computers? We allow
-                  you to see and manage availability for all your volunteers.
+                  Have that one person who doesn&apos;t use computers? With
+                  EventLite, you can easily see and manage the availability of
+                  all your volunteers, ensuring that no one is left out.
                 </p>
               </div>
             </div>
@@ -234,7 +238,7 @@ const Home = () => {
       </section>
 
       {/* Feedback Driven Section */}
-      <section className='py-16'>
+      {/* <section className='py-16'>
         <div className='mx-auto grid max-w-xl px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>Feedback driven</h2>
           <p className='mt-0 max-w-prose text-gray-600 sm:mt-3'>
@@ -242,7 +246,7 @@ const Home = () => {
             feedback to shape the development of EventLite.
           </p>
         </div>
-      </section>
+      </section> */}
 
       {/* Roadmap Section */}
       <section
@@ -253,8 +257,9 @@ const Home = () => {
             What&apos;s coming soon
           </h2>
           <p className='mt-0 text-gray-300 sm:mt-3'>
-            Volunteer scheduling is just the beginning. Take a look at the
-            amazing things we have planned for the future.
+            Volunteer scheduling is just the tip of the iceberg. We&apos;re
+            constantly working on new developments and updates that will help
+            you manage your team of volunteers more effectively.
           </p>
         </div>
         <div className='flex flex-col items-center'>
@@ -264,9 +269,10 @@ const Home = () => {
           </div>
           <h3 className='mt-6 text-3xl font-bold xl:text-4xl'>Mobile App</h3>
           <p className='max-w-lg pt-6 text-center text-gray-300'>
-            Our first step in revolutionizing your process is to create a mobile
-            app that allows you and your volunteers to interact from anywhere,
-            at anytime, simply and easily.
+            EventLite is dedicated to revolutionizing the way you manage your
+            volunteers. Our first step in achieving this goal is to provide you
+            with a user-friendly mobile app that allows you and your volunteers
+            to interact seamlessly from anywhere, at any time.
           </p>
 
           <LottiePlayer
@@ -285,9 +291,10 @@ const Home = () => {
             Team Messaging
           </h3>
           <p className='max-w-lg pt-6 text-center text-gray-300'>
-            Communication in teams can be difficult. Our next step is to simplfy
-            your teams communication by offering team messaging that syncs
-            across our website and mobile app.
+            Our next feature, team messaging, will seamlessly syncs across our
+            website and mobile app, enabling you to stay connected with your
+            team of volunteers, no matter where you are or what device
+            you&apos;re using.
           </p>
           {/* <Lottie animationData={MessageLottie} loop={0} /> */}
           <LottiePlayer
@@ -303,9 +310,11 @@ const Home = () => {
           </div>
           <h3 className='mt-6 text-2xl font-bold xl:text-2xl'>Forms</h3>
           <p className='max-w-lg pt-6 text-center text-gray-300'>
-            The future of EventLite will see multiple apps implemented within
-            our system to meet the demands of every organization. EventLite
-            Forms will be the first of this.
+            EventLite&apos;s vision for the future is to create a comprehensive
+            suite of tools that meet the unique needs of every organization.
+            We&apos;re excited to announce that the first of these tools will be
+            EventLite Forms, a powerful, yet easy-to-use application that
+            streamlines the process of collecting and managing data.
           </p>
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
           <LottiePlayer

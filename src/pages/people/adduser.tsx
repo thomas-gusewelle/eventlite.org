@@ -61,11 +61,8 @@ const AddUser = () => {
   });
 
   const submit = methods.handleSubmit((data) => {
-    console.log("here");
-    return;
     data["roles"] = selectedRoles;
 
-    // return;
     addUser.mutate(
       {
         firstName: data.firstName.trim(),

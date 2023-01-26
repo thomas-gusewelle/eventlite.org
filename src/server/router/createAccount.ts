@@ -89,7 +89,10 @@ export const createAccountRouter = createRouter()
       try {
         await sgMail.send({
           to: user.email,
-          from: "tgusewelle@gkwmedia.com",
+          from: {
+            email: "accounts@eventlite.org",
+            name: "EventLite.org",
+          },
           subject: `Join ${user?.Organization?.name}'s Team`,
           html: inviteCodeEmailString(user.Organization?.name, link.id),
         });
@@ -144,7 +147,10 @@ export const createAccountRouter = createRouter()
         sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
         await sgMail.send({
           to: user.email,
-          from: "tgusewelle@gkwmedia.com",
+          from: {
+            email: "accounts@eventlite.org",
+            name: "EventLite.org",
+          },
           subject: `Confirm Your Email`,
           html: confirmEmailEmailString(link),
         });
@@ -223,7 +229,10 @@ export const createAccountRouter = createRouter()
       try {
         await sgMail.send({
           to: user.email,
-          from: "accounts@eventlite.org",
+          from: {
+            email: "accounts@eventlite.org",
+            name: "EventLite.org",
+          },
           subject: `Reset Password`,
           html: resetPasswordEmail(input.email),
         });

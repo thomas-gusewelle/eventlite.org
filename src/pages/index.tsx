@@ -20,11 +20,12 @@ import { RiPagesFill } from "react-icons/ri";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { AnimatePresence, motion } from "framer-motion";
 import MessageLottie from "../../public/lottie/message.json";
-import FormLottie from "../../public/lottie/form2.json";
+import FormLottie from "../../public/lottie/form3.json";
 import App3 from "../../public/lottie/app4.json";
 import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 import { useRouter } from "next/router";
+import { PoepleTab } from "../components/marketing-site/component/peopleTab";
 
 export async function getServerSideProps(context: any) {
   const user = await getUser(context);
@@ -321,6 +322,7 @@ const Home = () => {
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
           <LottiePlayer
             animationData={FormLottie}
+            loop={0}
             divClasses='w-[90%] md:w-[70%] lg:w-[50%] xl:w-[30%] mt-6'
           />
         </div>
@@ -540,116 +542,6 @@ const EventsTab = () => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-const PoepleTab = () => {
-  return (
-    <div className='mt-4 w-full'>
-      <table className='w-full table-auto text-left'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th className='hidden md:table-cell'>Email</th>
-            <th>Role</th>
-            <th className='hidden md:table-cell'>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[
-            {
-              firstName: "Betty",
-              lastName: "Green",
-              id: "bgreen@email.com",
-              status: "USER" as UserStatus,
-              email: "",
-              emailVerified: null,
-              phoneNumber: null,
-              image: null,
-              organizationId: null,
-              hasLogin: false,
-              userSettingsId: null,
-              roles: [{ name: "Audio" }],
-            },
-            {
-              firstName: "John",
-              lastName: "Manning",
-              id: "jmanning@email.com",
-              status: "USER" as UserStatus,
-              email: "",
-              emailVerified: null,
-              phoneNumber: null,
-              image: null,
-              organizationId: null,
-              hasLogin: false,
-              userSettingsId: null,
-              roles: [{ name: "Audio" }, { name: "Video" }],
-            },
-            {
-              firstName: "Kathy",
-              lastName: "Lee",
-              id: "klee@email.com",
-              status: "USER" as UserStatus,
-              email: "",
-              emailVerified: null,
-              phoneNumber: null,
-              image: null,
-              organizationId: null,
-              hasLogin: false,
-              userSettingsId: null,
-              roles: [
-                { name: "Slides" },
-                { name: "Producer" },
-                { name: "Audio" },
-                { name: "Video" },
-              ],
-            },
-          ].map((person, index) => {
-            const options: TableOptionsDropdown = [
-              {
-                name: "View Profile",
-                function: () => {},
-              },
-
-              {
-                name: "Edit",
-                function: () => {},
-              },
-              {
-                name: "Delete",
-                function: () => {},
-              },
-            ];
-
-            return (
-              <tr key={index} className='border-t last:border-b'>
-                <td className='py-4'>
-                  <PicNameRow user={person} />
-                </td>
-                <td className='hidden md:table-cell'>{person.email}</td>
-                <td>
-                  <div className='my-1 flex flex-wrap items-center justify-start gap-1'>
-                    {person.roles.map((role, index) => (
-                      <div
-                        key={index}
-                        className='rounded-xl bg-indigo-200 px-2 text-center'>
-                        {role.name}
-                      </div>
-                    ))}
-                  </div>
-                </td>
-                <td className='hidden md:table-cell'>{person.status}</td>
-
-                <td>
-                  <TableDropdown options={options} />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
     </div>
   );
 };

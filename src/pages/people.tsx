@@ -228,7 +228,7 @@ const PeoplePage = () => {
                   name: "Reset Password",
                   function: () =>
                     sendResetPassword.mutate(
-                      { email: person.email },
+                      { email: person.email.trim() },
                       {
                         onSuccess() {
                           setSuccess({

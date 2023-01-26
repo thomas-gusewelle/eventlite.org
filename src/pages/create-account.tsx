@@ -19,6 +19,7 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
+import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 
 const SignIn = () => {
   const router = useRouter();
@@ -80,39 +81,29 @@ const SignIn = () => {
   });
   return (
     <>
-      <>
-        <h2 className='mb-12 text-center text-4xl font-bold text-white'>
-          Welcome to Themelios Schedule
-        </h2>
-        <StepCounter signUpState={step} totalNum={2} />
-        <LoginCard>
-          <FormProvider {...methods}>
-            <form onSubmit={submit}>
-              <Steps step={step} setStep={setStep} />
-              {step == 2 && (
-                <div className='mt-6 flex justify-center gap-6'>
-                  <BtnNeutral
-                    fullWidth={true}
-                    func={() => {
-                      setStep(1);
-                    }}>
-                    Back
-                  </BtnNeutral>
-                  <BtnPurple fullWidth={true} type='submit'>
-                    Submit
-                  </BtnPurple>
-                </div>
-              )}
-            </form>
-          </FormProvider>
-        </LoginCard>
-      </>
-      <p className='text-center text-white'>
-        Already have an account?
-        <Link href={"/signin"}>
-          <a className='ml-1 underline'>Sign In</a>
-        </Link>
-      </p>
+      <VerticalLogo />
+      {/* <StepCounter signUpState={step} totalNum={2} /> */}
+      <LoginCard>
+        <FormProvider {...methods}>
+          <form onSubmit={submit}>
+            <Steps step={step} setStep={setStep} />
+            {step == 2 && (
+              <div className='mt-6 flex justify-center gap-6'>
+                <BtnNeutral
+                  fullWidth={true}
+                  func={() => {
+                    setStep(1);
+                  }}>
+                  Back
+                </BtnNeutral>
+                <BtnPurple fullWidth={true} type='submit'>
+                  Submit
+                </BtnPurple>
+              </div>
+            )}
+          </form>
+        </FormProvider>
+      </LoginCard>
     </>
   );
 };

@@ -1,6 +1,11 @@
+import { useRouter } from "next/router";
+
 export const VerticalLogo = () => {
+  const router = useRouter();
   return (
-    <div className='mb-12'>
+    <div
+      className='mb-12 flex cursor-pointer flex-col items-center'
+      onClick={() => router.push("/")}>
       <svg
         width={188}
         height={32}
@@ -12,7 +17,7 @@ export const VerticalLogo = () => {
         />
       </svg>
       <h1 className='mt-2 text-center text-4xl font-bold tracking-wide text-white'>
-        Themelios
+        EventLite.org
       </h1>
     </div>
   );

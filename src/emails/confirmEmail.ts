@@ -27,7 +27,7 @@ export function confirmEmailEmailString(link: string): string {
                     margin: 0;
                   "
                 >
-                  Themelios
+                  EventLite.org
                 </h1>
               </div>
             </a>

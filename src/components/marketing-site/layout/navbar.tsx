@@ -157,7 +157,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
           </div>
           <h1 className='text-2xl font-bold tracking-wide'>EventLite.org</h1>
         </div>
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-1'>
           <MdCopyright />
           <span>2023 EventLight.org, All Rights Reserved</span>
         </div>

@@ -329,7 +329,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className='bg-gray-100 py-16'>
+      {/* <section className='bg-gray-100 py-16'>
         <div className='mx-auto grid max-w-md gap-6 px-2 text-center text-lg'>
           <h2 className='text-4xl font-bold xl:text-5xl'>Ready to join?</h2>
           <button
@@ -340,7 +340,7 @@ const Home = () => {
             Join the Beta Now
           </button>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };

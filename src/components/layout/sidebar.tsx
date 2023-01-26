@@ -26,6 +26,7 @@ import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 
 import { classNames } from "../../utils/classnames";
 import { getUser, supabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useUser } from "@supabase/auth-helpers-react";
 
 type SideLink = {
   name: string;
@@ -40,12 +41,14 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const windowWidth = useWindowWidth();
   const router = useRouter();
   const user = useContext(UserContext);
-  const supaUser = supabaseClient.auth.user();
+  const supaUser = useUser();
 
   //Push to dashboard if not logged in || TODO: Move this to be server side
   useEffect(() => {
-    if (!supaUser) router.push("/");
-  }, [supaUser, router]);
+    if (!supaUser.user) {
+      router.push("/");
+    }
+  }, [router, supaUser.user]);
 
   useEffect(() => {
     if (user != undefined) {

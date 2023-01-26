@@ -21,7 +21,6 @@ import { BtnPurpleDropdown } from "../../components/btn/btnPurpleDropdown";
 const AddUser = () => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
-  const user = useUser();
   // used to track if user is adding or deleting characters from phone #
   const invite = useRef(false);
   const methods = useForm<UserFormValues>();
@@ -87,11 +86,6 @@ const AddUser = () => {
       }
     );
   });
-
-  if (!user) {
-    router.push("/signin");
-    return <div></div>;
-  }
 
   if (roles.isLoading) {
     return (

@@ -50,7 +50,7 @@ export function resetPasswordEmail(email: string): string {
                 </p>
                 <a
                   style="text-decoration: none; color: white"
-                  href="http://localhost:3000/account/reset-password?email=${email}"
+                  href="http://eventlite.org/account/reset-password?email=${email}"
                   ><button
                     style="
                       width: 100%;

@@ -52,7 +52,7 @@ export function inviteCodeEmailString(
               You have ben invited to join Preston Hollow Presbyterian
               Church's team. Click the button below to create your account.
             </p>
-            <a style="text-decoration: none; color: white; cursor: pointer;" href="https://themelios-schedule.vercel.app/account/invite?code=${encodeURIComponent(
+            <a style="text-decoration: none; color: white; cursor: pointer;" href="https://eventlite.org/account/invite?code=${encodeURIComponent(
               invideCode
             )}"><button
               style="

@@ -25,6 +25,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 
 import { classNames } from "../../utils/classnames";
+import { getUser } from "@supabase/auth-helpers-nextjs";
 
 type SideLink = {
   name: string;
@@ -32,6 +33,21 @@ type SideLink = {
   show: boolean;
   icon: IconType;
 }[];
+
+export async function getServerSideProps(context: any) {
+  const user = await getUser(context);
+  console.log(user);
+  if (user.user && !user.error) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+}
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const [sideLinks, setSideLinks] = useState<SideLink>([]);
@@ -41,9 +57,6 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const user = useContext(UserContext);
 
   useEffect(() => {
-    if (user == undefined) {
-      router.push("/");
-    }
     if (user != undefined) {
       setSideLinks([
         {

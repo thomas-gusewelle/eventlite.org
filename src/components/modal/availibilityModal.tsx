@@ -31,8 +31,7 @@ export const AvaililityModal: React.FC<{
         exisitingDates.map((item) => item.date).includes(date)
       )
     );
-    console.log(newDates);
-  }, [exisitingDates]);
+  }, [exisitingDates, newDates]);
 
   const updateAvailibility = trpc.useMutation(
     "avalibility.updateUserAvalibility",

@@ -44,11 +44,11 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const supabase = useSupabaseClient();
 
   //Push to dashboard if not logged in || TODO: Move this to be server side
-  useEffect(() => {
-    if (!supaUser) {
-      router.push("/");
-    }
-  }, [router, supaUser]);
+  // useEffect(() => {
+  //   if (!supaUser) {
+  //     router.push("/");
+  //   }
+  // }, [router, supaUser]);
 
   useEffect(() => {
     if (user != undefined) {

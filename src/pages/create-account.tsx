@@ -1,12 +1,5 @@
-import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useRouter } from "next/router";
-import StepCounter from "../components/create-account-flow/components/stepCounter";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateAccountForm } from "../../types/createAccountFormValues";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
@@ -15,7 +8,6 @@ import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { trpc } from "../utils/trpc";
 import { AlertContext } from "../providers/alertProvider";
-import Link from "next/link";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";

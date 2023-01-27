@@ -65,7 +65,7 @@ const ForgotPasswordPage = () => {
         </form>
         <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
           Here by accident?
-          <Link href={"/signin"}>
+          <Link href={"/signin"} legacyBehavior>
             <span
               tabIndex={0}
               role='link'

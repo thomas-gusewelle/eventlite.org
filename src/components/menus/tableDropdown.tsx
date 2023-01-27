@@ -10,7 +10,7 @@ export const TableDropdown: React.FC<{
 	options: TableOptionsDropdown;
 }> = ({ options }) => {
 	return (
-		<Menu as="div" className="relative inline-block text-left">
+        <Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
 					<BiChevronDown aria-hidden="true" />
@@ -30,24 +30,25 @@ export const TableDropdown: React.FC<{
 						{options.map((option, index) => {
 							if (option.href && option.show != false) {
 								return (
-									<Menu.Item key={index}>
+                                    <Menu.Item key={index}>
 										{({ active }) => (
 											<button className="w-full text-left">
-												<Link href={option.href as unknown as Url}>
-													<a
-														className={classNames(
-															active
-																? "bg-gray-100 text-gray-900"
-																: "text-gray-700",
-															"block px-4 py-2 text-sm"
-														)}>
-														{option.name}
-													</a>
-												</Link>
+												<Link
+                                                    href={option.href as unknown as Url}
+                                                    className={classNames(
+                                                        active
+                                                            ? "bg-gray-100 text-gray-900"
+                                                            : "text-gray-700",
+                                                        "block px-4 py-2 text-sm"
+                                                    )}>
+
+                                                    {option.name}
+
+                                                </Link>
 											</button>
 										)}
 									</Menu.Item>
-								);
+                                );
 							}
 							if (option.function != undefined && option.show != false) {
 								return (
@@ -72,5 +73,5 @@ export const TableDropdown: React.FC<{
 				</Menu.Items>
 			</Transition>
 		</Menu>
-	);
+    );
 };

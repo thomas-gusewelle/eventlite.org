@@ -57,17 +57,18 @@ export const BtnPurpleDropdown = ({
                   return (
                     <Menu.Item key={index}>
                       {({ active }) => (
-                        <Link href={option.href as unknown as Url}>
-                          <a
-                            className={classNames(
-                              active
-                                ? "bg-gray-100 text-gray-900"
-                                : "text-gray-700",
-                              "block px-4 py-2 text-sm"
-                            )}>
-                            {option.name}
-                          </a>
-                        </Link>
+                        (<Link
+                          href={option.href as unknown as Url}
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
+                          )}>
+
+                          {option.name}
+
+                        </Link>)
                       )}
                     </Menu.Item>
                   );

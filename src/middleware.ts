@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-server-import-in-page */
 import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -27,5 +28,13 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: "/people",
+  matcher: [
+    "/people/:path*",
+    "/events/:path*",
+    "/availability/:path*",
+    "/dashboard/:path*",
+    "/locations/:path*",
+    "/roles/:path*",
+    "/schedule/:path*",
+  ],
 };

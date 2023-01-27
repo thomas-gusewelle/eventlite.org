@@ -9,7 +9,6 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 export const userRouter = createRouter()
   .query("getUser", {
     async resolve({ ctx }) {
-      console.log("ctx: ", ctx?.data.user);
       const userInfo = await prisma?.user.findFirst({
         where: {
           id: ctx?.data.user?.id,

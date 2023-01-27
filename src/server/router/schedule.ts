@@ -7,7 +7,7 @@ import { zeroTime } from "../utils/dateTimeModifers";
 export const scheduleRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
-      where: { id: ctx.session?.user.id },
+      where: { id: ctx.data?.user?.id },
       select: {
         status: true,
       },
@@ -48,7 +48,7 @@ export const scheduleRouter = createRouter()
 
       const org = await prisma?.user.findFirst({
         where: {
-          id: ctx.session?.user.id,
+          id: ctx.data?.user?.id,
         },
         select: {
           organizationId: true,
@@ -145,7 +145,7 @@ export const scheduleRouter = createRouter()
     async resolve({ ctx, input }) {
       return await prisma?.userSettings.update({
         where: {
-          userId: ctx.session?.user.id,
+          userId: ctx.data?.user?.id,
         },
         data: {
           scheduleShowAmount: input,

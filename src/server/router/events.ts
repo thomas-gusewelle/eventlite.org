@@ -8,7 +8,7 @@ export const eventsRouter = createRouter()
   .query("getUpcomingEventsByOrganization", {
     async resolve({ ctx }) {
       const org = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx.data?.user?.id },
         select: { organizationId: true },
       });
       return await prisma?.event.findMany({
@@ -36,13 +36,11 @@ export const eventsRouter = createRouter()
   //Gets the upcoming events and the events that need approval
   .query("getUpcomingEventsByUser", {
     async resolve({ ctx }) {
-      console.log(ctx.session?.user);
-
       // Finds the positions that have already been aggreed to
       const upcomingPositions = await prisma?.eventPositions.findMany({
         where: {
           User: {
-            id: ctx.session?.user.id,
+            id: ctx.data?.user?.id,
           },
           OR: [
             {
@@ -82,7 +80,7 @@ export const eventsRouter = createRouter()
       const approvalPositions = await prisma?.eventPositions.findMany({
         where: {
           User: {
-            id: ctx.session?.user.id,
+            id: ctx.data?.user?.id,
           },
           userResponse: null,
         },
@@ -166,7 +164,7 @@ export const eventsRouter = createRouter()
   .query("getPastEventsByOrganization", {
     async resolve({ ctx }) {
       const org = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx.data?.user?.id },
         select: { organizationId: true },
       });
       return await prisma?.event.findMany({
@@ -192,7 +190,7 @@ export const eventsRouter = createRouter()
 
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
-      where: { id: ctx.session?.user.id },
+      where: { id: ctx.data?.user?.id },
       select: {
         status: true,
       },
@@ -286,7 +284,7 @@ export const eventsRouter = createRouter()
 
     async resolve({ ctx, input }) {
       const org = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx.data?.user?.id },
         select: { organizationId: true },
       });
 

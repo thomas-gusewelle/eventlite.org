@@ -25,8 +25,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 
 import { classNames } from "../../utils/classnames";
-import { getUser, supabaseClient } from "@supabase/auth-helpers-nextjs";
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 type SideLink = {
   name: string;
@@ -42,13 +41,14 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const router = useRouter();
   const user = useContext(UserContext);
   const supaUser = useUser();
+  const supabase = useSupabaseClient();
 
   //Push to dashboard if not logged in || TODO: Move this to be server side
   useEffect(() => {
-    if (!supaUser.user && !supaUser.isLoading) {
+    if (!supaUser) {
       router.push("/");
     }
-  }, [router, supaUser.user, supaUser.isLoading]);
+  }, [router, supaUser]);
 
   useEffect(() => {
     if (user != undefined) {
@@ -304,18 +304,20 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               <Menu.Item key={1}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
-                                    <Link href={"/api/auth/logout"}>
-                                      <a
-                                        onClick={() => setShow(false)}
-                                        className={classNames(
-                                          active
-                                            ? "bg-gray-100 text-gray-900"
-                                            : "text-gray-700",
-                                          "block px-4 py-2 text-sm"
-                                        )}>
-                                        Sign Out
-                                      </a>
-                                    </Link>
+                                    <a
+                                      onClick={async () => {
+                                        await supabase.auth.signOut();
+                                        setShow(false);
+                                        router.push("/");
+                                      }}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Sign Out
+                                    </a>
                                   </button>
                                 )}
                               </Menu.Item>
@@ -382,17 +384,19 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               <Menu.Item key={1}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
-                                    <Link href={"/api/auth/logout"}>
-                                      <a
-                                        className={classNames(
-                                          active
-                                            ? "bg-gray-100 text-gray-900"
-                                            : "text-gray-700",
-                                          "block px-4 py-2 text-sm"
-                                        )}>
-                                        Sign Out
-                                      </a>
-                                    </Link>
+                                    <a
+                                      onClick={async () => {
+                                        await supabase.auth.signOut();
+                                        router.push("/");
+                                      }}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Sign Out
+                                    </a>
                                   </button>
                                 )}
                               </Menu.Item>

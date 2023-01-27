@@ -19,14 +19,12 @@ export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactNode) => ReactNode;
 };
 
-type AppPropsWithLayout = AppProps<{ initialSession: Session }> & {
+type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
+  initialSession: Session;
 };
 
-const MyApp = ({
-  Component,
-  pageProps: { ...pageProps },
-}: AppPropsWithLayout) => {
+const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
   const layout = getLayout(<Component {...pageProps} />);
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());

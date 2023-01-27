@@ -45,10 +45,10 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
 
   //Push to dashboard if not logged in || TODO: Move this to be server side
   useEffect(() => {
-    if (!supaUser.user) {
+    if (!supaUser.user && !supaUser.isLoading) {
       router.push("/");
     }
-  }, [router, supaUser.user]);
+  }, [router, supaUser.user, supaUser.isLoading]);
 
   useEffect(() => {
     if (user != undefined) {

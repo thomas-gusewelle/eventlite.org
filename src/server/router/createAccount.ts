@@ -1,4 +1,3 @@
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "./context";
@@ -9,6 +8,7 @@ import { inviteCodeEmailString } from "../../emails/inviteCode";
 import { confirmEmailEmailString } from "../../emails/confirmEmail";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
 import { resetPasswordEmail } from "../../emails/resetPassword";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -116,10 +116,11 @@ export const createAccountRouter = createRouter()
         process.env.SUPABASE_PRIVATE!
       );
 
-      const { data, error } = await _supabase.auth.api.generateLink(
-        "signup",
-        input.email
-      );
+      const { data, error } = await _supabase.auth.admin.generateLink({
+        email: input.email,
+        type: "signup",
+        password: "test",
+      });
       //TODO: fix typing on supabase return. Any is a quick solution here
       const _data: any = data;
       const link = _data.action_link;
@@ -173,7 +174,7 @@ export const createAccountRouter = createRouter()
       confirmPassword: z.string(),
       inviteId: z.string(),
     }),
-    async resolve({ input }) {
+    async resolve({ input, ctx }) {
       // check confirmPass == password
       if (input.password != input.password) {
         throw new TRPCError({
@@ -181,8 +182,12 @@ export const createAccountRouter = createRouter()
           message: "Passwords do not match",
         });
       }
+      const supabase = createServerSupabaseClient({
+        req: ctx.req,
+        res: ctx.res,
+      });
 
-      const { user, error } = await supabaseClient.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: input.email,
         password: input.password,
       });
@@ -198,14 +203,14 @@ export const createAccountRouter = createRouter()
           id: input.oldId,
         },
         data: {
-          id: user?.id,
+          id: data?.user?.id,
           hasLogin: true,
         },
       });
       const deleteLink = await prisma?.inviteLink.delete({
         where: { id: input.inviteId },
       });
-      return user;
+      return data;
     },
   })
   // Checks to ensure the user exists and then sends email
@@ -268,7 +273,7 @@ export const createAccountRouter = createRouter()
         throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
       }
       const _supabase = createSupaServerClient();
-      const update = await _supabase.auth.api.updateUserById(user.id, {
+      const update = await _supabase.auth.admin.updateUserById(user.id, {
         password: input.password,
       });
       if (update.error) {

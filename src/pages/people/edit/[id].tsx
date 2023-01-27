@@ -59,7 +59,6 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   });
   const userQuery = trpc.useQuery(["user.getUserByID", id], {
     onSuccess(data) {
-      console.log(data);
       if (data != null) {
         data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
         methods.reset(data);

@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 export const locationRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
-      where: { id: ctx.session?.user.id },
+      where: { id: ctx.data.user?.id },
       select: {
         status: true,
       },
@@ -19,7 +19,7 @@ export const locationRouter = createRouter()
     async resolve({ ctx }) {
       const orgID = await prisma?.user.findFirst({
         select: { organizationId: true },
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx.data.user?.id },
       });
       if (orgID?.organizationId) {
         return await prisma?.locations.findMany({
@@ -33,7 +33,7 @@ export const locationRouter = createRouter()
     async resolve({ ctx, input }) {
       const orgID = await prisma?.user.findFirst({
         select: { organizationId: true },
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx.data.user?.id },
       });
       if (orgID?.organizationId) {
         return await prisma?.locations.create({

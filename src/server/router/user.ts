@@ -4,13 +4,15 @@ import { v4 as uuidv4 } from "uuid";
 import { UserStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createClient } from "@supabase/supabase-js";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 export const userRouter = createRouter()
   .query("getUser", {
     async resolve({ ctx }) {
+      console.log("ctx: ", ctx?.data.user);
       const userInfo = await prisma?.user.findFirst({
         where: {
-          id: ctx.session?.user.id ?? "",
+          id: ctx?.data.user?.id,
         },
         include: {
           UserSettings: true,
@@ -34,7 +36,7 @@ export const userRouter = createRouter()
   .query("getUsersByOrganization", {
     async resolve({ ctx }) {
       const orgID = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx?.data.user?.id },
         select: { organizationId: true },
       });
 
@@ -65,10 +67,10 @@ export const userRouter = createRouter()
 
     async resolve({ ctx, input }) {
       const user = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx?.data.user?.id },
         select: { status: true },
       });
-      if (ctx.session?.user.id != input.id && user?.status != "ADMIN") {
+      if (ctx?.data.user?.id != input.id && user?.status != "ADMIN") {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Error. Not Approved.",
@@ -101,7 +103,7 @@ export const userRouter = createRouter()
 
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
-      where: { id: ctx.session?.user.id },
+      where: { id: ctx?.data.user?.id },
       select: {
         status: true,
       },
@@ -114,7 +116,7 @@ export const userRouter = createRouter()
   .query("getAmdminCount", {
     async resolve({ ctx }) {
       const orgID = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx?.data.user?.id },
         select: { organizationId: true },
       });
       return await prisma?.user.count({
@@ -135,7 +137,7 @@ export const userRouter = createRouter()
 
     async resolve({ ctx, input }) {
       const orgID = await prisma?.user.findFirst({
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx?.data.user?.id },
         select: { organizationId: true },
       });
 
@@ -181,7 +183,7 @@ export const userRouter = createRouter()
           process.env.SUPABASE_PRIVATE!
         );
 
-        const deleteUser = await _supabase.auth.api.deleteUser(input.id);
+        const deleteUser = await _supabase.auth.admin.deleteUser(input.id);
         if (deleteUser.error) {
           throw new TRPCError({
             code: "BAD_REQUEST",

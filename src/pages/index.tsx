@@ -1,8 +1,8 @@
-import { getUser } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { navbar } from "../components/marketing-site/layout/navbar";
 import { longDate, shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
-import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
+import { PicNameRowSmall } from "../components/profile/PicNameRow";
 import { UserStatus } from "@prisma/client";
 import { BtnApprove } from "../components/btn/btnApprove";
 import { BtnDeny } from "../components/btn/btnDeny";
@@ -17,7 +17,7 @@ import {
   MdAdminPanelSettings,
 } from "react-icons/md";
 import { RiPagesFill } from "react-icons/ri";
-import { useWindowWidth } from "../hooks/useWindowWidth";
+
 import { AnimatePresence, motion } from "framer-motion";
 import MessageLottie from "../../public/lottie/message.json";
 import FormLottie from "../../public/lottie/form3.json";
@@ -28,9 +28,10 @@ import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
 
 export async function getServerSideProps(context: any) {
-  const user = await getUser(context);
+  const supaServer = createServerSupabaseClient(context);
+  const user = await supaServer.auth.getUser();
 
-  if (user.user && !user.error) {
+  if (user && !user.error) {
     return {
       redirect: {
         destination: "/dashboard",

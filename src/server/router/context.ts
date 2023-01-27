@@ -1,22 +1,24 @@
 // src/server/router/context.ts
-import { getUser } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
 
 import { prisma } from "../db/client";
 
 export const createContext = async (
-  opts?: trpcNext.CreateNextContextOptions
+  opts: trpcNext.CreateNextContextOptions
 ) => {
-  const req = opts?.req;
-  const res = opts?.res;
+  const req = opts.req;
+  const res = opts.res;
+  // console.log("req & res", req, res);
 
-  const session = req && res && (await getUser({ req, res }));
+  const supabaseServer = createServerSupabaseClient({ req, res });
+  const { data, error } = await supabaseServer.auth.getUser();
 
   return {
     req,
     res,
-    session,
+    data,
     prisma,
   };
 };

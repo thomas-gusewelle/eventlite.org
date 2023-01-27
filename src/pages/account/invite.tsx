@@ -28,7 +28,7 @@ const Invite = ({ code }: { code: string }) => {
       alert(error.message);
     },
     onSuccess(data, variables, context) {
-      router.push(`/account/confirm-email?email=${data?.email ?? ""}`);
+      router.push(`/account/confirm-email?email=${data?.user?.email ?? ""}`);
     },
   });
 

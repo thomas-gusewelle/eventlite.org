@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { LoginCard } from "../components/create-account-flow/components/card";
@@ -10,17 +9,19 @@ import { BtnPurple } from "../components/btn/btnPurple";
 import { FormProvider, useForm } from "react-hook-form";
 import { EmailInput } from "../components/form/emailInput";
 import { PasswordField } from "../components/form/password";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const SignIn = () => {
   const router = useRouter();
   const methods = useForm<{ email: string; password: string }>();
+  const supabase = useSupabaseClient();
 
-  const signIn = methods.handleSubmit(async (data) => {
-    const { user, error } = await supabaseClient.auth.signIn({
-      email: data.email,
-      password: data.password,
+  const signIn = methods.handleSubmit(async (input) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: input.email,
+      password: input.password,
     });
-    console.log(user);
+    console.log(data);
     if (error) {
       alert(error.message);
       return;

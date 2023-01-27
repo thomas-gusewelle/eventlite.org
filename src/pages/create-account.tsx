@@ -15,17 +15,18 @@ import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { trpc } from "../utils/trpc";
 import { AlertContext } from "../providers/alertProvider";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const SignIn = () => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
+  const supabaseClient = useSupabaseClient();
   const createOrg = trpc.useMutation("organization.createOrg", {
     onError(error, variables, context) {
       setError({
@@ -44,8 +45,6 @@ const SignIn = () => {
   });
 
   const submit = methods.handleSubmit(async (data) => {
-    console.log(data);
-
     //if no OrgID == create organization
     if (data.orgID == undefined || data?.orgID == "") {
       const user = await supabaseClient.auth.signUp({
@@ -53,16 +52,13 @@ const SignIn = () => {
         password: data.password,
       });
 
-      console.log(user);
-
-      if (user.user?.id == undefined || user.error) {
-        console.log("here");
+      if (user.data.user?.id == undefined || user.error) {
         setError({ state: true, message: "Unable to create user" });
         return;
       }
       createOrg.mutate(
         {
-          id: user.user?.id,
+          id: user.data.user?.id,
           orgName: data.orgName,
           orgPhoneNumber: data.orgPhoneNumber,
           firstName: data.firstName,

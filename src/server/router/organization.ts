@@ -1,8 +1,4 @@
 import { UserStatus } from "@prisma/client";
-import {
-  supabaseClient,
-  supabaseServerClient,
-} from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@supabase/supabase-js";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -52,7 +48,7 @@ export const organizationRouter = createRouter()
   })
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
-      where: { id: ctx.session?.user.id },
+      where: { id: ctx.data?.user?.id },
       select: {
         status: true,
       },
@@ -66,14 +62,20 @@ export const organizationRouter = createRouter()
     async resolve({ ctx }) {
       const org = await prisma?.user.findFirst({
         where: {
-          id: ctx.session?.user.id,
+          id: ctx.data?.user?.id,
         },
         select: {
           organizationId: true,
         },
       });
 
-      const users = await prisma?.user.deleteMany({
+      const users = await prisma?.user.findMany({
+        where: {
+          organizationId: org?.organizationId,
+        },
+      });
+
+      const Deletedusers = await prisma?.user.deleteMany({
         where: {
           organizationId: org?.organizationId,
         },
@@ -84,14 +86,16 @@ export const organizationRouter = createRouter()
           id: org?.organizationId ?? "",
         },
       });
-      if (ctx.req == undefined) return;
+      //Delete all logins for org
       const _supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_PRIVATE!
       );
-      const { data, error } = await _supabase.auth.api.deleteUser(
-        ctx.session?.user.id
-      );
+      users
+        ?.filter((user) => user.hasLogin)
+        .forEach(async (user) => {
+          await _supabase.auth.admin.deleteUser(user.id);
+        });
 
       return organization;
     },

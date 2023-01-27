@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import Image from "next/future/image";
+import Image from "next/image";
 
 export const Avatar: React.FC<{ user: User }> = ({ user }) => {
   const findInitials = () => {

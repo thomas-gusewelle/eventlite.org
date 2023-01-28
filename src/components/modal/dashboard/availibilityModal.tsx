@@ -82,10 +82,6 @@ export const DashboardAvaililityModal: React.FC<{
     });
   };
 
-  useEffect(() => {
-    console.log(dates);
-  }, [dates]);
-
   if (existingDates.isLoading) {
     return (
       <Modal open={open} setOpen={setOpen}>
@@ -122,12 +118,7 @@ export const DashboardAvaililityModal: React.FC<{
                         // onChange(date);
                         if (date) {
                           //checks if the date is included in the new dates list already and removes it. Triggered when a user clicks on a date already highlighted
-                          console.log(date);
-                          console.log(
-                            dates
-                              .map((item) => item.getTime())
-                              .includes(date.getTime())
-                          );
+
                           if (
                             dates
                               .map((item) => item.getTime())

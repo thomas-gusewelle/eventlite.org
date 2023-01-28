@@ -134,7 +134,7 @@ const AvailabilityPage = () => {
           setExisitingDates={setDates}
         />
         <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
-          <SectionHeading>Unavaliable Dates</SectionHeading>
+          <SectionHeading>Unavailable Dates</SectionHeading>
           <div className='flex justify-end'>
             <BtnAdd onClick={() => setModalOpen(true)} />
             {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}

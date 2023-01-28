@@ -33,6 +33,34 @@ export const eventsRouter = createRouter()
       });
     },
   })
+  .query("getPastEventsByOrganization", {
+    async resolve({ ctx }) {
+      const org = await prisma?.user.findFirst({
+        where: { id: ctx.data?.user?.id },
+        select: { organizationId: true },
+      });
+      return await prisma?.event.findMany({
+        where: {
+          organizationId: org?.organizationId,
+          datetime: {
+            lt: roundHourDown(),
+          },
+        },
+        include: {
+          Locations: true,
+          positions: {
+            include: {
+              Role: true,
+              User: true,
+            },
+          },
+        },
+        orderBy: {
+          datetime: "desc",
+        },
+      });
+    },
+  })
   //Gets the upcoming events and the events that need approval
   .query("getUpcomingEventsByUser", {
     async resolve({ ctx }) {
@@ -159,32 +187,6 @@ export const eventsRouter = createRouter()
           },
         });
       }
-    },
-  })
-  .query("getPastEventsByOrganization", {
-    async resolve({ ctx }) {
-      const org = await prisma?.user.findFirst({
-        where: { id: ctx.data?.user?.id },
-        select: { organizationId: true },
-      });
-      return await prisma?.event.findMany({
-        where: {
-          organizationId: org?.organizationId,
-          datetime: {
-            lt: roundHourDown(),
-          },
-        },
-        include: {
-          positions: {
-            include: {
-              Role: true,
-            },
-          },
-        },
-        orderBy: {
-          datetime: "desc",
-        },
-      });
     },
   })
 

@@ -20,18 +20,23 @@ export const AvaililityModal: React.FC<{
   setExisitingDates: Dispatch<SetStateAction<Availability[]>>;
 }> = ({ userId, open, setOpen, exisitingDates, setExisitingDates }) => {
   const methods = useForm();
-  const [newDates, setNewDates] = useState<Date[]>([]);
+  const [dates, setDates] = useState<Date[]>(
+    exisitingDates
+      .map((item) => item.date)
+      .sort((a, b) => a.getTime() - b.getTime())
+  );
   const [deletedDates, setDeletedDates] = useState<Date[]>([]);
   const opts = trpc.useContext();
 
   //TODO: fix display of dates below calendar
-  useEffect(() => {
-    setNewDates(
-      newDates.filter((date) =>
-        exisitingDates.map((item) => item.date).includes(date)
-      )
-    );
-  }, [exisitingDates, newDates]);
+  // useEffect(() => {
+  //   console.log(exisitingDates);
+  //   setNewDates(
+  //     newDates.filter((date) =>
+  //       exisitingDates.map((item) => item.date).includes(date)
+  //     )
+  //   );
+  // }, [exisitingDates, newDates]);
 
   const updateAvailibility = trpc.useMutation(
     "avalibility.updateUserAvalibility",
@@ -39,21 +44,34 @@ export const AvaililityModal: React.FC<{
       onSuccess() {
         setOpen(false);
         opts.refetchQueries(["avalibility.getUserAvalibilityByID"]);
+        opts.refetchQueries(["events.getUpcomingEventsByUser"]);
       },
     }
   );
 
   const submit = () => {
+    const newDates = dates.filter(
+      (date) =>
+        !exisitingDates
+          .map((item) => item.date.getTime())
+          .includes(date.getTime())
+    );
+
+    const deleteDates = exisitingDates.filter(
+      (date) =>
+        !dates.map((item) => item.getTime()).includes(date.date.getTime())
+    );
+
     updateAvailibility.mutate({
       userId: userId,
       newDates: newDates,
-      deleteDates: deletedDates,
+      deleteDates: deleteDates?.map((item) => item.date) ?? [],
     });
   };
 
   return (
     <Modal open={open} setOpen={setOpen}>
-      <form onSubmit={submit} className=' '>
+      <form onSubmit={submit} className='max-h-[90vh] overflow-scroll'>
         <ModalBody>
           <ModalTitle text={"Add Unavailable Dates"} />
 
@@ -74,42 +92,26 @@ export const AvaililityModal: React.FC<{
                       selected={null}
                       minDate={new Date()}
                       onChange={(date) => {
-                        onChange(date);
+                        // onChange(date);
                         if (date) {
                           //checks if the date is included in the new dates list already and removes it. Triggered when a user clicks on a date already highlighted
+
                           if (
-                            newDates
+                            dates
                               .map((item) => item.getTime())
                               .includes(date.getTime())
                           ) {
-                            setNewDates(
-                              newDates.filter(
-                                (_date) => _date.getTime() != date.getTime()
+                            setDates(
+                              dates.filter(
+                                (item) => item.getTime() != date.getTime()
                               )
                             );
-                            methods.setValue("Date", null);
-                          } else if (
-                            exisitingDates
-                              .map((item) => item.date.getTime())
-                              .includes(date.getTime())
-                          ) {
-                            setExisitingDates(
-                              exisitingDates.filter(
-                                (_date) =>
-                                  _date.date.getTime() != date.getTime()
-                              )
-                            );
-                            setDeletedDates([...deletedDates, date]);
-                            methods.setValue("Date", null);
                           } else {
-                            setNewDates([...newDates, date]);
+                            setDates([...dates, date]);
                           }
                         }
                       }}
-                      highlightDates={[
-                        ...exisitingDates.map((item) => item.date),
-                        ...newDates,
-                      ]}
+                      highlightDates={dates}
                       inline
                       className='customDate m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
                     />
@@ -118,14 +120,19 @@ export const AvaililityModal: React.FC<{
               />
 
               <div className='flex flex-col justify-center gap-3'>
-                {newDates.map((date, index) => (
+                {dates.map((date, index) => (
                   <div key={index} className='grid grid-cols-[2fr_.5fr] gap-3'>
                     <span>{date.toDateString()}</span>
                     <button
                       className='text-red-600'
-                      onClick={() =>
-                        setNewDates(newDates.filter((item) => item != date))
-                      }>
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDates(
+                          dates.filter(
+                            (item) => item.getTime() != date.getTime()
+                          )
+                        );
+                      }}>
                       <MdDelete size={25} />
                     </button>
                   </div>

@@ -106,6 +106,9 @@ const EventsPage = () => {
           <Tab.Panel>
             <UpcomingEvents queryString={queryString} />
           </Tab.Panel>
+          <Tab.Panel>
+            <PastEvents queryString={queryString} />
+          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </>
@@ -311,6 +314,240 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
                           setDeleteConfirm(true);
                         },
                         show: event.recurringId ? true : false,
+                      },
+                    ]}
+                  />
+                )}
+              </div>
+              <span className='text-lg font-medium'>
+                {event.Locations?.name}
+              </span>
+              <span>{shortDate(event.datetime)}</span>
+              <span>{shortTime(event.datetime)}</span>
+            </div>
+            <div className=''>
+              {event.positions
+                .sort((a, b) => {
+                  if (a.Role.name < b.Role.name) return -1;
+                  else if (a.Role.name > b.Role.name) return 1;
+                  else return 0;
+                })
+                .map((position) => {
+                  return (
+                    <div
+                      className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
+                      key={position.id}>
+                      <span className='py-3 px-3 font-medium'>
+                        {position.Role.name}
+                      </span>
+                      {position.User ? (
+                        <div
+                          className={`flex h-full py-1 px-3 text-center ${
+                            position.userResponse == null && "bg-gray-100"
+                          }
+        ${position.userResponse == true && "bg-green-200"}
+        ${position.userResponse == false && "bg-red-200"}
+        `}>
+                          <PicNameRowSmall user={position?.User} />
+                        </div>
+                      ) : (
+                        <div className='h-full bg-gray-100' />
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        ))}
+      </div>
+      <PaginationBar
+        setPageNum={setPageNum}
+        pageNum={pageNum}
+        paginateData={paginatedData}
+      />
+    </>
+  );
+};
+
+const PastEvents = ({ queryString }: { queryString: string }) => {
+  const utils = trpc.useContext();
+  const router = useRouter();
+  const alertContext = useContext(AlertContext);
+  const user = useContext(UserContext);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const eventId = useRef<{ id: string | null }>({ id: null });
+  const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
+
+  const [pageNum, setPageNum] = useState(1);
+  const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
+  const [events, setEvents] = useState<stateData>([]);
+  const [eventsPagianted, setEventsPaginated] = useState<stateData>([]);
+  const [showPastEvents, setShowPastEvents] = useState(false);
+  useEffect(() => {
+    if (events != undefined) {
+      const _paginated = paginate(events, pageNum, 15);
+      setpagiantedData(_paginated);
+      setEventsPaginated(_paginated.data);
+    }
+  }, [pageNum, events]);
+
+  const eventsQuery = trpc.useQuery(["events.getPastEventsByOrganization"], {
+    onSuccess(data) {
+      if (data != undefined) {
+        setEvents(data);
+      }
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error fetching your events. Message: ${err.message}`,
+      });
+    },
+  });
+
+  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+    onMutate(data) {
+      utils.queryClient.cancelQueries();
+
+      if (deleteAllRecurring == false) {
+        setEvents(events.filter((event) => event.id != data.id));
+      }
+      if (deleteAllRecurring == true) {
+        let _event = events.filter((event) => event.id == data.id);
+        setEvents(
+          events.filter((event) => event.recurringId != _event[0]?.recurringId)
+        );
+      }
+      setDeleteConfirm(false);
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error deleting the event. Message: ${err.message}`,
+      });
+      if (eventsQuery.data) {
+        setEvents(eventsQuery.data);
+      }
+      eventsQuery.refetch();
+    },
+    onSuccess() {
+      eventId.current.id = null;
+      setDeleteAllRecuring(false);
+      eventsQuery.refetch();
+    },
+  });
+
+  useEffect(() => {
+    const filter = () => {
+      if (queryString.length > 0) {
+        let key = queryString.toLowerCase();
+        const filter = eventsQuery.data?.filter((event) => {
+          return (
+            event.name.toLowerCase().includes(key) ||
+            event.Locations?.name.toLowerCase().includes(key) ||
+            event.datetime.toLocaleDateString().toLowerCase().includes(key) ||
+            event.datetime
+              .toLocaleString("default", { month: "long" })
+              .toLowerCase()
+              .startsWith(key) ||
+            event.positions.some((pos) =>
+              pos.Role.name.toLowerCase().includes(key)
+            ) ||
+            event.positions.some(
+              (pos) =>
+                pos.User?.firstName?.toLowerCase().includes(key) ||
+                pos.User?.lastName?.toLowerCase().includes(key)
+            )
+          );
+        });
+
+        if (filter == undefined) return;
+        setPageNum(1);
+        setEvents(filter);
+      } else {
+        if (eventsQuery.data == undefined) return;
+        setEvents(eventsQuery.data);
+      }
+    };
+    filter();
+  }, [eventsQuery.data, queryString]);
+
+  if (paginatedData == undefined) {
+    return null;
+  }
+
+  if (eventsQuery.isLoading) {
+    return (
+      <div className='flex justify-center'>
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (eventsQuery.data?.length == 0) {
+    return (
+      <NoDataLayout
+        heading='Events'
+        btnText='Add Event'
+        func={() => router.push("/events/addevent")}
+      />
+    );
+  }
+
+  return (
+    <>
+      <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>
+        <div className='flex justify-center'>
+          <ModalBody>
+            <ModalTitle
+              text={
+                deleteAllRecurring
+                  ? "Are you sure you want to delete all events in this reccurance?"
+                  : "Are you sure you want to delete this event?"
+              }
+            />
+            <BottomButtons>
+              <BtnDelete
+                onClick={() => {
+                  if (eventId.current.id != null)
+                    deleteEventMutation.mutate({
+                      id: eventId.current.id,
+                      deleteRecurring: deleteAllRecurring,
+                    });
+                }}
+              />
+              <BtnCancel onClick={() => setDeleteConfirm(false)} />
+            </BottomButtons>
+          </ModalBody>
+        </div>
+      </Modal>
+      <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
+        {eventsPagianted.map((event) => (
+          <div
+            key={event.id}
+            className='flex flex-col rounded-lg border border-gray-300 pt-4 shadow'>
+            <div className='mb-4 flex flex-col px-3'>
+              <div className='flex justify-between'>
+                <h3 className='text-xl font-bold'>{event.name}</h3>
+                {user?.status == "ADMIN" && (
+                  <TableDropdown
+                    options={[
+                      {
+                        name: "Schedule",
+                        href: `/schedule?cursor=${event.id}`,
+                      },
+                      {
+                        name: "Edit",
+                        href: `/events/edit/${event.id}?rec=false`,
+                      },
+
+                      {
+                        name: "Delete",
+                        function: () => {
+                          eventId.current.id = event.id;
+                          setDeleteAllRecuring(false);
+                          setDeleteConfirm(true);
+                        },
                       },
                     ]}
                   />

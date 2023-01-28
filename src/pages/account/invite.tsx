@@ -28,7 +28,7 @@ const Invite = ({ code }: { code: string }) => {
       alert(error.message);
     },
     onSuccess(data, variables, context) {
-      router.push(`/account/confirm-email?email=${data?.email ?? ""}`);
+      router.push(`/account/confirm-email?email=${data?.user?.email ?? ""}`);
     },
   });
 
@@ -96,8 +96,8 @@ const Invite = ({ code }: { code: string }) => {
       </div>
       <p className='text-center text-white'>
         Already have an account?
-        <Link href={"/signin"}>
-          <a className='ml-1 underline'>Sign In</a>
+        <Link href={"/signin"} className='ml-1 underline'>
+          Sign In
         </Link>
       </p>
     </div>

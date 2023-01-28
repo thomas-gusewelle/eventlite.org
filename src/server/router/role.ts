@@ -5,7 +5,7 @@ import { createRouter } from "./context";
 export const roleRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
     const user = await prisma?.user.findFirst({
-      where: { id: ctx.session?.user.id },
+      where: { id: ctx.data.user?.id },
       select: {
         status: true,
       },
@@ -22,7 +22,7 @@ export const roleRouter = createRouter()
           organizationId: true,
         },
         where: {
-          id: ctx.session?.user.id,
+          id: ctx.data.user?.id,
         },
       });
       if (org?.organizationId) {
@@ -37,7 +37,7 @@ export const roleRouter = createRouter()
     async resolve({ ctx, input }) {
       const org = await prisma?.user.findFirst({
         select: { organizationId: true },
-        where: { id: ctx.session?.user.id },
+        where: { id: ctx.data.user?.id },
       });
       if (org?.organizationId) {
         return await prisma?.role.create({

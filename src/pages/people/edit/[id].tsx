@@ -22,10 +22,11 @@ import { UserFormValues } from "../../../../types/userFormValues";
 import { BtnCancel } from "../../../components/btn/btnCancel";
 import { EmailChangeModal } from "../../../components/modal/emailChangeConfirm";
 import { BtnSave } from "../../../components/btn/btnSave";
+import { UserContext } from "../../../providers/userProvider";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
-  const user = useUser();
+  const user = useContext(UserContext);
   const methods = useForm<UserFormValues>();
   const [emailEditModal, setEmailEditModal] = useState(false);
   const [formData, setFormData] = useState<UserFormValues | null>(null);
@@ -35,6 +36,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
   const roles = trpc.useQuery(["role.getRolesByOrganization"], {
+    enabled: !!(user?.status == "ADMIN"),
     onSuccess(data) {
       setRoleList(data as any);
     },
@@ -57,7 +59,6 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   });
   const userQuery = trpc.useQuery(["user.getUserByID", id], {
     onSuccess(data) {
-      console.log(data);
       if (data != null) {
         data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
         methods.reset(data);
@@ -152,6 +153,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
                 Positions
               </label>
               <MultiSelect
+                disabled={user.status != "ADMIN"}
                 selected={selectedRoles}
                 setSelected={setSelectedRoles}
                 list={roleList}

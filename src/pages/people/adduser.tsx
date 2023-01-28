@@ -21,7 +21,6 @@ import { BtnPurpleDropdown } from "../../components/btn/btnPurpleDropdown";
 const AddUser = () => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
-  const user = useUser();
   // used to track if user is adding or deleting characters from phone #
   const invite = useRef(false);
   const methods = useForm<UserFormValues>();
@@ -63,7 +62,6 @@ const AddUser = () => {
   const submit = methods.handleSubmit((data) => {
     data["roles"] = selectedRoles;
 
-    // return;
     addUser.mutate(
       {
         firstName: data.firstName.trim(),
@@ -88,11 +86,6 @@ const AddUser = () => {
       }
     );
   });
-
-  if (!user) {
-    router.push("/signin");
-    return <div></div>;
-  }
 
   if (roles.isLoading) {
     return (
@@ -141,6 +134,7 @@ const AddUser = () => {
           <div className='flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6'>
             <BtnPurpleDropdown
               btnFunction={() => {
+                console.log("146");
                 invite.current = true;
                 submit();
               }}

@@ -4,6 +4,10 @@
 
 /* These two selectors are to customize the datepciker for the unavilable dates selector to facilitate allowing for picking multiple dates. The first removes the styling when selected and the second makes the hjighlight styling custom */
 @layer components {
+  html {
+    @apply scroll-smooth;
+  }
+
   .input-field {
     @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm;
   }

@@ -1,12 +1,5 @@
-import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useRouter } from "next/router";
-import StepCounter from "../components/create-account-flow/components/stepCounter";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateAccountForm } from "../../types/createAccountFormValues";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
@@ -15,14 +8,17 @@ import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { trpc } from "../utils/trpc";
 import { AlertContext } from "../providers/alertProvider";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
-import Link from "next/link";
+import { LoginCard } from "../components/create-account-flow/components/card";
+import { loginFlowLayout } from "../components/layout/login-flow-layout";
+import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const SignIn = () => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
+  const supabaseClient = useSupabaseClient();
   const createOrg = trpc.useMutation("organization.createOrg", {
     onError(error, variables, context) {
       setError({
@@ -41,8 +37,6 @@ const SignIn = () => {
   });
 
   const submit = methods.handleSubmit(async (data) => {
-    console.log(data);
-
     //if no OrgID == create organization
     if (data.orgID == undefined || data?.orgID == "") {
       const user = await supabaseClient.auth.signUp({
@@ -50,16 +44,13 @@ const SignIn = () => {
         password: data.password,
       });
 
-      console.log(user);
-
-      if (user.user?.id == undefined || user.error) {
-        console.log("here");
+      if (user.data.user?.id == undefined || user.error) {
         setError({ state: true, message: "Unable to create user" });
         return;
       }
       createOrg.mutate(
         {
-          id: user.user?.id,
+          id: user.data.user?.id,
           orgName: data.orgName,
           orgPhoneNumber: data.orgPhoneNumber,
           firstName: data.firstName,
@@ -77,44 +68,35 @@ const SignIn = () => {
     }
   });
   return (
-    <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
-      <h2 className='mb-12 text-center text-4xl font-bold text-white'>
-        Welcome to Themelios Schedule
-      </h2>
-      <StepCounter signUpState={step} totalNum={2} />
-      <div className='flex flex-col items-center justify-center'>
-        <div className='mb-3 w-full rounded bg-white p-10 shadow md:w-1/2 lg:w-1/3'>
-          <FormProvider {...methods}>
-            <form onSubmit={submit}>
-              <Steps step={step} setStep={setStep} />
-              {step == 2 && (
-                <div className='mt-6 flex justify-center gap-6'>
-                  <BtnNeutral
-                    fullWidth={true}
-                    func={() => {
-                      setStep(1);
-                    }}>
-                    Back
-                  </BtnNeutral>
-                  <BtnPurple fullWidth={true} type='submit'>
-                    Submit
-                  </BtnPurple>
-                </div>
-              )}
-            </form>
-          </FormProvider>
-        </div>
-      </div>
-      <p className='text-center text-white'>
-        Already have an account?
-        <Link href={"/signin"}>
-          <a className='underline'>Sign In</a>
-        </Link>
-      </p>
-    </div>
+    <>
+      <VerticalLogo />
+      {/* <StepCounter signUpState={step} totalNum={2} /> */}
+      <LoginCard>
+        <FormProvider {...methods}>
+          <form onSubmit={submit}>
+            <Steps step={step} setStep={setStep} />
+            {step == 2 && (
+              <div className='mt-6 flex justify-center gap-6'>
+                <BtnNeutral
+                  fullWidth={true}
+                  func={() => {
+                    setStep(1);
+                  }}>
+                  Back
+                </BtnNeutral>
+                <BtnPurple fullWidth={true} type='submit'>
+                  Submit
+                </BtnPurple>
+              </div>
+            )}
+          </form>
+        </FormProvider>
+      </LoginCard>
+    </>
   );
 };
 
+SignIn.getLayout = loginFlowLayout;
 export default SignIn;
 
 const Steps = ({

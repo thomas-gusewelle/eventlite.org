@@ -27,7 +27,7 @@ export const YourInfoStep = ({
   return (
     <>
       <CardHeader>Your Info</CardHeader>
-      <section className='grid'>
+      <section className='mt-6 grid'>
         <FirstNameInput />
         <LastNameInput />
         <PhoneInput />

@@ -20,6 +20,7 @@ import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { PicNameRow, PicNameRowSmall } from "../components/profile/PicNameRow";
 import { AlertContext } from "../providers/alertProvider";
+import { UserContext } from "../providers/userProvider";
 import { paginate } from "../utils/paginate";
 import { trpc } from "../utils/trpc";
 
@@ -35,6 +36,7 @@ const EventsPage = () => {
   const utils = trpc.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
+  const user = useContext(UserContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
@@ -191,7 +193,7 @@ const EventsPage = () => {
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Events</SectionHeading>
         <div className='flex justify-end'>
-          <AddDropdownMenu options={addOptions} />
+          {user?.status == "ADMIN" && <AddDropdownMenu options={addOptions} />}
         </div>
         <div className='col-span-2'>
           <input
@@ -214,7 +216,7 @@ const EventsPage = () => {
             placeholder='Search'
           />
           {/* <SearchBar /> */}
-          <AddDropdownMenu options={addOptions} />
+          {user?.status == "ADMIN" && <AddDropdownMenu options={addOptions} />}
         </div>
       </div>
 
@@ -226,37 +228,42 @@ const EventsPage = () => {
             <div className='mb-4 flex flex-col px-3'>
               <div className='flex justify-between'>
                 <h3 className='text-xl font-bold'>{event.name}</h3>
-                <TableDropdown
-                  options={[
-                    { name: "Schedule", href: `/schedule?cursor=${event.id}` },
-                    {
-                      name: "Edit",
-                      href: `/events/edit/${event.id}?rec=false`,
-                    },
-                    {
-                      name: "Edit Recurring",
-                      href: `/events/edit/${event.id}?rec=true`,
-                      show: event.recurringId ? true : false,
-                    },
-                    {
-                      name: "Delete",
-                      function: () => {
-                        eventId.current.id = event.id;
-                        setDeleteAllRecuring(false);
-                        setDeleteConfirm(true);
+                {user?.status == "ADMIN" && (
+                  <TableDropdown
+                    options={[
+                      {
+                        name: "Schedule",
+                        href: `/schedule?cursor=${event.id}`,
                       },
-                    },
-                    {
-                      name: "Delete Recurring",
-                      function: () => {
-                        setDeleteAllRecuring(true);
-                        eventId.current.id = event.id;
-                        setDeleteConfirm(true);
+                      {
+                        name: "Edit",
+                        href: `/events/edit/${event.id}?rec=false`,
                       },
-                      show: event.recurringId ? true : false,
-                    },
-                  ]}
-                />
+                      {
+                        name: "Edit Recurring",
+                        href: `/events/edit/${event.id}?rec=true`,
+                        show: event.recurringId ? true : false,
+                      },
+                      {
+                        name: "Delete",
+                        function: () => {
+                          eventId.current.id = event.id;
+                          setDeleteAllRecuring(false);
+                          setDeleteConfirm(true);
+                        },
+                      },
+                      {
+                        name: "Delete Recurring",
+                        function: () => {
+                          setDeleteAllRecuring(true);
+                          eventId.current.id = event.id;
+                          setDeleteConfirm(true);
+                        },
+                        show: event.recurringId ? true : false,
+                      },
+                    ]}
+                  />
+                )}
               </div>
               <span className='text-lg font-medium'>
                 {event.Locations?.name}
@@ -290,9 +297,7 @@ const EventsPage = () => {
                           <PicNameRowSmall user={position?.User} />
                         </div>
                       ) : (
-                        <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'>
-                          Not Scheduled
-                        </div>
+                        <div className='h-full bg-gray-100' />
                       )}
                     </div>
                   );

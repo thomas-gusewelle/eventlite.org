@@ -8,6 +8,7 @@ import { CircularProgress } from "../components/circularProgress";
 import { longDate } from "../components/dateTime/dates";
 import { NewSingleSelect } from "../components/form/singleSelect";
 import { SectionHeading } from "../components/headers/SectionHeading";
+import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { TableDropdown } from "../components/menus/tableDropdown";
@@ -90,11 +91,88 @@ const AvailabilityPage = () => {
     }
   );
 
-  if (pagiantedData == undefined || getUsersQuery.isLoading) {
+  if (
+    pagiantedData == undefined ||
+    getUsersQuery.isLoading ||
+    getUserAvailibilityQuery.isLoading
+  ) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />
       </div>
+    );
+  }
+
+  if (pagiantedData.data.length <= 0 && user?.status != "ADMIN") {
+    return (
+      <>
+        <AvaililityModal
+          userId={userSelected.id}
+          open={modalOpen}
+          setOpen={setModalOpen}
+          exisitingDates={dates}
+          setExisitingDates={setDates}
+        />
+
+        <NoDataLayout
+          heading={"Unavailable Dates"}
+          func={() => setModalOpen(true)}
+          btnText={"Add Unavailable Dates"}
+        />
+      </>
+    );
+  }
+
+  if (pagiantedData.data.length <= 0 && user?.status == "ADMIN") {
+    return (
+      <>
+        <AvaililityModal
+          userId={userSelected.id}
+          open={modalOpen}
+          setOpen={setModalOpen}
+          exisitingDates={dates}
+          setExisitingDates={setDates}
+        />
+        <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
+          <SectionHeading>Unavailable Dates</SectionHeading>
+          <div className='flex justify-end'>
+            <BtnAdd onClick={() => setModalOpen(true)} />
+            {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
+          </div>
+          {user?.status == "ADMIN" && (
+            <div className='col-span-2'>
+              <NewSingleSelect
+                selected={userSelected}
+                setSelected={setUserSelected}
+                list={peopleList}
+                label={(item) => fullName(item.firstName, item.lastName)}
+              />
+            </div>
+          )}
+        </div>
+        <div className='mb-8 hidden justify-between md:flex'>
+          <SectionHeading>Unavailable Dates</SectionHeading>
+          <div className='flex gap-4'>
+            {user?.status == "ADMIN" && (
+              <div className='min-w-[10rem]'>
+                <NewSingleSelect
+                  selected={userSelected}
+                  setSelected={setUserSelected}
+                  list={peopleList}
+                  label={(item) => fullName(item.firstName, item.lastName)}
+                />
+              </div>
+            )}
+            <BtnAdd onClick={() => setModalOpen(true)} />
+            {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <BtnPurple func={() => setModalOpen(true)}>
+            Add Unavailable Dates
+          </BtnPurple>
+        </div>
+      </>
     );
   }
 
@@ -153,7 +231,7 @@ const AvailabilityPage = () => {
               <table className='w-full table-auto text-left'>
                 <thead>
                   <tr>
-                    <th>Name</th>
+                    <th>Date</th>
                     <th>Actions</th>
                   </tr>
                 </thead>

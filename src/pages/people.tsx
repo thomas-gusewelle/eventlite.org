@@ -19,7 +19,7 @@ import { EmailChangeModal } from "../components/modal/emailChangeConfirm";
 import { BtnAdd } from "../components/btn/btnAdd";
 
 const PeoplePage = () => {
-  const { setError } = useContext(AlertContext);
+  const { setError, setSuccess } = useContext(AlertContext);
   const router = useRouter();
   const user = useContext(UserContext);
   const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
@@ -64,6 +64,17 @@ const PeoplePage = () => {
         setError({
           state: true,
           message: `Error creating invite code. ${error.message}`,
+        });
+      },
+    }
+  );
+  const sendResetPassword = trpc.useMutation(
+    "createAccount.generateResetPassword",
+    {
+      onError(error, variables, context) {
+        setError({
+          state: true,
+          message: `Error sending reset password link. Message: ${error.message}`,
         });
       },
     }
@@ -158,7 +169,9 @@ const PeoplePage = () => {
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Users</SectionHeading>
         <div className='flex justify-end'>
-          <BtnAdd onClick={() => router.push("/people/adduser")} />
+          {user?.status == "ADMIN" && (
+            <BtnAdd onClick={() => router.push("/people/adduser")} />
+          )}
         </div>
         <div className='col-span-2'>
           <input
@@ -182,7 +195,9 @@ const PeoplePage = () => {
           />
           {/* <SearchBar /> */}
 
-          <BtnAdd onClick={() => router.push("/people/adduser")} />
+          {user?.status === "ADMIN" && (
+            <BtnAdd onClick={() => router.push("/people/adduser")} />
+          )}
         </div>
       </div>
 
@@ -203,11 +218,27 @@ const PeoplePage = () => {
                 {
                   name: "Invite user",
                   function: () => createInvite.mutate({ userId: person.id }),
-                  show: !person.hasLogin,
+                  show: !person.hasLogin && user?.status == "ADMIN",
                 },
                 {
                   name: "View Profile",
                   href: `/people/view/${person.id}`,
+                },
+                {
+                  name: "Reset Password",
+                  function: () =>
+                    sendResetPassword.mutate(
+                      { email: person.email.trim() },
+                      {
+                        onSuccess() {
+                          setSuccess({
+                            state: true,
+                            message: "Password Reset Email Sent",
+                          });
+                        },
+                      }
+                    ),
+                  show: user?.status == "ADMIN" && person.hasLogin,
                 },
                 {
                   name: "Edit",

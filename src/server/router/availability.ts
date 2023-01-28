@@ -1,16 +1,12 @@
 import { createRouter } from "./context";
-import { date, z } from "zod";
-
-import { UserStatus } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { resolve } from "path";
+import { z } from "zod";
 
 export const avalibiltyRouter = createRouter()
   .query("getUserAvalibility", {
     async resolve({ ctx }) {
       return await prisma?.availability.findMany({
         where: {
-          userId: ctx.session?.user.id,
+          userId: ctx.data?.user?.id,
           date: {
             gte: new Date(),
           },

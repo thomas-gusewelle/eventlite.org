@@ -1,4 +1,3 @@
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "./context";
@@ -7,6 +6,9 @@ import { InviteLink } from "@prisma/client";
 import { createClient, Session } from "@supabase/supabase-js";
 import { inviteCodeEmailString } from "../../emails/inviteCode";
 import { confirmEmailEmailString } from "../../emails/confirmEmail";
+import { createSupaServerClient } from "../../utils/serverSupaClient";
+import { resetPasswordEmail } from "../../emails/resetPassword";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -86,8 +88,11 @@ export const createAccountRouter = createRouter()
       sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
         await sgMail.send({
-          to: "tombome119@gmail.com",
-          from: "tgusewelle@gkwmedia.com",
+          to: user.email,
+          from: {
+            email: "accounts@eventlite.org",
+            name: "EventLite.org",
+          },
           subject: `Join ${user?.Organization?.name}'s Team`,
           html: inviteCodeEmailString(user.Organization?.name, link.id),
         });
@@ -111,10 +116,11 @@ export const createAccountRouter = createRouter()
         process.env.SUPABASE_PRIVATE!
       );
 
-      const { data, error } = await _supabase.auth.api.generateLink(
-        "signup",
-        input.email
-      );
+      const { data, error } = await _supabase.auth.admin.generateLink({
+        email: input.email,
+        type: "signup",
+        password: "test",
+      });
       //TODO: fix typing on supabase return. Any is a quick solution here
       const _data: any = data;
       const link = _data.action_link;
@@ -141,9 +147,12 @@ export const createAccountRouter = createRouter()
       try {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
         await sgMail.send({
-          to: "tombome119@gmail.com",
-          from: "tgusewelle@gkwmedia.com",
-          subject: `Join ${user?.Organization?.name}'s Team`,
+          to: user.email,
+          from: {
+            email: "accounts@eventlite.org",
+            name: "EventLite.org",
+          },
+          subject: `Confirm Your Email`,
           html: confirmEmailEmailString(link),
         });
       } catch (error) {
@@ -165,7 +174,7 @@ export const createAccountRouter = createRouter()
       confirmPassword: z.string(),
       inviteId: z.string(),
     }),
-    async resolve({ input }) {
+    async resolve({ input, ctx }) {
       // check confirmPass == password
       if (input.password != input.password) {
         throw new TRPCError({
@@ -173,8 +182,12 @@ export const createAccountRouter = createRouter()
           message: "Passwords do not match",
         });
       }
+      const supabase = createServerSupabaseClient({
+        req: ctx.req,
+        res: ctx.res,
+      });
 
-      const { user, error } = await supabaseClient.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: input.email,
         password: input.password,
       });
@@ -190,13 +203,85 @@ export const createAccountRouter = createRouter()
           id: input.oldId,
         },
         data: {
-          id: user?.id,
+          id: data?.user?.id,
           hasLogin: true,
         },
       });
       const deleteLink = await prisma?.inviteLink.delete({
         where: { id: input.inviteId },
       });
-      return user;
+      return data;
+    },
+  })
+  // Checks to ensure the user exists and then sends email
+  .mutation("generateResetPassword", {
+    input: z.object({
+      email: z.string().email(),
+    }),
+    async resolve({ input }) {
+      const user = await prisma?.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user == undefined || user == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with that email does not exist.",
+        });
+      }
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+      try {
+        await sgMail.send({
+          to: user.email,
+          from: {
+            email: "accounts@eventlite.org",
+            name: "EventLite.org",
+          },
+          subject: `Reset Password`,
+          html: resetPasswordEmail(input.email),
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send password reset email",
+        });
+      }
+    },
+  })
+  // takes in email and passwords. Find the user from public.users and updated the auth password
+  .mutation("resetPassword", {
+    input: z.object({
+      email: z.string().email(),
+      password: z.string(),
+      passwordConfirm: z.string(),
+    }),
+    async resolve({ input }) {
+      if (input.password != input.passwordConfirm) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Passwords do not match.",
+        });
+      }
+
+      const user = await prisma?.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user == null || user == undefined) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+      const _supabase = createSupaServerClient();
+      const update = await _supabase.auth.admin.updateUserById(user.id, {
+        password: input.password,
+      });
+      if (update.error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error updating the password.",
+        });
+      }
+      return update;
     },
   });

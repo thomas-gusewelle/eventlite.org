@@ -37,7 +37,6 @@ type stateData = (Event & {
 const EventsPage = () => {
   const user = useContext(UserContext);
   const [queryString, setQueryString] = useState("");
-  const [showPastEvents, setShowPastEvents] = useState(false);
 
   const addOptions: TableOptionsDropdown = [
     { name: "New Event", href: "/events/addevent" },
@@ -47,13 +46,14 @@ const EventsPage = () => {
   return (
     <>
       {/* MD Top Bar */}
-      <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
+      <div className='mb-3 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Events</SectionHeading>
         <div className='flex justify-end'>
           {user?.status == "ADMIN" && <AddDropdownMenu options={addOptions} />}
         </div>
         <div className='col-span-2'>
           <input
+            value={queryString}
             onChange={(e) => setQueryString(e.target.value)}
             className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
             type='text'
@@ -63,7 +63,7 @@ const EventsPage = () => {
       </div>
 
       {/* Desktop Top Bar */}
-      <div className='mb-8 hidden justify-between md:flex'>
+      <div className='mb-3 hidden justify-between md:flex'>
         <SectionHeading>Events</SectionHeading>
         <div className='flex gap-4'>
           <input
@@ -78,20 +78,20 @@ const EventsPage = () => {
       </div>
 
       <Tab.Group>
-        <Tab.List className='mb-6 flex space-x-1 rounded-xl bg-gray-100 p-1'>
+        <Tab.List className='mb-6 flex justify-start space-x-1 rounded-xl bg-gray-100 p-1 sm:w-fit'>
           {[
             {
               name: "Upcoming Events",
-              onClick: () => setShowPastEvents(false),
+              onClick: () => setQueryString(""),
             },
-            { name: "Past Events", onClick: () => setShowPastEvents(true) },
+            { name: "Past Events", onClick: () => setQueryString("") },
           ].map((item, index) => (
             <Tab
               key={index}
               onClick={item.onClick}
               className={({ selected }) =>
                 classNames(
-                  "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
+                  "w-full rounded-lg px-2 py-2.5 text-sm font-medium leading-5 sm:w-auto",
                   "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
                   selected
                     ? "bg-white text-indigo-700 shadow"
@@ -132,7 +132,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
   const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
   const [events, setEvents] = useState<stateData>([]);
   const [eventsPagianted, setEventsPaginated] = useState<stateData>([]);
-  const [showPastEvents, setShowPastEvents] = useState(false);
+
   useEffect(() => {
     if (events != undefined) {
       const _paginated = paginate(events, pageNum, 15);
@@ -382,7 +382,6 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
   const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
   const [events, setEvents] = useState<stateData>([]);
   const [eventsPagianted, setEventsPaginated] = useState<stateData>([]);
-  const [showPastEvents, setShowPastEvents] = useState(false);
   useEffect(() => {
     if (events != undefined) {
       const _paginated = paginate(events, pageNum, 15);

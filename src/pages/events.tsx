@@ -91,7 +91,7 @@ const EventsPage = () => {
               onClick={item.onClick}
               className={({ selected }) =>
                 classNames(
-                  "w-full rounded-lg px-2 py-2.5 text-sm font-medium leading-5 sm:w-auto",
+                  "w-full rounded-lg px-4 py-3 text-sm font-medium leading-5 sm:w-auto",
                   "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
                   selected
                     ? "bg-white text-indigo-700 shadow"

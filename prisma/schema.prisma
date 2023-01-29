@@ -58,7 +58,7 @@ enum UserStatus {
 
 model Availability {
   id     String   @id @default(cuid())
-  User   User     @relation(fields: [userId], references: [id])
+  User   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   date   DateTime
 }

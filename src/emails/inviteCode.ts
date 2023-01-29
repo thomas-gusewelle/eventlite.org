@@ -1,6 +1,7 @@
 export function inviteCodeEmailString(
   orgName: string | undefined,
-  invideCode: string
+  invideCode: string,
+  email: string
 ): string {
   return `<body
   style="
@@ -54,7 +55,7 @@ export function inviteCodeEmailString(
             </p>
             <a style="text-decoration: none; color: white; cursor: pointer;" href="https://eventlite.org/account/invite?code=${encodeURIComponent(
               invideCode
-            )}"><button
+            )}&email=${email}"><button
               style="
                 width: 100%;
                 

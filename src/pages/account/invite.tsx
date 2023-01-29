@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { BtnPurple } from "../../components/btn/btnPurple";
 import { CircularProgress } from "../../components/circularProgress";
@@ -9,18 +10,20 @@ import { trpc } from "../../utils/trpc";
 
 type FormFields = { email: string; password: string; passwordConfirm: string };
 
-const Invite = ({ code }: { code: string }) => {
+const Invite = ({ code, email }: { code: string; email: string }) => {
   const methods = useForm<FormFields>();
   const router = useRouter();
   const password = methods.watch("password");
   const confirmPassword = methods.watch("passwordConfirm");
 
+  useEffect(() => {
+    methods.setValue("email", email);
+  }, [email, methods]);
+
   const getUserFromCode = trpc.useQuery(
     ["createAccount.getUserFromInvite", code],
     {
-      onSuccess(data) {
-        console.log(data);
-      },
+      onSuccess(data) {},
     }
   );
   const createLogin = trpc.useMutation("createAccount.createInviteLogin", {
@@ -106,12 +109,15 @@ const Invite = ({ code }: { code: string }) => {
 
 const InvitePage = () => {
   const router = useRouter();
-  const { code } = router.query;
+  const { code, email } = router.query;
 
   if (!code || typeof code !== "string") {
-    return <div>No Id Provided</div>;
+    return null;
   }
-  return <Invite code={decodeURIComponent(code)} />;
+  if (!email || typeof email !== "string") {
+    return null;
+  }
+  return <Invite code={decodeURIComponent(code)} email={email} />;
 };
 
 export default InvitePage;

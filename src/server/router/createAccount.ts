@@ -94,9 +94,14 @@ export const createAccountRouter = createRouter()
             name: "EventLite.org",
           },
           subject: `Join ${user?.Organization?.name}'s Team`,
-          html: inviteCodeEmailString(user.Organization?.name, link.id),
+          html: inviteCodeEmailString(
+            user.Organization?.name,
+            link.id,
+            user.email
+          ),
         });
       } catch (error) {
+        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to send invite code",

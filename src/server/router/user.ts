@@ -46,6 +46,7 @@ export const userRouter = createRouter()
         },
         include: {
           roles: true,
+          InviteLink: true,
         },
       });
     },

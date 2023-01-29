@@ -5,7 +5,7 @@ import { trpc } from "../utils/trpc";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { CircularProgress } from "../components/circularProgress";
-import { Role, User } from "@prisma/client";
+import { InviteLink, Role, User } from "@prisma/client";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { PaginationBar } from "../components/layout/pagination-bar";
@@ -22,14 +22,16 @@ const PeoplePage = () => {
   const { setError, setSuccess } = useContext(AlertContext);
   const router = useRouter();
   const user = useContext(UserContext);
-  const [peopleList, setPeopleList] = useState<(User & { roles: Role[] })[]>();
+  const [peopleList, setPeopleList] =
+    useState<(User & { roles: Role[]; InviteLink: InviteLink | null })[]>();
   const [peopleUnPageList, setPeopleUnPageList] =
-    useState<(User & { roles: Role[] })[]>();
+    useState<(User & { roles: Role[]; InviteLink: InviteLink | null })[]>();
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setPaginatedData] = useState<
     PaginateData<
       (User & {
         roles: Role[];
+        InviteLink: InviteLink | null;
       })[]
     >
   >();
@@ -216,7 +218,7 @@ const PeoplePage = () => {
             {peopleList.map((person, index) => {
               const options: TableOptionsDropdown = [
                 {
-                  name: "Invite user",
+                  name: person.InviteLink ? "Resend Invite" : "Invite user",
                   function: () => createInvite.mutate({ userId: person.id }),
                   show: !person.hasLogin && user?.status == "ADMIN",
                 },

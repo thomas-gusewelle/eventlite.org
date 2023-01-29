@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { sidebar } from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
 import { trpc } from "../utils/trpc";
-import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { CircularProgress } from "../components/circularProgress";
 import { InviteLink, Role, User } from "@prisma/client";
@@ -15,7 +14,6 @@ import { AlertContext } from "../providers/alertProvider";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { useRouter } from "next/router";
 import { UserContext } from "../providers/userProvider";
-import { EmailChangeModal } from "../components/modal/emailChangeConfirm";
 import { BtnAdd } from "../components/btn/btnAdd";
 
 const PeoplePage = () => {

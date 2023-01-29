@@ -212,23 +212,27 @@ const Dashboard = () => {
                   </div>
                   {/* User approval section */}
                   {userResponse?.userResponse == null && (
-                    <div className='grid grid-cols-2 overflow-hidden rounded-b-lg border-b border-r border-l'>
-                      <BtnApprove
-                        func={() =>
-                          userResponseMutation.mutate({
-                            response: "APPROVE",
-                            positionId: userResponse?.id,
-                          })
-                        }
-                      />
-                      <BtnDeny
-                        func={() =>
-                          userResponseMutation.mutate({
-                            response: "DENY",
-                            positionId: userResponse?.id,
-                          })
-                        }
-                      />
+                    <div className='mt-3 grid grid-cols-2 gap-3 overflow-hidden'>
+                      <div className='grid w-full overflow-hidden rounded-lg shadow'>
+                        <BtnApprove
+                          func={() =>
+                            userResponseMutation.mutate({
+                              response: "APPROVE",
+                              positionId: userResponse?.id,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className='grid w-full overflow-hidden rounded-xl shadow'>
+                        <BtnDeny
+                          func={() =>
+                            userResponseMutation.mutate({
+                              response: "DENY",
+                              positionId: userResponse?.id,
+                            })
+                          }
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

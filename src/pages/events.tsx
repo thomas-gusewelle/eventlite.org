@@ -9,6 +9,7 @@ import { BtnDelete } from "../components/btn/btnDelete";
 import { CircularProgress } from "../components/circularProgress";
 import { shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
+import { EventCard } from "../components/events/eventCard";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
@@ -276,88 +277,42 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
       </Modal>
       <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
         {eventsPagianted.map((event) => (
-          <div
+          <EventCard
             key={event.id}
-            className='flex flex-col rounded-lg border border-gray-300 pt-4 shadow'>
-            <div className='mb-4 flex flex-col px-3'>
-              <div className='flex justify-between'>
-                <h3 className='text-xl font-bold'>{event.name}</h3>
-                {user?.status == "ADMIN" && (
-                  <TableDropdown
-                    options={[
-                      {
-                        name: "Schedule",
-                        href: `/schedule?cursor=${event.id}`,
-                      },
-                      {
-                        name: "Edit",
-                        href: `/events/edit/${event.id}?rec=false`,
-                      },
-                      {
-                        name: "Edit Recurring",
-                        href: `/events/edit/${event.id}?rec=true`,
-                        show: event.recurringId ? true : false,
-                      },
-                      {
-                        name: "Delete",
-                        function: () => {
-                          eventId.current.id = event.id;
-                          setDeleteAllRecuring(false);
-                          setDeleteConfirm(true);
-                        },
-                      },
-                      {
-                        name: "Delete Recurring",
-                        function: () => {
-                          setDeleteAllRecuring(true);
-                          eventId.current.id = event.id;
-                          setDeleteConfirm(true);
-                        },
-                        show: event.recurringId ? true : false,
-                      },
-                    ]}
-                  />
-                )}
-              </div>
-              <span className='text-lg font-medium'>
-                {event.Locations?.name}
-              </span>
-              <span>{shortDate(event.datetime)}</span>
-              <span>{shortTime(event.datetime)}</span>
-            </div>
-            <div className=''>
-              {event.positions
-                .sort((a, b) => {
-                  if (a.Role.name < b.Role.name) return -1;
-                  else if (a.Role.name > b.Role.name) return 1;
-                  else return 0;
-                })
-                .map((position) => {
-                  return (
-                    <div
-                      className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
-                      key={position.id}>
-                      <span className='py-3 px-3 font-medium'>
-                        {position.Role.name}
-                      </span>
-                      {position.User ? (
-                        <div
-                          className={`flex h-full py-1 px-3 text-center ${
-                            position.userResponse == null && "bg-gray-100"
-                          }
-        ${position.userResponse == true && "bg-green-200"}
-        ${position.userResponse == false && "bg-red-200"}
-        `}>
-                          <PicNameRowSmall user={position?.User} />
-                        </div>
-                      ) : (
-                        <div className='h-full bg-gray-100' />
-                      )}
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
+            event={event}
+            dropdownOptions={[
+              {
+                name: "Schedule",
+                href: `/schedule?cursor=${event.id}`,
+              },
+              {
+                name: "Edit",
+                href: `/events/edit/${event.id}?rec=false`,
+              },
+              {
+                name: "Edit Recurring",
+                href: `/events/edit/${event.id}?rec=true`,
+                show: event.recurringId ? true : false,
+              },
+              {
+                name: "Delete",
+                function: () => {
+                  eventId.current.id = event.id;
+                  setDeleteAllRecuring(false);
+                  setDeleteConfirm(true);
+                },
+              },
+              {
+                name: "Delete Recurring",
+                function: () => {
+                  setDeleteAllRecuring(true);
+                  eventId.current.id = event.id;
+                  setDeleteConfirm(true);
+                },
+                show: event.recurringId ? true : false,
+              },
+            ]}
+          />
         ))}
       </div>
       <PaginationBar
@@ -522,75 +477,29 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
       </Modal>
       <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
         {eventsPagianted.map((event) => (
-          <div
+          <EventCard
             key={event.id}
-            className='flex flex-col rounded-lg border border-gray-300 pt-4 shadow'>
-            <div className='mb-4 flex flex-col px-3'>
-              <div className='flex justify-between'>
-                <h3 className='text-xl font-bold'>{event.name}</h3>
-                {user?.status == "ADMIN" && (
-                  <TableDropdown
-                    options={[
-                      {
-                        name: "Schedule",
-                        href: `/schedule?cursor=${event.id}`,
-                      },
-                      {
-                        name: "Edit",
-                        href: `/events/edit/${event.id}?rec=false`,
-                      },
+            event={event}
+            dropdownOptions={[
+              {
+                name: "Schedule",
+                href: `/schedule?cursor=${event.id}`,
+              },
+              {
+                name: "Edit",
+                href: `/events/edit/${event.id}?rec=false`,
+              },
 
-                      {
-                        name: "Delete",
-                        function: () => {
-                          eventId.current.id = event.id;
-                          setDeleteAllRecuring(false);
-                          setDeleteConfirm(true);
-                        },
-                      },
-                    ]}
-                  />
-                )}
-              </div>
-              <span className='text-lg font-medium'>
-                {event.Locations?.name}
-              </span>
-              <span>{shortDate(event.datetime)}</span>
-              <span>{shortTime(event.datetime)}</span>
-            </div>
-            <div className=''>
-              {event.positions
-                .sort((a, b) => {
-                  if (a.Role.name < b.Role.name) return -1;
-                  else if (a.Role.name > b.Role.name) return 1;
-                  else return 0;
-                })
-                .map((position) => {
-                  return (
-                    <div
-                      className='grid grid-cols-[1fr_1.5fr] items-center border-t last:rounded-b-lg last:border-b last:pb-0'
-                      key={position.id}>
-                      <span className='py-3 px-3 font-medium'>
-                        {position.Role.name}
-                      </span>
-                      {position.User ? (
-                        <div
-                          className={`flex h-full py-1 px-3 text-center ${
-                            position.userResponse == null && "bg-gray-100"
-                          }
-        ${position.userResponse == true && "bg-green-200"}
-        ${position.userResponse == false && "bg-red-200"}
-        `}>
-                          <PicNameRowSmall user={position?.User} />
-                        </div>
-                      ) : (
-                        <div className='h-full bg-gray-100' />
-                      )}
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
+              {
+                name: "Delete",
+                function: () => {
+                  eventId.current.id = event.id;
+                  setDeleteAllRecuring(false);
+                  setDeleteConfirm(true);
+                },
+              },
+            ]}
+          />
         ))}
       </div>
       <PaginationBar

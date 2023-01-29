@@ -44,42 +44,40 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const supabase = useSupabaseClient();
 
   useEffect(() => {
-    if (user != undefined) {
-      setSideLinks([
-        {
-          name: "Dashboard",
-          href: "/dashboard",
-          show: true,
-          icon: MdSpaceDashboard,
-        },
-        {
-          name: "Schedule",
-          href: "/schedule?cursor=",
-          show: user?.status == "ADMIN",
-          icon: MdSchedule,
-        },
-        { name: "Events", href: "/events", show: true, icon: MdEvent },
-        {
-          name: "Availability",
-          href: "/availability",
-          show: true,
-          icon: MdPermContactCalendar,
-        },
-        { name: "People", href: "/people", show: true, icon: MdPeopleAlt },
-        {
-          name: "Locations",
-          href: "/locations",
-          show: user?.status == "ADMIN",
-          icon: FaChurch,
-        },
-        {
-          name: "Roles",
-          href: "/roles",
-          show: user?.status == "ADMIN",
-          icon: MdWorkspaces,
-        },
-      ]);
-    }
+    setSideLinks([
+      {
+        name: "Dashboard",
+        href: "/dashboard",
+        show: true,
+        icon: MdSpaceDashboard,
+      },
+      {
+        name: "Schedule",
+        href: "/schedule?cursor=",
+        show: user?.status == "ADMIN",
+        icon: MdSchedule,
+      },
+      { name: "Events", href: "/events", show: true, icon: MdEvent },
+      {
+        name: "Availability",
+        href: "/availability",
+        show: true,
+        icon: MdPermContactCalendar,
+      },
+      { name: "People", href: "/people", show: true, icon: MdPeopleAlt },
+      {
+        name: "Locations",
+        href: "/locations",
+        show: user?.status == "ADMIN",
+        icon: FaChurch,
+      },
+      {
+        name: "Roles",
+        href: "/roles",
+        show: user?.status == "ADMIN",
+        icon: MdWorkspaces,
+      },
+    ]);
   }, [user]);
 
   // uses window width to set show to false on tranisiting from mobile to full screen
@@ -95,13 +93,13 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
     }
   }, [show, windowWidth]);
 
-  if (user == undefined || user == null) {
-    return (
-      <div className='mt-6 flex justify-center'>
-        <CircularProgress />
-      </div>
-    );
-  }
+  // if (user == undefined || user == null) {
+  //   return (
+  //     <div className='mt-6 flex justify-center'>
+  //       <CircularProgress />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -263,7 +261,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         <Avatar user={user} />
 
                         <p className='ml-2 text-base leading-4 text-gray-800 md:text-xl'>
-                          {fullName(user.firstName, user.lastName)}
+                          {fullName(user?.firstName, user?.lastName)}
                         </p>
                       </div>
                       <Menu
@@ -286,7 +284,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <Link
-                                      href={`/people/view/${user.id}`}
+                                      href={`/people/view/${user?.id}`}
                                       onClick={() => setShow(false)}
                                       className={classNames(
                                         active
@@ -344,7 +342,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         </div>
                       </div>
                       <p className='mx-3 text-sm text-gray-800'>
-                        {fullName(user.firstName, user.lastName)}
+                        {fullName(user?.firstName, user?.lastName)}
                       </p>
                       <Menu
                         as='div'
@@ -366,7 +364,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <Link
-                                      href={`/people/view/${user.id}`}
+                                      href={`/people/view/${user?.id}`}
                                       className={classNames(
                                         active
                                           ? "bg-gray-100 text-gray-900"
@@ -459,7 +457,13 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <>
                     <ErrorAlert />
                     <SuccdssAlert />
-                    {children}
+                    {user == undefined || user == null ? (
+                      <div className='flex justify-center'>
+                        <CircularProgress />
+                      </div>
+                    ) : (
+                      children
+                    )}
                   </>
                 </div>
               </AlertProvider>

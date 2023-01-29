@@ -1,4 +1,4 @@
-import { UserStatus } from "@prisma/client";
+import { UserSettings, UserStatus } from "@prisma/client";
 import { Dispatch, SetStateAction, useState } from "react";
 import { TableOptionsDropdown } from "../../../../types/tableMenuOptions";
 import { formatPhoneNumber } from "../../../utils/formatPhoneNumber";
@@ -30,7 +30,9 @@ type User = {
 export const PoepleTab = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<User>();
-  const [people, setPeople] = useState<User[]>([
+  const [people, setPeople] = useState<
+    (User & { UserSettings: UserSettings | null })[]
+  >([
     {
       firstName: "Betty",
       lastName: "Green",
@@ -44,6 +46,7 @@ export const PoepleTab = () => {
       hasLogin: false,
       userSettingsId: null,
       roles: [{ name: "Audio" }],
+      UserSettings: null,
     },
     {
       firstName: "John",
@@ -58,6 +61,7 @@ export const PoepleTab = () => {
       hasLogin: false,
       userSettingsId: null,
       roles: [{ name: "Audio" }, { name: "Video" }],
+      UserSettings: null,
     },
     {
       firstName: "Kathy",
@@ -77,6 +81,7 @@ export const PoepleTab = () => {
         { name: "Audio" },
         { name: "Video" },
       ],
+      UserSettings: null,
     },
   ]);
   return (

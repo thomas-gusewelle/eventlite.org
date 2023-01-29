@@ -2,12 +2,7 @@ import { User, UserSettings } from "@prisma/client";
 import Image from "next/image";
 
 export const Avatar: React.FC<{
-  user:
-    | (User & {
-        UserSettings: UserSettings | null;
-      })
-    | null
-    | undefined;
+  user: User | null | undefined;
 }> = ({ user }) => {
   if (user == undefined || user == null) {
     return null;

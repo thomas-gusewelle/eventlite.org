@@ -116,6 +116,7 @@ export const createAccountRouter = createRouter()
       email: z.string().email(),
     }),
     async resolve({ input }) {
+      console.log("Here 119");
       const _supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_PRIVATE!
@@ -124,11 +125,9 @@ export const createAccountRouter = createRouter()
       const { data, error } = await _supabase.auth.admin.generateLink({
         email: input.email,
         type: "signup",
+
         password: "test",
       });
-      //TODO: fix typing on supabase return. Any is a quick solution here
-      const _data: any = data;
-      const link = _data.action_link;
 
       if (error) {
         throw new TRPCError({
@@ -137,28 +136,16 @@ export const createAccountRouter = createRouter()
         });
       }
 
-      const user = await prisma?.user.findFirst({
-        where: { id: _data.id },
-        include: { Organization: true },
-      });
-
-      if (user == null || user == undefined) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User not found.",
-        });
-      }
-
       try {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
         await sgMail.send({
-          to: user.email,
+          to: input.email,
           from: {
             email: "accounts@eventlite.org",
             name: "EventLite.org",
           },
           subject: `Confirm Your Email`,
-          html: confirmEmailEmailString(link),
+          html: confirmEmailEmailString(data.properties.action_link),
         });
       } catch (error) {
         throw new TRPCError({

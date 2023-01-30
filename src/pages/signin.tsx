@@ -28,6 +28,7 @@ const SignIn = () => {
     console.log(data);
     if (error) {
       alert(error.message);
+      setIsLoading(false);
       return;
     }
   });

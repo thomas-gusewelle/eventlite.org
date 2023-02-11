@@ -130,7 +130,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
             </ul>
           </div>
           <div className='item-center hidden gap-3 md:flex '>
-            <BtnPurple func={() => router.push("/create-account")}>
+            <BtnPurple func={() => router.push("/beta")}>
               Join the Beta
             </BtnPurple>
             <BtnNeutral func={() => router.push("/signin")}>Login</BtnNeutral>

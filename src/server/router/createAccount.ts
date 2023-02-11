@@ -276,4 +276,22 @@ export const createAccountRouter = createRouter()
       }
       return update;
     },
+  })
+  .mutation("registerBetaInterest", {
+    input: z.object({
+      firstName: z.string(),
+      lastName: z.string(),
+      email: z.string().email(),
+      orgName: z.string(),
+    }),
+    async resolve({ input }) {
+      return await prisma?.betaInterest.create({
+        data: {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          orgName: input.orgName,
+        },
+      });
+    },
   });

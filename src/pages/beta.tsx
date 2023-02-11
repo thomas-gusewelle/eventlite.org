@@ -38,6 +38,21 @@ const BetaPage = () => {
       { onSuccess: () => setIsSubmit(true) }
     );
   });
+
+  if (isSubmit) {
+    return (
+      <>
+        <VerticalLogo />
+        <LoginCard>
+          <CardHeader>Thank you!</CardHeader>
+          <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
+            Thank you for submitting your interest in our beta. You should
+            recieve an email soon with an invitation to the beta.
+          </p>
+        </LoginCard>
+      </>
+    );
+  }
   return (
     <>
       <VerticalLogo />

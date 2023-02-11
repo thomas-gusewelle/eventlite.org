@@ -69,7 +69,7 @@ const Home = () => {
           </p>
 
           <button
-            onClick={() => router.push("/create-account")}
+            onClick={() => router.push("/beta")}
             type={"button"}
             tabIndex={1}
             className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 lg:w-auto`}>

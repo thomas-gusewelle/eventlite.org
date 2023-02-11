@@ -11,13 +11,7 @@ import { LastNameInput } from "../components/form/lastNameInput";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { trpc } from "../utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-// type FormData = {
-//     firstName: String;
-//     lastName: String;
-//     email: String;
-
-// }
+import { useState } from "react";
 
 const schema = z.object({
   firstName: z.string(),
@@ -27,13 +21,22 @@ const schema = z.object({
 });
 
 const BetaPage = () => {
+  const [isSubmit, setIsSubmit] = useState(false);
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
   const betaMutate = trpc.useMutation("createAccount.registerBetaInterest");
 
   const submit = methods.handleSubmit((data) => {
-    console.log(data);
+    betaMutate.mutate(
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        orgName: data.orgName,
+      },
+      { onSuccess: () => setIsSubmit(true) }
+    );
   });
   return (
     <>

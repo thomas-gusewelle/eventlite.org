@@ -57,7 +57,7 @@ const BetaPage = () => {
     <>
       <VerticalLogo />
       <LoginCard>
-        <CardHeader>Beta Interest</CardHeader>
+        <CardHeader>Let Us Know You&apos;re Interested</CardHeader>
         <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
           Join our beta by registering your interest. Be the first to receive an
           invitation and share your feedback with us.

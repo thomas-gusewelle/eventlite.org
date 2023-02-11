@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { CardHeader } from "../components/create-account-flow/components/cardHeader";
@@ -8,11 +9,32 @@ import { EmailInput } from "../components/form/emailInput";
 import { FirstNameInput } from "../components/form/firstNameInput";
 import { LastNameInput } from "../components/form/lastNameInput";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
+import { trpc } from "../utils/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// type FormData = {
+//     firstName: String;
+//     lastName: String;
+//     email: String;
+
+// }
+
+const schema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  orgName: z.string().min(1, { message: "Organization name required" }),
+});
 
 const BetaPage = () => {
-  const methods = useForm();
+  const methods = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
+  const betaMutate = trpc.useMutation("createAccount.registerBetaInterest");
 
-  const submit = methods.handleSubmit((data) => {});
+  const submit = methods.handleSubmit((data) => {
+    console.log(data);
+  });
   return (
     <>
       <VerticalLogo />

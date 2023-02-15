@@ -151,3 +151,11 @@ model EventPositions {
 
   @@index([eventId, roleId])
 }
+
+model BetaInterest {
+  id        String @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String
+  orgName   String
+}

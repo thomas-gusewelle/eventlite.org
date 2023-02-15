@@ -1,0 +1,101 @@
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
+import { BtnPurple } from "../components/btn/btnPurple";
+import { LoginCard } from "../components/create-account-flow/components/card";
+import { CardHeader } from "../components/create-account-flow/components/cardHeader";
+import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
+import { ErrorSpan } from "../components/errors/errorSpan";
+import { EmailInput } from "../components/form/emailInput";
+import { FirstNameInput } from "../components/form/firstNameInput";
+import { LastNameInput } from "../components/form/lastNameInput";
+import { loginFlowLayout } from "../components/layout/login-flow-layout";
+import { trpc } from "../utils/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useRouter } from "next/router";
+
+const schema = z.object({
+  firstName: z.string().min(1, { message: "First name required" }),
+  lastName: z.string().min(1, { message: "Last name required" }),
+  email: z.string().email(),
+  orgName: z.string().min(1, { message: "Organization name required" }),
+});
+
+const BetaPage = () => {
+  const [isSubmit, setIsSubmit] = useState(false);
+  const router = useRouter();
+  const methods = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
+  const betaMutate = trpc.useMutation("createAccount.registerBetaInterest");
+
+  const submit = methods.handleSubmit((data) => {
+    betaMutate.mutate(
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        orgName: data.orgName,
+      },
+      { onSuccess: () => setIsSubmit(true) }
+    );
+  });
+
+  if (isSubmit) {
+    return (
+      <>
+        <VerticalLogo />
+        <LoginCard>
+          <CardHeader>Thank you!</CardHeader>
+          <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
+            Thank you for submitting your interest in our beta. You should
+            recieve an email soon with an invitation to the beta.
+          </p>
+          <div className='mt-6'>
+            <BtnPurple fullWidth func={() => router.push("/")}>
+              Return Home
+            </BtnPurple>
+          </div>
+        </LoginCard>
+      </>
+    );
+  }
+  return (
+    <>
+      <VerticalLogo />
+      <LoginCard>
+        <CardHeader>Let Us Know You&apos;re Interested</CardHeader>
+        <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
+          Join our beta by registering your interest. Be the first to receive an
+          invitation and share your feedback with us.
+        </p>
+        <FormProvider {...methods}>
+          <form onSubmit={submit} className={"mt-3"}>
+            <FirstNameInput />
+            <LastNameInput />
+            <EmailInput />
+
+            <label className='form-label'>Organization Name</label>
+            <input
+              type='text'
+              className='input-field'
+              defaultValue={""}
+              {...methods.register("orgName")}
+            />
+            {methods.formState.errors.orgName && (
+              <ErrorSpan>{methods.formState.errors.orgName.message}</ErrorSpan>
+            )}
+            <div className='mt-6'>
+              <BtnPurple type='submit' fullWidth>
+                Submit
+              </BtnPurple>
+            </div>
+          </form>
+        </FormProvider>
+      </LoginCard>
+    </>
+  );
+};
+
+BetaPage.getLayout = loginFlowLayout;
+export default BetaPage;

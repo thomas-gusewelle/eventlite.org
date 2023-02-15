@@ -7,9 +7,7 @@ export const LastNameInput = () => {
   } = useFormContext();
   return (
     <>
-      <label
-        htmlFor='last-name'
-        className='block text-sm font-medium text-gray-700'>
+      <label htmlFor='last-name' className='form-label'>
         Last name
       </label>
       <input

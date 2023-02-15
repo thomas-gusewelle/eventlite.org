@@ -158,4 +158,5 @@ model BetaInterest {
   lastName  String
   email     String
   orgName   String
+  teamSize  String
 }

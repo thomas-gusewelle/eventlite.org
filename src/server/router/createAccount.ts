@@ -284,7 +284,27 @@ export const createAccountRouter = createRouter()
       email: z.string().email(),
       orgName: z.string(),
     }),
+
     async resolve({ input }) {
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+      try {
+        sgMail.send({
+          from: "beta@eventlite.org",
+          to: "tgusewelle@eventlite.org",
+          subject: "Beta Request",
+          text: `first name: ${input.firstName}\n
+          last name: ${input.lastName}\n
+          email: ${input.email}\n
+          organization: ${input.orgName}
+          `,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error as string,
+        });
+      }
+
       return await prisma?.betaInterest.create({
         data: {
           firstName: input.firstName,

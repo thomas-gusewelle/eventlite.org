@@ -12,16 +12,18 @@ import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { trpc } from "../utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 const schema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().min(1, { message: "First name required" }),
+  lastName: z.string().min(1, { message: "Last name required" }),
   email: z.string().email(),
   orgName: z.string().min(1, { message: "Organization name required" }),
 });
 
 const BetaPage = () => {
   const [isSubmit, setIsSubmit] = useState(false);
+  const router = useRouter();
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
@@ -49,6 +51,11 @@ const BetaPage = () => {
             Thank you for submitting your interest in our beta. You should
             recieve an email soon with an invitation to the beta.
           </p>
+          <div className='mt-6'>
+            <BtnPurple fullWidth func={() => router.push("/")}>
+              Return Home
+            </BtnPurple>
+          </div>
         </LoginCard>
       </>
     );

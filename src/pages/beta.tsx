@@ -36,8 +36,6 @@ const BetaPage = () => {
   const betaMutate = trpc.useMutation("createAccount.registerBetaInterest");
 
   const submit = methods.handleSubmit((data) => {
-    console.log(data);
-    return;
     betaMutate.mutate(
       {
         firstName: data.firstName,
@@ -94,7 +92,7 @@ const BetaPage = () => {
               <ErrorSpan>{methods.formState.errors.orgName.message}</ErrorSpan>
             )}
             <label className='form-label'>Team Size</label>
-            <div>
+            <div className=''>
               <div className='flex items-center gap-2 '>
                 <input
                   {...methods.register("teamSize")}
@@ -102,8 +100,7 @@ const BetaPage = () => {
                   type={"radio"}
                   name='teamSize'
                   value={"1-5"}
-                  defaultChecked={true}></input>
-
+                  defaultChecked></input>
                 <label>1-5</label>
               </div>
               <div className='flex items-center gap-2 '>

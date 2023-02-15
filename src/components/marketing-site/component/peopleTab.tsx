@@ -94,9 +94,9 @@ export const PoepleTab = () => {
           <thead>
             <tr>
               <th>Name</th>
-              <th className='hidden md:table-cell'>Email</th>
+              <th className='hidden lg:table-cell'>Email</th>
               <th>Role</th>
-              <th className='hidden md:table-cell'>Status</th>
+
               <th>Actions</th>
             </tr>
           </thead>
@@ -124,7 +124,7 @@ export const PoepleTab = () => {
                   <td className='py-4'>
                     <PicNameRow user={person} />
                   </td>
-                  <td className='hidden md:table-cell'>{person.email}</td>
+                  <td className='hidden lg:table-cell'>{person.email}</td>
                   <td>
                     <div className='my-1 flex flex-wrap items-center justify-start gap-1'>
                       {person.roles.map((role, index) => (
@@ -136,7 +136,6 @@ export const PoepleTab = () => {
                       ))}
                     </div>
                   </td>
-                  <td className='hidden md:table-cell'>{person.status}</td>
 
                   <td>
                     <TableDropdown options={options} />

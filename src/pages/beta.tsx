@@ -19,6 +19,12 @@ const schema = z.object({
   lastName: z.string().min(1, { message: "Last name required" }),
   email: z.string().email(),
   orgName: z.string().min(1, { message: "Organization name required" }),
+  teamSize: z.union([
+    z.literal("1-5"),
+    z.literal("5-15"),
+    z.literal("15-25"),
+    z.literal("25+"),
+  ]),
 });
 
 const BetaPage = () => {
@@ -30,12 +36,15 @@ const BetaPage = () => {
   const betaMutate = trpc.useMutation("createAccount.registerBetaInterest");
 
   const submit = methods.handleSubmit((data) => {
+    console.log(data);
+    return;
     betaMutate.mutate(
       {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         orgName: data.orgName,
+        teamSize: data.teamSize,
       },
       { onSuccess: () => setIsSubmit(true) }
     );
@@ -74,7 +83,6 @@ const BetaPage = () => {
             <FirstNameInput />
             <LastNameInput />
             <EmailInput />
-
             <label className='form-label'>Organization Name</label>
             <input
               type='text'
@@ -85,6 +93,48 @@ const BetaPage = () => {
             {methods.formState.errors.orgName && (
               <ErrorSpan>{methods.formState.errors.orgName.message}</ErrorSpan>
             )}
+            <label className='form-label'>Team Size</label>
+            <div>
+              <div className='flex items-center gap-2 '>
+                <input
+                  {...methods.register("teamSize")}
+                  className=' text-indigo-700 checked:bg-indigo-700 indeterminate:bg-indigo-700 hover:bg-indigo-700 focus:bg-indigo-600 focus:shadow-indigo-700 focus:ring-indigo-700'
+                  type={"radio"}
+                  name='teamSize'
+                  value={"1-5"}
+                  defaultChecked={true}></input>
+
+                <label>1-5</label>
+              </div>
+              <div className='flex items-center gap-2 '>
+                <input
+                  {...methods.register("teamSize")}
+                  type={"radio"}
+                  name='teamSize'
+                  value={"5-15"}
+                  className=' text-indigo-700 checked:bg-indigo-700 indeterminate:bg-indigo-700 hover:bg-indigo-700 focus:bg-indigo-600 focus:shadow-indigo-700 focus:ring-indigo-700'></input>{" "}
+                <label>5-15</label>
+              </div>
+              <div className='flex items-center gap-2 '>
+                <input
+                  {...methods.register("teamSize")}
+                  className=' text-indigo-700 checked:bg-indigo-700 indeterminate:bg-indigo-700 hover:bg-indigo-700 focus:bg-indigo-600 focus:shadow-indigo-700 focus:ring-indigo-700'
+                  type={"radio"}
+                  name='teamSize'
+                  value={"15-25"}></input>{" "}
+                <label>15-25</label>
+              </div>
+              <div className='flex items-center gap-2 '>
+                <input
+                  {...methods.register("teamSize")}
+                  className=' text-indigo-700 checked:bg-indigo-700 indeterminate:bg-indigo-700 hover:bg-indigo-700 focus:bg-indigo-600 focus:shadow-indigo-700 focus:ring-indigo-700'
+                  type={"radio"}
+                  name='teamSize'
+                  value={"25+"}></input>{" "}
+                <label>25+</label>
+              </div>
+            </div>
+
             <div className='mt-6'>
               <BtnPurple type='submit' fullWidth>
                 Submit

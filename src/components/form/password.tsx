@@ -16,9 +16,7 @@ export const PasswordField = ({
   } = useFormContext();
   return (
     <>
-      <label
-        htmlFor='passwordConfirm'
-        className='block text-sm font-medium text-gray-700'>
+      <label htmlFor='passwordConfirm' className='form-label'>
         {isConfirm ? "Confirm Password" : "Password"}
       </label>
       <div className='relative'>

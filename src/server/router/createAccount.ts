@@ -283,6 +283,12 @@ export const createAccountRouter = createRouter()
       lastName: z.string(),
       email: z.string().email(),
       orgName: z.string(),
+      teamSize: z.union([
+        z.literal("1-5"),
+        z.literal("5-15"),
+        z.literal("15-25"),
+        z.literal("25+"),
+      ]),
     }),
 
     async resolve({ input }) {
@@ -311,6 +317,7 @@ export const createAccountRouter = createRouter()
           lastName: input.lastName,
           email: input.email,
           orgName: input.orgName,
+          teamSize: input.teamSize,
         },
       });
     },

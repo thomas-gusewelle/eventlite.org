@@ -45,14 +45,14 @@ const SignIn = () => {
       <LoginCard>
         <CardHeader>Sign in to your account</CardHeader>
         <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
-          Need to setup your organization?
-          <Link href={"/create-account"} legacyBehavior>
+          Want to Join?
+          <Link href={"/beta"} legacyBehavior>
             <span
               tabIndex={0}
               role='link'
-              aria-label='Sign up here'
+              aria-label='let us know'
               className='ml-1 cursor-pointer text-sm font-medium leading-none text-gray-800 underline'>
-              Sign up here
+              Let us know!
             </span>
           </Link>
         </p>

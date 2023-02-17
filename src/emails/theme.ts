@@ -25,6 +25,7 @@ export const colors = {
   blue400: "#a1bfff",
   blue600: "#3a70e3",
   zinc800: "#27272a",
+  indigo700: "#4f46e5",
 };
 
 export const fontSize = {

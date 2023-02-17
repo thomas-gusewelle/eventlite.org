@@ -23,7 +23,7 @@ const styles = `
 
   @media (min-width:${screens.xs}) {
     .h1 > * {
-      font-size: 42px !important;
+      font-size: 36px !important;
     }
     .h2 > * {
       font-size: ${fontSize.xxl}px !important;

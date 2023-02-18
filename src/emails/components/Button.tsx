@@ -22,7 +22,6 @@ export default function Button(props: ButtonProps) {
         innerPadding='16px 24px 18px'
         align='left'
         backgroundColor={colors.indigo700}
-        color={colors.white}
         borderRadius={borderRadius.base}
         cssClass={cx("button", props.cssClass)}
         {...props}

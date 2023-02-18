@@ -6,6 +6,7 @@ import Text from "./components/Text";
 import Button from "./components/Button";
 import { MjmlWrapper, MjmlColumn, MjmlSection } from "mjml-react";
 import { colors, fontFamily, fontSize, screens } from "./theme";
+import Footer from "./components/Footer";
 
 const styles = `
   .h1 > * {
@@ -38,7 +39,7 @@ const ConfirmEmail = () => {
   return (
     <BaseLayout style={styles}>
       <Header />
-      <MjmlWrapper cssClass='gutter'>
+      <MjmlWrapper cssClass='gutter' paddingBottom={"30px"}>
         <MjmlSection>
           <MjmlColumn>
             <Heading cssClass='h1' color={colors.black000}>
@@ -56,6 +57,7 @@ const ConfirmEmail = () => {
           </MjmlColumn>
         </MjmlSection>
       </MjmlWrapper>
+      <Footer />
     </BaseLayout>
   );
 };

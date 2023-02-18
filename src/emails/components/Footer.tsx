@@ -123,7 +123,7 @@ export default function Footer({ includeUnsubscribe = false }: FooterProps) {
         </MjmlSection>
       </MjmlWrapper>
 
-      <MjmlWrapper cssClass='gutter' paddingTop={"10px"}>
+      <MjmlWrapper cssClass='gutter' paddingTop={"10px"} paddingBottom='40px'>
         <MjmlSection>
           <MjmlColumn>
             <Text color={colors.gray500}>

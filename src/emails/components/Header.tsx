@@ -7,7 +7,7 @@ import { colors, fontSize, lineHeight, fontWeight } from "../theme";
 
 export default function Header() {
   return (
-    <MjmlWrapper padding='40px 0 64px'>
+    <MjmlWrapper paddingTop={"40px"} paddingBottom='24px'>
       <MjmlSection>
         <MjmlGroup>
           <MjmlColumn width='100%'>
@@ -19,7 +19,7 @@ export default function Header() {
                 href='https://eventlite.org'
                 textDecoration='none'>
                 <img
-                  width={300}
+                  width={200}
                   src={
                     "https://kisagiikxconhevqlkke.supabase.co/storage/v1/object/public/email-images/eventLiteEmailCover.jpg"
                   }

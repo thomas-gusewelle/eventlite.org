@@ -70,8 +70,7 @@ const ThankYouEmail = ({ firstName }: { firstName: string }) => {
                 you need it to be.
               </p>
               <p>
-                Be on the lookout for an invitation email soon to get started
-                with managing your team with EventLite.
+                Be on the lookout for an invitation email soon to get started managing your team with EventLite.
               </p>
               <p>
                 Thanks again for your interest, and please don&apos;t hesitate

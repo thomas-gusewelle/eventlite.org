@@ -3,18 +3,18 @@ import { buildSendMail } from "mailing-core";
 
 const transport = nodemailer.createTransport({
   pool: true,
-  host: "smtp.example.com",
+  host: "smtp.sendgrid.net",
   port: 465,
   secure: true, // use TLS
   auth: {
-    user: "username",
-    pass: "password",
+    user: "apikey",
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 
 const sendMail = buildSendMail({
   transport,
-  defaultFrom: "replace@me.with.your.com",
+  defaultFrom: "EventLite <accounts@eventlite.org>",
   configPath: "./mailing.config.json",
 });
 

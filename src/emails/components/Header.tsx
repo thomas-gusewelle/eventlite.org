@@ -7,7 +7,7 @@ import { colors, fontSize, lineHeight, fontWeight } from "../theme";
 
 export default function Header() {
   return (
-    <MjmlWrapper paddingTop={"40px"} paddingBottom='24px'>
+    <MjmlWrapper paddingTop='40px' paddingBottom='30px' cssClass='gutter'>
       <MjmlSection>
         <MjmlGroup>
           <MjmlColumn width='100%'>

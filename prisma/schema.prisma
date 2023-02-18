@@ -32,6 +32,7 @@ model User {
   userSettingsId String?
   UserSettings   UserSettings?
   InviteLink     InviteLink?
+  ResetPassword  ResetPassword[]
 
   @@index([id, organizationId, userSettingsId])
 }
@@ -40,6 +41,12 @@ model InviteLink {
   id     String @id @default(uuid())
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
+}
+
+model ResetPassword {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 }
 
 model UserSettings {

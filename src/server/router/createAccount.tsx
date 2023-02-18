@@ -3,12 +3,13 @@ import { z } from "zod";
 import { createRouter } from "./context";
 import sgMail from "@sendgrid/mail";
 import { InviteLink } from "@prisma/client";
-import { createClient, Session } from "@supabase/supabase-js";
-import { inviteCodeEmailString } from "../../emails/inviteCode";
-import { confirmEmailEmailString } from "../../emails/confirmEmail";
+import { createClient } from "@supabase/supabase-js";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
-import { resetPasswordEmail } from "../../emails/resetPassword";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import sendMail from "../../emails";
+import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
+import InviteCode from "../../emails/accounts/InviteCode";
+import ResetPassword from "../../emails/accounts/ResetPassword";
+import ThankYouEmail from "../../emails/beta/ThankYou";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -85,28 +86,46 @@ export const createAccountRouter = createRouter()
         });
       }
 
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
-        await sgMail.send({
+        sendMail({
           to: user.email,
-          from: {
-            email: "accounts@eventlite.org",
-            name: "EventLite.org",
-          },
-          subject: `Join ${user?.Organization?.name}'s Team`,
-          html: inviteCodeEmailString(
-            user.Organization?.name,
-            link.id,
-            user.email
+          component: (
+            <InviteCode
+              orgName={user.Organization?.name}
+              invideCode={link.id}
+              email={user.email}
+            />
           ),
         });
       } catch (error) {
-        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to send invite code",
         });
       }
+
+      // sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+      // try {
+      //   await sgMail.send({
+      //     to: user.email,
+      //     from: {
+      //       email: "accounts@eventlite.org",
+      //       name: "EventLite.org",
+      //     },
+      //     subject: `Join ${user?.Organization?.name}'s Team`,
+      //     html: inviteCodeEmailString(
+      //       user.Organization?.name,
+      //       link.id,
+      //       user.email
+      //     ),
+      //   });
+      // } catch (error) {
+      //   console.log(error);
+      //   throw new TRPCError({
+      //     code: "INTERNAL_SERVER_ERROR",
+      //     message: "Failed to send invite code",
+      //   });
+      // }
       return link;
     },
   })
@@ -137,20 +156,14 @@ export const createAccountRouter = createRouter()
       }
 
       try {
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-        await sgMail.send({
+        await sendMail({
           to: input.email,
-          from: {
-            email: "accounts@eventlite.org",
-            name: "EventLite.org",
-          },
-          subject: `Confirm Your Email`,
-          html: confirmEmailEmailString(data.properties.action_link),
+          component: <ConfirmEmailNew link={data.properties.action_link} />,
         });
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error sending invite code",
+          message: "Email send failed",
         });
       }
       return data;
@@ -160,7 +173,6 @@ export const createAccountRouter = createRouter()
   // creates the user then updates the database userID and deletes the inviteLink entry
   .mutation("createInviteLogin", {
     input: z.object({
-      oldId: z.string(),
       email: z.string().email(),
       password: z.string(),
       confirmPassword: z.string(),
@@ -174,13 +186,30 @@ export const createAccountRouter = createRouter()
           message: "Passwords do not match",
         });
       }
-      const supabase = createServerSupabaseClient({
-        req: ctx.req,
-        res: ctx.res,
+
+      const user = await prisma?.inviteLink.findFirst({
+        where: { id: input.inviteId },
       });
 
-      const { data, error } = await supabase.auth.signUp({
+      if (!user) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Bad invite link",
+        });
+      }
+
+      const _supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_PRIVATE!
+      );
+
+      // const { data, error } = await supabase.auth.signUp({
+      //   email: input.email,
+      //   password: input.password,
+      // });
+      const { data, error } = await _supabase.auth.admin.generateLink({
         email: input.email,
+        type: "signup",
         password: input.password,
       });
       if (error) {
@@ -190,9 +219,22 @@ export const createAccountRouter = createRouter()
           cause: "User Login Creation",
         });
       }
+
+      try {
+        await sendMail({
+          to: input.email,
+          component: <ConfirmEmailNew link={data.properties.action_link} />,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Email send failed",
+        });
+      }
+
       const updateuser = await prisma?.user.update({
         where: {
-          id: input.oldId,
+          id: user.userId,
         },
         data: {
           id: data?.user?.id,
@@ -222,29 +264,41 @@ export const createAccountRouter = createRouter()
           message: "User with that email does not exist.",
         });
       }
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-      try {
-        await sgMail.send({
-          to: user.email,
-          from: {
-            email: "accounts@eventlite.org",
-            name: "EventLite.org",
+
+      const resetCode = await prisma?.resetPassword.create({
+        data: {
+          user: {
+            connect: {
+              id: user.id,
+            },
           },
-          subject: `Reset Password`,
-          html: resetPasswordEmail(input.email),
+        },
+      });
+
+      if (!resetCode) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error creating reset code",
+        });
+      }
+      try {
+        await sendMail({
+          to: input.email,
+          component: <ResetPassword code={resetCode.id} />,
         });
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to send password reset email",
+          message: "Unable to send reset email",
         });
       }
+      return;
     },
   })
   // takes in email and passwords. Find the user from public.users and updated the auth password
   .mutation("resetPassword", {
     input: z.object({
-      email: z.string().email(),
+      code: z.string(),
       password: z.string(),
       passwordConfirm: z.string(),
     }),
@@ -256,18 +310,22 @@ export const createAccountRouter = createRouter()
         });
       }
 
-      const user = await prisma?.user.findFirst({
+      const resetCode = await prisma?.resetPassword.findFirst({
         where: {
-          email: input.email,
+          id: input.code,
         },
+        include: { user: true },
       });
-      if (user == null || user == undefined) {
+      if (resetCode?.user == null || resetCode?.user == undefined) {
         throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
       }
       const _supabase = createSupaServerClient();
-      const update = await _supabase.auth.admin.updateUserById(user.id, {
-        password: input.password,
-      });
+      const update = await _supabase.auth.admin.updateUserById(
+        resetCode.user.id,
+        {
+          password: input.password,
+        }
+      );
       if (update.error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -302,12 +360,23 @@ export const createAccountRouter = createRouter()
           last name: ${input.lastName}\n
           email: ${input.email}\n
           organization: ${input.orgName}
+          team size: ${input.teamSize}
           `,
         });
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error as string,
+        });
+      }
+
+      try {
+        await sendMail({
+          to: input.email,
+          component: <ThankYouEmail firstName={input.firstName} />,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
 

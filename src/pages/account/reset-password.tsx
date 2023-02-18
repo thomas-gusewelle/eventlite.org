@@ -14,7 +14,7 @@ type FormData = {
   passwordConfirm: string;
 };
 
-const ResetPassword = ({ email }: { email: string }) => {
+const ResetPassword = ({ code }: { code: string }) => {
   const methods = useForm<FormData>();
   const router = useRouter();
   const resetPassword = trpc.useMutation("createAccount.resetPassword");
@@ -22,7 +22,7 @@ const ResetPassword = ({ email }: { email: string }) => {
   const submit = methods.handleSubmit((data) => {
     resetPassword.mutate(
       {
-        email: email,
+        code: code,
         password: data.password,
         passwordConfirm: data.passwordConfirm,
       },
@@ -57,8 +57,8 @@ const ResetPassword = ({ email }: { email: string }) => {
 
 const ResetPasswordPage = () => {
   const router = useRouter();
-  const { email } = router.query;
-  if (email == undefined || typeof email != "string") {
+  const { code } = router.query;
+  if (code == undefined || typeof code != "string") {
     return (
       <>
         <VerticalLogo />
@@ -73,7 +73,7 @@ const ResetPasswordPage = () => {
       </>
     );
   }
-  return <ResetPassword email={email} />;
+  return <ResetPassword code={decodeURIComponent(code)} />;
 };
 
 ResetPasswordPage.getLayout = loginFlowLayout;

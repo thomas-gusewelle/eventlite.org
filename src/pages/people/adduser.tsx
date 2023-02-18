@@ -1,5 +1,4 @@
 import { sidebar } from "../../components/layout/sidebar";
-import { useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
@@ -16,7 +15,6 @@ import { EmailInput } from "../../components/form/emailInput";
 import { UserStatusInputSelector } from "../../components/form/userStatusInputSelector";
 import { removeDashes } from "../../utils/formatPhoneNumber";
 import { UserFormValues } from "../../../types/userFormValues";
-import { BtnPurple } from "../../components/btn/btnPurple";
 import { BtnPurpleDropdown } from "../../components/btn/btnPurpleDropdown";
 const AddUser = () => {
   const router = useRouter();

@@ -10,7 +10,15 @@ import { trpc } from "../../utils/trpc";
 
 type FormFields = { email: string; password: string; passwordConfirm: string };
 
-const Invite = ({ code, email }: { code: string; email: string }) => {
+const Invite = ({
+  code,
+  email,
+  orgName,
+}: {
+  code: string;
+  email: string;
+  orgName: string;
+}) => {
   const methods = useForm<FormFields>();
   const router = useRouter();
   const password = methods.watch("password");
@@ -20,12 +28,6 @@ const Invite = ({ code, email }: { code: string; email: string }) => {
     methods.setValue("email", email);
   }, [email, methods]);
 
-  const getUserFromCode = trpc.useQuery(
-    ["createAccount.getUserFromInvite", code],
-    {
-      onSuccess(data) {},
-    }
-  );
   const createLogin = trpc.useMutation("createAccount.createInviteLogin", {
     onError(error) {
       alert(error.message);
@@ -36,35 +38,21 @@ const Invite = ({ code, email }: { code: string; email: string }) => {
   });
 
   const submit = methods.handleSubmit((data: FormFields) => {
-    if (getUserFromCode.data?.id == undefined) {
-      alert("User Does Not Exist");
-      return;
-    }
-    createLogin.mutate({
-      email: data.email,
-      oldId: getUserFromCode.data?.id,
-      password: data.password,
-      confirmPassword: data.passwordConfirm,
-      inviteId: code,
-    });
-  });
-
-  if (getUserFromCode.isLoading) {
-    return (
-      <div className='mt-12 flex justify-center'>
-        <CircularProgress />
-      </div>
+    createLogin.mutate(
+      {
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.passwordConfirm,
+        inviteId: code,
+      },
+      { onError: (error) => alert(error.message) }
     );
-  }
-
-  if (getUserFromCode.data == undefined) {
-    return <div>Error getting user</div>;
-  }
+  });
 
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
       <h2 className='mb-12 text-center text-4xl font-bold text-white'>
-        Join {getUserFromCode.data?.Organization?.name}&apos;s Team
+        Join {orgName}&apos;s Team
       </h2>
 
       <div className='flex flex-col items-center justify-center'>
@@ -109,7 +97,7 @@ const Invite = ({ code, email }: { code: string; email: string }) => {
 
 const InvitePage = () => {
   const router = useRouter();
-  const { code, email } = router.query;
+  const { code, email, orgName } = router.query;
 
   if (!code || typeof code !== "string") {
     return null;
@@ -117,7 +105,12 @@ const InvitePage = () => {
   if (!email || typeof email !== "string") {
     return null;
   }
-  return <Invite code={decodeURIComponent(code)} email={email} />;
+  if (!orgName || typeof orgName !== "string") {
+    return null;
+  }
+  return (
+    <Invite code={decodeURIComponent(code)} email={email} orgName={orgName} />
+  );
 };
 
 export default InvitePage;

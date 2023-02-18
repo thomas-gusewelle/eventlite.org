@@ -1,5 +1,5 @@
 import ConfirmEmail from "../ConfirmEmailNew";
 
 export function preview() {
-  return <ConfirmEmail />;
+  return <ConfirmEmail link='eventlite.org' />;
 }

@@ -1,4 +1,3 @@
-import React from "react";
 import BaseLayout from "./components/BaseLayout";
 import Header from "./components/Header";
 import Heading from "./components/Heading";
@@ -35,7 +34,7 @@ const styles = `
   }
 `;
 
-const ConfirmEmail = () => {
+const ConfirmEmail = ({ link }: { link: string }) => {
   return (
     <BaseLayout style={styles}>
       <Header />
@@ -53,7 +52,15 @@ const ConfirmEmail = () => {
               Confirming your email allows us and your organization to know
               it&apos;s really you. Use the button below to confirm your email.
             </Text>
-            <Button>Confirm Email</Button>
+            <Button href={link}>Confirm Email</Button>
+          </MjmlColumn>
+        </MjmlSection>
+        <MjmlSection paddingTop={"30px"}>
+          <MjmlColumn>
+            <Text color={colors.black} fontSize={fontSize.sm}>
+              If you didn&apos;t request this email, there&apos;s nothing to
+              worry about - you can safely ignore it.
+            </Text>
           </MjmlColumn>
         </MjmlSection>
       </MjmlWrapper>

@@ -38,20 +38,19 @@ const ConfirmEmail = () => {
   return (
     <BaseLayout style={styles}>
       <Header />
-      <MjmlWrapper>
-        <MjmlSection cssClass='gutter'>
+      <MjmlWrapper cssClass='gutter'>
+        <MjmlSection>
           <MjmlColumn>
             <Heading cssClass='h1' color={colors.black000}>
               Confirm Your Email Address
             </Heading>
           </MjmlColumn>
         </MjmlSection>
-        <MjmlSection cssClass='gutter'>
+        <MjmlSection>
           <MjmlColumn>
             <Text color={colors.black} paddingTop={24} paddingBottom={24}>
               Confirming your email allows us and your organization to know
-              it&apos;s really you. Please use the button below to confirm your
-              email.
+              it&apos;s really you. Use the button below to confirm your email.
             </Text>
             <Button>Confirm Email</Button>
           </MjmlColumn>

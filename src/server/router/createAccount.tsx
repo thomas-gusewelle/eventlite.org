@@ -9,6 +9,7 @@ import sendMail from "../../emails";
 import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
 import InviteCode from "../../emails/accounts/InviteCode";
 import ResetPassword from "../../emails/accounts/ResetPassword";
+import ThankYouEmail from "../../emails/beta/ThankYou";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -359,12 +360,23 @@ export const createAccountRouter = createRouter()
           last name: ${input.lastName}\n
           email: ${input.email}\n
           organization: ${input.orgName}
+          team size: ${input.teamSize}
           `,
         });
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error as string,
+        });
+      }
+
+      try {
+        await sendMail({
+          to: input.email,
+          component: <ThankYouEmail firstName={input.firstName} />,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
 

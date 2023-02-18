@@ -8,7 +8,9 @@ import { inviteCodeEmailString } from "../../emails/inviteCode";
 import { confirmEmailEmailString } from "../../emails/confirmEmail";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
 import { resetPasswordEmail } from "../../emails/resetPassword";
+import sendMail from "../../emails";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import ConfirmEmailNew from "../../emails/ConfirmEmailNew";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -174,13 +176,18 @@ export const createAccountRouter = createRouter()
           message: "Passwords do not match",
         });
       }
-      const supabase = createServerSupabaseClient({
-        req: ctx.req,
-        res: ctx.res,
-      });
+      const _supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_PRIVATE!
+      );
 
-      const { data, error } = await supabase.auth.signUp({
+      // const { data, error } = await supabase.auth.signUp({
+      //   email: input.email,
+      //   password: input.password,
+      // });
+      const { data, error } = await _supabase.auth.admin.generateLink({
         email: input.email,
+        type: "signup",
         password: input.password,
       });
       if (error) {
@@ -188,6 +195,18 @@ export const createAccountRouter = createRouter()
           code: "INTERNAL_SERVER_ERROR",
           message: error.message,
           cause: "User Login Creation",
+        });
+      }
+
+      try {
+        await sendMail({
+          to: input.email,
+          component: <ConfirmEmailNew link={data.properties.action_link} />,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Email send failed",
         });
       }
       const updateuser = await prisma?.user.update({

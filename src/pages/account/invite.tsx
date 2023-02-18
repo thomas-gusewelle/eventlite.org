@@ -28,10 +28,6 @@ const Invite = ({
     methods.setValue("email", email);
   }, [email, methods]);
 
-  const getUserFromCode = trpc.useQuery([
-    "createAccount.getUserFromInvite",
-    code,
-  ]);
   const createLogin = trpc.useMutation("createAccount.createInviteLogin", {
     onError(error) {
       alert(error.message);
@@ -42,22 +38,16 @@ const Invite = ({
   });
 
   const submit = methods.handleSubmit((data: FormFields) => {
-    if (getUserFromCode.data?.id == undefined) {
-      alert("User Does Not Exist");
-      return;
-    }
-    createLogin.mutate({
-      email: data.email,
-      oldId: getUserFromCode.data?.id,
-      password: data.password,
-      confirmPassword: data.passwordConfirm,
-      inviteId: code,
-    });
+    createLogin.mutate(
+      {
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.passwordConfirm,
+        inviteId: code,
+      },
+      { onError: (error) => alert(error.message) }
+    );
   });
-
-  if (getUserFromCode.data == undefined) {
-    return <div>Error getting user</div>;
-  }
 
   return (
     <div className='h-screen w-full bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-4'>
@@ -74,8 +64,6 @@ const Invite = ({
               <PasswordField isConfirm={true} />
               <div className='mt-6 flex justify-center gap-6'>
                 <BtnPurple
-                  isLoading={getUserFromCode.isLoading}
-                  disabled={getUserFromCode.isLoading}
                   fullWidth={true}
                   type='button'
                   func={() => {

@@ -10,6 +10,7 @@ import { resetPasswordEmail } from "../../emails/resetPassword";
 import sendMail from "../../emails";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
+import InviteCode from "../../emails/accounts/InviteCode";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -86,28 +87,46 @@ export const createAccountRouter = createRouter()
         });
       }
 
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
       try {
-        await sgMail.send({
+        sendMail({
           to: user.email,
-          from: {
-            email: "accounts@eventlite.org",
-            name: "EventLite.org",
-          },
-          subject: `Join ${user?.Organization?.name}'s Team`,
-          html: inviteCodeEmailString(
-            user.Organization?.name,
-            link.id,
-            user.email
+          component: (
+            <InviteCode
+              orgName={user.Organization?.name}
+              invideCode={link.id}
+              email={user.email}
+            />
           ),
         });
       } catch (error) {
-        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to send invite code",
         });
       }
+
+      // sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+      // try {
+      //   await sgMail.send({
+      //     to: user.email,
+      //     from: {
+      //       email: "accounts@eventlite.org",
+      //       name: "EventLite.org",
+      //     },
+      //     subject: `Join ${user?.Organization?.name}'s Team`,
+      //     html: inviteCodeEmailString(
+      //       user.Organization?.name,
+      //       link.id,
+      //       user.email
+      //     ),
+      //   });
+      // } catch (error) {
+      //   console.log(error);
+      //   throw new TRPCError({
+      //     code: "INTERNAL_SERVER_ERROR",
+      //     message: "Failed to send invite code",
+      //   });
+      // }
       return link;
     },
   })
@@ -155,7 +174,6 @@ export const createAccountRouter = createRouter()
   // creates the user then updates the database userID and deletes the inviteLink entry
   .mutation("createInviteLogin", {
     input: z.object({
-      oldId: z.string(),
       email: z.string().email(),
       password: z.string(),
       confirmPassword: z.string(),
@@ -169,6 +187,18 @@ export const createAccountRouter = createRouter()
           message: "Passwords do not match",
         });
       }
+
+      const user = await prisma?.inviteLink.findFirst({
+        where: { id: input.inviteId },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Bad invite link",
+        });
+      }
+
       const _supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_PRIVATE!
@@ -202,9 +232,10 @@ export const createAccountRouter = createRouter()
           message: "Email send failed",
         });
       }
+
       const updateuser = await prisma?.user.update({
         where: {
-          id: input.oldId,
+          id: user.userId,
         },
         data: {
           id: data?.user?.id,

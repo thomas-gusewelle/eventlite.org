@@ -82,5 +82,6 @@ const InviteCode = ({
   );
 };
 
-InviteCode.subject = "Confirm Your Email";
+InviteCode.subject = ({ orgName }: { orgName: string }) =>
+  `Join ${orgName}'s Team`;
 export default InviteCode;

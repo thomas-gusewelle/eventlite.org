@@ -5,7 +5,6 @@ import sgMail from "@sendgrid/mail";
 import { InviteLink } from "@prisma/client";
 import { createClient, Session } from "@supabase/supabase-js";
 import { inviteCodeEmailString } from "../../emails/inviteCode";
-import { confirmEmailEmailString } from "../../emails/confirmEmail";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
 import { resetPasswordEmail } from "../../emails/resetPassword";
 import sendMail from "../../emails";
@@ -139,20 +138,14 @@ export const createAccountRouter = createRouter()
       }
 
       try {
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-        await sgMail.send({
+        await sendMail({
           to: input.email,
-          from: {
-            email: "accounts@eventlite.org",
-            name: "EventLite.org",
-          },
-          subject: `Confirm Your Email`,
-          html: confirmEmailEmailString(data.properties.action_link),
+          component: <ConfirmEmailNew link={data.properties.action_link} />,
         });
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error sending invite code",
+          message: "Email send failed",
         });
       }
       return data;

@@ -3,12 +3,10 @@ import { z } from "zod";
 import { createRouter } from "./context";
 import sgMail from "@sendgrid/mail";
 import { InviteLink } from "@prisma/client";
-import { createClient, Session } from "@supabase/supabase-js";
-import { inviteCodeEmailString } from "../../emails/inviteCode";
+import { createClient } from "@supabase/supabase-js";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
 import { resetPasswordEmail } from "../../emails/resetPassword";
 import sendMail from "../../emails";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
 import InviteCode from "../../emails/accounts/InviteCode";
 

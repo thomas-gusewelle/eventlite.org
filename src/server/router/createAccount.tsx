@@ -5,10 +5,10 @@ import sgMail from "@sendgrid/mail";
 import { InviteLink } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
-import { resetPasswordEmail } from "../../emails/resetPassword";
 import sendMail from "../../emails";
 import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
 import InviteCode from "../../emails/accounts/InviteCode";
+import ResetPassword from "../../emails/accounts/ResetPassword";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {
@@ -263,29 +263,41 @@ export const createAccountRouter = createRouter()
           message: "User with that email does not exist.",
         });
       }
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-      try {
-        await sgMail.send({
-          to: user.email,
-          from: {
-            email: "accounts@eventlite.org",
-            name: "EventLite.org",
+
+      const resetCode = await prisma?.resetPassword.create({
+        data: {
+          user: {
+            connect: {
+              id: user.id,
+            },
           },
-          subject: `Reset Password`,
-          html: resetPasswordEmail(input.email),
+        },
+      });
+
+      if (!resetCode) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error creating reset code",
+        });
+      }
+      try {
+        await sendMail({
+          to: input.email,
+          component: <ResetPassword code={resetCode.id} />,
         });
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to send password reset email",
+          message: "Unable to send reset email",
         });
       }
+      return;
     },
   })
   // takes in email and passwords. Find the user from public.users and updated the auth password
   .mutation("resetPassword", {
     input: z.object({
-      email: z.string().email(),
+      code: z.string(),
       password: z.string(),
       passwordConfirm: z.string(),
     }),
@@ -297,18 +309,22 @@ export const createAccountRouter = createRouter()
         });
       }
 
-      const user = await prisma?.user.findFirst({
+      const resetCode = await prisma?.resetPassword.findFirst({
         where: {
-          email: input.email,
+          id: input.code,
         },
+        include: { user: true },
       });
-      if (user == null || user == undefined) {
+      if (resetCode?.user == null || resetCode?.user == undefined) {
         throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
       }
       const _supabase = createSupaServerClient();
-      const update = await _supabase.auth.admin.updateUserById(user.id, {
-        password: input.password,
-      });
+      const update = await _supabase.auth.admin.updateUserById(
+        resetCode.user.id,
+        {
+          password: input.password,
+        }
+      );
       if (update.error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

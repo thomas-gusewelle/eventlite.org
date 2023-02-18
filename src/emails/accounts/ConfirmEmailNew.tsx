@@ -1,11 +1,11 @@
-import BaseLayout from "./components/BaseLayout";
-import Header from "./components/Header";
-import Heading from "./components/Heading";
-import Text from "./components/Text";
-import Button from "./components/Button";
+import BaseLayout from "../components/BaseLayout";
+import Header from "../components/Header";
+import Heading from "../components/Heading";
+import Text from "../components/Text";
+import Button from "../components/Button";
 import { MjmlWrapper, MjmlColumn, MjmlSection } from "mjml-react";
-import { colors, fontFamily, fontSize, screens } from "./theme";
-import Footer from "./components/Footer";
+import { colors, fontFamily, fontSize, screens } from "../theme";
+import Footer from "../components/Footer";
 
 const styles = `
   .h1 > * {

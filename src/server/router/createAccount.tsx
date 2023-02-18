@@ -9,7 +9,7 @@ import { createSupaServerClient } from "../../utils/serverSupaClient";
 import { resetPasswordEmail } from "../../emails/resetPassword";
 import sendMail from "../../emails";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import ConfirmEmailNew from "../../emails/ConfirmEmailNew";
+import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
 
 export const createAccountRouter = createRouter()
   .query("searchForOrg", {

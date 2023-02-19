@@ -71,7 +71,7 @@ export const scheduleRouter = createRouter()
           },
         });
       } catch (err) {
-        items = [];
+        return { items };
       }
       console.log(items);
 

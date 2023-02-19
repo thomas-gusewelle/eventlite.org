@@ -62,7 +62,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
       keepPreviousData: true,
       onSuccess(data) {
         let _selectedPeople: { userId: string | null; dateTime: Date }[] = [];
-        data.items.map((item) =>
+        data.items?.map((item) =>
           item.positions.map((pos) =>
             _selectedPeople.push({
               userId: pos.userId,
@@ -139,7 +139,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   }
 
   if (
-    getScheduleQuery.data?.items.length == 0 ||
+    getScheduleQuery.data?.items?.length == 0 ||
     getScheduleQuery.data == undefined ||
     poepleList == undefined
   ) {
@@ -147,7 +147,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
       <NoDataLayout
         heading={"Schedule"}
         text={"No events found. Please add an event."}
-        func={() => router.push("/events/addevent")}
+        func={() => router.push(`/events/addevent?redirect=${router.asPath}`)}
         btnText={"Add Events"}
       />
     );
@@ -197,7 +197,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
           </div>
           <div>
             <div className='mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
-              {getScheduleQuery?.data.items.map((event) => (
+              {getScheduleQuery?.data.items?.map((event) => (
                 <div
                   key={event.id}
                   className='flex flex-col rounded-lg border border-gray-300 shadow'>

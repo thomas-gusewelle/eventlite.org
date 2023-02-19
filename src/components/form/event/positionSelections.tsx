@@ -113,16 +113,10 @@ export const PositionsSelector = () => {
                     position: { id: "", name: "" },
                   })
                 }
-                className={`col-span-1 flex cursor-pointer items-center justify-center ${
-                  posiitonsField.length == rolesQuery.data?.length &&
-                  "pointer-events-none"
-                } cursor-pointer`}>
+                className={`col-span-1 flex cursor-pointer items-center justify-center cursor-pointer`}>
                 <MdAddCircleOutline
                   size={25}
-                  className={`text-green-600 ${
-                    posiitonsField.length == rolesQuery.data?.length &&
-                    "text-gray-300"
-                  }`}
+                  className={`text-green-600`}
                 />
               </div>
               <div

@@ -52,7 +52,7 @@ export const EventForm: React.FC<{
     ) {
       setRepeatFrequency(_repeatFrequency);
     }
-  }, [_repeatFrequency]);
+  }, [_repeatFrequency, repeatFrequency.id]);
 
   useEffect(() => {
     setFrequncyOptions([

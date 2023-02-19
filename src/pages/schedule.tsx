@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useState } from "react";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { SectionHeading } from "../components/headers/SectionHeading";
@@ -74,8 +74,13 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         setSelectedPeople(_selectedPeople);
         setPoepleList(data.users);
       },
+      // onError: () => router.push("/events"),
     }
   );
+
+  useEffect(() => {
+    console.log(getScheduleQuery);
+  }, [getScheduleQuery]);
 
   const scheduleUserMutation = trpc.useMutation("schedule.updateUserRole", {
     onSuccess() {
@@ -125,13 +130,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     console.log("This is the data", data);
   });
 
-  if (
-    getScheduleQuery.data == undefined ||
-    getScheduleQuery.data.users == undefined ||
-    getScheduleQuery.isLoading ||
-    getScheduleQuery.isFetching ||
-    poepleList == undefined
-  ) {
+  if (getScheduleQuery.isLoading || getScheduleQuery.isFetching) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />
@@ -139,7 +138,11 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     );
   }
 
-  if (getScheduleQuery.data?.items.length == 0) {
+  if (
+    getScheduleQuery.data?.items.length == 0 ||
+    getScheduleQuery.data == undefined ||
+    poepleList == undefined
+  ) {
     return (
       <NoDataLayout
         heading={"Schedule"}

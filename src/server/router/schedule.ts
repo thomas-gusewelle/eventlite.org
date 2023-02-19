@@ -1,7 +1,7 @@
 import { createRouter } from "./context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { Event } from "@prisma/client";
+import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { zeroTime } from "../utils/dateTimeModifers";
 
 export const scheduleRouter = createRouter()
@@ -23,28 +23,9 @@ export const scheduleRouter = createRouter()
       cursor: z.string().nullish(),
     }),
     async resolve({ input, ctx }) {
+      console.log("here 26");
       const limit: number = input.limit ?? 50;
       const { cursor } = input;
-      // const testItems = await prisma?.event.findMany({
-      //   where: {
-      //     datetime: { gte: new Date() },
-      //   },
-      //   take: 4,
-      //   orderBy: {
-      //     datetime: "asc",
-      //   },
-      //   include: {
-      //     Locations: true,
-      //     positions: {
-      //       include: {
-      //         Role: true,
-      //         User: true,
-      //       },
-      //     },
-      //   },
-      //   cursor: cursor ? { id: cursor } : undefined,
-      // });
-      // console.log("this is the test: ", testItems);
 
       const org = await prisma?.user.findFirst({
         where: {
@@ -54,29 +35,45 @@ export const scheduleRouter = createRouter()
           organizationId: true,
         },
       });
+      console.log(org);
 
-      const items = await prisma?.event.findMany({
-        take: limit + 1,
-        where: {
-          organizationId: org?.organizationId,
-          datetime: {
-            gte: new Date(),
-          },
-        },
-        include: {
-          Locations: true,
-          positions: {
-            include: {
-              Role: true,
-              User: true,
+      let items:
+        | (Event & {
+            Locations: Locations | null;
+            positions: (EventPositions & {
+              User: User | null;
+              Role: Role;
+            })[];
+          })[]
+        | undefined = undefined;
+
+      try {
+        items = await prisma?.event.findMany({
+          take: limit + 1,
+          where: {
+            organizationId: org?.organizationId,
+            datetime: {
+              gte: new Date(),
             },
           },
-        },
-        cursor: cursor ? { id: cursor } : undefined,
-        orderBy: {
-          datetime: "asc",
-        },
-      });
+          include: {
+            Locations: true,
+            positions: {
+              include: {
+                Role: true,
+                User: true,
+              },
+            },
+          },
+          cursor: cursor ? { id: cursor } : undefined,
+          orderBy: {
+            datetime: "asc",
+          },
+        });
+      } catch (err) {
+        items = [];
+      }
+      console.log(items);
 
       const lastItems = await prisma?.event.findMany({
         take: -limit - 1,

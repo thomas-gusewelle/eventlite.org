@@ -116,6 +116,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     onSuccess() {
       eventId.current.id = null;
       setDeleteAllRecuring(false);
+      utils.invalidateQueries("schedule.getSchedule");
       getScheduleQuery.refetch();
     },
   });

@@ -23,7 +23,6 @@ export const scheduleRouter = createRouter()
       cursor: z.string().nullish(),
     }),
     async resolve({ input, ctx }) {
-      console.log("here 26");
       const limit: number = input.limit ?? 50;
       const { cursor } = input;
 
@@ -35,7 +34,6 @@ export const scheduleRouter = createRouter()
           organizationId: true,
         },
       });
-      console.log(org);
 
       let items:
         | (Event & {
@@ -73,7 +71,6 @@ export const scheduleRouter = createRouter()
       } catch (err) {
         return { items };
       }
-      console.log(items);
 
       const lastItems = await prisma?.event.findMany({
         take: -limit - 1,

@@ -28,20 +28,28 @@ export const EventForm: React.FC<{
     name: "Daily",
   });
   const [isRepeating, setIsRepeating] = useState(false);
-  const _isRepeating = watch("isRepeating", false);
-  const _repeatFrequency = watch("repeatFrequency", {
-    id: "D",
-    name: "Daily",
-  });
+  const _isRepeating: boolean = watch("isRepeating", false);
+  const _repeatFrequency: { id: "D" | "W" | "WC" | "M"; name: string } = watch(
+    "repeatFrequency",
+    {
+      id: "D",
+      name: "Daily",
+    }
+  );
   const _eventDate: Date = watch("eventDate", new Date());
   useEffect(() => {
+    // console.log(_isRepeating);
     if (_isRepeating != undefined) {
       setIsRepeating(_isRepeating);
     }
   }, [_isRepeating]);
 
   useEffect(() => {
-    if (_repeatFrequency != undefined) {
+    console.log(_repeatFrequency);
+    if (
+      _repeatFrequency != undefined &&
+      _repeatFrequency.id != repeatFrequency.id
+    ) {
       setRepeatFrequency(_repeatFrequency);
     }
   }, [_repeatFrequency]);
@@ -63,7 +71,7 @@ export const EventForm: React.FC<{
 
   return (
     <>
-      <div className='grid grid-cols-6 gap-6 mb-6 px-6'>
+      <div className='mb-6 grid grid-cols-6 gap-6 px-6'>
         <div className='col-span-6 sm:col-span-3'>
           <label htmlFor='event-name' className=' text-gray-700'>
             Event Name
@@ -73,13 +81,13 @@ export const EventForm: React.FC<{
             id='Name'
             autoFocus
             {...register("name", { required: true, minLength: 3 })}
-            className=' focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+            className=' block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
           />
           {formState.errors.name && (
             <span className='text-red-500'>Event Name is Required</span>
           )}
         </div>
-        <div className='hidden sm:block col-span-3'></div>
+        <div className='col-span-3 hidden sm:block'></div>
         <div className='col-span-6 md:col-span-2'>
           <label htmlFor='EventDate' className='text-gray-700'>
             Event Date
@@ -99,14 +107,14 @@ export const EventForm: React.FC<{
                       onChange={onChange}
                       minDate={new Date()}
                       maxDate={yearsFromToday()}
-                      className=' block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+                      className=' m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
                     />
 
                     <div
                       onClick={() =>
                         document.getElementById("datepick")?.focus()
                       }
-                      className='flex items-center rounded-r cursor-pointer px-3 border border-gray-300 border-l-0 bg-gray-50 hover:text-indigo-700'>
+                      className='flex cursor-pointer items-center rounded-r border border-l-0 border-gray-300 bg-gray-50 px-3 hover:text-indigo-700'>
                       <MdOutlineCalendarToday size={20} />
                     </div>
                   </div>
@@ -138,11 +146,11 @@ export const EventForm: React.FC<{
                     timeIntervals={15}
                     timeCaption='Time'
                     dateFormat='h:mm aa'
-                    className='block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-l transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none'
+                    className='m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
                   />
                   <div
                     onClick={() => document.getElementById("timepick")?.focus()}
-                    className='flex items-center rounded-r cursor-pointer px-3 border hover:text-indigo-700 border-gray-300 border-l-0 bg-gray-50'>
+                    className='flex cursor-pointer items-center rounded-r border border-l-0 border-gray-300 bg-gray-50 px-3 hover:text-indigo-700'>
                     <MdAccessTime size={20} />
                   </div>
                 </div>
@@ -154,7 +162,7 @@ export const EventForm: React.FC<{
           />
         </div>
         {/* Fill space div */}
-        <div className='hidden md:block md:col-span-2 lg:col-span-3'></div>
+        <div className='hidden md:col-span-2 md:block lg:col-span-3'></div>
 
         {/* Event Location */}
         <div className='col-span-6 md:col-span-3 '>
@@ -179,7 +187,7 @@ export const EventForm: React.FC<{
           />
         </div>
         {/* Fill space div */}
-        <div className='hidden md:block md:col-span-3 '></div>
+        <div className='hidden md:col-span-3 md:block '></div>
 
         {/* Event recurring switch */}
         {(alreadyRec == false || alreadyRec == null || rec == true) && (
@@ -234,7 +242,7 @@ export const EventForm: React.FC<{
 
             {isRepeating && (
               <>
-                <div className='hidden sm:block col-span-2'></div>
+                <div className='col-span-2 hidden sm:block'></div>
                 <div className='col-span-6 sm:col-span-3'>
                   <RecurringOptions selection={repeatFrequency} />
                 </div>

@@ -74,7 +74,7 @@ export const PositionsSelector = () => {
 
       <div className='mt-1 grid gap-y-6'>
         {fields.map((field, index) => (
-          <div key={field.id} className='mt-1 grid grid-cols-8 gap-x-3 gap-y-6'>
+          <div key={field.id} className='mt-1 grid grid-cols-6 gap-x-3 gap-y-6'>
             <div className='col-span-4'>
               <Controller
                 name={`positions.${index}.position`}

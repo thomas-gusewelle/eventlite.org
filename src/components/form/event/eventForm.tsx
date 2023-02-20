@@ -3,8 +3,12 @@ import { PositionsSelector } from "./positionSelections";
 import { RecurringOptions } from "./recurringOptions";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { MdAccessTime, MdOutlineCalendarToday } from "react-icons/md";
-import { SingleSelect } from "../singleSelect";
+import {
+  MdAccessTime,
+  MdAddCircleOutline,
+  MdOutlineCalendarToday,
+} from "react-icons/md";
+import { NewSingleSelect, SingleSelect } from "../singleSelect";
 import { Switch } from "@headlessui/react";
 import { Locations } from "@prisma/client";
 import { useEffect, useState } from "react";
@@ -13,12 +17,17 @@ import { findWeekday } from "../../../utils/findWeekday";
 import { NIL } from "uuid";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { yearsFromToday } from "../../../server/utils/dateTimeModifers";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { AddSelection } from "../AddSelection";
+import { LocationSelector } from "./locationSelector";
 
 export const EventForm: React.FC<{
   locations: Locations[];
   rec?: boolean;
   alreadyRec?: boolean | null;
 }> = ({ locations, rec = null, alreadyRec = null }) => {
+  const router = useRouter();
   const { control, register, formState, watch } = useFormContext();
   const [frequncyOptions, setFrequncyOptions] = useState<
     EventRepeatFrequency[]
@@ -165,27 +174,7 @@ export const EventForm: React.FC<{
         <div className='hidden md:col-span-2 md:block lg:col-span-3'></div>
 
         {/* Event Location */}
-        <div className='col-span-6 md:col-span-3 '>
-          <label className='text-gray-700'>Event Location</label>
-          <Controller
-            name='eventLocation'
-            control={control}
-            defaultValue={{ id: "", name: "", organizationId: "" }}
-            rules={{ validate: { isNull: (v) => v.id != "" } }}
-            render={({ field: { onChange, value }, fieldState }) => (
-              <>
-                <SingleSelect
-                  selected={value}
-                  setSelected={onChange}
-                  list={locations}
-                />
-                {fieldState.error?.type == "isNull" && (
-                  <ErrorSpan>Location Required</ErrorSpan>
-                )}
-              </>
-            )}
-          />
-        </div>
+        <LocationSelector locations={locations} />
         {/* Fill space div */}
         <div className='hidden md:col-span-3 md:block '></div>
 

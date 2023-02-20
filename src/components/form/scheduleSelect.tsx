@@ -86,7 +86,7 @@ export const ScheduleSelect: React.FC<{
                       <Combobox.Option
                         key={index}
                         className={({ active }) =>
-                          `relative cursor-default cursor-pointer select-none py-2 pl-10 pr-4 ${
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                             active ? "bg-indigo-100" : "text-gray-900"
                           }`
                         }

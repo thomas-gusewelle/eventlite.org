@@ -19,7 +19,7 @@ import { sidebar } from "../../components/layout/sidebar";
 import { ErrorAlert } from "../../components/alerts/errorAlert";
 import { AlertContext } from "../../providers/alertProvider";
 
-const AddEvent = () => {
+const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
   const utils = trpc.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
@@ -57,7 +57,11 @@ const AddEvent = () => {
     if (!data.isRepeating) {
       addEvent.mutate(data, {
         onSuccess() {
-          router.push("/events");
+          if (redirect) {
+            router.push(redirect);
+          } else {
+            router.push("/events");
+          }
         },
       });
     }
@@ -87,7 +91,11 @@ const AddEvent = () => {
               _data["recurringId"] = recurringId;
               addEventRecurrance.mutate(_data as EventRecurrance, {
                 onSuccess() {
-                  router.push("/events");
+                  if (redirect) {
+                    router.push(redirect);
+                  } else {
+                    router.push("/events");
+                  }
                 },
               });
 
@@ -133,6 +141,19 @@ const AddEvent = () => {
   );
 };
 
-AddEvent.getLayout = sidebar;
+const AddEventPage = () => {
+  const router = useRouter();
 
-export default AddEvent;
+  const { redirect } = router.query;
+  console.log(typeof redirect);
+
+  if (Array.isArray(redirect)) {
+    return <div>Error with redirct link</div>;
+  }
+
+  return <AddEvent redirect={redirect} />;
+};
+
+AddEventPage.getLayout = sidebar;
+
+export default AddEventPage;

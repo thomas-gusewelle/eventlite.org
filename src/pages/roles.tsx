@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
-import { ErrorAlert } from "../components/alerts/errorAlert";
 import { BtnAdd } from "../components/btn/btnAdd";
 import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnSave } from "../components/btn/btnSave";

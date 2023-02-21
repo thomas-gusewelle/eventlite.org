@@ -16,7 +16,7 @@ import { UserStatusInputSelector } from "../../components/form/userStatusInputSe
 import { removeDashes } from "../../utils/formatPhoneNumber";
 import { UserFormValues } from "../../../types/userFormValues";
 import { BtnPurpleDropdown } from "../../components/btn/btnPurpleDropdown";
-const AddUser = () => {
+const AddUser = ({ redirect }: { redirect: string | undefined }) => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
   // used to track if user is adding or deleting characters from phone #
@@ -75,10 +75,13 @@ const AddUser = () => {
           if (invite.current == true && data) {
             inviteUser.mutate(
               { userId: data.id },
-              { onSuccess: () => router.push("/people") }
+              {
+                onSuccess: () =>
+                  redirect ? router.push(redirect) : router.push("/people"),
+              }
             );
           } else {
-            router.push("/people");
+            redirect ? router.push(redirect) : router.push("/people");
           }
         },
       }
@@ -161,6 +164,17 @@ const AddUser = () => {
   );
 };
 
-AddUser.getLayout = sidebar;
+const AddUserPage = () => {
+  const router = useRouter();
+  const { redirect } = router.query;
 
-export default AddUser;
+  if (Array.isArray(redirect)) {
+    return <div>Error with redirect link</div>;
+  }
+
+  return <AddUser redirect={redirect} />;
+};
+
+AddUserPage.getLayout = sidebar;
+
+export default AddUserPage;

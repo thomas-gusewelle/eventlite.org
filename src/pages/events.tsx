@@ -1,26 +1,22 @@
 import { Tab } from "@headlessui/react";
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { useRouter } from "next/router";
-import { FormEvent, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnDelete } from "../components/btn/btnDelete";
 import { CircularProgress } from "../components/circularProgress";
-import { shortDate } from "../components/dateTime/dates";
-import { shortTime } from "../components/dateTime/times";
 import { EventCard } from "../components/events/eventCard";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
 import { AddDropdownMenu } from "../components/menus/addDropdown";
-import { TableDropdown } from "../components/menus/tableDropdown";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
 import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
-import { PicNameRowSmall } from "../components/profile/PicNameRow";
 import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { classNames } from "../utils/classnames";
@@ -440,11 +436,9 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
 
   if (eventsQuery.data?.length == 0) {
     return (
-      <NoDataLayout
-        heading='Events'
-        btnText='Add Event'
-        func={() => router.push("/events/addevent")}
-      />
+      <div className='mt-3 flex justify-center'>
+        <h3 className='text-3xl font-bold'>No Past Events Found</h3>
+      </div>
     );
   }
 

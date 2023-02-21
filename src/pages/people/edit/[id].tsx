@@ -23,11 +23,13 @@ import { BtnCancel } from "../../../components/btn/btnCancel";
 import { EmailChangeModal } from "../../../components/modal/emailChangeConfirm";
 import { BtnSave } from "../../../components/btn/btnSave";
 import { UserContext } from "../../../providers/userProvider";
+import { BtnPurple } from "../../../components/btn/btnPurple";
 
 const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useContext(UserContext);
   const methods = useForm<UserFormValues>();
+  const utils = trpc.useContext();
   const [emailEditModal, setEmailEditModal] = useState(false);
   const [formData, setFormData] = useState<UserFormValues | null>(null);
 
@@ -90,16 +92,23 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const submit = (data: UserFormValues) => {
     data["roles"] = selectedRoles;
 
-    editUser.mutate({
-      id: id,
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      email: data.email,
-      phone: removeDashes(data.phoneNumber ?? ""),
-      role: data.roles,
-      status: data.status,
-    });
-    router.push("/people");
+    editUser.mutate(
+      {
+        id: id,
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email,
+        phone: removeDashes(data.phoneNumber ?? ""),
+        role: data.roles,
+        status: data.status,
+      },
+      {
+        onSuccess() {
+          utils.invalidateQueries("user.getUsersByOrganization");
+          router.push("/people");
+        },
+      }
+    );
   };
 
   if (!user) {
@@ -166,7 +175,9 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
           </div>
           <div className='flex justify-end gap-3 bg-gray-50 px-4 py-3 text-right sm:px-6'>
             <BtnCancel onClick={() => router.back()} />
-            <BtnSave type='submit'></BtnSave>
+            <BtnPurple isLoading={editUser.isLoading} type='submit'>
+              Save
+            </BtnPurple>
           </div>
         </form>
       </FormProvider>

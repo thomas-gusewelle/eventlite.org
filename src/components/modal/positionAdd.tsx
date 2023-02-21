@@ -44,12 +44,12 @@ export const PositionAddModal = ({
       <>
         <form onSubmit={submit}>
           <ModalBody>
-            <ModalTitle text={"Add Position"} />
+            <ModalTitle text={"Add Role"} />
             <div className='mt-3'>
               <label
                 htmlFor='name'
                 className='block text-left text-sm font-medium text-gray-700'>
-                Position Name
+                Role Name
               </label>
               <input
                 type='text'
@@ -58,7 +58,7 @@ export const PositionAddModal = ({
                 className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
               />
               {errors.name && (
-                <span className='text-red-500'>Position name is required</span>
+                <span className='text-red-500'>Role name is required</span>
               )}
             </div>
           </ModalBody>

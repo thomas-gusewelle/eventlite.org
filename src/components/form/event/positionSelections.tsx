@@ -78,7 +78,7 @@ export const PositionsSelector = () => {
         {/*  */}
         <div className='grid grid-cols-8 gap-6'>
           <div className='col-span-4'>
-            <label className=''>Position</label>
+            <label className=''>Role</label>
           </div>
         </div>
 
@@ -112,7 +112,7 @@ export const PositionsSelector = () => {
                         showAdd
                         showAddComponent={
                           <AddSelection onClick={() => setOpen(true)}>
-                            Add a Position
+                            Add a Role
                           </AddSelection>
                         }
                       />
@@ -156,9 +156,11 @@ export const PositionsSelector = () => {
                   }`}>
                   <MdDelete
                     size={25}
-                    className={`text-red-600 ${
-                      index == 0 && posiitonsField.length < 2 && "text-gray-300"
-                    }`}
+                    className={
+                      index == 0 && posiitonsField.length < 2
+                        ? "text-gray-300"
+                        : "text-red-600"
+                    }
                   />
                 </div>
               </div>

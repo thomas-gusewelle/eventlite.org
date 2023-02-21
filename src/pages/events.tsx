@@ -33,6 +33,7 @@ type stateData = (Event & {
 
 const EventsPage = () => {
   const user = useContext(UserContext);
+
   const [queryString, setQueryString] = useState("");
 
   const addOptions: TableOptionsDropdown = [
@@ -111,6 +112,17 @@ const EventsPage = () => {
     </>
   );
 };
+
+// const EventsWrapper = () => {
+//   const router = useRouter();
+//   const { page } = router.query;
+//   if (!page || typeof page != "string") {
+//     return <div>Error with page number</div>;
+//   }
+//   const num = parseInt(page);
+
+//   return <EventsPage pageNum={num} />;
+// };
 
 EventsPage.getLayout = sidebar;
 

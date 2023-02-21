@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { trpc } from "../../utils/trpc";
 import { BtnCancel } from "../btn/btnCancel";
@@ -8,7 +8,7 @@ import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
 import { ModalTitle } from "./modalTitle";
 
-export const LocationAddModel = ({
+export const PositionAddModal = ({
   open,
   setOpen,
 }: {
@@ -16,7 +16,6 @@ export const LocationAddModel = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const utils = trpc.useContext();
-  const ref = useRef();
   const {
     register,
     handleSubmit,
@@ -24,12 +23,12 @@ export const LocationAddModel = ({
     formState: { errors },
   } = useForm<{ name: string }>();
 
-  const addLocation = trpc.useMutation("locations.createLocation");
+  const addPosition = trpc.useMutation("role.addRole");
 
   const submit = handleSubmit((data) => {
-    addLocation.mutate(data.name, {
+    addPosition.mutate(data.name, {
       onSuccess() {
-        utils.refetchQueries(["locations.getLocationsByOrg"], { active: true });
+        utils.refetchQueries(["role.getRolesByOrganization"], { active: true });
         setOpen(false);
       },
     });
@@ -40,33 +39,31 @@ export const LocationAddModel = ({
       setFocus("name", { shouldSelect: true });
     }
   }, [open, setFocus]);
-
   return (
     <Modal open={open} setOpen={setOpen}>
       <>
         <form onSubmit={submit}>
           <ModalBody>
-            <ModalTitle text={"Add Location"} />
-            <div className='mt-2'>
+            <ModalTitle text={"Add Position"} />
+            <div className='mt-3'>
               <label
                 htmlFor='name'
-                className='block text-sm font-medium text-gray-700'>
-                Location Name
+                className='block text-left text-sm font-medium text-gray-700'>
+                Position Name
               </label>
               <input
-                autoFocus={true}
                 type='text'
                 id='name'
                 {...register("name", { required: true, minLength: 3 })}
                 className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
               />
               {errors.name && (
-                <span className='text-red-500'>Location Name is Required</span>
+                <span className='text-red-500'>Position name is required</span>
               )}
             </div>
           </ModalBody>
           <BottomButtons>
-            <BtnPurple func={() => submit()} isLoading={addLocation.isLoading}>
+            <BtnPurple isLoading={addPosition.isLoading} func={() => submit()}>
               Save
             </BtnPurple>
             <BtnCancel

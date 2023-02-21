@@ -144,7 +144,7 @@ export const PositionsSelector = () => {
                       position: { id: "", name: "" },
                     })
                   }
-                  className={`col-span-1 flex cursor-pointer cursor-pointer items-center justify-center`}>
+                  className={`col-span-1 flex cursor-pointer items-center justify-center`}>
                   <MdAddCircleOutline size={25} className={`text-green-600`} />
                 </div>
                 <div

@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
+import { trpc } from "../../utils/trpc";
 import { BtnCancel } from "../btn/btnCancel";
+import { BtnPurple } from "../btn/btnPurple";
 import { BtnSave } from "../btn/btnSave";
 import { BottomButtons } from "./bottomButtons";
 import { Modal } from "./modal";
@@ -14,14 +16,22 @@ export const LocationAddModel = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const utils = trpc.useContext();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<{ name: string }>();
+
+  const addLocation = trpc.useMutation("locations.createLocation");
 
   const submit = handleSubmit((data) => {
-    console.log(data);
+    addLocation.mutate(data.name, {
+      onSuccess() {
+        utils.refetchQueries(["locations.getLocationsByOrg"], { active: true });
+        setOpen(false);
+      },
+    });
   });
   return (
     <Modal open={open} setOpen={setOpen}>
@@ -47,7 +57,9 @@ export const LocationAddModel = ({
             </div>
           </ModalBody>
           <BottomButtons>
-            <BtnSave type={"submit"} />
+            <BtnPurple type='submit' isLoading={addLocation.isLoading}>
+              Save
+            </BtnPurple>
             <BtnCancel
               onClick={() => {
                 setOpen(false);

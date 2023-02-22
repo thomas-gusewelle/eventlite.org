@@ -1,4 +1,11 @@
-import { Fragment, ReactElement, useContext, useEffect, useState } from "react";
+import {
+  Fragment,
+  ReactElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useRouter } from "next/router";
 import {
@@ -27,6 +34,7 @@ import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 import { classNames } from "../../utils/classnames";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { CircularProgress } from "../circularProgress";
+import { Feedback } from "../feedback/feedback";
 
 type SideLink = {
   name: string;
@@ -36,12 +44,31 @@ type SideLink = {
 }[];
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isScroll, setIsScroll] = useState(false);
   const [sideLinks, setSideLinks] = useState<SideLink>([]);
   const [show, setShow] = useState(false);
   const windowWidth = useWindowWidth();
   const router = useRouter();
   const user = useContext(UserContext);
   const supabase = useSupabaseClient();
+
+  useEffect(() => {
+    const observer = new ResizeObserver((item) => {
+      const { height } = item[0]!.contentRect;
+      if (height > window.innerHeight) {
+        setIsScroll(true);
+      } else {
+        setIsScroll(false);
+      }
+    });
+
+    if (scrollRef.current) {
+      observer.observe(scrollRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => observer.unobserve(scrollRef.current!);
+  }, []);
 
   useEffect(() => {
     setSideLinks([
@@ -329,7 +356,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
           </div>
           {/*Mobile responsive sidebar*/}
           {/* Sidebar ends */}
-          <div className='w-full'>
+          <div ref={scrollRef} className='w-full'>
             {/* Navigation starts */}
             <nav className='relative z-10 flex h-16 items-center justify-end bg-white shadow lg:items-stretch lg:justify-between'>
               <div className='hidden w-full pr-6 lg:flex'>
@@ -450,6 +477,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             </nav>
             {/* Navigation ends */}
             {/* Remove class [ h-64 ] when adding a card block */}
+
             <div className='pb-42 container mx-auto px-4 pt-4 pb-52 sm:pt-10 2xl:pb-10'>
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
               <AlertProvider>
@@ -462,12 +490,13 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         <CircularProgress />
                       </div>
                     ) : (
-                      children
+                      <>{children}</>
                     )}
                   </>
                 </div>
               </AlertProvider>
             </div>
+            <Feedback isScroll={isScroll} />
           </div>
         </div>
       </div>

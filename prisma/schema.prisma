@@ -29,10 +29,11 @@ model User {
   availability   Availability[]
   hasLogin       Boolean          @default(false)
 
-  userSettingsId String?
-  UserSettings   UserSettings?
-  InviteLink     InviteLink?
-  ResetPassword  ResetPassword[]
+  userSettingsId   String?
+  UserSettings     UserSettings?
+  InviteLink       InviteLink?
+  ResetPassword    ResetPassword[]
+  BugFeatureReport BugFeatureReport[]
 
   @@index([id, organizationId, userSettingsId])
 }
@@ -166,4 +167,14 @@ model BetaInterest {
   email     String
   orgName   String
   teamSize  String
+}
+
+model BugFeatureReport {
+  id     String  @id @default(cuid())
+  type   String
+  text   String
+  url    String
+  picUrl String?
+  User   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
 }

@@ -9,6 +9,8 @@ import submitLottie from "./check-tick.json";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import { trpc } from "../../utils/trpc";
+import { useRouter } from "next/router";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // export const Feedback = ({ isScroll }: { isScroll: boolean }) => {
 //   const [open, setOpen] = useState(true);
@@ -37,7 +39,9 @@ export const FeedbackTabs = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const router = useRouter();
   const [isSubmited, setIsSubmited] = useState(false);
+  const supabase = useSupabaseClient();
   const [elementHeight, setElementHeight] = useState(0);
   const reportMutation = trpc.useMutation("feedback.submitReport");
   const {
@@ -45,7 +49,7 @@ export const FeedbackTabs = ({
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<{ text: string }>();
+  } = useForm<{ text: string; picture: FileList }>();
   const [selected, setSelected] = useState<"FEEDBACK" | "BUG" | "OTHER">("BUG");
   // Sets focus on paragraph entry
   setFocus("text");
@@ -58,11 +62,32 @@ export const FeedbackTabs = ({
     }
   }, []);
 
-  const submit = handleSubmit((data) => {
-    reportMutation.mutate(
-      { type: selected, text: data.text },
-      { onSuccess: () => setIsSubmited(true) }
-    );
+  const submit = handleSubmit(async (data) => {
+    console.log(data);
+    const pic = data.picture[0];
+    if (pic) {
+      const upload = await supabase.storage
+        .from("feedback")
+        .upload(`beta/${pic.name}`, pic);
+      reportMutation.mutate(
+        {
+          type: selected,
+          text: data.text,
+          route: router.asPath,
+          picUrl: upload.data?.path,
+        },
+        { onSuccess: () => setIsSubmited(true) }
+      );
+    } else {
+      reportMutation.mutate(
+        {
+          type: selected,
+          text: data.text,
+          route: router.asPath,
+        },
+        { onSuccess: () => setIsSubmited(true) }
+      );
+    }
   });
 
   // timeout to close form after submitted
@@ -150,6 +175,14 @@ export const FeedbackTabs = ({
               errors.text &&
               "border-2 border-red-500 focus:border-red-500 focus:ring-red-500"
             }`}></textarea>
+          <div>
+            <label>Screenshot Upload</label>
+            <input
+              {...register("picture")}
+              className='file:rounded-lg file:border-none file:bg-indigo-600 file:px-3 file:py-1 file:text-white'
+              type={"file"}
+              accept='image/png image/jpeg image/heic '></input>
+          </div>
           <div className='mt-3 flex justify-center gap-3'>
             <BtnNeutral fullWidth func={() => setOpen(false)}>
               Cancel

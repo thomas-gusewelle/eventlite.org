@@ -175,11 +175,11 @@ export const FeedbackTabs = ({
               errors.text &&
               "border-2 border-red-500 focus:border-red-500 focus:ring-red-500"
             }`}></textarea>
-          <div>
-            <label>Screenshot Upload</label>
+          <div className='mt-3 mb-6 grid gap-1'>
+            <label>Screenshot Upload (not required)</label>
             <input
               {...register("picture")}
-              className='file:rounded-lg file:border-none file:bg-indigo-600 file:px-3 file:py-1 file:text-white'
+              className='file:cursor-pointer file:rounded-lg file:border-none file:bg-indigo-600 file:px-3 file:py-1 file:text-white'
               type={"file"}
               accept='image/png image/jpeg image/heic '></input>
           </div>

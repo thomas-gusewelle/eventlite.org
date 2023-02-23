@@ -34,7 +34,8 @@ import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 import { classNames } from "../../utils/classnames";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { CircularProgress } from "../circularProgress";
-import { Feedback } from "../feedback/feedback";
+import { FeedbackTabs } from "../feedback/feedback";
+import { createPortal } from "react-dom";
 
 type SideLink = {
   name: string;
@@ -46,6 +47,7 @@ type SideLink = {
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isScroll, setIsScroll] = useState(false);
+  const [showReport, setShowReport] = useState(true);
   const [sideLinks, setSideLinks] = useState<SideLink>([]);
   const [show, setShow] = useState(false);
   const windowWidth = useWindowWidth();
@@ -53,22 +55,22 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const user = useContext(UserContext);
   const supabase = useSupabaseClient();
 
-  useEffect(() => {
-    const observer = new ResizeObserver((item) => {
-      const { height } = item[0]!.contentRect;
-      if (height > window.innerHeight) {
-        setIsScroll(true);
-      } else {
-        setIsScroll(false);
-      }
-    });
+  // useEffect(() => {
+  //   const observer = new ResizeObserver((item) => {
+  //     const { height } = item[0]!.contentRect;
+  //     if (height > window.innerHeight) {
+  //       setIsScroll(true);
+  //     } else {
+  //       setIsScroll(false);
+  //     }
+  //   });
 
-    if (scrollRef.current) {
-      observer.observe(scrollRef.current);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    return () => observer.unobserve(scrollRef.current!);
-  }, []);
+  //   if (scrollRef.current) {
+  //     observer.observe(scrollRef.current);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   return () => observer.unobserve(scrollRef.current!);
+  // }, []);
 
   useEffect(() => {
     setSideLinks([
@@ -328,6 +330,25 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <a
+                                      onClick={() => {
+                                        setShow(false);
+                                        setShowReport(true);
+                                      }}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Bug/Feedback Report
+                                    </a>
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item key={2}>
+                                {({ active }) => (
+                                  <button className='w-full text-left'>
+                                    <a
                                       onClick={async () => {
                                         await supabase.auth.signOut();
                                         setShow(false);
@@ -404,6 +425,25 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 )}
                               </Menu.Item>
                               <Menu.Item key={1}>
+                                {({ active }) => (
+                                  <button className='w-full text-left'>
+                                    <a
+                                      onClick={() => {
+                                        setShow(false);
+                                        setShowReport(true);
+                                      }}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Bug/Feedback Report
+                                    </a>
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item key={2}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <a
@@ -490,13 +530,27 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         <CircularProgress />
                       </div>
                     ) : (
-                      <>{children}</>
+                      <>
+                        {children}
+
+                        {showReport &&
+                          createPortal(
+                            <FeedbackTabs
+                              open={showReport}
+                              setOpen={setShowReport}
+                            />,
+                            document.body
+                          )}
+                        {/* <FeedbackTabs
+                          open={showReport}
+                          setOpen={setShowReport}
+                        /> */}
+                      </>
                     )}
                   </>
                 </div>
               </AlertProvider>
             </div>
-            <Feedback isScroll={isScroll} />
           </div>
         </div>
       </div>

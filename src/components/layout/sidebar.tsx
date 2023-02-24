@@ -47,7 +47,7 @@ type SideLink = {
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isScroll, setIsScroll] = useState(false);
-  const [showReport, setShowReport] = useState(true);
+  const [showReport, setShowReport] = useState(false);
   const [sideLinks, setSideLinks] = useState<SideLink>([]);
   const [show, setShow] = useState(false);
   const windowWidth = useWindowWidth();

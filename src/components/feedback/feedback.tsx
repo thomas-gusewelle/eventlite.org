@@ -126,7 +126,7 @@ export const FeedbackTabs = ({
         <form
           id='form'
           onSubmit={submit}
-          className='min-w-[90vw] rounded-lg px-3  py-3 shadow sm:min-w-[24rem]'>
+          className='min-w-[90vw] max-w-[90vw] rounded-lg px-3  py-3 shadow sm:min-w-[24rem]'>
           <div className='mb-3 flex justify-start space-x-1 rounded-xl bg-gray-200 p-1'>
             <div
               onClick={() => {

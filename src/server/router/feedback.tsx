@@ -52,7 +52,7 @@ export const feedbackRouter = createRouter().mutation("submitReport", {
             text={input.text}
           />
         ),
-        attachments: [picUrl ? { filename: report?.id, path: picUrl } : {}],
+        attachments: [picUrl ? { filename: report?.id, path: picUrl } : null],
       });
     } catch (error) {}
   },

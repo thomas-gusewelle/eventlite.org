@@ -20,8 +20,8 @@ export const LimitSelect: React.FC<{
         onChange={(value) => {
           updateLimit.mutate(value, {
             onSuccess() {
-              utils.invalidateQueries("user.getUser");
               setSelected(value);
+              utils.invalidateQueries("user.getUser");
             },
           });
         }}>

@@ -326,6 +326,7 @@ export const createAccountRouter = createRouter()
           password: input.password,
         }
       );
+      console.log(update);
       if (update.error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

@@ -1,3 +1,11 @@
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+  PreviewData,
+} from "next";
+import { ParsedUrlQuery } from "querystring";
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CircularProgress } from "../../components/circularProgress";
@@ -7,6 +15,28 @@ import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { AreYouSureModal } from "../../components/modal/areYouSure";
 import { trpc } from "../../utils/trpc";
+
+export async function getServerSideProps(
+  context:
+    | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
+    | {
+        req: NextApiRequest;
+        res: NextApiResponse;
+      }
+) {
+  const supabase = createServerSupabaseClient(context);
+  const user = await supabase.auth.getUser();
+  if (user.data.user?.email != "tgusewelle@eventlite.org") {
+    return {
+      redirect: {
+        destination: "/dashboard",
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+}
 
 const OrgsPage = () => {
   const getOrgs = trpc.useQuery(["admin.getOrgs"]);

@@ -1,8 +1,38 @@
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+  PreviewData,
+} from "next";
+import { ParsedUrlQuery } from "querystring";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { trpc } from "../../utils/trpc";
+
+export async function getServerSideProps(
+  context:
+    | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
+    | {
+        req: NextApiRequest;
+        res: NextApiResponse;
+      }
+) {
+  const supabase = createServerSupabaseClient(context);
+  const user = await supabase.auth.getUser();
+  if (user.data.user?.email != "tgusewelle@eventlite.org") {
+    return {
+      redirect: {
+        destination: "/dashboard",
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+}
 
 const LoginUsers = () => {
   const getUsers = trpc.useQuery(["admin.getLoginUsers"]);

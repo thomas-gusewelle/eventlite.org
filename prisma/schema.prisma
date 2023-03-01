@@ -161,12 +161,13 @@ model EventPositions {
 }
 
 model BetaInterest {
-  id        String @id @default(uuid())
-  firstName String
-  lastName  String
-  email     String
-  orgName   String
-  teamSize  String
+  id         String  @id @default(uuid())
+  firstName  String
+  lastName   String
+  email      String
+  orgName    String
+  teamSize   String
+  inviteSent Boolean @default(false)
 }
 
 model BugFeatureReport {

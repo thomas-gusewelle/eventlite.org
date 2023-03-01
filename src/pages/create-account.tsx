@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateAccountForm } from "../../types/createAccountFormValues";
@@ -13,7 +19,19 @@ import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-const SignIn = () => {
+const CreateAccount = ({
+  code,
+  firstName,
+  lastName,
+  orgName,
+  email,
+}: {
+  code: string;
+  firstName: string;
+  lastName: string;
+  orgName: string;
+  email: string;
+}) => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(1);
@@ -38,35 +56,39 @@ const SignIn = () => {
 
   const submit = methods.handleSubmit(async (data) => {
     //if no OrgID == create organization
-    if (data.orgID == undefined || data?.orgID == "") {
-      const user = await supabaseClient.auth.signUp({
+
+    createOrg.mutate(
+      {
+        inviteCode: code,
+        orgName: data.orgName,
+        orgPhoneNumber: data.orgPhoneNumber,
+        firstName: data.firstName,
+        lastName: data.lastName,
         email: data.email,
         password: data.password,
-      });
+        phoneNumber: data.phoneNumber,
+        status: "ADMIN",
+      },
 
-      if (user.data.user?.id == undefined || user.error) {
-        setError({ state: true, message: "Unable to create user" });
-        return;
-      }
-      createOrg.mutate(
-        {
-          id: user.data.user?.id,
-          orgName: data.orgName,
-          orgPhoneNumber: data.orgPhoneNumber,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
-          status: "ADMIN",
+      {
+        onError(err) {
+          alert(err);
         },
-        {
-          onSuccess(retunredData, variables, context) {
-            router.push("/dashboard");
-          },
-        }
-      );
-    }
+        onSuccess(retunredData, variables, context) {
+          router.push("/dashboard");
+        },
+      }
+    );
   });
+
+  useEffect(() => {
+    methods.reset({
+      orgName: orgName,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+    });
+  }, [email, firstName, lastName, methods, orgName]);
   return (
     <>
       <VerticalLogo />
@@ -84,7 +106,10 @@ const SignIn = () => {
                   }}>
                   Back
                 </BtnNeutral>
-                <BtnPurple fullWidth={true} type='submit'>
+                <BtnPurple
+                  isLoading={createOrg.isLoading}
+                  fullWidth={true}
+                  type='submit'>
                   Submit
                 </BtnPurple>
               </div>
@@ -96,8 +121,38 @@ const SignIn = () => {
   );
 };
 
-SignIn.getLayout = loginFlowLayout;
-export default SignIn;
+const CreateAcountPage = () => {
+  const router = useRouter();
+  const { orgName, firstName, lastName, email, code } = router.query;
+
+  if (
+    !orgName ||
+    typeof orgName != "string" ||
+    !firstName ||
+    typeof firstName != "string" ||
+    !lastName ||
+    typeof lastName != "string" ||
+    !email ||
+    typeof email != "string" ||
+    !code ||
+    typeof code != "string"
+  ) {
+    return <div>Error with invite link</div>;
+  }
+
+  return (
+    <CreateAccount
+      orgName={orgName}
+      lastName={lastName}
+      firstName={firstName}
+      email={email}
+      code={decodeURIComponent(code)}
+    />
+  );
+};
+
+CreateAcountPage.getLayout = loginFlowLayout;
+export default CreateAcountPage;
 
 const Steps = ({
   step,

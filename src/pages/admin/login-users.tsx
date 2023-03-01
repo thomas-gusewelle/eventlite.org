@@ -7,10 +7,11 @@ import { trpc } from "../../utils/trpc";
 const LoginUsers = () => {
   const getUsers = trpc.useQuery(["admin.getLoginUsers"]);
   const resetPassword = trpc.useMutation("createAccount.generateResetPassword");
+  const resendVerification = trpc.useMutation("createAccount.resendConfirm");
 
   return (
     <AdminLayout>
-      <SectionHeading>Beta Requests</SectionHeading>
+      <SectionHeading>Login Users</SectionHeading>
       <table className='mt-6 w-full table-auto text-left'>
         <thead>
           <tr>
@@ -36,13 +37,15 @@ const LoginUsers = () => {
                       },
                       show: user.email != undefined,
                     },
-                    // {
-                    //   name: "Delete",
-                    //   function: () => {
-                    //     deleteRef.current = req.id;
-                    //     setDeleteConfirm(true);
-                    //   },
-                    // },
+                    {
+                      name: "Resend Verification",
+                      function: () => {
+                        if (user.email) {
+                          resendVerification.mutate({ email: user.email });
+                        }
+                      },
+                      show: user.confirmed_at == undefined,
+                    },
                   ]}
                 />
               </td>

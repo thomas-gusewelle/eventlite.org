@@ -14,6 +14,8 @@ import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { CircularProgress } from "../components/circularProgress";
+import Lottie from "lottie-react";
+import scheduleLottie from "../../public/lottie/schedule.json";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -151,6 +153,20 @@ const Dashboard = () => {
           Update Availability
         </BtnPurple>
       </div>
+
+      {approvalEventsData.length == 0 && eventsData.length == 0 && (
+        <div className='mt-12 flex flex-col items-center md:mt-3'>
+          <Lottie
+            className='max-w-[80%] sm:max-w-[24rem] md:max-w-[28rem]'
+            animationData={scheduleLottie}
+            loop={0}
+            initialSegment={[0, 40]}
+          />
+          <h3 className='text-center text-2xl font-medium md:text-3xl'>
+            Breath Easy, Your Schedule is Clear
+          </h3>
+        </div>
+      )}
 
       {approvalEventsData.length > 0 && (
         <>

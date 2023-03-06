@@ -163,7 +163,7 @@ const Dashboard = () => {
             initialSegment={[0, 40]}
           />
           <h3 className='text-center text-lg font-medium md:text-2xl'>
-            Breath Easy, Your Schedule is Clear
+            Breath easy, your schedule is clear.
           </h3>
         </div>
       )}

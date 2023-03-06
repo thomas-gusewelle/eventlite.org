@@ -133,7 +133,10 @@ const BetaPage = () => {
             </div>
 
             <div className='mt-6'>
-              <BtnPurple isLoding={betaMutate.isLoading} type='submit' fullWidth>
+              <BtnPurple
+                isLoading={betaMutate.isLoading}
+                type='submit'
+                fullWidth>
                 Submit
               </BtnPurple>
             </div>

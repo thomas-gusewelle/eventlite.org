@@ -162,7 +162,7 @@ const Dashboard = () => {
             loop={0}
             initialSegment={[0, 40]}
           />
-          <h3 className='text-center text-2xl font-medium md:text-3xl'>
+          <h3 className='text-center text-lg font-medium md:text-2xl'>
             Breath Easy, Your Schedule is Clear
           </h3>
         </div>

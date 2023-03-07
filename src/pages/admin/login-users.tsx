@@ -6,6 +6,7 @@ import {
   PreviewData,
 } from "next";
 import { ParsedUrlQuery } from "querystring";
+import { useContext } from "react";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
@@ -85,8 +86,8 @@ const LoginUsers = () => {
                     },
                     {
                       name: "Delete Login",
-                      function: () => deleteLogin.mutate(user.id, {
-                        onError: (err) => setError({ state: true, message: err.message })
+                      function: () => deleteLogin.mutate({ id: user.id }, {
+                        onError: (err) => setError({ state: true, message: err.message }), onSuccess: () => getUsers.refetch()
                       })
                     }
                   ]}

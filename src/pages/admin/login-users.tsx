@@ -78,7 +78,7 @@ const LoginUsers = () => {
                       function: () => {
                         if (user.email) {
                           resendVerification.mutate({ email: user.email }, {
-                            onError: (err) => setErrorr({ state: true, message: err.message })
+                            onError: (err) => setError({ state: true, message: err.message })
                           });
                         }
                       },

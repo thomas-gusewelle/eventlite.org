@@ -71,6 +71,7 @@ export const organizationRouter = createRouter()
           email: input.email,
           phoneNumber: input.phoneNumber,
           organizationId: org?.id,
+          hasLogin: true,
           status: input.status as UserStatus,
           UserSettings: {
             create: {},

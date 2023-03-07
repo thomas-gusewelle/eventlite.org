@@ -9,7 +9,6 @@ import { createRouter } from "./context";
 export const organizationRouter = createRouter()
   .mutation("createOrg", {
     input: z.object({
-      inviteCode: z.string(),
       firstName: z.string(),
       lastName: z.string(),
       email: z.string().email(),
@@ -24,18 +23,6 @@ export const organizationRouter = createRouter()
       orgPhoneNumber: z.string().optional(),
     }),
     async resolve({ input }) {
-      //Find and verify that the user has registered for the beta
-      const betaInvite = await prisma?.betaInterest.findFirst({
-        where: {
-          id: input.inviteCode,
-        },
-      });
-      if (!betaInvite) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invite does not exisit",
-        });
-      }
 
       // Create signup link and send to user
       const _supabase = createClient(
@@ -92,19 +79,9 @@ export const organizationRouter = createRouter()
       });
 
       try {
-        await prisma?.betaInterest.delete({
-          where: {
-            id: betaInvite.id,
-          },
-        });
+        await sendMail({ to: "tgusewelle@eventlite.org", subject: "Organization Created", text: `Awesome! Someone set up an organization. The name was ${org?.name}` })
       } catch (err) {
-        try {
-          await sendMail({
-            to: "tgusewelle@eventlite.org",
-            subject: "Error Deleting Beta Invite",
-            text: `Error deleting beta invite with ID; ${betaInvite.id}`,
-          });
-        } catch (err) {}
+
       }
 
       return { org: org, user: user };

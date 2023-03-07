@@ -48,9 +48,8 @@ export const AdminRouter = createRouter()
             <SendBetaInvite
               link={`https://eventlite.org/create-account?code=${encodeURIComponent(
                 betaRequest.id
-              )}&firstName=${betaRequest.firstName}&lastName=${
-                betaRequest.lastName
-              }&email=${betaRequest.email}&orgName=${betaRequest.orgName}`}
+              )}&firstName=${betaRequest.firstName}&lastName=${betaRequest.lastName
+                }&email=${betaRequest.email}&orgName=${betaRequest.orgName}`}
               name={betaRequest.firstName}
             />
           ),
@@ -132,6 +131,7 @@ export const AdminRouter = createRouter()
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_PRIVATE!
       );
+
       users
         ?.filter((user) => user.hasLogin)
         .forEach(async (user) => {

@@ -62,6 +62,7 @@ export const CreateOrganization = ({
   // Event listener for using enter key to press next btn
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
+      console.log(e)
       if (e.key == "Enter") {
         submitNext()
       }

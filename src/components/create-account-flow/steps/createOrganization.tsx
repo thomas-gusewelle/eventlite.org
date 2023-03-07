@@ -31,7 +31,6 @@ export const CreateOrganization = ({
   const orgPhone: string = watch("orgPhoneNumber");
 
   const submitNext = () => {
-
     // validate input of fields
     if (orgName?.length == 0 || orgName == undefined) {
       setError("orgName", {
@@ -52,17 +51,15 @@ export const CreateOrganization = ({
     //proceed to next Step
     if (
       orgName?.length > 0 &&
-      removeDashes(orgPhone ?? "").length == 10
+      removeDashes(orgPhone ?? "").length == 10 && orgName.length > 0
     ) {
       setStep(2);
     }
-
   }
 
   // Event listener for using enter key to press next btn
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      console.log(e)
       if (e.key == "Enter") {
         submitNext()
       }
@@ -73,7 +70,7 @@ export const CreateOrganization = ({
     return () => {
       document.removeEventListener("keydown", (e) => handleKey(e))
     }
-  }, [])
+  })
 
   return <>
     <CardHeader>Create Organization</CardHeader>
@@ -138,7 +135,6 @@ export const CreateOrganization = ({
                 type='tel'
                 {...field}
                 onChange={(e) => {
-                  console.log(e);
                   const eLength = e.target.value.length;
                   // checks if number is full length and prohibits extra input
                   if (eLength == 13) return;

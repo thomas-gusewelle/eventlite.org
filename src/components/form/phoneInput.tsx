@@ -33,7 +33,6 @@ export const PhoneInput = () => {
               type='tel'
               {...field}
               onChange={(e) => {
-                console.log(e);
                 const eLength = e.target.value.length;
                 // checks if number is full length and prohibits extra input
                 if (eLength == 13) return;

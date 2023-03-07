@@ -101,8 +101,8 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                       </li>
                     ))}
                     <li className='mt-6 md:mt-0 md:ml-6'>
-                      <BtnPurple fullWidth func={() => router.push("/beta")}>
-                        Join the Beta
+                      <BtnPurple fullWidth func={() => router.push("/create-account")}>
+                        Join the Beta Now
                       </BtnPurple>
                     </li>
                     <li>

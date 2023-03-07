@@ -48,9 +48,8 @@ export const AdminRouter = createRouter()
             <SendBetaInvite
               link={`https://eventlite.org/create-account?code=${encodeURIComponent(
                 betaRequest.id
-              )}&firstName=${betaRequest.firstName}&lastName=${
-                betaRequest.lastName
-              }&email=${betaRequest.email}&orgName=${betaRequest.orgName}`}
+              )}&firstName=${betaRequest.firstName}&lastName=${betaRequest.lastName
+                }&email=${betaRequest.email}&orgName=${betaRequest.orgName}`}
               name={betaRequest.firstName}
             />
           ),
@@ -132,6 +131,7 @@ export const AdminRouter = createRouter()
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_PRIVATE!
       );
+
       users
         ?.filter((user) => user.hasLogin)
         .forEach(async (user) => {
@@ -146,4 +146,16 @@ export const AdminRouter = createRouter()
       const supabase = createSupaServerClient();
       return await supabase.auth.admin.listUsers();
     },
-  });
+  }).mutation("deleteLoginUser", {
+    input: z.object({
+      id: z.string()
+    }),
+    async resolve({ input }) {
+      const supabase = createSupaServerClient();
+      try {
+        return await supabase.auth.admin.deleteUser(input.id)
+      } catch (err) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete user login" })
+      }
+    }
+  })

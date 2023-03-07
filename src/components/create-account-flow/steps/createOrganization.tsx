@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import {
   formatPhoneNumber,
@@ -29,6 +29,49 @@ export const CreateOrganization = ({
 
   const orgName: string = watch("orgName");
   const orgPhone: string = watch("orgPhoneNumber");
+
+  const submitNext = () => {
+    // validate input of fields
+    if (orgName?.length == 0 || orgName == undefined) {
+      setError("orgName", {
+        type: "required",
+        message: "Organization name required",
+      });
+    } else {
+      clearErrors("orgName");
+    }
+    if (removeDashes(orgPhone ?? "").length != 10) {
+      setError("orgPhoneNumber", {
+        type: "required",
+        message: "Phone Number Required",
+      });
+    } else {
+      clearErrors("orgPhoneNumber");
+    }
+    //proceed to next Step
+    if (
+      orgName?.length > 0 &&
+      removeDashes(orgPhone ?? "").length == 10 && orgName.length > 0
+    ) {
+      setStep(2);
+    }
+  }
+
+  // Event listener for using enter key to press next btn
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key == "Enter") {
+        submitNext()
+      }
+    }
+
+    document.addEventListener("keydown", (e) => handleKey(e))
+
+    return () => {
+      document.removeEventListener("keydown", (e) => handleKey(e))
+    }
+  })
+
   return <>
     <CardHeader>Create Organization</CardHeader>
     <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
@@ -92,7 +135,6 @@ export const CreateOrganization = ({
                 type='tel'
                 {...field}
                 onChange={(e) => {
-                  console.log(e);
                   const eLength = e.target.value.length;
                   // checks if number is full length and prohibits extra input
                   if (eLength == 13) return;
@@ -145,33 +187,7 @@ export const CreateOrganization = ({
 
         <BtnPurple
           fullWidth={true}
-          func={() => {
-            // validate input of fields
-            if (orgName?.length == 0 || orgName == undefined) {
-              setError("orgName", {
-                type: "required",
-                message: "Organization name required",
-              });
-            } else {
-              clearErrors("orgName");
-            }
-            if (removeDashes(orgPhone ?? "").length != 10) {
-              setError("orgPhoneNumber", {
-                type: "required",
-                message: "Phone Number Required",
-              });
-            } else {
-              clearErrors("orgPhoneNumber");
-            }
-
-            //proceed to next Step
-            if (
-              orgName?.length > 0 &&
-              removeDashes(orgPhone ?? "").length == 10
-            ) {
-              setStep(2);
-            }
-          }}>
+          func={() => submitNext()} >
           Next
         </BtnPurple>
       </div>

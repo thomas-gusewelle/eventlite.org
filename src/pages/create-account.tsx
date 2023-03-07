@@ -20,17 +20,15 @@ import { VerticalLogo } from "../components/create-account-flow/components/Verti
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const CreateAccount = ({
-  code,
   firstName,
   lastName,
   orgName,
   email,
 }: {
-  code: string;
-  firstName: string;
-  lastName: string;
-  orgName: string;
-  email: string;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  orgName: string | undefined;
+  email: string | undefined;
 }) => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
@@ -59,7 +57,6 @@ const CreateAccount = ({
 
     createOrg.mutate(
       {
-        inviteCode: code,
         orgName: data.orgName,
         orgPhoneNumber: data.orgPhoneNumber,
         firstName: data.firstName,
@@ -123,21 +120,11 @@ const CreateAccount = ({
 
 const CreateAcountPage = () => {
   const router = useRouter();
-  const { orgName, firstName, lastName, email, code } = router.query;
+  const { orgName, firstName, lastName, email } = router.query;
 
-  if (
-    !orgName ||
-    typeof orgName != "string" ||
-    !firstName ||
-    typeof firstName != "string" ||
-    !lastName ||
-    typeof lastName != "string" ||
-    !email ||
-    typeof email != "string" ||
-    !code ||
-    typeof code != "string"
-  ) {
-    return <div>Error with invite link</div>;
+  if (Array.isArray(orgName) || Array.isArray(firstName) || Array.isArray(lastName) || Array.isArray(email)) {
+    return <div>Error with invite link
+    </div>
   }
 
   return (
@@ -146,7 +133,6 @@ const CreateAcountPage = () => {
       lastName={lastName}
       firstName={firstName}
       email={email}
-      code={decodeURIComponent(code)}
     />
   );
 };

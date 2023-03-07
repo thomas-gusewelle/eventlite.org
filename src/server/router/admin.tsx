@@ -146,4 +146,16 @@ export const AdminRouter = createRouter()
       const supabase = createSupaServerClient();
       return await supabase.auth.admin.listUsers();
     },
-  });
+  }).mutation("deleteLoginUser", {
+    input: z.object({
+      id: z.string()
+    }),
+    async resolve({ input }) {
+      const supabase = createSupaServerClient();
+      try {
+        return await supabase.auth.admin.deleteUser(input.id)
+      } catch (err) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete user login" })
+      }
+    }
+  })

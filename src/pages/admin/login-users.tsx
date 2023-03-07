@@ -10,15 +10,16 @@ import { SectionHeading } from "../../components/headers/SectionHeading";
 import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
+import { AlertContext } from "../../providers/alertProvider";
 import { trpc } from "../../utils/trpc";
 
 export async function getServerSideProps(
   context:
     | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     | {
-        req: NextApiRequest;
-        res: NextApiResponse;
-      }
+      req: NextApiRequest;
+      res: NextApiResponse;
+    }
 ) {
   const supabase = createServerSupabaseClient(context);
   const user = await supabase.auth.getUser();
@@ -35,9 +36,11 @@ export async function getServerSideProps(
 }
 
 const LoginUsers = () => {
+  const { setError } = useContext(AlertContext)
   const getUsers = trpc.useQuery(["admin.getLoginUsers"]);
   const resetPassword = trpc.useMutation("createAccount.generateResetPassword");
   const resendVerification = trpc.useMutation("createAccount.resendConfirm");
+  const deleteLogin = trpc.useMutation("admin.deleteLoginUser")
 
   return (
     <AdminLayout>
@@ -62,7 +65,9 @@ const LoginUsers = () => {
                       name: "Reset password",
                       function: () => {
                         if (user.email) {
-                          resetPassword.mutate({ email: user.email });
+                          resetPassword.mutate({ email: user.email }, {
+                            onError: (err) => setError({ state: true, message: err.message })
+                          });
                         }
                       },
                       show: user.email != undefined,
@@ -71,11 +76,19 @@ const LoginUsers = () => {
                       name: "Resend Verification",
                       function: () => {
                         if (user.email) {
-                          resendVerification.mutate({ email: user.email });
+                          resendVerification.mutate({ email: user.email }, {
+                            onError: (err) => setErrorr({ state: true, message: err.message })
+                          });
                         }
                       },
                       show: user.confirmed_at == undefined,
                     },
+                    {
+                      name: "Delete Login",
+                      function: () => deleteLogin.mutate(user.id, {
+                        onError: (err) => setError({ state: true, message: err.message })
+                      })
+                    }
                   ]}
                 />
               </td>

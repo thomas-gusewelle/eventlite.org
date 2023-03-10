@@ -5,21 +5,17 @@ import {
   NextApiResponse,
   PreviewData,
 } from "next";
-import { useRouter } from "next/router";
-import { NextRequest, NextResponse } from "next/server";
 import { ParsedUrlQuery } from "querystring";
-import { useEffect } from "react";
 import { CircularProgress } from "../components/circularProgress";
-import { AdminLayout } from "../components/layout/admin";
 import { sidebar } from "../components/layout/sidebar";
 
 export async function getServerSideProps(
   context:
     | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     | {
-        req: NextApiRequest;
-        res: NextApiResponse;
-      }
+      req: NextApiRequest;
+      res: NextApiResponse;
+    }
 ) {
   const supabase = createServerSupabaseClient(context);
   const user = await supabase.auth.getUser();

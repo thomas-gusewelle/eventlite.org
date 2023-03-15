@@ -12,7 +12,7 @@ export const scheduleRouter = createTRPCRouter({
       limit: z.number().min(1).max(100).nullish(),
       cursor: z.string().nullish(),
     }),
-  ).mutation(async ({ctx, input}) => {
+  ).query(async ({ctx, input}) => {
     
       const limit: number = input.limit ?? 50;
       const { cursor } = input;

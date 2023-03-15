@@ -19,7 +19,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // make session nullable so typing overrides isn't hellish
 
-  return { session: data.user, prisma };
+  return { session: data.user, prisma, req, res};
 };
 
 /**
@@ -84,6 +84,9 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 export const loggedInProcedure = t.procedure.use(enforceUserIsAuthed);
 
 const enforeIsAdmin = t.middleware(async ({ctx, next}) => {
+  if (!ctx.session || !ctx.session.id){
+    throw new TRPCError({code: "UNAUTHORIZED"})
+  }
   const user = await prisma.user.findFirst({
     where:{
       id: ctx?.session?.id   

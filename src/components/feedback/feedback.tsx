@@ -4,14 +4,12 @@ import { classNames } from "../../utils/classnames";
 import { BtnNeutral } from "../btn/btnNeutral";
 import { BtnPurple } from "../btn/btnPurple";
 import { Modal } from "../modal/modal";
-import { LottiePlayer } from "../marketing-site/component/lottiePlayer";
 import submitLottie from "./check-tick.json";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
-import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
+import { api } from "../../server/utils/api"
 // export const Feedback = ({ isScroll }: { isScroll: boolean }) => {
 //   const [open, setOpen] = useState(true);
 //   return (
@@ -43,7 +41,7 @@ export const FeedbackTabs = ({
   const [isSubmited, setIsSubmited] = useState(false);
   const supabase = useSupabaseClient();
   const [elementHeight, setElementHeight] = useState(0);
-  const reportMutation = trpc.feedback.submitReport.useMutation();
+  const reportMutation = api.feedback.submitReport.useMutation();
   const {
     register,
     handleSubmit,
@@ -171,10 +169,9 @@ export const FeedbackTabs = ({
           <textarea
             autoFocus
             {...register("text", { required: "Description required" })}
-            className={`min-h-[12rem] w-full rounded-lg border-gray-300  bg-gray-100 focus:border-indigo-700 focus:ring-indigo-700 ${
-              errors.text &&
+            className={`min-h-[12rem] w-full rounded-lg border-gray-300  bg-gray-100 focus:border-indigo-700 focus:ring-indigo-700 ${errors.text &&
               "border-2 border-red-500 focus:border-red-500 focus:ring-red-500"
-            }`}></textarea>
+              }`}></textarea>
           <div className='mt-3 mb-6 grid gap-1'>
             <label>Screenshot Upload (not required)</label>
             <input

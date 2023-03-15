@@ -1,17 +1,19 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { replaceTime, roundHourDown } from "../utils/dateTimeModifers";
-import { createRouter } from "./context";
+import { createTRPCRouter, loggedInProcedure, adminProcedure} from "./context";
 import { v4 as uuidv4 } from "uuid";
 
-export const eventsRouter = createRouter()
-  .query("getUpcomingEventsByOrganization", {
-    async resolve({ ctx }) {
-      const org = await prisma?.user.findFirst({
-        where: { id: ctx.data?.user?.id },
+
+export const eventsRouter = createTRPCRouter({
+  
+getUpcomingEventsByOrganization: loggedInProcedure.query(async ({ctx}) => {
+    
+      const org = await ctx.prisma?.user.findFirst({
+        where: { id: ctx.session.id },
         select: { organizationId: true },
       });
-      return await prisma?.event.findMany({
+      return await ctx.prisma?.event.findMany({
         where: {
           organizationId: org?.organizationId,
           datetime: {
@@ -31,15 +33,16 @@ export const eventsRouter = createRouter()
           datetime: "asc",
         },
       });
-    },
-  })
-  .query("getPastEventsByOrganization", {
-    async resolve({ ctx }) {
-      const org = await prisma?.user.findFirst({
-        where: { id: ctx.data?.user?.id },
+  }),
+
+  
+getPastEventsByOrganization: loggedInProcedure.query(async ({ctx}) => {
+    
+      const org = await ctx.prisma?.user.findFirst({
+        where: { id: ctx.session.id },
         select: { organizationId: true },
       });
-      return await prisma?.event.findMany({
+      return await ctx.prisma?.event.findMany({
         where: {
           organizationId: org?.organizationId,
           datetime: {
@@ -59,16 +62,17 @@ export const eventsRouter = createRouter()
           datetime: "desc",
         },
       });
-    },
-  })
+  }),
+
+  
   //Gets the upcoming events and the events that need approval
-  .query("getUpcomingEventsByUser", {
-    async resolve({ ctx }) {
+getUpcomingEventsByUser: loggedInProcedure.query(async ({ctx}) => {
+    
       // Finds the positions that have already been aggreed to
-      const upcomingPositions = await prisma?.eventPositions.findMany({
+      const upcomingPositions = await ctx.prisma?.eventPositions.findMany({
         where: {
           User: {
-            id: ctx.data?.user?.id,
+            id: ctx.session.id,
           },
           OR: [
             {
@@ -80,7 +84,7 @@ export const eventsRouter = createRouter()
       });
 
       // const limit: number = input.limit ?? 3;
-      const upcoming = await prisma?.event.findMany({
+      const upcoming = await ctx.prisma?.event.findMany({
         where: {
           id: {
             in: upcomingPositions?.map((item) => item.eventId ?? ""),
@@ -105,17 +109,17 @@ export const eventsRouter = createRouter()
       });
 
       // Finds the positions that have still need to be approved
-      const approvalPositions = await prisma?.eventPositions.findMany({
+      const approvalPositions = await ctx.prisma?.eventPositions.findMany({
         where: {
           User: {
-            id: ctx.data?.user?.id,
+            id: ctx.session.id,
           },
           userResponse: null,
         },
       });
 
       // const limit: number = input.limit ?? 3;
-      const needApproval = await prisma?.event.findMany({
+      const needApproval = await ctx.prisma?.event.findMany({
         where: {
           id: {
             in: approvalPositions?.map((item) => item.eventId ?? ""),
@@ -140,10 +144,11 @@ export const eventsRouter = createRouter()
       });
 
       return { upcoming: upcoming, needApproval: needApproval };
-    },
-  })
-  .mutation("updateUserResponse", {
-    input: z.object({
+  }),
+
+
+updateUserResponse: loggedInProcedure.input(
+         z.object({
       response: z.union([
         z.literal("APPROVE"),
         z.literal("DENY"),
@@ -151,7 +156,8 @@ export const eventsRouter = createRouter()
       ]),
       positionId: z.string().optional(),
     }),
-    async resolve({ input }) {
+  ).mutation(async ({ctx, input}) => {
+    
       // Check if position ID exists and throw if it does not
       if (input.positionId == undefined) {
         throw new TRPCError({
@@ -160,7 +166,7 @@ export const eventsRouter = createRouter()
         });
       }
       if (input.response == "APPROVE") {
-        return await prisma?.eventPositions.update({
+        return await ctx.prisma?.eventPositions.update({
           where: {
             id: input.positionId,
           },
@@ -169,7 +175,7 @@ export const eventsRouter = createRouter()
           },
         });
       } else if (input.response == "DENY") {
-        return await prisma?.eventPositions.update({
+        return await ctx.prisma?.eventPositions.update({
           where: {
             id: input.positionId,
           },
@@ -178,7 +184,7 @@ export const eventsRouter = createRouter()
           },
         });
       } else if (input.response == "NULL") {
-        return await prisma?.eventPositions.update({
+        return await ctx.prisma?.eventPositions.update({
           where: {
             id: input.positionId,
           },
@@ -187,31 +193,17 @@ export const eventsRouter = createRouter()
           },
         });
       }
-    },
-  })
+  }),
 
-  .middleware(async ({ ctx, next }) => {
-    const user = await prisma?.user.findFirst({
-      where: { id: ctx.data?.user?.id },
-      select: {
-        status: true,
-      },
-    });
-    if (user?.status != "ADMIN") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  })
-  .query("getEditEvent", {
-    input: z.string(),
-    async resolve({ ctx, input }) {
+  getEditEvent: adminProcedure.input(z.string()).query(async ({ctx, input}) => {
+    
       if (ctx.req?.headers.referer == undefined) return;
       const queries: string | null = new URL(
         ctx.req?.headers.referer
       ).searchParams.get("rec");
 
       if (queries == "true") {
-        const idEvent = await prisma?.event.findFirst({
+        const idEvent = await ctx.prisma?.event.findFirst({
           where: {
             id: input,
           },
@@ -222,7 +214,7 @@ export const eventsRouter = createRouter()
         if (idEvent?.recurringId == undefined) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
-        return await prisma?.event.findFirst({
+        return await ctx.prisma?.event.findFirst({
           where: {
             recurringId: idEvent.recurringId,
           },
@@ -239,7 +231,7 @@ export const eventsRouter = createRouter()
       }
 
       if (queries == "false" || queries == null) {
-        return await prisma?.event.findFirst({
+        return await ctx.prisma?.event.findFirst({
           where: { id: input },
           include: {
             Locations: true,
@@ -249,21 +241,21 @@ export const eventsRouter = createRouter()
           },
         });
       }
-    },
-  })
-  .query("getEventRecurranceData", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.eventReccurance.findFirst({
+  }),
+
+
+getEventRecurranceData: adminProcedure.input(z.string()).query(async ({input, ctx}) => {
+    
+      return await ctx.prisma?.eventReccurance.findFirst({
         where: {
           recurringId: input,
         },
       });
-    },
-  })
+  }),
 
-  .mutation("createEvent", {
-    input: z.object({
+createEvent: adminProcedure.input(
+    
+       z.object({
       name: z.string(),
       eventDate: z.date(),
       eventTime: z.date(),
@@ -282,15 +274,15 @@ export const eventsRouter = createRouter()
           }),
         })
         .array(),
-    }),
-
-    async resolve({ ctx, input }) {
-      const org = await prisma?.user.findFirst({
-        where: { id: ctx.data?.user?.id },
+      })
+  ).mutation(async ({ctx, input}) => {
+    
+      const org = await ctx.prisma?.user.findFirst({
+        where: { id: ctx.session.id },
         select: { organizationId: true },
       });
 
-      return await prisma?.event.create({
+      return await ctx.prisma?.event.create({
         data: {
           name: input.name,
           recurringId: input?.recurringId,
@@ -304,10 +296,10 @@ export const eventsRouter = createRouter()
           },
         },
       });
-    },
-  })
-  .mutation("createEventReccurance", {
-    input: z.object({
+  }),
+
+createEventReccurance: adminProcedure.input(
+         z.object({
       recurringId: z.string(),
       repeatFrequency: z.object({
         id: z.union([
@@ -362,8 +354,9 @@ export const eventsRouter = createRouter()
       MNum: z.number().optional(),
       MDate: z.date().optional(),
     }),
-    async resolve({ input }) {
-      return await prisma?.eventReccurance.create({
+  ).mutation(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.eventReccurance.create({
         data: {
           recurringId: input.recurringId,
           repeatFrequecyId: input.repeatFrequency.id,
@@ -393,10 +386,10 @@ export const eventsRouter = createRouter()
           MDate: input.MDate,
         },
       });
-    },
-  })
-  .mutation("EditEventReccuranceData", {
-    input: z.object({
+  }),
+  
+EditEventReccuranceData: adminProcedure.input(
+         z.object({
       recurringId: z.string(),
       repeatFrequency: z.object({
         id: z.union([
@@ -451,8 +444,9 @@ export const eventsRouter = createRouter()
       MNum: z.number().optional(),
       MDate: z.date().optional(),
     }),
-    async resolve({ input }) {
-      return await prisma?.eventReccurance.update({
+  ).mutation(async ({ctx, input}) => {
+  
+      return await ctx.prisma?.eventReccurance.update({
         where: {
           recurringId: input.recurringId,
         },
@@ -485,10 +479,10 @@ export const eventsRouter = createRouter()
           MDate: input.MDate,
         },
       });
-    },
-  })
-  .mutation("editEvent", {
-    input: z.object({
+    }),
+
+  editEvent: adminProcedure.input(
+         z.object({
       id: z.string(),
       name: z.string(),
       eventDate: z.date(),
@@ -521,10 +515,10 @@ export const eventsRouter = createRouter()
         .array(),
       deletePositions: z.string().array(),
     }),
-
-    async resolve({ ctx, input }) {
+  ).mutation(async ({ctx, input}) => {
+    
       //deletes all connected positions that are not in the posiitons list
-      await prisma?.eventPositions.deleteMany({
+      await ctx.prisma?.eventPositions.deleteMany({
         where: {
           id: {
             in: input.deletePositions,
@@ -533,7 +527,7 @@ export const eventsRouter = createRouter()
       });
       await Promise.all(
         input.updatePositions.map(async (item) => {
-          await prisma?.eventPositions.update({
+          await ctx.prisma?.eventPositions.update({
             where: {
               id: item.eventPositionId,
             },
@@ -548,7 +542,7 @@ export const eventsRouter = createRouter()
         })
       );
 
-      const events = await prisma?.event.update({
+      const events = await ctx.prisma?.event.update({
         data: {
           name: input.name,
           recurringId: input?.recurringId,
@@ -566,8 +560,13 @@ export const eventsRouter = createRouter()
         },
       });
       return events;
-    },
-  })
+  }),
+
+  editRecurringEvent: adminProcedure
+})
+
+export const eventsRouter = createRouter()
+
   .mutation("editRecurringEvent", {
     input: z.object({
       id: z.string(),

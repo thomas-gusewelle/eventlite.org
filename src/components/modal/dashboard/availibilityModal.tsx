@@ -15,11 +15,12 @@ import { BottomButtons } from "../bottomButtons";
 import { BtnSave } from "../../btn/btnSave";
 import { BtnCancel } from "../../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
-import { trpc } from "../../../utils/trpc";
 import { Availability } from "@prisma/client";
+import { api } from "../../../server/utils/api"
 import { UserContext } from "../../../providers/userProvider";
 import { CircularProgress } from "../../circularProgress";
 import { AlertContext } from "../../../providers/alertProvider";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const DashboardAvaililityModal: React.FC<{
   open: boolean;
@@ -29,27 +30,27 @@ export const DashboardAvaililityModal: React.FC<{
   const user = useContext(UserContext);
   const alertContext = useContext(AlertContext);
   const [dates, setDates] = useState<Date[]>([]);
-  const opts = trpc.useContext();
+  const opts = useQueryClient();
 
-    const existingDates = trpc.avalibility.getUserAvalibility.useQuery(undefined, {
-        enabled: !!open,
-        onError(err) {
-            alertContext.setError({
-                state: true,
-                message: `Error getting user availability. ${err.message}`,
-            });
-        },
-        onSuccess(data) {
-            if (!data) return;
-            console.log(data);
+  const existingDates = api.avalibility.getUserAvalibility.useQuery(undefined, {
+    enabled: !!open,
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `Error getting user availability. ${err.message}`,
+      });
+    },
+    onSuccess(data) {
+      if (!data) return;
+      console.log(data);
 
-            setDates(
-                data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
-            );
-        },
-    });
+      setDates(
+        data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
+      );
+    },
+  });
 
-  const updateAvailibility = trpc.avalibility.updateUserAvalibility.useMutation(
+  const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation(
     {
       onSuccess() {
         setOpen(false);

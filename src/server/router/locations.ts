@@ -1,69 +1,57 @@
-import { createRouter } from "./context";
+import { createTRPCRouter, adminProcedure} from "./context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-export const locationRouter = createRouter()
-  .middleware(async ({ ctx, next }) => {
-    const user = await prisma?.user.findFirst({
-      where: { id: ctx.data.user?.id },
-      select: {
-        status: true,
-      },
-    });
-    if (user?.status != "ADMIN") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  })
-  .query("getLocationsByOrg", {
-    async resolve({ ctx }) {
-      const orgID = await prisma?.user.findFirst({
+
+export const locationRouter = createTRPCRouter({
+  getLocationsByOrg: adminProcedure.query(async ({ctx}) => {
+    
+      const orgID = await ctx.prisma?.user.findFirst({
         select: { organizationId: true },
-        where: { id: ctx.data.user?.id },
+        where: { id: ctx.session.id },
       });
       if (orgID?.organizationId) {
-        return await prisma?.locations.findMany({
+        return await ctx.prisma?.locations.findMany({
           where: { organizationId: orgID.organizationId },
         });
       }
-    },
-  })
-  .mutation("createLocation", {
-    input: z.string(),
-    async resolve({ ctx, input }) {
-      const orgID = await prisma?.user.findFirst({
+  }),
+
+  createLocation: adminProcedure.input(z.string()).mutation(async ({ctx, input}) => {
+    
+      const orgID = await ctx.prisma?.user.findFirst({
         select: { organizationId: true },
-        where: { id: ctx.data.user?.id },
+        where: { id: ctx.session.id },
       });
       if (orgID?.organizationId) {
-        return await prisma?.locations.create({
+        return await ctx.prisma?.locations.create({
           data: {
             name: input,
             organizationId: orgID?.organizationId,
           },
         });
       }
-    },
-  })
-  .mutation("editLocationByID", {
-    input: z.object({
+  }),
+
+  editLocationByID: adminProcedure.input(
+         z.object({
       id: z.string(),
       name: z.string(),
     }),
-    async resolve({ input }) {
-      return await prisma?.locations.update({
+  ).mutation(async ({ctx, input}) => {
+          return await ctx.prisma?.locations.update({
         data: {
           name: input.name,
         },
         where: { id: input.id },
       });
-    },
-  })
-  .mutation("deletebyId", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.locations.delete({
+  }), 
+
+  deletebyId: adminProcedure.input(z.string()).mutation(async ({ctx, input}) => {
+          return await ctx.prisma?.locations.delete({
         where: { id: input },
       });
-    },
-  });
+  })
+  
+})
+

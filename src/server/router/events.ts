@@ -562,13 +562,9 @@ EditEventReccuranceData: adminProcedure.input(
       return events;
   }),
 
-  editRecurringEvent: adminProcedure
-})
-
-export const eventsRouter = createRouter()
-
-  .mutation("editRecurringEvent", {
-    input: z.object({
+  editRecurringEvent: adminProcedure.input(
+    
+     z.object({
       id: z.string(),
       name: z.string(),
       eventTime: z.date(),
@@ -591,11 +587,12 @@ export const eventsRouter = createRouter()
         .array(),
       newDates: z.date().array(),
     }),
-    async resolve({ input }) {
+  ).mutation(async ({ctx, input}) => {
+    
       // for events that were not previously reccuring
       if (input.recurringId == undefined) {
         //find original event
-        const originalEvent = await prisma?.event.findFirst({
+        const originalEvent = await ctx.prisma?.event.findFirst({
           where: {
             id: input.id,
           },
@@ -627,7 +624,7 @@ export const eventsRouter = createRouter()
             });
           }
           //updates original events
-          const update = await prisma?.event.update({
+          const update = await ctx.prisma?.event.update({
             where: {
               id: originalEvent.id,
             },
@@ -649,7 +646,7 @@ export const eventsRouter = createRouter()
           const newEvents = await Promise.all(
             newdates.map(async (date, index) => {
               console.log(date);
-              await prisma?.event.create({
+              await ctx.prisma?.event.create({
                 data: {
                   name: input.name,
                   recurringId: recurringId,
@@ -668,7 +665,7 @@ export const eventsRouter = createRouter()
           return [update, ...newEvents];
         }
         if (differentPositionIds.length > 0) {
-          await prisma?.eventPositions.deleteMany({
+          await ctx.prisma?.eventPositions.deleteMany({
             where: {
               id: {
                 in: differentPositionIds.map((item) => item.id),
@@ -687,7 +684,7 @@ export const eventsRouter = createRouter()
             });
           }
           //updates original events
-          const update = await prisma?.event.update({
+          const update = await ctx.prisma?.event.update({
             where: {
               id: originalEvent.id,
             },
@@ -708,7 +705,7 @@ export const eventsRouter = createRouter()
           const newdates = input.newDates.slice(1);
           const newEvents = await Promise.all(
             newdates.map(async (date, index) => {
-              await prisma?.event.create({
+              await ctx.prisma?.event.create({
                 data: {
                   name: input.name,
                   recurringId: recurringId,
@@ -729,7 +726,7 @@ export const eventsRouter = createRouter()
       }
 
       // for events that were previously recuring
-      const exisitingEvents = await prisma?.event.findMany({
+      const exisitingEvents = await ctx.prisma?.event.findMany({
         where: {
           recurringId: input.recurringId,
         },
@@ -777,7 +774,7 @@ export const eventsRouter = createRouter()
                 (item) => item.eventPositionId == null
               );
 
-              const event = await prisma?.event.update({
+              const event = await ctx.prisma?.event.update({
                 data: {
                   name: input.name,
                   recurringId: input?.recurringId,
@@ -797,7 +794,7 @@ export const eventsRouter = createRouter()
             }
 
             if (differentPositionsId.length > 0) {
-              await prisma?.eventPositions.deleteMany({
+              await ctx.prisma?.eventPositions.deleteMany({
                 where: {
                   eventId: oldEvent.id,
                   roleId: {
@@ -810,7 +807,7 @@ export const eventsRouter = createRouter()
                 (item) => item.eventPositionId == null
               );
 
-              const event = await prisma?.event.update({
+              const event = await ctx.prisma?.event.update({
                 data: {
                   name: input.name,
                   recurringId: input?.recurringId,
@@ -857,7 +854,7 @@ export const eventsRouter = createRouter()
                 (item) => item.eventPositionId == null
               );
 
-              const event = await prisma?.event.update({
+              const event = await ctx.prisma?.event.update({
                 data: {
                   name: input.name,
                   recurringId: input?.recurringId,
@@ -877,7 +874,7 @@ export const eventsRouter = createRouter()
             }
 
             if (differentPositionsId.length > 0) {
-              await prisma?.eventPositions.deleteMany({
+              await ctx.prisma?.eventPositions.deleteMany({
                 where: {
                   eventId: oldEvent.id,
                   roleId: {
@@ -890,7 +887,7 @@ export const eventsRouter = createRouter()
                 (item) => item.eventPositionId == null
               );
 
-              const event = await prisma?.event.update({
+              const event = await ctx.prisma?.event.update({
                 data: {
                   name: input.name,
                   recurringId: input?.recurringId,
@@ -917,7 +914,7 @@ export const eventsRouter = createRouter()
 
         const _createdEvents = await Promise.all(
           newEvents.map(async (date) => {
-            await prisma?.event.create({
+            await ctx.prisma?.event.create({
               data: {
                 name: input.name,
                 datetime: replaceTime(date, input.eventTime),
@@ -950,7 +947,7 @@ export const eventsRouter = createRouter()
         const numToDelete = input.newDates.length - exisitingEvents.length;
         const eventsToDelete = exisitingEvents.slice(numToDelete);
 
-        const _deletes = await prisma?.event.deleteMany({
+        const _deletes = await ctx.prisma?.event.deleteMany({
           where: {
             id: {
               in: eventsToDelete.map((event) => event.id),
@@ -970,7 +967,7 @@ export const eventsRouter = createRouter()
                 (item) => item.eventPositionId == null
               );
 
-              const event = await prisma?.event.update({
+              const event = await ctx.prisma?.event.update({
                 data: {
                   name: input.name,
                   recurringId: input?.recurringId,
@@ -990,7 +987,7 @@ export const eventsRouter = createRouter()
             }
 
             if (differentPositionsId.length > 0) {
-              await prisma?.eventPositions.deleteMany({
+              await ctx.prisma?.eventPositions.deleteMany({
                 where: {
                   eventId: exisitingEvents[index]!.id,
                   roleId: {
@@ -1003,7 +1000,7 @@ export const eventsRouter = createRouter()
                 (item) => item.eventPositionId == null
               );
 
-              const event = await prisma?.event.update({
+              const event = await ctx.prisma?.event.update({
                 data: {
                   name: input.name,
                   recurringId: input?.recurringId,
@@ -1022,15 +1019,15 @@ export const eventsRouter = createRouter()
               });
             }
           })
-        );
-      }
-    },
-  })
-  .mutation("deleteEventById", {
-    input: z.object({ id: z.string(), deleteRecurring: z.boolean() }),
-    async resolve({ input }) {
+        )}
+  }),
+
+  deleteEventById: adminProcedure.input(
+         z.object({ id: z.string(), deleteRecurring: z.boolean() }),
+  ).mutation(async ({ctx, input}) => {
+    
       if (input.deleteRecurring == false) {
-        return await prisma?.event.delete({
+        return await ctx.prisma?.event.delete({
           where: {
             id: input.id,
           },
@@ -1038,7 +1035,7 @@ export const eventsRouter = createRouter()
       }
 
       if (input.deleteRecurring == true) {
-        const event = await prisma?.event.findFirst({
+        const event = await ctx.prisma?.event.findFirst({
           where: {
             id: input.id,
           },
@@ -1056,15 +1053,17 @@ export const eventsRouter = createRouter()
           throw new TRPCError({ code: "NOT_FOUND" });
         }
 
-        const deletedEvents = await prisma?.event.deleteMany({
+        const deletedEvents = await ctx.prisma?.event.deleteMany({
           where: {
             recurringId: event.recurringId,
           },
         });
-        const recurringDataDelete = await prisma?.eventReccurance.delete({
+        const recurringDataDelete = await ctx.prisma?.eventReccurance.delete({
           where: { recurringId: event.recurringId },
         });
         return { ...deletedEvents, ...recurringDataDelete };
+
       }
-    },
-  });
+  })
+})
+

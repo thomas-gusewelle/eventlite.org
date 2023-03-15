@@ -41,7 +41,7 @@ const AvailabilityPage = () => {
     }
   }, [dates, pageNum]);
 
-  const deleteDateMutation = trpc.useMutation("avalibility.deleteDate", {
+  const deleteDateMutation = trpc.avalibility.deleteDate.useMutation({
     onSuccess(data) {
       setDates(dates.filter((item) => item.id != data?.id));
       getUserAvailibilityQuery.refetch();
@@ -54,41 +54,41 @@ const AvailabilityPage = () => {
     },
   });
 
-  const getUsersQuery = trpc.useQuery(["user.getUsersByOrganization"], {
-    enabled: !!(user?.status == "ADMIN"),
-    onSuccess(data) {
-      setPeopleList(
-        data?.map((user) => ({
-          item: user,
-          label: fullName(user.firstName, user.lastName) ?? "",
-        })) ?? []
-      );
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `There was an error fetching the users. Message: ${err.message}`,
-      });
-      getUsersQuery.refetch();
-    },
-  });
+    const getUsersQuery = trpc.user.getUsersByOrganization.useQuery(undefined, {
+        enabled: !!(user?.status == "ADMIN"),
+        onSuccess(data) {
+            setPeopleList(
+                data?.map((user) => ({
+                    item: user,
+                    label: fullName(user.firstName, user.lastName) ?? "",
+                })) ?? []
+            );
+        },
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `There was an error fetching the users. Message: ${err.message}`,
+            });
+            getUsersQuery.refetch();
+        },
+    });
 
-  const getUserAvailibilityQuery = trpc.useQuery(
-    ["avalibility.getUserAvalibilityByID", userSelected.id],
-    {
-      onSuccess(data) {
-        setDates(
-          data?.sort((a, b) => a.date.getTime() - b.date.getTime()) ?? []
-        );
-      },
-      onError(err) {
-        alertContext.setError({
-          state: true,
-          message: `There was an error fetching the user availibility. Message: ${err.message}`,
-        });
-        getUserAvailibilityQuery.refetch();
-      },
-    }
+  const getUserAvailibilityQuery = trpc.avalibility.getUserAvalibilityById.useQuery(
+    userSelected.id,
+      {
+          onSuccess(data) {
+              setDates(
+                  data?.sort((a, b) => a.date.getTime() - b.date.getTime()) ?? []
+              );
+          },
+          onError(err) {
+              alertContext.setError({
+                  state: true,
+                  message: `There was an error fetching the user availibility. Message: ${err.message}`,
+              });
+              getUserAvailibilityQuery.refetch();
+          },
+      }
   );
 
   if (

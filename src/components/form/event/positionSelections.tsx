@@ -16,16 +16,16 @@ import { PositionAddModal } from "../../modal/positionAdd";
 
 export const PositionsSelector = () => {
   const [open, setOpen] = useState(false);
-  const rolesQuery = trpc.useQuery(["role.getRolesByOrganization"], {
-    onSuccess(data) {
-      if (data != undefined) {
-        const _data = data.map((item) => {
-          return { ...item, show: true };
-        });
-        setRoles(_data);
-      }
-    },
-  });
+    const rolesQuery = trpc.role.getRolesByOrganization.useQuery(undefined, {
+        onSuccess(data) {
+            if (data != undefined) {
+                const _data = data.map((item) => {
+                    return { ...item, show: true };
+                });
+                setRoles(_data);
+            }
+        },
+    });
   const [roles, setRoles] = useState<(Role & { show: boolean })[]>([]);
   const {
     control,

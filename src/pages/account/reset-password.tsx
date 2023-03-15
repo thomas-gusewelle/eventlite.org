@@ -17,7 +17,7 @@ type FormData = {
 const ResetPassword = ({ code }: { code: string }) => {
   const methods = useForm<FormData>();
   const router = useRouter();
-  const resetPassword = trpc.useMutation("createAccount.resetPassword");
+  const resetPassword = trpc.createAccount.resetPassword.useMutation();
 
   const submit = methods.handleSubmit((data) => {
     resetPassword.mutate(

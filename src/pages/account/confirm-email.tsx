@@ -7,7 +7,7 @@ import { loginFlowLayout } from "../../components/layout/login-flow-layout";
 import { trpc } from "../../utils/trpc";
 
 const ConfirmEmail = ({ email }: { email: string }) => {
-  const resendEmail = trpc.useMutation("createAccount.resendConfirm");
+  const resendEmail = trpc.createAccount.resendConfirm.useMutation();
   return (
     <>
       <LoginCard>

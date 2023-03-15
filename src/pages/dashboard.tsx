@@ -34,29 +34,27 @@ const Dashboard = () => {
   const [eventsData, setEventsData] = useState<stateData>([]);
   const [approvalEventsData, setApprovalEventsData] = useState<stateData>([]);
 
-  const eventsQuery = trpc.useQuery(
-    ["events.getUpcomingEventsByUser"],
-
-    {
-      onSuccess(data) {
-        if (data != undefined) {
-          if (data.upcoming != undefined) {
-            setEventsData(data.upcoming);
-          }
-          if (data.needApproval != undefined) {
-            setApprovalEventsData(data.needApproval);
-          }
-        }
-      },
-      onError(err) {
-        alertContext.setError({
-          state: true,
-          message: `Error getting upcoming events. ${err.message}`,
-        });
-      },
-    }
+  const eventsQuery = trpc.events.getUpcomingEventsByUser.useQuery(
+    undefined, {
+          onSuccess(data) {
+              if (data != undefined) {
+                  if (data.upcoming != undefined) {
+                      setEventsData(data.upcoming);
+                  }
+                  if (data.needApproval != undefined) {
+                      setApprovalEventsData(data.needApproval);
+                  }
+              }
+          },
+          onError(err) {
+              alertContext.setError({
+                  state: true,
+                  message: `Error getting upcoming events. ${err.message}`,
+              });
+          },
+      }
   );
-  const userResponseMutation = trpc.useMutation("events.updateUserResponse", {
+  const userResponseMutation = trpc.events.updateUserResponse.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: true,

@@ -33,7 +33,7 @@ const BetaPage = () => {
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
-  const betaMutate = trpc.useMutation("createAccount.registerBetaInterest");
+  const betaMutate = trpc.createAccount.registerBetaInterest.useMutation();
 
   const submit = methods.handleSubmit((data) => {
     betaMutate.mutate(

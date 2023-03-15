@@ -23,25 +23,25 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
   const utils = trpc.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
-  const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
-    onSuccess(data) {
-      if (data != undefined) {
-        setLocations(data);
-      }
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `Error fetching locations. Message; ${err.message}`,
-      });
-      locationsQuery.refetch();
-    },
-  });
+    const locationsQuery = trpc.locations.getLocationsByOrg.useQuery(undefined, {
+        onSuccess(data) {
+            if (data != undefined) {
+                setLocations(data);
+            }
+        },
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `Error fetching locations. Message; ${err.message}`,
+            });
+            locationsQuery.refetch();
+        },
+    });
   const [locations, setLocations] = useState<Locations[]>([
     { id: "", name: "", organizationId: "" },
   ]);
 
-  const addEventRecurrance = trpc.useMutation("events.createEventReccurance", {
+  const addEventRecurrance = trpc.events.createEventReccurance.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: true,
@@ -49,7 +49,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
       });
     },
   });
-  const addEvent = trpc.useMutation("events.createEvent", {
+  const addEvent = trpc.events.createEvent.useMutation({
     onError(error, variables, context) {},
   });
   const methods = useForm<EventFormValues>();

@@ -37,51 +37,49 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
-  const eventQuery = trpc.useQuery(["events.getEditEvent", id], {
-    cacheTime: 0,
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `There was an issue getting your event. Message: ${err.message}`,
-      });
-    },
-    onSuccess(data) {
-      if (!rec && data != undefined) methods.reset(formatEventData(data));
-      if (data?.recurringId) setAlreadyRec(true);
-    },
-  });
+    const eventQuery = trpc.events.getEditEvent.useQuery(id, {
+        cacheTime: 0,
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `There was an issue getting your event. Message: ${err.message}`,
+            });
+        },
+        onSuccess(data) {
+            if (!rec && data != undefined) methods.reset(formatEventData(data));
+            if (data?.recurringId) setAlreadyRec(true);
+        },
+    });
 
   const recurringId = rec ? eventQuery.data?.recurringId || "" : "";
 
-  const EventRecurrance = trpc.useQuery(
-    ["events.getEventRecurranceData", recurringId],
-    {
-      enabled: !!recurringId,
-      cacheTime: 0,
-      onSuccess(data) {
-        if (data) {
-          if (eventQuery.data == undefined) return;
-          methods.reset(formatEventData(eventQuery.data, data));
-        }
-      },
-    }
-  );
-  const createEventReccuranceData = trpc.useMutation(
-    "events.createEventReccurance"
-  );
-  const editEventRecurranceData = trpc.useMutation(
-    "events.EditEventReccuranceData"
-  );
-  const editEvent = trpc.useMutation("events.editEvent");
-  const editRecurringEvent = trpc.useMutation("events.editRecurringEvent");
-
-  const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
-    onSuccess(data) {
-      if (data != undefined) {
-        setLocations(data);
+  const EventRecurrance = trpc.events.getEventRecurranceData.useQuery(
+    recurringId,
+      {
+          enabled: !!recurringId,
+          cacheTime: 0,
+          onSuccess(data) {
+              if (data) {
+                  if (eventQuery.data == undefined) return;
+                  methods.reset(formatEventData(eventQuery.data, data));
+              }
+          },
       }
-    },
-  });
+  );
+  const createEventReccuranceData = trpc.events.createEventReccurance.useMutation(
+);
+  const editEventRecurranceData = trpc.events.editEventReccuranceData.useMutation(
+);
+  const editEvent = trpc.events.editEvent.useMutation();
+  const editRecurringEvent = trpc.events.editRecurringEvent.useMutation();
+
+    const locationsQuery = trpc.locations.getLocationsByOrg.useQuery(undefined, {
+        onSuccess(data) {
+            if (data != undefined) {
+                setLocations(data);
+            }
+        },
+    });
   const [locations, setLocations] = useState<Locations[]>([
     { id: "", name: "", organizationId: "" },
   ]);

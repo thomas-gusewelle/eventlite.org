@@ -33,32 +33,31 @@ const PeoplePage = () => {
       })[]
     >
   >();
-  const people = trpc.useQuery(["user.getUsersByOrganization"], {
-    onSuccess: (data) => {
-      if (data) {
-        // sorts users by status with inactive at the end
-        data = data.sort((a, b) => {
-          if (
-            (a.status == "ADMIN" || a.status == "USER") &&
-            b.status == "INACTIVE"
-          ) {
-            return -1;
-          } else if (
-            (b.status == "ADMIN" || b.status == "USER") &&
-            a.status == "INACTIVE"
-          ) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        setPeopleUnPageList(data);
-      }
-    },
-  });
-  const adminCount = trpc.useQuery(["user.getAmdminCount"]);
-  const createInvite = trpc.useMutation(
-    "createAccount.createInviteLinkWithID",
+    const people = trpc.user.getUsersByOrganization.useQuery(undefined, {
+        onSuccess: (data) => {
+            if (data) {
+                // sorts users by status with inactive at the end
+                data = data.sort((a, b) => {
+                    if (
+                        (a.status == "ADMIN" || a.status == "USER") &&
+                        b.status == "INACTIVE"
+                    ) {
+                        return -1;
+                    } else if (
+                        (b.status == "ADMIN" || b.status == "USER") &&
+                        a.status == "INACTIVE"
+                    ) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+                setPeopleUnPageList(data);
+            }
+        },
+    });
+  const adminCount = trpc.user.getAmdminCount.useQuery();
+  const createInvite = trpc.createAccount.createInviteLinkWithId.useMutation(
     {
       onError(error, variables, context) {
         setError({
@@ -68,8 +67,7 @@ const PeoplePage = () => {
       },
     }
   );
-  const sendResetPassword = trpc.useMutation(
-    "createAccount.generateResetPassword",
+  const sendResetPassword = trpc.createAccount.generateResetPassword.useMutation(
     {
       onError(error, variables, context) {
         setError({
@@ -79,7 +77,7 @@ const PeoplePage = () => {
       },
     }
   );
-  const deleteUser = trpc.useMutation("user.deleteUserByID", {
+  const deleteUser = trpc.user.deleteUserById.useMutation({
     onError: (error) => {
       setError({
         message: `Sorry. There was an issue deleting the user. Message: ${error}`,

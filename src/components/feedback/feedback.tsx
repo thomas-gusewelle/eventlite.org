@@ -43,7 +43,7 @@ export const FeedbackTabs = ({
   const [isSubmited, setIsSubmited] = useState(false);
   const supabase = useSupabaseClient();
   const [elementHeight, setElementHeight] = useState(0);
-  const reportMutation = trpc.useMutation("feedback.submitReport");
+  const reportMutation = trpc.feedback.submitReport.useMutation();
   const {
     register,
     handleSubmit,

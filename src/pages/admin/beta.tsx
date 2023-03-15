@@ -39,9 +39,9 @@ export async function getServerSideProps(
 }
 
 const AdminBetaPage = () => {
-  const getBetaRequest = trpc.useQuery(["admin.getBetaRequests"]);
-  const sendInvite = trpc.useMutation("admin.sendBetaInvite");
-  const deleteBetaRequest = trpc.useMutation("admin.deleteBetaRegister");
+  const getBetaRequest = trpc.admin.getBetaRequests.useQuery();
+  const sendInvite = trpc.admin.sendBetaInvite.useMutation();
+  const deleteBetaRequest = trpc.admin.deleteBetaRegister.useMutation();
   const deleteRef = useRef<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 

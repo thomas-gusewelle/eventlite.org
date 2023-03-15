@@ -38,19 +38,19 @@ const LocationsPage = () => {
     reset,
   } = useForm();
 
-  const locations = trpc.useQuery(["locations.getLocationsByOrg"], {
-    onSuccess(data) {
-      setLocationList(data);
-    },
-    onError(err) {
-      alertContext.setError({
-        message: `Error fetching locations. Message: ${err.message}`,
-        state: true,
-      });
-    },
-  });
+    const locations = trpc.locations.getLocationsByOrg.useQuery(undefined, {
+        onSuccess(data) {
+            setLocationList(data);
+        },
+        onError(err) {
+            alertContext.setError({
+                message: `Error fetching locations. Message: ${err.message}`,
+                state: true,
+            });
+        },
+    });
 
-  const addLocation = trpc.useMutation("locations.createLocation", {
+  const addLocation = trpc.locations.createLocation.useMutation({
     onSuccess(data, variables, context) {
       if (locationList && data) {
         const newData = [...locationList, data];
@@ -67,7 +67,7 @@ const LocationsPage = () => {
     },
   });
 
-  const editLocation = trpc.useMutation("locations.editLocationByID", {
+  const editLocation = trpc.locations.editLocationById.useMutation({
     onMutate(data) {
       if (editId != null && locationList) {
         let index = locationList?.findIndex((loc) => loc.id == data.id);
@@ -91,7 +91,7 @@ const LocationsPage = () => {
     },
   });
 
-  const deleteLocation = trpc.useMutation("locations.deletebyId", {
+  const deleteLocation = trpc.locations.deletebyId.useMutation({
     onMutate(data) {
       const newData = locationList?.filter((location) => location.id != data);
       setLocationList(newData);

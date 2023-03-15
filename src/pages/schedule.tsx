@@ -56,40 +56,39 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     user?.UserSettings?.scheduleShowAmount ?? 4
   );
 
-  const getScheduleQuery = trpc.useQuery(
-    ["schedule.getSchedule", { limit: limit, cursor: cursor }],
-    {
-      keepPreviousData: true,
-      onSuccess(data) {
-        let _selectedPeople: { userId: string | null; dateTime: Date }[] = [];
-        data.items?.map((item) =>
-          item.positions.map((pos) =>
-            _selectedPeople.push({
-              userId: pos.userId,
-              dateTime: item.datetime,
-            })
-          )
-        );
+  const getScheduleQuery = trpc.schedule.getSchedule.useQuery(
+    { limit: limit, cursor: cursor },
+      {
+          keepPreviousData: true,
+          onSuccess(data) {
+              let _selectedPeople: { userId: string | null; dateTime: Date }[] = [];
+              data.items?.map((item) =>
+                  item.positions.map((pos) =>
+                      _selectedPeople.push({
+                          userId: pos.userId,
+                          dateTime: item.datetime,
+                      })
+                  )
+              );
 
-        setSelectedPeople(_selectedPeople);
-        setPoepleList(data.users);
-      },
-      // onError: () => router.push("/events"),
-    }
+              setSelectedPeople(_selectedPeople);
+              setPoepleList(data.users);
+          },
+          // onError: () => router.push("/events"),
+      }
   );
 
   useEffect(() => {
     console.log(getScheduleQuery);
   }, [getScheduleQuery]);
 
-  const scheduleUserMutation = trpc.useMutation("schedule.updateUserRole", {
+  const scheduleUserMutation = trpc.schedule.updateUserRole.useMutation({
     onSuccess() {
       alertContext.setSuccess({ state: true, message: "Changes Saved" });
     },
   });
 
-  const removeUserFromPosition = trpc.useMutation(
-    "schedule.removerUserfromPosition",
+  const removeUserFromPosition = trpc.schedule.removerUserfromPosition.useMutation(
     {
       onMutate(variables) {
         setSelectedPeople(
@@ -104,7 +103,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   const methods = useForm();
 
-  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+  const deleteEventMutation = trpc.events.deleteEventById.useMutation({
     onMutate(data) {
       utils.queryClient.cancelQueries();
 
@@ -116,7 +115,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     onSuccess() {
       eventId.current.id = null;
       setDeleteAllRecuring(false);
-      utils.invalidateQueries("schedule.getSchedule");
+      utils.schedule.getSchedule.invalidate();
       getScheduleQuery.refetch();
     },
   });

@@ -10,7 +10,7 @@ import { trpc } from "../../../utils/trpc";
 const ViewProfile = ({ id }: { id: string }) => {
   const user = useContext(UserContext);
   const router = useRouter();
-  const userQuery = trpc.useQuery(["user.getUserByID", id]);
+  const userQuery = trpc.user.getUserById.useQuery(id);
 
   if (userQuery.isLoading) {
     return (

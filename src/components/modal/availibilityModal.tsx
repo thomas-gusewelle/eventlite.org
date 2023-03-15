@@ -38,8 +38,7 @@ export const AvaililityModal: React.FC<{
   //   );
   // }, [exisitingDates, newDates]);
 
-  const updateAvailibility = trpc.useMutation(
-    "avalibility.updateUserAvalibility",
+  const updateAvailibility = trpc.avalibility.updateUserAvalibility.useMutation(
     {
       onSuccess() {
         setOpen(false);

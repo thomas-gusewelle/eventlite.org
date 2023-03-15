@@ -23,12 +23,12 @@ export const PositionAddModal = ({
     formState: { errors },
   } = useForm<{ name: string }>();
 
-  const addPosition = trpc.useMutation("role.addRole");
+  const addPosition = trpc.role.addRole.useMutation();
 
   const submit = handleSubmit((data) => {
     addPosition.mutate(data.name, {
       onSuccess() {
-        utils.refetchQueries(["role.getRolesByOrganization"], { active: true });
+        utils.role.getRolesByOrganization.refetch(undefined, { active: true });
         setOpen(false);
       },
     });

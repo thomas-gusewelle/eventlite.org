@@ -24,12 +24,12 @@ export const LocationAddModel = ({
     formState: { errors },
   } = useForm<{ name: string }>();
 
-  const addLocation = trpc.useMutation("locations.createLocation");
+  const addLocation = trpc.locations.createLocation.useMutation();
 
   const submit = handleSubmit((data) => {
     addLocation.mutate(data.name, {
       onSuccess() {
-        utils.refetchQueries(["locations.getLocationsByOrg"], { active: true });
+        utils.locations.getLocationsByOrg.refetch(undefined, { active: true });
         setOpen(false);
       },
     });

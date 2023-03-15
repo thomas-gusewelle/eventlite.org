@@ -31,26 +31,25 @@ export const DashboardAvaililityModal: React.FC<{
   const [dates, setDates] = useState<Date[]>([]);
   const opts = trpc.useContext();
 
-  const existingDates = trpc.useQuery(["avalibility.getUserAvalibility"], {
-    enabled: !!open,
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `Error getting user availability. ${err.message}`,
-      });
-    },
-    onSuccess(data) {
-      if (!data) return;
-      console.log(data);
+    const existingDates = trpc.avalibility.getUserAvalibility.useQuery(undefined, {
+        enabled: !!open,
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `Error getting user availability. ${err.message}`,
+            });
+        },
+        onSuccess(data) {
+            if (!data) return;
+            console.log(data);
 
-      setDates(
-        data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
-      );
-    },
-  });
+            setDates(
+                data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
+            );
+        },
+    });
 
-  const updateAvailibility = trpc.useMutation(
-    "avalibility.updateUserAvalibility",
+  const updateAvailibility = trpc.avalibility.updateUserAvalibility.useMutation(
     {
       onSuccess() {
         setOpen(false);

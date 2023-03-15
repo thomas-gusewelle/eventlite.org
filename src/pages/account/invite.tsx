@@ -28,7 +28,7 @@ const Invite = ({
     methods.setValue("email", email);
   }, [email, methods]);
 
-  const createLogin = trpc.useMutation("createAccount.createInviteLogin", {
+  const createLogin = trpc.createAccount.createInviteLogin.useMutation({
     onError(error) {
       alert(error.message);
     },

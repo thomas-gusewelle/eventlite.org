@@ -25,12 +25,12 @@ export const FindOrganization = ({
   } = useFormContext();
   const [selectedOrg, setSelectedOrg] = useState("");
   const [query, setQuery] = useState("");
-  const searchQuery = trpc.useQuery(["createAccount.searchForOrg", query], {
-    enabled: !!(query != ""),
-    onSuccess(data) {
-      console.log(data);
-    },
-  });
+    const searchQuery = trpc.createAccount.searchForOrg.useQuery(query, {
+        enabled: !!(query != ""),
+        onSuccess(data) {
+            console.log(data);
+        },
+    });
   return (
     <>
       <CardHeader>Find Organization</CardHeader>

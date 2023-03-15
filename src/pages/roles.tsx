@@ -38,13 +38,13 @@ const Roles = () => {
     reset,
   } = useForm();
 
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
-    onSuccess(data) {
-      setRoleList(data);
-    },
-  });
+    const roles = trpc.role.getRolesByOrganization.useQuery(undefined, {
+        onSuccess(data) {
+            setRoleList(data);
+        },
+    });
 
-  const addRole = trpc.useMutation("role.addRole", {
+  const addRole = trpc.role.addRole.useMutation({
     onSuccess(data, variables, context) {
       if (roleList && data) {
         setRoleList([...roleList, data]);
@@ -62,7 +62,7 @@ const Roles = () => {
     },
   });
 
-  const editRole = trpc.useMutation("role.editRoleById", {
+  const editRole = trpc.role.editRoleById.useMutation({
     onMutate(data) {
       if (editId != null && roleList) {
         let index = roleList?.findIndex((role) => role.id == data.id);
@@ -86,7 +86,7 @@ const Roles = () => {
     },
   });
 
-  const deleteRole = trpc.useMutation("role.deleteRoleById", {
+  const deleteRole = trpc.role.deleteRoleById.useMutation({
     onMutate(data) {
       setRoleList(roleList?.filter((role) => role.id != data));
     },

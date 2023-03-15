@@ -39,8 +39,8 @@ export async function getServerSideProps(
 }
 
 const OrgsPage = () => {
-  const getOrgs = trpc.useQuery(["admin.getOrgs"]);
-  const deleteOrg = trpc.useMutation("admin.deleteOrg");
+  const getOrgs = trpc.admin.getOrgs.useQuery();
+  const deleteOrg = trpc.admin.deleteOrg.useMutation();
   const deleteRef = useRef<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 

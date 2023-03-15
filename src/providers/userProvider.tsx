@@ -21,10 +21,10 @@ type UserProviderData =
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<UserProviderData>(undefined);
   const user = useUser();
-  const query = trpc.useQuery(["user.getUser"], {
-    enabled: !!user,
-    onSuccess: (data) => setData(data),
-  });
+    const query = trpc.user.getUser.useQuery(undefined, {
+        enabled: !!user,
+        onSuccess: (data) => setData(data),
+    });
 
   useEffect(() => {
     if (user != null) {

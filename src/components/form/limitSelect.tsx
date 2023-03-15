@@ -11,7 +11,7 @@ export const LimitSelect: React.FC<{
 }> = ({ defaultNum = 4, selected, setSelected }) => {
   const limitSelector = [4, 6, 8, 10, 15, 20, 50];
   const utils = trpc.useContext();
-  const updateLimit = trpc.useMutation("schedule.updateShowLimit");
+  const updateLimit = trpc.schedule.updateShowLimit.useMutation();
 
   return (
     <div className=' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
@@ -21,7 +21,7 @@ export const LimitSelect: React.FC<{
           updateLimit.mutate(value, {
             onSuccess() {
               setSelected(value);
-              utils.invalidateQueries("user.getUser");
+              utils.user.getUser.invalidate();
             },
           });
         }}>

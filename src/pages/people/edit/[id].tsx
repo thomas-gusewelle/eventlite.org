@@ -37,21 +37,21 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const alertContext = useContext(AlertContext);
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
-    enabled: !!(user?.status == "ADMIN"),
-    onSuccess(data) {
-      setRoleList(data as any);
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `Error fetching user roles. Message: ${err.message}`,
-      });
-      roles.refetch();
-    },
-  });
+    const roles = trpc.role.getRolesByOrganization.useQuery(undefined, {
+        enabled: !!(user?.status == "ADMIN"),
+        onSuccess(data) {
+            setRoleList(data as any);
+        },
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `Error fetching user roles. Message: ${err.message}`,
+            });
+            roles.refetch();
+        },
+    });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
-  const editUser = trpc.useMutation("user.updateUserByID", {
+  const editUser = trpc.user.updateUserById.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: false,
@@ -59,24 +59,24 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       });
     },
   });
-  const userQuery = trpc.useQuery(["user.getUserByID", id], {
-    onSuccess(data) {
-      if (data != null) {
-        data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
-        methods.reset(data);
-        setSelectedRoles(data?.roles);
-        setIsLoading(false);
-      }
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `Error fetching user. Message: ${err.message}`,
-      });
-      userQuery.refetch();
-    },
-    refetchOnWindowFocus: false,
-  });
+    const userQuery = trpc.user.getUserById.useQuery(id, {
+        onSuccess(data) {
+            if (data != null) {
+                data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
+                methods.reset(data);
+                setSelectedRoles(data?.roles);
+                setIsLoading(false);
+            }
+        },
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `Error fetching user. Message: ${err.message}`,
+            });
+            userQuery.refetch();
+        },
+        refetchOnWindowFocus: false,
+    });
 
   // Checks to see if email has changed since loading.
   // If so there is a confirmation that this does not change the login email
@@ -104,7 +104,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       },
       {
         onSuccess() {
-          utils.invalidateQueries("user.getUsersByOrganization");
+          utils.user.getUsersByOrganization.invalidate();
           router.push("/people");
         },
       }

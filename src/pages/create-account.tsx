@@ -35,7 +35,7 @@ const CreateAccount = ({
   const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
   const supabaseClient = useSupabaseClient();
-  const createOrg = trpc.useMutation("organization.createOrg", {
+  const createOrg = trpc.organization.createOrg.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,
@@ -43,7 +43,7 @@ const CreateAccount = ({
       });
     },
   });
-  const createUser = trpc.useMutation("user.addUser", {
+  const createUser = trpc.user.addUser.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,

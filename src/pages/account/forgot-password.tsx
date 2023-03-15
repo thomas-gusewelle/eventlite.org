@@ -12,7 +12,7 @@ import { trpc } from "../../utils/trpc";
 const ForgotPasswordPage = () => {
   const methods = useForm<{ email: string }>();
   const [isSubmit, setIsSubmit] = useState(false);
-  const generateEmail = trpc.useMutation("createAccount.generateResetPassword");
+  const generateEmail = trpc.createAccount.generateResetPassword.useMutation();
 
   const submit = methods.handleSubmit((data) => {
     generateEmail.mutate(

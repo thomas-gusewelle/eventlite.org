@@ -38,10 +38,10 @@ export async function getServerSideProps(
 
 const LoginUsers = () => {
   const { setError } = useContext(AlertContext)
-  const getUsers = trpc.useQuery(["admin.getLoginUsers"]);
-  const resetPassword = trpc.useMutation("createAccount.generateResetPassword");
-  const resendVerification = trpc.useMutation("createAccount.resendConfirm");
-  const deleteLogin = trpc.useMutation("admin.deleteLoginUser")
+  const getUsers = trpc.admin.getLoginUsers.useQuery();
+  const resetPassword = trpc.createAccount.generateResetPassword.useMutation();
+  const resendVerification = trpc.createAccount.resendConfirm.useMutation();
+  const deleteLogin = trpc.admin.deleteLoginUser.useMutation()
 
   return (
     <AdminLayout>

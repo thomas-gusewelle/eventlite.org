@@ -25,22 +25,22 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
 
   const [roleList, setRoleList] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
-    onSuccess(data) {
-      if (data) {
-        setRoleList(data);
-      }
-    },
-    onError(err) {
-      setError({
-        state: true,
-        message: `Error fetching user roles: Message: ${err.message}`,
-      });
-      roles.refetch();
-    },
-  });
+    const roles = trpc.role.getRolesByOrganization.useQuery(undefined, {
+        onSuccess(data) {
+            if (data) {
+                setRoleList(data);
+            }
+        },
+        onError(err) {
+            setError({
+                state: true,
+                message: `Error fetching user roles: Message: ${err.message}`,
+            });
+            roles.refetch();
+        },
+    });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
-  const addUser = trpc.useMutation(["user.addUser"], {
+  const addUser = trpc.user.addUser.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,
@@ -48,7 +48,7 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
       });
     },
   });
-  const inviteUser = trpc.useMutation("createAccount.createInviteLinkWithID", {
+  const inviteUser = trpc.createAccount.createInviteLinkWithId.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,

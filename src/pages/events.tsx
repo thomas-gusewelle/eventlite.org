@@ -150,24 +150,23 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = trpc.useQuery(
-    ["events.getUpcomingEventsByOrganization"],
-    {
-      onSuccess(data) {
-        if (data != undefined) {
-          setEvents(data);
-        }
-      },
-      onError(err) {
-        alertContext.setError({
-          state: true,
-          message: `There was an error fetching your events. Message: ${err.message}`,
-        });
-      },
-    }
+  const eventsQuery = trpc.events.getUpcomingEventsByOrganization.useQuery(
+    undefined, {
+          onSuccess(data) {
+              if (data != undefined) {
+                  setEvents(data);
+              }
+          },
+          onError(err) {
+              alertContext.setError({
+                  state: true,
+                  message: `There was an error fetching your events. Message: ${err.message}`,
+              });
+          },
+      }
   );
 
-  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+  const deleteEventMutation = trpc.events.deleteEventById.useMutation({
     onMutate(data) {
       utils.queryClient.cancelQueries();
 
@@ -353,21 +352,21 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = trpc.useQuery(["events.getPastEventsByOrganization"], {
-    onSuccess(data) {
-      if (data != undefined) {
-        setEvents(data);
-      }
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `There was an error fetching your events. Message: ${err.message}`,
-      });
-    },
-  });
+    const eventsQuery = trpc.events.getPastEventsByOrganization.useQuery(undefined, {
+        onSuccess(data) {
+            if (data != undefined) {
+                setEvents(data);
+            }
+        },
+        onError(err) {
+            alertContext.setError({
+                state: true,
+                message: `There was an error fetching your events. Message: ${err.message}`,
+            });
+        },
+    });
 
-  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+  const deleteEventMutation = trpc.events.deleteEventById.useMutation({
     onMutate(data) {
       utils.queryClient.cancelQueries();
 

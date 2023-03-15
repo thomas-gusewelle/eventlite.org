@@ -1,30 +1,32 @@
 import { User, UserSettings } from "@prisma/client";
 import { useUser } from "@supabase/auth-helpers-react";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { trpc } from "../utils/trpc";
-
+import { api } from "../server/utils/api"
 export const UserContext = createContext<
   | (User & {
-      UserSettings: UserSettings | null;
-    })
+    UserSettings: UserSettings | null;
+  })
   | null
   | undefined
 >(null);
 
 type UserProviderData =
   | (User & {
-      UserSettings: UserSettings | null;
-    })
+    UserSettings: UserSettings | null;
+  })
   | null
   | undefined;
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<UserProviderData>(undefined);
   const user = useUser();
-    const query = trpc.user.getUser.useQuery(undefined, {
-        enabled: !!user,
-        onSuccess: (data) => setData(data),
-    });
+  api.user.getUser.useQuery(undefined, {
+    onSuccess: (data) => console.log("here is the data: ", data)
+  })
+  const query = api.user.getUser.useQuery(undefined, {
+    enabled: !!user,
+    onSuccess: (data) => setData(data),
+  });
 
   useEffect(() => {
     if (user != null) {

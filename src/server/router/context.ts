@@ -105,3 +105,17 @@ const enforeIsAdmin = t.middleware(async ({ctx, next}) => {
 })
 
 export const adminProcedure = t.procedure.use(enforeIsAdmin)
+
+
+const enforceIsEventLiteAdmin = t.middleware(async ({ctx, next}) => {
+  
+  if (!ctx.session || !ctx.session.id){
+    throw new TRPCError({code: "UNAUTHORIZED"})
+  }
+    if (ctx.session.email != "tgusewelle@eventlite.org") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next();
+})
+
+export const elAdminProcedure = t.procedure.use(enforceIsEventLiteAdmin)

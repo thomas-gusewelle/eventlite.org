@@ -24,7 +24,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 /**
  * 2. INITIALIZATION
- *
+*
  * This is where the tRPC API is initialized, connecting the context and transformer.
  */
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -81,4 +81,24 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const loggedInProcedure = t.procedure.use(enforceUserIsAuthed);
+
+const enforeIsAdmin = t.middleware(async ({ctx, next}) => {
+  const user = await prisma.user.findFirst({
+    where:{
+      id: ctx?.session?.id   
+       } 
+  })
+
+  if (user == undefined || user.status 
+ != "ADMIN"){
+    throw new TRPCError({code: "UNAUTHORIZED"})
+  }
+  return next({
+    ctx: {
+      session: ctx.session  
+    }
+  })
+})
+
+export const adminProcedure = t.procedure.use(enforeIsAdmin)

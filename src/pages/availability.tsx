@@ -17,7 +17,7 @@ import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { fullName } from "../utils/fullName";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 
 const AvailabilityPage = () => {
   const alertContext = useContext(AlertContext);
@@ -41,7 +41,7 @@ const AvailabilityPage = () => {
     }
   }, [dates, pageNum]);
 
-  const deleteDateMutation = trpc.avalibility.deleteDate.useMutation({
+  const deleteDateMutation = api.avalibility.deleteDate.useMutation({
     onSuccess(data) {
       setDates(dates.filter((item) => item.id != data?.id));
       getUserAvailibilityQuery.refetch();
@@ -54,41 +54,41 @@ const AvailabilityPage = () => {
     },
   });
 
-    const getUsersQuery = trpc.user.getUsersByOrganization.useQuery(undefined, {
-        enabled: !!(user?.status == "ADMIN"),
-        onSuccess(data) {
-            setPeopleList(
-                data?.map((user) => ({
-                    item: user,
-                    label: fullName(user.firstName, user.lastName) ?? "",
-                })) ?? []
-            );
-        },
-        onError(err) {
-            alertContext.setError({
-                state: true,
-                message: `There was an error fetching the users. Message: ${err.message}`,
-            });
-            getUsersQuery.refetch();
-        },
-    });
+  const getUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
+    enabled: !!(user?.status == "ADMIN"),
+    onSuccess(data) {
+      setPeopleList(
+        data?.map((user) => ({
+          item: user,
+          label: fullName(user.firstName, user.lastName) ?? "",
+        })) ?? []
+      );
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error fetching the users. Message: ${err.message}`,
+      });
+      getUsersQuery.refetch();
+    },
+  });
 
-  const getUserAvailibilityQuery = trpc.avalibility.getUserAvalibilityById.useQuery(
+  const getUserAvailibilityQuery = api.avalibility.getUserAvalibilityByID.useQuery(
     userSelected.id,
-      {
-          onSuccess(data) {
-              setDates(
-                  data?.sort((a, b) => a.date.getTime() - b.date.getTime()) ?? []
-              );
-          },
-          onError(err) {
-              alertContext.setError({
-                  state: true,
-                  message: `There was an error fetching the user availibility. Message: ${err.message}`,
-              });
-              getUserAvailibilityQuery.refetch();
-          },
-      }
+    {
+      onSuccess(data) {
+        setDates(
+          data?.sort((a, b) => a.date.getTime() - b.date.getTime()) ?? []
+        );
+      },
+      onError(err) {
+        alertContext.setError({
+          state: true,
+          message: `There was an error fetching the user availibility. Message: ${err.message}`,
+        });
+        getUserAvailibilityQuery.refetch();
+      },
+    }
   );
 
   if (

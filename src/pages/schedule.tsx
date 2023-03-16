@@ -131,7 +131,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     console.log("This is the data", data);
   });
 
-  if (getScheduleQuery.isLoading || getScheduleQuery.isFetching) {
+  if (getScheduleQuery.isLoading) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />

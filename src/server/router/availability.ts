@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const avalibiltyRouter = createTRPCRouter({
     
-getUserAvalibility: loggedInProcedure.mutation(async ({ctx}) => {
+getUserAvalibility: loggedInProcedure.query(async ({ctx}) => {
     
       return await ctx.prisma?.availability.findMany({
         where: {

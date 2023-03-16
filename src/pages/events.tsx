@@ -21,7 +21,7 @@ import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { classNames } from "../utils/classnames";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -129,7 +129,7 @@ EventsPage.getLayout = sidebar;
 export default EventsPage;
 
 const UpcomingEvents = ({ queryString }: { queryString: string }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useContext(UserContext);
@@ -150,23 +150,23 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = trpc.events.getUpcomingEventsByOrganization.useQuery(
+  const eventsQuery = api.events.getUpcomingEventsByOrganization.useQuery(
     undefined, {
-          onSuccess(data) {
-              if (data != undefined) {
-                  setEvents(data);
-              }
-          },
-          onError(err) {
-              alertContext.setError({
-                  state: true,
-                  message: `There was an error fetching your events. Message: ${err.message}`,
-              });
-          },
+    onSuccess(data) {
+      if (data != undefined) {
+        setEvents(data);
       }
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error fetching your events. Message: ${err.message}`,
+      });
+    },
+  }
   );
 
-  const deleteEventMutation = trpc.events.deleteEventById.useMutation({
+  const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
       utils.queryClient.cancelQueries();
 
@@ -332,7 +332,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
 };
 
 const PastEvents = ({ queryString }: { queryString: string }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useContext(UserContext);
@@ -352,21 +352,21 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-    const eventsQuery = trpc.events.getPastEventsByOrganization.useQuery(undefined, {
-        onSuccess(data) {
-            if (data != undefined) {
-                setEvents(data);
-            }
-        },
-        onError(err) {
-            alertContext.setError({
-                state: true,
-                message: `There was an error fetching your events. Message: ${err.message}`,
-            });
-        },
-    });
+  const eventsQuery = api.events.getPastEventsByOrganization.useQuery(undefined, {
+    onSuccess(data) {
+      if (data != undefined) {
+        setEvents(data);
+      }
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error fetching your events. Message: ${err.message}`,
+      });
+    },
+  });
 
-  const deleteEventMutation = trpc.events.deleteEventById.useMutation({
+  const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
       utils.queryClient.cancelQueries();
 

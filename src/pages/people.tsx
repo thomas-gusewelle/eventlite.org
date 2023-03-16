@@ -154,7 +154,7 @@ const PeoplePage = () => {
   if (people.data?.length == 0) {
     return (
       <NoDataLayout
-        heading='Users'
+        heading='People'
         btnText='Add User'
         func={() => router.push("/people/adduser")}
       />
@@ -165,7 +165,7 @@ const PeoplePage = () => {
     <>
       {/* MD Top Bar */}
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
-        <SectionHeading>Users</SectionHeading>
+        <SectionHeading>People</SectionHeading>
         <div className='flex justify-end'>
           {user?.status == "ADMIN" && (
             <BtnAdd onClick={() => router.push("/people/adduser")} />
@@ -183,7 +183,7 @@ const PeoplePage = () => {
 
       {/* Desktop Top Bar */}
       <div className='mb-8 hidden justify-between md:flex'>
-        <SectionHeading>Users</SectionHeading>
+        <SectionHeading>People</SectionHeading>
         <div className='flex gap-4'>
           <input
             onChange={(e) => filter(e.target.value)}

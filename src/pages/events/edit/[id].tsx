@@ -270,7 +270,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         </div>
       </Modal>
       {/* The is loading is handled here to make the reset work correctly */}
-      {eventQuery.isFetching || (EventRecurrance.isLoading && recurringId != "") ? (
+      {eventQuery.isLoading || (EventRecurrance.isLoading && recurringId != "") ? (
         <div className='flex justify-center'>
           <CircularProgress />
         </div>
@@ -278,7 +278,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         <></>
       )}
       <div
-        className={`${eventQuery.isFetching || (EventRecurrance.isLoading && recurringId != "")
+        className={`${eventQuery.isLoading || (EventRecurrance.isLoading && recurringId != "")
           ? "hidden"
           : "block"
           }`}>

@@ -42,7 +42,7 @@ export const createAccountRouter = createTRPCRouter({
     });
   }),
 
-  reateInviteLinkWithID: loggedInProcedure.input(
+  createInviteLinkWithID: loggedInProcedure.input(
     z.object({
       userId: z.string(),
     }),

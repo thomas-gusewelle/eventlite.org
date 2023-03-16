@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { sidebar } from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { CircularProgress } from "../components/circularProgress";
 import { InviteLink, Role, User } from "@prisma/client";
@@ -33,31 +33,31 @@ const PeoplePage = () => {
       })[]
     >
   >();
-    const people = trpc.user.getUsersByOrganization.useQuery(undefined, {
-        onSuccess: (data) => {
-            if (data) {
-                // sorts users by status with inactive at the end
-                data = data.sort((a, b) => {
-                    if (
-                        (a.status == "ADMIN" || a.status == "USER") &&
-                        b.status == "INACTIVE"
-                    ) {
-                        return -1;
-                    } else if (
-                        (b.status == "ADMIN" || b.status == "USER") &&
-                        a.status == "INACTIVE"
-                    ) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
-                setPeopleUnPageList(data);
-            }
-        },
-    });
-  const adminCount = trpc.user.getAmdminCount.useQuery();
-  const createInvite = trpc.createAccount.createInviteLinkWithId.useMutation(
+  const people = api.user.getUsersByOrganization.useQuery(undefined, {
+    onSuccess: (data) => {
+      if (data) {
+        // sorts users by status with inactive at the end
+        data = data.sort((a, b) => {
+          if (
+            (a.status == "ADMIN" || a.status == "USER") &&
+            b.status == "INACTIVE"
+          ) {
+            return -1;
+          } else if (
+            (b.status == "ADMIN" || b.status == "USER") &&
+            a.status == "INACTIVE"
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+        setPeopleUnPageList(data);
+      }
+    },
+  });
+  const adminCount = api.user.getAmdminCount.useQuery();
+  const createInvite = api.createAccount.createInviteLinkWithID.useMutation(
     {
       onError(error, variables, context) {
         setError({
@@ -67,7 +67,7 @@ const PeoplePage = () => {
       },
     }
   );
-  const sendResetPassword = trpc.createAccount.generateResetPassword.useMutation(
+  const sendResetPassword = api.createAccount.generateResetPassword.useMutation(
     {
       onError(error, variables, context) {
         setError({
@@ -77,7 +77,7 @@ const PeoplePage = () => {
       },
     }
   );
-  const deleteUser = trpc.user.deleteUserById.useMutation({
+  const deleteUser = api.user.deleteUserById.useMutation({
     onError: (error) => {
       setError({
         message: `Sorry. There was an issue deleting the user. Message: ${error}`,

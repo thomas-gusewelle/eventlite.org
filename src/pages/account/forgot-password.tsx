@@ -7,12 +7,12 @@ import { CardHeader } from "../../components/create-account-flow/components/card
 import { VerticalLogo } from "../../components/create-account-flow/components/VerticalLogo";
 import { EmailInput } from "../../components/form/emailInput";
 import { loginFlowLayout } from "../../components/layout/login-flow-layout";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 const ForgotPasswordPage = () => {
   const methods = useForm<{ email: string }>();
   const [isSubmit, setIsSubmit] = useState(false);
-  const generateEmail = trpc.createAccount.generateResetPassword.useMutation();
+  const generateEmail = api.createAccount.generateResetPassword.useMutation();
 
   const submit = methods.handleSubmit((data) => {
     generateEmail.mutate(

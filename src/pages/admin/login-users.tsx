@@ -12,7 +12,7 @@ import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { AlertContext } from "../../providers/alertProvider";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 export async function getServerSideProps(
   context:
@@ -38,10 +38,10 @@ export async function getServerSideProps(
 
 const LoginUsers = () => {
   const { setError } = useContext(AlertContext)
-  const getUsers = trpc.admin.getLoginUsers.useQuery();
-  const resetPassword = trpc.createAccount.generateResetPassword.useMutation();
-  const resendVerification = trpc.createAccount.resendConfirm.useMutation();
-  const deleteLogin = trpc.admin.deleteLoginUser.useMutation()
+  const getUsers = api.admin.getLoginUsers.useQuery();
+  const resetPassword = api.createAccount.generateResetPassword.useMutation();
+  const resendVerification = api.createAccount.resendConfirm.useMutation();
+  const deleteLogin = api.admin.deleteLoginUser.useMutation()
 
   return (
     <AdminLayout>

@@ -14,15 +14,15 @@ import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { AreYouSureModal } from "../../components/modal/areYouSure";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 export async function getServerSideProps(
   context:
     | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     | {
-        req: NextApiRequest;
-        res: NextApiResponse;
-      }
+      req: NextApiRequest;
+      res: NextApiResponse;
+    }
 ) {
   const supabase = createServerSupabaseClient(context);
   const user = await supabase.auth.getUser();
@@ -39,9 +39,9 @@ export async function getServerSideProps(
 }
 
 const AdminBetaPage = () => {
-  const getBetaRequest = trpc.admin.getBetaRequests.useQuery();
-  const sendInvite = trpc.admin.sendBetaInvite.useMutation();
-  const deleteBetaRequest = trpc.admin.deleteBetaRegister.useMutation();
+  const getBetaRequest = api.admin.getBetaRequests.useQuery();
+  const sendInvite = api.admin.sendBetaInvite.useMutation();
+  const deleteBetaRequest = api.admin.deleteBetaRegister.useMutation();
   const deleteRef = useRef<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 

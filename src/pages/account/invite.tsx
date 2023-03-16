@@ -6,7 +6,7 @@ import { BtnPurple } from "../../components/btn/btnPurple";
 import { CircularProgress } from "../../components/circularProgress";
 import { EmailInput } from "../../components/form/emailInput";
 import { PasswordField } from "../../components/form/password";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 type FormFields = { email: string; password: string; passwordConfirm: string };
 
@@ -28,7 +28,7 @@ const Invite = ({
     methods.setValue("email", email);
   }, [email, methods]);
 
-  const createLogin = trpc.createAccount.createInviteLogin.useMutation({
+  const createLogin = api.createAccount.createInviteLogin.useMutation({
     onError(error) {
       alert(error.message);
     },

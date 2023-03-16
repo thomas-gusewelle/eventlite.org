@@ -22,6 +22,7 @@ import { UserContext } from "../providers/userProvider";
 import { classNames } from "../utils/classnames";
 import { paginate } from "../utils/paginate";
 import { api } from "../server/utils/api"
+import { useQueryClient } from "@tanstack/react-query";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -136,7 +137,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
-
+  const queryClient = useQueryClient()
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
   const [events, setEvents] = useState<stateData>([]);
@@ -168,7 +169,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
 
   const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      utils.queryClient.cancelQueries();
+      queryClient.cancelQueries()
 
       if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));
@@ -333,6 +334,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
 
 const PastEvents = ({ queryString }: { queryString: string }) => {
   const utils = api.useContext();
+  const queryClient = useQueryClient()
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useContext(UserContext);
@@ -368,7 +370,7 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
 
   const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      utils.queryClient.cancelQueries();
+      queryClient.cancelQueries()
 
       if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));

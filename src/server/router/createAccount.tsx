@@ -170,7 +170,7 @@ export const createAccountRouter = createTRPCRouter({
 
   //  used for creating login for user that is already in org.
   // creates the user then updates the database userID and deletes the inviteLink entry
-  createIniteLogin: publicProcedure.input(
+  createInviteLogin: publicProcedure.input(
     z.object({
       email: z.string().email(),
       password: z.string(),

@@ -14,15 +14,15 @@ import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { AreYouSureModal } from "../../components/modal/areYouSure";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 export async function getServerSideProps(
   context:
     | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     | {
-        req: NextApiRequest;
-        res: NextApiResponse;
-      }
+      req: NextApiRequest;
+      res: NextApiResponse;
+    }
 ) {
   const supabase = createServerSupabaseClient(context);
   const user = await supabase.auth.getUser();
@@ -39,8 +39,8 @@ export async function getServerSideProps(
 }
 
 const OrgsPage = () => {
-  const getOrgs = trpc.admin.getOrgs.useQuery();
-  const deleteOrg = trpc.admin.deleteOrg.useMutation();
+  const getOrgs = api.admin.getOrgs.useQuery();
+  const deleteOrg = api.admin.deleteOrg.useMutation();
   const deleteRef = useRef<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 

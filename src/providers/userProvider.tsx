@@ -20,13 +20,13 @@ type UserProviderData =
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<UserProviderData>(undefined);
   const user = useUser();
-  api.user.getUser.useQuery(undefined)
   const query = api.user.getUser.useQuery(undefined, {
     enabled: !!user,
     onSuccess: (data) => setData(data),
   });
 
   useEffect(() => {
+    console.log(user)
     if (user != null) {
     } else {
       setData(undefined);

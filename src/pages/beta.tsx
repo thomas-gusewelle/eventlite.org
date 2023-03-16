@@ -9,7 +9,7 @@ import { EmailInput } from "../components/form/emailInput";
 import { FirstNameInput } from "../components/form/firstNameInput";
 import { LastNameInput } from "../components/form/lastNameInput";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -33,7 +33,7 @@ const BetaPage = () => {
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
-  const betaMutate = trpc.createAccount.registerBetaInterest.useMutation();
+  const betaMutate = api.createAccount.registerBetaInterest.useMutation();
 
   const submit = methods.handleSubmit((data) => {
     betaMutate.mutate(

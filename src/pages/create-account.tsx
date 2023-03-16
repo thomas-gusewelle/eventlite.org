@@ -12,7 +12,7 @@ import { CreateOrganization } from "../components/create-account-flow/steps/crea
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
 import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 import { AlertContext } from "../providers/alertProvider";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
@@ -35,7 +35,7 @@ const CreateAccount = ({
   const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
   const supabaseClient = useSupabaseClient();
-  const createOrg = trpc.organization.createOrg.useMutation({
+  const createOrg = api.organization.createOrg.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,
@@ -43,7 +43,7 @@ const CreateAccount = ({
       });
     },
   });
-  const createUser = trpc.user.addUser.useMutation({
+  const createUser = api.user.addUser.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,

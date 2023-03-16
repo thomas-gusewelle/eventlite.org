@@ -4,7 +4,7 @@ import { SectionHeading } from "../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
 import { MultiSelect } from "../../components/form/multiSelect";
 import { useContext, useEffect, useRef, useState } from "react";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 import { Role, UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../components/circularProgress";
 import { AlertContext } from "../../providers/alertProvider";
@@ -25,22 +25,22 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
 
   const [roleList, setRoleList] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
-    const roles = trpc.role.getRolesByOrganization.useQuery(undefined, {
-        onSuccess(data) {
-            if (data) {
-                setRoleList(data);
-            }
-        },
-        onError(err) {
-            setError({
-                state: true,
-                message: `Error fetching user roles: Message: ${err.message}`,
-            });
-            roles.refetch();
-        },
-    });
+  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
+    onSuccess(data) {
+      if (data) {
+        setRoleList(data);
+      }
+    },
+    onError(err) {
+      setError({
+        state: true,
+        message: `Error fetching user roles: Message: ${err.message}`,
+      });
+      roles.refetch();
+    },
+  });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
-  const addUser = trpc.user.addUser.useMutation({
+  const addUser = api.user.addUser.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,
@@ -48,7 +48,7 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
       });
     },
   });
-  const inviteUser = trpc.createAccount.createInviteLinkWithId.useMutation({
+  const inviteUser = api.createAccount.createInviteLinkWithID.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,

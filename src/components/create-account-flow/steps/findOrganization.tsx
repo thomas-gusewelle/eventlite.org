@@ -2,7 +2,7 @@ import { Combobox, Transition } from "@headlessui/react";
 import { Organization } from "@prisma/client";
 import { Dispatch, FormEvent, Fragment, SetStateAction, useState } from "react";
 import { Controller, FormProvider, useFormContext } from "react-hook-form";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../server/utils/api"
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
 import { CircularProgress } from "../../circularProgress";
@@ -25,12 +25,12 @@ export const FindOrganization = ({
   } = useFormContext();
   const [selectedOrg, setSelectedOrg] = useState("");
   const [query, setQuery] = useState("");
-    const searchQuery = trpc.createAccount.searchForOrg.useQuery(query, {
-        enabled: !!(query != ""),
-        onSuccess(data) {
-            console.log(data);
-        },
-    });
+  const searchQuery = api.createAccount.searchForOrg.useQuery(query, {
+    enabled: !!(query != ""),
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
   return (
     <>
       <CardHeader>Find Organization</CardHeader>
@@ -83,18 +83,16 @@ export const FindOrganization = ({
                           key={org.id}
                           value={org}
                           className={({ active }) =>
-                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                              active ? "bg-indigo-100" : "text-gray-900"
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
                             }`
                           }>
                           {({ selected }) => (
                             <>
                               <span
-                                className={`block cursor-pointer truncate ${
-                                  selected
+                                className={`block cursor-pointer truncate ${selected
                                     ? "font-medium text-indigo-700"
                                     : "font-normal"
-                                }`}>
+                                  }`}>
                                 {org.name}
                               </span>
                             </>

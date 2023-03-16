@@ -63,7 +63,7 @@ updateUserByID: publicProcedure.input(
       role: z.object({ id: z.string(), name: z.string() }).array(),
       status: z.string(),
     }),
-  ).query(async ({ctx, input}) => {
+  ).mutation(async ({ctx, input}) => {
     
       const user = await ctx.prisma?.user.findFirst({
         where: { id: ctx?.session?.id },

@@ -5,7 +5,7 @@ import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
 import { MultiSelect } from "../../../components/form/multiSelect";
 import { useContext, useRef, useState } from "react";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../server/utils/api"
 import { UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../../components/circularProgress";
 import { AlertContext } from "../../../providers/alertProvider";
@@ -29,7 +29,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useContext(UserContext);
   const methods = useForm<UserFormValues>();
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const [emailEditModal, setEmailEditModal] = useState(false);
   const [formData, setFormData] = useState<UserFormValues | null>(null);
 
@@ -37,21 +37,21 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const alertContext = useContext(AlertContext);
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
-    const roles = trpc.role.getRolesByOrganization.useQuery(undefined, {
-        enabled: !!(user?.status == "ADMIN"),
-        onSuccess(data) {
-            setRoleList(data as any);
-        },
-        onError(err) {
-            alertContext.setError({
-                state: true,
-                message: `Error fetching user roles. Message: ${err.message}`,
-            });
-            roles.refetch();
-        },
-    });
+  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
+    enabled: !!(user?.status == "ADMIN"),
+    onSuccess(data) {
+      setRoleList(data as any);
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `Error fetching user roles. Message: ${err.message}`,
+      });
+      roles.refetch();
+    },
+  });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
-  const editUser = trpc.user.updateUserById.useMutation({
+  const editUser = api.user.updateUserByID.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: false,
@@ -59,24 +59,24 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       });
     },
   });
-    const userQuery = trpc.user.getUserById.useQuery(id, {
-        onSuccess(data) {
-            if (data != null) {
-                data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
-                methods.reset(data);
-                setSelectedRoles(data?.roles);
-                setIsLoading(false);
-            }
-        },
-        onError(err) {
-            alertContext.setError({
-                state: true,
-                message: `Error fetching user. Message: ${err.message}`,
-            });
-            userQuery.refetch();
-        },
-        refetchOnWindowFocus: false,
-    });
+  const userQuery = api.user.getUserByID.useQuery(id, {
+    onSuccess(data) {
+      if (data != null) {
+        data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
+        methods.reset(data);
+        setSelectedRoles(data?.roles);
+        setIsLoading(false);
+      }
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `Error fetching user. Message: ${err.message}`,
+      });
+      userQuery.refetch();
+    },
+    refetchOnWindowFocus: false,
+  });
 
   // Checks to see if email has changed since loading.
   // If so there is a confirmation that this does not change the login email

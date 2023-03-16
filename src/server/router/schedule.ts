@@ -129,7 +129,7 @@ updateShowLimit: adminProcedure.input(z.number()).mutation(async ({ctx, input}) 
     
       return await ctx.prisma?.userSettings.update({
         where: {
-          userId: ctx.data?.user?.id,
+          userId: ctx.session.id,
         },
         data: {
           scheduleShowAmount: input,

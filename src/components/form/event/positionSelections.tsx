@@ -6,7 +6,7 @@ import {
   useFieldArray,
   Controller,
 } from "react-hook-form";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../server/utils/api"
 import { NewSingleSelect, SingleSelect } from "../singleSelect";
 import { MdAddCircleOutline, MdDelete } from "react-icons/md";
 import { ErrorSpan } from "../../errors/errorSpan";
@@ -16,16 +16,16 @@ import { PositionAddModal } from "../../modal/positionAdd";
 
 export const PositionsSelector = () => {
   const [open, setOpen] = useState(false);
-    const rolesQuery = trpc.role.getRolesByOrganization.useQuery(undefined, {
-        onSuccess(data) {
-            if (data != undefined) {
-                const _data = data.map((item) => {
-                    return { ...item, show: true };
-                });
-                setRoles(_data);
-            }
-        },
-    });
+  const rolesQuery = api.role.getRolesByOrganization.useQuery(undefined, {
+    onSuccess(data) {
+      if (data != undefined) {
+        const _data = data.map((item) => {
+          return { ...item, show: true };
+        });
+        setRoles(_data);
+      }
+    },
+  });
   const [roles, setRoles] = useState<(Role & { show: boolean })[]>([]);
   const {
     control,
@@ -149,11 +149,10 @@ export const PositionsSelector = () => {
                 </div>
                 <div
                   onClick={() => remove(index)}
-                  className={`col-span-1 flex cursor-pointer items-center justify-center ${
-                    index == 0 &&
+                  className={`col-span-1 flex cursor-pointer items-center justify-center ${index == 0 &&
                     posiitonsField.length < 2 &&
                     "pointer-events-none"
-                  }`}>
+                    }`}>
                   <MdDelete
                     size={25}
                     className={

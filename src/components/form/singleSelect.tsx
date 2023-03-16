@@ -34,19 +34,17 @@ export const SingleSelect: React.FC<{
                     <Listbox.Option
                       key={index}
                       className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                          active ? "bg-indigo-100" : "text-gray-900"
+                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
                         }`
                       }
                       value={item}>
                       {({ selected }) => (
                         <>
                           <span
-                            className={`block truncate ${
-                              selected
+                            className={`block truncate ${selected
                                 ? "font-medium text-indigo-700"
                                 : "font-normal"
-                            }`}>
+                              }`}>
                             {item.name}
                           </span>
                         </>
@@ -81,7 +79,6 @@ export const NewSingleSelect = <List extends Object>({
   showAdd = false,
   showAddComponent = <></>,
 }: SingleSelectProps<List>) => {
-  console.log(showAddComponent);
   return (
     <div className=' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
       <Listbox value={selected} onChange={(value) => setSelected(value)}>
@@ -106,19 +103,17 @@ export const NewSingleSelect = <List extends Object>({
                     <Listbox.Option
                       key={index}
                       className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-4 pr-4 ${
-                          active ? "bg-indigo-100" : "text-gray-900"
+                        `relative cursor-default select-none py-2 pl-4 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
                         }`
                       }
                       value={item.item}>
                       {({ selected }) => (
                         <>
                           <span
-                            className={`block truncate ${
-                              selected
+                            className={`block truncate ${selected
                                 ? "font-medium text-indigo-700"
                                 : "font-normal"
-                            }`}>
+                              }`}>
                             {label(item.item)}
                           </span>
                         </>

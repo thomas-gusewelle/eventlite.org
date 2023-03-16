@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 import { BtnCancel } from "../btn/btnCancel";
 import { BtnPurple } from "../btn/btnPurple";
 import { BottomButtons } from "./bottomButtons";
@@ -15,7 +15,7 @@ export const LocationAddModel = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const ref = useRef();
   const {
     register,
@@ -24,12 +24,12 @@ export const LocationAddModel = ({
     formState: { errors },
   } = useForm<{ name: string }>();
 
-  const addLocation = trpc.locations.createLocation.useMutation();
+  const addLocation = api.locations.createLocation.useMutation();
 
   const submit = handleSubmit((data) => {
     addLocation.mutate(data.name, {
       onSuccess() {
-        utils.locations.getLocationsByOrg.refetch(undefined, { active: true });
+        utils.locations.getLocationsByOrg.refetch(undefined, { type: "active" });
         setOpen(false);
       },
     });

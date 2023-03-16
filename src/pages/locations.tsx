@@ -20,7 +20,7 @@ import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api";
 
 const LocationsPage = () => {
   const alertContext = useContext(AlertContext);
@@ -38,19 +38,19 @@ const LocationsPage = () => {
     reset,
   } = useForm();
 
-    const locations = trpc.locations.getLocationsByOrg.useQuery(undefined, {
-        onSuccess(data) {
-            setLocationList(data);
-        },
-        onError(err) {
-            alertContext.setError({
-                message: `Error fetching locations. Message: ${err.message}`,
-                state: true,
-            });
-        },
-    });
+  const locations = api.locations.getLocationsByOrg.useQuery(undefined, {
+    onSuccess(data) {
+      setLocationList(data);
+    },
+    onError(err) {
+      alertContext.setError({
+        message: `Error fetching locations. Message: ${err.message}`,
+        state: true,
+      });
+    },
+  });
 
-  const addLocation = trpc.locations.createLocation.useMutation({
+  const addLocation = api.locations.createLocation.useMutation({
     onSuccess(data, variables, context) {
       if (locationList && data) {
         const newData = [...locationList, data];
@@ -67,7 +67,7 @@ const LocationsPage = () => {
     },
   });
 
-  const editLocation = trpc.locations.editLocationById.useMutation({
+  const editLocation = api.locations.editLocationByID.useMutation({
     onMutate(data) {
       if (editId != null && locationList) {
         let index = locationList?.findIndex((loc) => loc.id == data.id);
@@ -91,7 +91,7 @@ const LocationsPage = () => {
     },
   });
 
-  const deleteLocation = trpc.locations.deletebyId.useMutation({
+  const deleteLocation = api.locations.deletebyId.useMutation({
     onMutate(data) {
       const newData = locationList?.filter((location) => location.id != data);
       setLocationList(newData);

@@ -12,7 +12,7 @@ getRolesByOrganization: adminProcedure.query(async ({ctx}) => {
           organizationId: true,
         },
         where: {
-          id: ctx.data.user?.id,
+          id: ctx.session.id,
         },
       });
       if (org?.organizationId) {

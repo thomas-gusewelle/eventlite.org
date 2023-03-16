@@ -258,7 +258,7 @@ const Roles = () => {
 
         {/* Desktop Top Bar */}
         <div className='mb-8 hidden justify-between md:flex'>
-          <SectionHeading>Locations</SectionHeading>
+          <SectionHeading>Roles</SectionHeading>
           <div className='flex gap-4'>
             <input
               onChange={(e) => filter(e.target.value)}

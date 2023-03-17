@@ -8,10 +8,10 @@ export const config = {
   api: { bodyParser: false }
 }
 
-export default verifySignature(handler, {
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
-})
+// export default verifySignature(handler, {
+//   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+//   nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+// })
 
 
 
@@ -21,7 +21,7 @@ type EventsWithPositions = (Event & {
   })[];
 })[] | undefined
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body
   console.log(body)
 
@@ -31,9 +31,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       text: "Hello World",
       subject: "Hello"
     })
+
+    console.log("here in the try")
   } catch (err) {
     res.status(500).send(null)
   }
 
-  res.send(null)
+  res.status(200).send(null)
 }

@@ -34,4 +34,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } catch (err) {
     res.status(500).send(null)
   }
+
+  res.send(null)
 }

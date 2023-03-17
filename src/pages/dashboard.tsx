@@ -1,5 +1,5 @@
 import { sidebar } from "../components/layout/sidebar";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 import { useContext, useEffect, useState } from "react";
 import { AlertContext } from "../providers/alertProvider";
 import { BtnPurple } from "../components/btn/btnPurple";
@@ -34,29 +34,27 @@ const Dashboard = () => {
   const [eventsData, setEventsData] = useState<stateData>([]);
   const [approvalEventsData, setApprovalEventsData] = useState<stateData>([]);
 
-  const eventsQuery = trpc.useQuery(
-    ["events.getUpcomingEventsByUser"],
-
-    {
-      onSuccess(data) {
-        if (data != undefined) {
-          if (data.upcoming != undefined) {
-            setEventsData(data.upcoming);
-          }
-          if (data.needApproval != undefined) {
-            setApprovalEventsData(data.needApproval);
-          }
+  const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(
+    undefined, {
+    onSuccess(data) {
+      if (data != undefined) {
+        if (data.upcoming != undefined) {
+          setEventsData(data.upcoming);
         }
-      },
-      onError(err) {
-        alertContext.setError({
-          state: true,
-          message: `Error getting upcoming events. ${err.message}`,
-        });
-      },
-    }
+        if (data.needApproval != undefined) {
+          setApprovalEventsData(data.needApproval);
+        }
+      }
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `Error getting upcoming events. ${err.message}`,
+      });
+    },
+  }
   );
-  const userResponseMutation = trpc.useMutation("events.updateUserResponse", {
+  const userResponseMutation = api.events.updateUserResponse.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: true,
@@ -73,9 +71,9 @@ const Dashboard = () => {
       // puls the item from approval list if changing to False or True
       let item:
         | (Event & {
-            Locations: Locations | null;
-            positions: (EventPositions & { User: User | null; Role: Role })[];
-          })
+          Locations: Locations | null;
+          positions: (EventPositions & { User: User | null; Role: Role })[];
+        })
         | undefined = undefined;
       if (variables.response == "NULL") {
         item = eventsData.find((item) =>
@@ -183,11 +181,10 @@ const Dashboard = () => {
                   key={event.id}
                   className='flex flex-col border-gray-300 pt-4'>
                   <div
-                    className={`rounded-t-lg pt-2 ${
-                      userResponse?.userResponse == null
+                    className={`rounded-t-lg pt-2 ${userResponse?.userResponse == null
                         ? ""
                         : "rounded-b-lg border-b"
-                    } round border-t border-r border-l shadow`}>
+                      } round border-t border-r border-l shadow`}>
                     <div className='mb-4 flex flex-col px-3'>
                       <div className='flex justify-between'>
                         <h3 className='text-xl font-bold'>{event.name}</h3>
@@ -210,9 +207,8 @@ const Dashboard = () => {
                             </span>
                             {position.User ? (
                               <div
-                                className={`flex h-full py-1 px-3 text-center ${
-                                  position.userResponse == null && "bg-gray-100"
-                                }
+                                className={`flex h-full py-1 px-3 text-center ${position.userResponse == null && "bg-gray-100"
+                                  }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>
@@ -273,11 +269,10 @@ const Dashboard = () => {
                   key={event.id}
                   className='flex flex-col border-gray-300 pt-4'>
                   <div
-                    className={`rounded-t-lg pt-2 ${
-                      userResponse?.userResponse == null
+                    className={`rounded-t-lg pt-2 ${userResponse?.userResponse == null
                         ? ""
                         : "rounded-b-lg border-b"
-                    } round border-t border-r border-l shadow`}>
+                      } round border-t border-r border-l shadow`}>
                     <div className='mb-4 flex flex-col px-3'>
                       <div className='flex justify-between'>
                         <h3 className='text-xl font-bold'>{event.name}</h3>
@@ -313,9 +308,8 @@ const Dashboard = () => {
                           </span>
                           {position.User ? (
                             <div
-                              className={`flex h-full py-1 px-3 text-center ${
-                                position.userResponse == null && "bg-gray-100"
-                              }
+                              className={`flex h-full py-1 px-3 text-center ${position.userResponse == null && "bg-gray-100"
+                                }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
                     `}>

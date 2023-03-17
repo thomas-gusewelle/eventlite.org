@@ -9,8 +9,9 @@ import { BottomButtons } from "./bottomButtons";
 import { BtnSave } from "../btn/btnSave";
 import { BtnCancel } from "../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
-import { trpc } from "../../utils/trpc";
 import { Availability } from "@prisma/client";
+import { api } from "../../server/utils/api"
+import { useQueryClient } from "@tanstack/react-query";
 
 export const AvaililityModal: React.FC<{
   userId: string;
@@ -26,11 +27,10 @@ export const AvaililityModal: React.FC<{
       .sort((a, b) => a.getTime() - b.getTime())
   );
   const [deletedDates, setDeletedDates] = useState<Date[]>([]);
-  const opts = trpc.useContext();
+  const opts = useQueryClient()
 
   //TODO: fix display of dates below calendar
   // useEffect(() => {
-  //   console.log(exisitingDates);
   //   setNewDates(
   //     newDates.filter((date) =>
   //       exisitingDates.map((item) => item.date).includes(date)
@@ -38,8 +38,7 @@ export const AvaililityModal: React.FC<{
   //   );
   // }, [exisitingDates, newDates]);
 
-  const updateAvailibility = trpc.useMutation(
-    "avalibility.updateUserAvalibility",
+  const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation(
     {
       onSuccess() {
         setOpen(false);

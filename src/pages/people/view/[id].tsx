@@ -5,12 +5,12 @@ import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { sidebar } from "../../../components/layout/sidebar";
 import { UserContext } from "../../../providers/userProvider";
 import { formatPhoneNumber } from "../../../utils/formatPhoneNumber";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../server/utils/api"
 
 const ViewProfile = ({ id }: { id: string }) => {
   const user = useContext(UserContext);
   const router = useRouter();
-  const userQuery = trpc.useQuery(["user.getUserByID", id]);
+  const userQuery = api.user.getUserByID.useQuery(id);
 
   if (userQuery.isLoading) {
     return (

@@ -51,7 +51,6 @@ export const PaginationBar: React.FC<{
 
   const rowUp = () => {
     if (pageRow == pageNums?.total_pages) return;
-    console.log("here");
     setPageNum(5 * pageRow + 1);
     // setPageRow(pageRow + 1);
   };
@@ -88,9 +87,8 @@ export const PaginationBar: React.FC<{
             )}
             <button
               onClick={() => pageDown()}
-              className={`relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${
-                pageNums.total_pages == 1 && "rounded-l-md"
-              }`}>
+              className={`relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${pageNums.total_pages == 1 && "rounded-l-md"
+                }`}>
               <span className='sr-only'>Previous Page</span>
               <MdChevronLeft className='h-5 w-5' aria-hidden='true' />
             </button>
@@ -99,19 +97,17 @@ export const PaginationBar: React.FC<{
               <button
                 key={page}
                 onClick={() => setPageNum(page)}
-                className={`${
-                  pageNum == page
+                className={`${pageNum == page
                     ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
                     : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                } relative inline-flex items-center px-4 py-2 border text-sm font-medium`}>
+                  } relative inline-flex items-center px-4 py-2 border text-sm font-medium`}>
                 {page}
               </button>
             ))}
             <button
               onClick={() => pageUp()}
-              className={`relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${
-                pageNums.total_pages == 1 && "rounded-r-md"
-              }`}>
+              className={`relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${pageNums.total_pages == 1 && "rounded-r-md"
+                }`}>
               <span className='sr-only'>Next Page</span>
               <MdChevronRight className='h-5 w-5' aria-hidden='true' />
             </button>

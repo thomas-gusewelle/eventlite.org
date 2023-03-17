@@ -1,7 +1,3 @@
-// src/server/router/index.ts
-import { createRouter } from "./context";
-import superjson from "superjson";
-
 import { userRouter } from "./user";
 import { roleRouter } from "./role";
 import { locationRouter } from "./locations";
@@ -12,19 +8,26 @@ import { createAccountRouter } from "./createAccount";
 import { organizationRouter } from "./organization";
 import { feedbackRouter } from "./feedback";
 import { AdminRouter } from "./admin";
+import { createTRPCRouter } from "./context";
 
-export const appRouter = createRouter()
-  .transformer(superjson)
-  .merge("user.", userRouter)
-  .merge("role.", roleRouter)
-  .merge("locations.", locationRouter)
-  .merge("events.", eventsRouter)
-  .merge("schedule.", scheduleRouter)
-  .merge("avalibility.", avalibiltyRouter)
-  .merge("createAccount.", createAccountRouter)
-  .merge("organization.", organizationRouter)
-  .merge("feedback.", feedbackRouter)
-  .merge("admin.", AdminRouter);
+/**
+ * This is the primary router for your server.
+ *
+ * All routers added in /api/routers should be manually added here.
+ */
+export const appRouter = createTRPCRouter({
+  user: userRouter,
+  role: roleRouter,
+  locations: locationRouter,
+  events: eventsRouter,
+  schedule: scheduleRouter,
+  avalibility: avalibiltyRouter,
+  createAccount: createAccountRouter,
+  organization: organizationRouter,
+  feedback: feedbackRouter,
+  admin: AdminRouter
+});
+
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

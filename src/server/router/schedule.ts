@@ -1,34 +1,25 @@
-import { createRouter } from "./context";
+import { createTRPCRouter, adminProcedure} from "./context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { zeroTime } from "../utils/dateTimeModifers";
 
-export const scheduleRouter = createRouter()
-  .middleware(async ({ ctx, next }) => {
-    const user = await prisma?.user.findFirst({
-      where: { id: ctx.data?.user?.id },
-      select: {
-        status: true,
-      },
-    });
-    if (user?.status != "ADMIN") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  })
-  .query("getSchedule", {
-    input: z.object({
+
+
+export const scheduleRouter = createTRPCRouter({
+  getSchedule: adminProcedure.input(
+         z.object({
       limit: z.number().min(1).max(100).nullish(),
       cursor: z.string().nullish(),
     }),
-    async resolve({ input, ctx }) {
+  ).query(async ({ctx, input}) => {
+    
       const limit: number = input.limit ?? 50;
       const { cursor } = input;
 
-      const org = await prisma?.user.findFirst({
+      const org = await ctx.prisma?.user.findFirst({
         where: {
-          id: ctx.data?.user?.id,
+          id: ctx.session.id,
         },
         select: {
           organizationId: true,
@@ -46,7 +37,7 @@ export const scheduleRouter = createRouter()
         | undefined = undefined;
 
       try {
-        items = await prisma?.event.findMany({
+        items = await ctx.prisma?.event.findMany({
           take: limit + 1,
           where: {
             organizationId: org?.organizationId,
@@ -72,7 +63,7 @@ export const scheduleRouter = createRouter()
         return { items };
       }
 
-      const lastItems = await prisma?.event.findMany({
+      const lastItems = await ctx.prisma?.event.findMany({
         take: -limit - 1,
         where: {
           organizationId: org?.organizationId,
@@ -114,7 +105,7 @@ export const scheduleRouter = createRouter()
       // This json parsing is a dirty way of deep cloning the array to keep a mutation from happening on line 130
       let gteTime = JSON.parse(JSON.stringify(items));
 
-      const users = await prisma?.user.findMany({
+      const users = await ctx.prisma?.user.findMany({
         where: {
           organizationId: org?.organizationId,
         },
@@ -132,28 +123,27 @@ export const scheduleRouter = createRouter()
         },
       });
       return { items, users, nextCursor, lastCursor };
-    },
-  })
-  .mutation("updateShowLimit", {
-    input: z.number(),
-    async resolve({ ctx, input }) {
-      return await prisma?.userSettings.update({
+  }),
+
+updateShowLimit: adminProcedure.input(z.number()).mutation(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.userSettings.update({
         where: {
-          userId: ctx.data?.user?.id,
+          userId: ctx.session.id,
         },
         data: {
           scheduleShowAmount: input,
         },
       });
-    },
-  })
-  .mutation("updateUserRole", {
-    input: z.object({
+  }),
+
+  updateUserRole: adminProcedure.input(
+         z.object({
       posisitionId: z.string(),
       userId: z.string(),
     }),
-    async resolve({ input }) {
-      return await prisma?.eventPositions.update({
+  ).mutation(async ({ctx, input}) => {
+          return await ctx.prisma?.eventPositions.update({
         where: {
           id: input.posisitionId,
         },
@@ -166,15 +156,16 @@ export const scheduleRouter = createRouter()
           userResponse: null,
         },
       });
-    },
-  })
-  .mutation("removerUserfromPosition", {
-    input: z.object({
+  }),
+
+removeUserfromPosition: adminProcedure.input(
+         z.object({
       eventPositionId: z.string(),
       userId: z.string(),
     }),
-    async resolve({ input }) {
-      return await prisma?.eventPositions.update({
+  ).mutation(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.eventPositions.update({
         where: {
           id: input.eventPositionId,
         },
@@ -184,5 +175,7 @@ export const scheduleRouter = createRouter()
           },
         },
       });
-    },
-  });
+  })  
+  
+})
+

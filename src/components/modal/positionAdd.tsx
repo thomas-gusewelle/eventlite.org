@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 import { BtnCancel } from "../btn/btnCancel";
 import { BtnPurple } from "../btn/btnPurple";
 import { BottomButtons } from "./bottomButtons";
@@ -15,7 +15,7 @@ export const PositionAddModal = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const {
     register,
     handleSubmit,
@@ -23,12 +23,12 @@ export const PositionAddModal = ({
     formState: { errors },
   } = useForm<{ name: string }>();
 
-  const addPosition = trpc.useMutation("role.addRole");
+  const addPosition = api.role.addRole.useMutation();
 
   const submit = handleSubmit((data) => {
     addPosition.mutate(data.name, {
       onSuccess() {
-        utils.refetchQueries(["role.getRolesByOrganization"], { active: true });
+        utils.role.getRolesByOrganization.refetch(undefined, { type: "active" });
         setOpen(false);
       },
     });

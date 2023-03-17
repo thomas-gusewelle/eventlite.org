@@ -2,20 +2,23 @@ import { z } from "zod";
 import sendMail from "../../emails";
 import ReportSubmited from "../../emails/feedback/reportSubmitted";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
-import { createRouter } from "./context";
+import { createTRPCRouter, publicProcedure } from "./context";
 
-export const feedbackRouter = createRouter().mutation("submitReport", {
-  input: z.object({
-    type: z.union([
-      z.literal("BUG"),
-      z.literal("FEEDBACK"),
-      z.literal("OTHER"),
-    ]),
-    text: z.string().min(1),
-    route: z.string(),
-    picUrl: z.string().nullish(),
-  }),
-  async resolve({ ctx, input }) {
+
+export const feedbackRouter = createTRPCRouter({
+  submitReport: publicProcedure.input(
+    z.object({
+      type: z.union([
+        z.literal("BUG"),
+        z.literal("FEEDBACK"),
+        z.literal("OTHER"),
+      ]),
+      text: z.string().min(1),
+      route: z.string(),
+      picUrl: z.string().nullish(),
+    })
+  ).mutation(async ({ ctx, input }) => {
+
     const supabase = createSupaServerClient();
     let picUrl = undefined;
     if (input.picUrl) {
@@ -23,18 +26,18 @@ export const feedbackRouter = createRouter().mutation("submitReport", {
       picUrl = pic.data.publicUrl;
     }
 
-    const report = await prisma?.bugFeatureReport.create({
+    const report = await ctx.prisma?.bugFeatureReport.create({
       data: {
         type: input.type,
         text: input.text,
-        userId: ctx.data.user?.id,
+        userId: ctx?.session?.id,
         url: input.route,
         picUrl: picUrl,
       },
     });
-    const user = await prisma?.user.findFirst({
+    const user = await ctx.prisma?.user.findFirst({
       where: {
-        id: ctx.data.user?.id,
+        id: ctx?.session?.id,
       },
     });
     try {
@@ -54,6 +57,8 @@ export const feedbackRouter = createRouter().mutation("submitReport", {
         ),
         attachments: picUrl ? [{ filename: report?.id, path: picUrl }] : [],
       });
-    } catch (error) {}
-  },
-});
+    } catch (error) { }
+  })
+
+})
+

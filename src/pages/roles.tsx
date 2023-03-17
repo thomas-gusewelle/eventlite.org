@@ -19,7 +19,7 @@ import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 
 const Roles = () => {
   const [editOpen, setEditOpen] = useState(false);
@@ -38,13 +38,13 @@ const Roles = () => {
     reset,
   } = useForm();
 
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
+  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
     onSuccess(data) {
       setRoleList(data);
     },
   });
 
-  const addRole = trpc.useMutation("role.addRole", {
+  const addRole = api.role.addRole.useMutation({
     onSuccess(data, variables, context) {
       if (roleList && data) {
         setRoleList([...roleList, data]);
@@ -62,7 +62,7 @@ const Roles = () => {
     },
   });
 
-  const editRole = trpc.useMutation("role.editRoleById", {
+  const editRole = api.role.editRoleById.useMutation({
     onMutate(data) {
       if (editId != null && roleList) {
         let index = roleList?.findIndex((role) => role.id == data.id);
@@ -86,7 +86,7 @@ const Roles = () => {
     },
   });
 
-  const deleteRole = trpc.useMutation("role.deleteRoleById", {
+  const deleteRole = api.role.deleteRolebyId.useMutation({
     onMutate(data) {
       setRoleList(roleList?.filter((role) => role.id != data));
     },
@@ -258,7 +258,7 @@ const Roles = () => {
 
         {/* Desktop Top Bar */}
         <div className='mb-8 hidden justify-between md:flex'>
-          <SectionHeading>Locations</SectionHeading>
+          <SectionHeading>Roles</SectionHeading>
           <div className='flex gap-4'>
             <input
               onChange={(e) => filter(e.target.value)}

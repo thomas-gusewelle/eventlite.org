@@ -7,7 +7,7 @@ import { VerticalLogo } from "../../components/create-account-flow/components/Ve
 import { PasswordField } from "../../components/form/password";
 import { loginFlowLayout } from "../../components/layout/login-flow-layout";
 import { sidebar } from "../../components/layout/sidebar";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 type FormData = {
   password: string;
@@ -17,7 +17,7 @@ type FormData = {
 const ResetPassword = ({ code }: { code: string }) => {
   const methods = useForm<FormData>();
   const router = useRouter();
-  const resetPassword = trpc.useMutation("createAccount.resetPassword");
+  const resetPassword = api.createAccount.resetPassword.useMutation();
 
   const submit = methods.handleSubmit((data) => {
     resetPassword.mutate(

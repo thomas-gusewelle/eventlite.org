@@ -25,7 +25,6 @@ const SignIn = () => {
       email: input.email,
       password: input.password,
     });
-    console.log(data);
     if (error) {
       alert(error.message);
       setIsLoading(false);
@@ -46,13 +45,13 @@ const SignIn = () => {
         <CardHeader>Sign in to your account</CardHeader>
         <p className='mt-4 text-center text-sm font-medium leading-none text-gray-500'>
           Want to Join?
-          <Link href={"/beta"} legacyBehavior>
+          <Link href={"/create-account"} legacyBehavior>
             <span
               tabIndex={0}
               role='link'
               aria-label='let us know'
               className='ml-1 cursor-pointer text-sm font-medium leading-none text-gray-800 underline'>
-              Let us know!
+              Get started now!
             </span>
           </Link>
         </p>

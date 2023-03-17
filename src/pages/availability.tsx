@@ -17,7 +17,7 @@ import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { fullName } from "../utils/fullName";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 
 const AvailabilityPage = () => {
   const alertContext = useContext(AlertContext);
@@ -41,7 +41,7 @@ const AvailabilityPage = () => {
     }
   }, [dates, pageNum]);
 
-  const deleteDateMutation = trpc.useMutation("avalibility.deleteDate", {
+  const deleteDateMutation = api.avalibility.deleteDate.useMutation({
     onSuccess(data) {
       setDates(dates.filter((item) => item.id != data?.id));
       getUserAvailibilityQuery.refetch();
@@ -54,7 +54,7 @@ const AvailabilityPage = () => {
     },
   });
 
-  const getUsersQuery = trpc.useQuery(["user.getUsersByOrganization"], {
+  const getUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
     enabled: !!(user?.status == "ADMIN"),
     onSuccess(data) {
       setPeopleList(
@@ -73,8 +73,8 @@ const AvailabilityPage = () => {
     },
   });
 
-  const getUserAvailibilityQuery = trpc.useQuery(
-    ["avalibility.getUserAvalibilityByID", userSelected.id],
+  const getUserAvailibilityQuery = api.avalibility.getUserAvalibilityByID.useQuery(
+    userSelected.id,
     {
       onSuccess(data) {
         setDates(

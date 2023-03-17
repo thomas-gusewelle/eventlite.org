@@ -4,7 +4,7 @@ import { SectionHeading } from "../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
 import { MultiSelect } from "../../components/form/multiSelect";
 import { useContext, useEffect, useRef, useState } from "react";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 import { Role, UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../components/circularProgress";
 import { AlertContext } from "../../providers/alertProvider";
@@ -25,7 +25,7 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
 
   const [roleList, setRoleList] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
+  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
     onSuccess(data) {
       if (data) {
         setRoleList(data);
@@ -40,7 +40,7 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
     },
   });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
-  const addUser = trpc.useMutation(["user.addUser"], {
+  const addUser = api.user.addUser.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,
@@ -48,7 +48,7 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
       });
     },
   });
-  const inviteUser = trpc.useMutation("createAccount.createInviteLinkWithID", {
+  const inviteUser = api.createAccount.createInviteLinkWithID.useMutation({
     onError(error, variables, context) {
       setError({
         state: true,
@@ -135,7 +135,6 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
           <div className='flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6'>
             <BtnPurpleDropdown
               btnFunction={() => {
-                console.log("146");
                 invite.current = true;
                 submit();
               }}

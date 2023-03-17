@@ -1,23 +1,27 @@
-import { createRouter } from "./context";
+import { createTRPCRouter, loggedInProcedure } from "./context";
 import { z } from "zod";
 
-export const avalibiltyRouter = createRouter()
-  .query("getUserAvalibility", {
-    async resolve({ ctx }) {
-      return await prisma?.availability.findMany({
+
+export const avalibiltyRouter = createTRPCRouter({
+    
+getUserAvalibility: loggedInProcedure.query(async ({ctx}) => {
+    
+      return await ctx.prisma?.availability.findMany({
         where: {
-          userId: ctx.data?.user?.id,
+          userId: ctx.session.id,
           date: {
             gte: new Date(),
           },
         },
       });
-    },
-  })
-  .query("getUserAvalibilityByID", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.availability.findMany({
+  }),
+
+  
+getUserAvalibilityByID: loggedInProcedure.input(
+    z.string()
+  ).query(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.availability.findMany({
         where: {
           userId: input,
           date: {
@@ -25,16 +29,17 @@ export const avalibiltyRouter = createRouter()
           },
         },
       });
-    },
-  })
-  .mutation("updateUserAvalibility", {
-    input: z.object({
+  }),
+
+  updateUserAvalibility: loggedInProcedure.input(
+         z.object({
       userId: z.string(),
       newDates: z.date().array(),
       deleteDates: z.date().array(),
     }),
-    async resolve({ input }) {
-      const newDates = await prisma?.availability.createMany({
+  ).mutation(async ({ctx, input}) => {
+    
+      const newDates = await ctx.prisma?.availability.createMany({
         data: input.newDates.map((date) => ({
           userId: input.userId,
           date: date,
@@ -43,7 +48,7 @@ export const avalibiltyRouter = createRouter()
 
       // find dates user has responsed to and set the response to be DENY
       if (input.newDates.length > 0) {
-        const schedule = await prisma?.eventPositions.findMany({
+        const schedule = await ctx.prisma?.eventPositions.findMany({
           where: {
             userId: input.userId,
           },
@@ -66,7 +71,7 @@ export const avalibiltyRouter = createRouter()
             )
         );
 
-        await prisma?.eventPositions.updateMany({
+        await ctx.prisma?.eventPositions.updateMany({
           where: {
             id: {
               in: changeDates?.map((item) => item.id),
@@ -78,7 +83,7 @@ export const avalibiltyRouter = createRouter()
         });
       }
 
-      const deleteDates = await prisma?.availability.deleteMany({
+      const deleteDates = await ctx.prisma?.availability.deleteMany({
         where: {
           userId: input.userId,
           date: {
@@ -87,15 +92,15 @@ export const avalibiltyRouter = createRouter()
         },
       });
       return { newDates: newDates, deletedDates: deleteDates };
-    },
-  })
-  .mutation("deleteDate", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.availability.delete({
+  }),
+
+  deleteDate: loggedInProcedure.input(z.string()).mutation(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.availability.delete({
         where: {
           id: input,
         },
       });
-    },
-  });
+  })  
+
+})

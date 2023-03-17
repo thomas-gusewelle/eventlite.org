@@ -21,7 +21,8 @@ import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { classNames } from "../utils/classnames";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
+import { useQueryClient } from "@tanstack/react-query";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -129,14 +130,14 @@ EventsPage.getLayout = sidebar;
 export default EventsPage;
 
 const UpcomingEvents = ({ queryString }: { queryString: string }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useContext(UserContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
-
+  const queryClient = useQueryClient()
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
   const [events, setEvents] = useState<stateData>([]);
@@ -150,26 +151,25 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = trpc.useQuery(
-    ["events.getUpcomingEventsByOrganization"],
-    {
-      onSuccess(data) {
-        if (data != undefined) {
-          setEvents(data);
-        }
-      },
-      onError(err) {
-        alertContext.setError({
-          state: true,
-          message: `There was an error fetching your events. Message: ${err.message}`,
-        });
-      },
-    }
+  const eventsQuery = api.events.getUpcomingEventsByOrganization.useQuery(
+    undefined, {
+    onSuccess(data) {
+      if (data != undefined) {
+        setEvents(data);
+      }
+    },
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an error fetching your events. Message: ${err.message}`,
+      });
+    },
+  }
   );
 
-  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+  const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      utils.queryClient.cancelQueries();
+      queryClient.cancelQueries()
 
       if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));
@@ -333,7 +333,8 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
 };
 
 const PastEvents = ({ queryString }: { queryString: string }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
+  const queryClient = useQueryClient()
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useContext(UserContext);
@@ -353,7 +354,7 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = trpc.useQuery(["events.getPastEventsByOrganization"], {
+  const eventsQuery = api.events.getPastEventsByOrganization.useQuery(undefined, {
     onSuccess(data) {
       if (data != undefined) {
         setEvents(data);
@@ -367,9 +368,9 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
     },
   });
 
-  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+  const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      utils.queryClient.cancelQueries();
+      queryClient.cancelQueries()
 
       if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));

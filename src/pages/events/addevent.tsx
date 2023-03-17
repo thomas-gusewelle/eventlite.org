@@ -5,7 +5,7 @@ import {
   EventFormValues,
   EventRecurrance,
 } from "../../../types/eventFormValues";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 import { useRouter } from "next/router";
 import { Locations } from "@prisma/client";
 import {
@@ -20,10 +20,10 @@ import { ErrorAlert } from "../../components/alerts/errorAlert";
 import { AlertContext } from "../../providers/alertProvider";
 
 const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
-  const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
+  const locationsQuery = api.locations.getLocationsByOrg.useQuery(undefined, {
     onSuccess(data) {
       if (data != undefined) {
         setLocations(data);
@@ -41,7 +41,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
     { id: "", name: "", organizationId: "" },
   ]);
 
-  const addEventRecurrance = trpc.useMutation("events.createEventReccurance", {
+  const addEventRecurrance = api.events.createEventReccurance.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: true,
@@ -49,8 +49,8 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
       });
     },
   });
-  const addEvent = trpc.useMutation("events.createEvent", {
-    onError(error, variables, context) {},
+  const addEvent = api.events.createEvent.useMutation({
+    onError(error, variables, context) { },
   });
   const methods = useForm<EventFormValues>();
   const submit = methods.handleSubmit((data: EventFormValues) => {
@@ -145,7 +145,6 @@ const AddEventPage = () => {
   const router = useRouter();
 
   const { redirect } = router.query;
-  console.log(typeof redirect);
 
   if (Array.isArray(redirect)) {
     return <div>Error with redirct link</div>;

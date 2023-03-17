@@ -4,7 +4,7 @@ import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { sidebar } from "../components/layout/sidebar";
 
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api"
 import { Availability, Role, User } from "@prisma/client";
 import { CircularProgress } from "../components/circularProgress";
 import { useForm, Controller } from "react-hook-form";
@@ -26,11 +26,12 @@ import { shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
 import { AlertContext } from "../providers/alertProvider";
 import { NoDataLayout } from "../components/layout/no-data-layout";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   cursor,
 }) => {
-  const utils = trpc.useContext();
+  const utils = useQueryClient()
   const router = useRouter();
   const userContext = useContext(UserContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -56,8 +57,8 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     user?.UserSettings?.scheduleShowAmount ?? 4
   );
 
-  const getScheduleQuery = trpc.useQuery(
-    ["schedule.getSchedule", { limit: limit, cursor: cursor }],
+  const getScheduleQuery = api.schedule.getSchedule.useQuery(
+    { limit: limit, cursor: cursor },
     {
       keepPreviousData: true,
       onSuccess(data) {
@@ -79,17 +80,15 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   );
 
   useEffect(() => {
-    console.log(getScheduleQuery);
   }, [getScheduleQuery]);
 
-  const scheduleUserMutation = trpc.useMutation("schedule.updateUserRole", {
+  const scheduleUserMutation = api.schedule.updateUserRole.useMutation({
     onSuccess() {
       alertContext.setSuccess({ state: true, message: "Changes Saved" });
     },
   });
 
-  const removeUserFromPosition = trpc.useMutation(
-    "schedule.removerUserfromPosition",
+  const removeUserFromPosition = api.schedule.removeUserfromPosition.useMutation(
     {
       onMutate(variables) {
         setSelectedPeople(
@@ -104,9 +103,9 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   const methods = useForm();
 
-  const deleteEventMutation = trpc.useMutation("events.deleteEventById", {
+  const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      utils.queryClient.cancelQueries();
+      utils.cancelQueries();
 
       setDeleteConfirm(false);
     },
@@ -116,7 +115,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     onSuccess() {
       eventId.current.id = null;
       setDeleteAllRecuring(false);
-      utils.invalidateQueries("schedule.getSchedule");
+      api.useContext().schedule.getSchedule.invalidate()
       getScheduleQuery.refetch();
     },
   });
@@ -128,10 +127,9 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   const sumbit = methods.handleSubmit((data) => {
     data = Object.values(data).filter((item) => item.positionId != null);
-    console.log("This is the data", data);
   });
 
-  if (getScheduleQuery.isLoading || getScheduleQuery.isFetching) {
+  if (getScheduleQuery.isLoading) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />
@@ -149,7 +147,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         heading={"Schedule"}
         text={"No events found. Please add an event."}
         func={() => router.push(`/events/addevent?redirect=${router.asPath}`)}
-        btnText={"Add Events"}
+        btnText={"Add Event"}
       />
     );
   }
@@ -370,7 +368,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
           <div className='mx-6 flex justify-between'>
             {getScheduleQuery.data.lastCursor &&
               getScheduleQuery.data.lastCursor.datetime.getTime() <
-                getScheduleQuery.data.items[0]!.datetime.getTime() && (
+              getScheduleQuery.data.items[0]!.datetime.getTime() && (
                 <button
                   onClick={() =>
                     router.push(

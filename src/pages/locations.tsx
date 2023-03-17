@@ -20,7 +20,7 @@ import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api";
 
 const LocationsPage = () => {
   const alertContext = useContext(AlertContext);
@@ -38,7 +38,7 @@ const LocationsPage = () => {
     reset,
   } = useForm();
 
-  const locations = trpc.useQuery(["locations.getLocationsByOrg"], {
+  const locations = api.locations.getLocationsByOrg.useQuery(undefined, {
     onSuccess(data) {
       setLocationList(data);
     },
@@ -50,7 +50,7 @@ const LocationsPage = () => {
     },
   });
 
-  const addLocation = trpc.useMutation("locations.createLocation", {
+  const addLocation = api.locations.createLocation.useMutation({
     onSuccess(data, variables, context) {
       if (locationList && data) {
         const newData = [...locationList, data];
@@ -67,7 +67,7 @@ const LocationsPage = () => {
     },
   });
 
-  const editLocation = trpc.useMutation("locations.editLocationByID", {
+  const editLocation = api.locations.editLocationByID.useMutation({
     onMutate(data) {
       if (editId != null && locationList) {
         let index = locationList?.findIndex((loc) => loc.id == data.id);
@@ -91,7 +91,7 @@ const LocationsPage = () => {
     },
   });
 
-  const deleteLocation = trpc.useMutation("locations.deletebyId", {
+  const deleteLocation = api.locations.deletebyId.useMutation({
     onMutate(data) {
       const newData = locationList?.filter((location) => location.id != data);
       setLocationList(newData);

@@ -47,14 +47,12 @@ export const EventForm: React.FC<{
   );
   const _eventDate: Date = watch("eventDate", new Date());
   useEffect(() => {
-    // console.log(_isRepeating);
     if (_isRepeating != undefined) {
       setIsRepeating(_isRepeating);
     }
   }, [_isRepeating]);
 
   useEffect(() => {
-    console.log(_repeatFrequency);
     if (
       _repeatFrequency != undefined &&
       _repeatFrequency.id != repeatFrequency.id
@@ -197,11 +195,10 @@ export const EventForm: React.FC<{
                       <span className='sr-only'>Is Repeating</span>
                       <span
                         aria-hidden='true'
-                        className={`${
-                          value
+                        className={`${value
                             ? "translate-x-9 bg-white"
                             : "translate-x-0 bg-white"
-                        }
+                          }
         pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`}
                       />
                     </Switch>

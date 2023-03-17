@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { sidebar } from "../components/layout/sidebar";
 import { PicNameRow } from "../components/profile/PicNameRow";
-import { trpc } from "../utils/trpc";
+import { api } from "../server/utils/api";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { CircularProgress } from "../components/circularProgress";
 import { InviteLink, Role, User } from "@prisma/client";
@@ -33,7 +33,7 @@ const PeoplePage = () => {
       })[]
     >
   >();
-  const people = trpc.useQuery(["user.getUsersByOrganization"], {
+  const people = api.user.getUsersByOrganization.useQuery(undefined, {
     onSuccess: (data) => {
       if (data) {
         // sorts users by status with inactive at the end
@@ -56,9 +56,8 @@ const PeoplePage = () => {
       }
     },
   });
-  const adminCount = trpc.useQuery(["user.getAmdminCount"]);
-  const createInvite = trpc.useMutation(
-    "createAccount.createInviteLinkWithID",
+  const adminCount = api.user.getAmdminCount.useQuery();
+  const createInvite = api.createAccount.createInviteLinkWithID.useMutation(
     {
       onError(error, variables, context) {
         setError({
@@ -68,8 +67,7 @@ const PeoplePage = () => {
       },
     }
   );
-  const sendResetPassword = trpc.useMutation(
-    "createAccount.generateResetPassword",
+  const sendResetPassword = api.createAccount.generateResetPassword.useMutation(
     {
       onError(error, variables, context) {
         setError({
@@ -79,7 +77,7 @@ const PeoplePage = () => {
       },
     }
   );
-  const deleteUser = trpc.useMutation("user.deleteUserByID", {
+  const deleteUser = api.user.deleteUserById.useMutation({
     onError: (error) => {
       setError({
         message: `Sorry. There was an issue deleting the user. Message: ${error}`,
@@ -92,7 +90,6 @@ const PeoplePage = () => {
   });
 
   const onDelete = (person: User) => {
-    console.log("getting Called");
     if (adminCount.isLoading) return;
     if (adminCount.error) return;
     if (adminCount.data == undefined) return;
@@ -156,7 +153,7 @@ const PeoplePage = () => {
   if (people.data?.length == 0) {
     return (
       <NoDataLayout
-        heading='Users'
+        heading='People'
         btnText='Add User'
         func={() => router.push("/people/adduser")}
       />
@@ -167,7 +164,7 @@ const PeoplePage = () => {
     <>
       {/* MD Top Bar */}
       <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
-        <SectionHeading>Users</SectionHeading>
+        <SectionHeading>People</SectionHeading>
         <div className='flex justify-end'>
           {user?.status == "ADMIN" && (
             <BtnAdd onClick={() => router.push("/people/adduser")} />
@@ -185,7 +182,7 @@ const PeoplePage = () => {
 
       {/* Desktop Top Bar */}
       <div className='mb-8 hidden justify-between md:flex'>
-        <SectionHeading>Users</SectionHeading>
+        <SectionHeading>People</SectionHeading>
         <div className='flex gap-4'>
           <input
             onChange={(e) => filter(e.target.value)}

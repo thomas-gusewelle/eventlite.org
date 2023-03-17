@@ -4,10 +4,10 @@ import { BtnPurple } from "../../components/btn/btnPurple";
 import { LoginCard } from "../../components/create-account-flow/components/card";
 import { CardHeader } from "../../components/create-account-flow/components/cardHeader";
 import { loginFlowLayout } from "../../components/layout/login-flow-layout";
-import { trpc } from "../../utils/trpc";
+import { api } from "../../server/utils/api"
 
 const ConfirmEmail = ({ email }: { email: string }) => {
-  const resendEmail = trpc.useMutation("createAccount.resendConfirm");
+  const resendEmail = api.createAccount.resendConfirm.useMutation();
   return (
     <>
       <LoginCard>

@@ -1,17 +1,14 @@
-import { createRouter } from "./context";
+import { createTRPCRouter } from "./context";
 import { z } from "zod";
-import { v4 as uuidv4 } from "uuid";
 import { UserStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createClient } from "@supabase/supabase-js";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
-export const userRouter = createRouter()
-  .query("getUser", {
-    async resolve({ ctx }) {
-      const userInfo = await prisma?.user.findFirst({
+import {publicProcedure, adminProcedure} from "../router/context"
+export const userRouter = createTRPCRouter({
+  getUser: publicProcedure.query(async ({ctx}) => {
+      const userInfo = await ctx.prisma?.user.findFirst({
         where: {
-          id: ctx?.data.user?.id,
+          id: ctx?.session?.id
         },
         include: {
           UserSettings: true,
@@ -19,27 +16,26 @@ export const userRouter = createRouter()
       });
 
       return userInfo;
-    },
-  })
-  .query("getUserByID", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.user.findFirst({
+  }),
+
+  getUserByID: publicProcedure.input(z.string()).query(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.user.findFirst({
         where: {
           id: input,
         },
         include: { roles: true },
       });
-    },
-  })
-  .query("getUsersByOrganization", {
-    async resolve({ ctx }) {
+  }),
+
+getUsersByOrganization: publicProcedure.query(async ({ctx}) => {
+    
       const orgID = await prisma?.user.findFirst({
-        where: { id: ctx?.data.user?.id },
+        where: { id: ctx?.session?.id },
         select: { organizationId: true },
       });
 
-      return await prisma?.user.findMany({
+      return await  ctx.prisma?.user.findMany({
         orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
         where: {
           organizationId: orgID?.organizationId,
@@ -49,13 +45,16 @@ export const userRouter = createRouter()
           InviteLink: true,
         },
       });
-    },
-  })
+  }), 
+
+
+  
   // mutation is here to facilate updating by logged in user
   // checks to see if user is MANAGER or ADMIN or the same user as is logged in
   // if not it throughs an error
-  .mutation("updateUserByID", {
-    input: z.object({
+updateUserByID: publicProcedure.input(
+    
+   z.object({
       id: z.string(),
       firstName: z.string(),
       lastName: z.string(),
@@ -64,13 +63,13 @@ export const userRouter = createRouter()
       role: z.object({ id: z.string(), name: z.string() }).array(),
       status: z.string(),
     }),
-
-    async resolve({ ctx, input }) {
-      const user = await prisma?.user.findFirst({
-        where: { id: ctx?.data.user?.id },
+  ).mutation(async ({ctx, input}) => {
+    
+      const user = await ctx.prisma?.user.findFirst({
+        where: { id: ctx?.session?.id },
         select: { status: true },
       });
-      if (ctx?.data.user?.id != input.id && user?.status != "ADMIN") {
+      if (ctx?.session?.id != input.id && user?.status != "ADMIN") {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Error. Not Approved.",
@@ -98,35 +97,22 @@ export const userRouter = createRouter()
         },
         where: { id: input.id },
       });
-    },
-  })
+  }), 
 
-  .middleware(async ({ ctx, next }) => {
-    const user = await prisma?.user.findFirst({
-      where: { id: ctx?.data.user?.id },
-      select: {
-        status: true,
-      },
-    });
-    if (user?.status == "USER") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  })
-  .query("getAmdminCount", {
-    async resolve({ ctx }) {
-      const orgID = await prisma?.user.findFirst({
-        where: { id: ctx?.data.user?.id },
+getAmdminCount:   adminProcedure.query(async ({ctx}) => {
+    
+      const orgID = await ctx.prisma?.user.findFirst({
+        where: { id: ctx?.session?.id },
         select: { organizationId: true },
       });
-      return await prisma?.user.count({
-        where: { status: "ADMIN" },
+      return await ctx.prisma?.user.count({
+        where: { status: "ADMIN", organizationId: orgID?.organizationId },
       });
-    },
-  })
+  }),
 
-  .mutation("addUser", {
-    input: z.object({
+
+  addUser: adminProcedure.input(
+     z.object({
       firstName: z.string(),
       lastName: z.string(),
       email: z.string(),
@@ -134,14 +120,14 @@ export const userRouter = createRouter()
       role: z.object({ id: z.string(), name: z.string() }).array(),
       status: z.string(),
     }),
-
-    async resolve({ ctx, input }) {
-      const orgID = await prisma?.user.findFirst({
-        where: { id: ctx?.data.user?.id },
+  ).mutation(async ({ctx, input}) => {
+    
+      const orgID = await ctx.prisma?.user.findFirst({
+        where: { id: ctx?.session?.id },
         select: { organizationId: true },
       });
 
-      return await prisma?.user.create({
+      return await ctx.prisma?.user.create({
         data: {
           firstName: input.firstName,
           lastName: input.lastName,
@@ -159,17 +145,18 @@ export const userRouter = createRouter()
           },
         },
       });
-    },
-  })
+  })  ,
+
+
   // takes in user id and hasLogin -> deletes user and user login
-  .mutation("deleteUserByID", {
-    input: z.object({
+  deleteUserById: adminProcedure.input(
+     z.object({
       id: z.string(),
       hasLogin: z.boolean(),
     }),
-    async resolve({ input }) {
-      console.log(input);
-      const user = await prisma?.user.delete({
+  ).mutation(async ({ctx, input}) => {
+    
+      const user = await ctx.prisma?.user.delete({
         where: { id: input.id },
       });
 
@@ -191,6 +178,8 @@ export const userRouter = createRouter()
           });
         }
         return deleteUser;
-      }
-    },
-  });
+}
+      })
+   
+})
+

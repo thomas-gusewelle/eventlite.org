@@ -1,8 +1,8 @@
-import { Dispatch, Fragment, SetStateAction, useEffect } from "react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { trpc } from "../../utils/trpc";
 
+import { api } from "../../server/utils/api"
 //this requies data to have an id and name property
 export const LimitSelect: React.FC<{
   defaultNum?: number;
@@ -10,8 +10,8 @@ export const LimitSelect: React.FC<{
   setSelected: Dispatch<SetStateAction<number>>;
 }> = ({ defaultNum = 4, selected, setSelected }) => {
   const limitSelector = [4, 6, 8, 10, 15, 20, 50];
-  const utils = trpc.useContext();
-  const updateLimit = trpc.useMutation("schedule.updateShowLimit");
+  const utils = api.useContext();
+  const updateLimit = api.schedule.updateShowLimit.useMutation();
 
   return (
     <div className=' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
@@ -21,7 +21,7 @@ export const LimitSelect: React.FC<{
           updateLimit.mutate(value, {
             onSuccess() {
               setSelected(value);
-              utils.invalidateQueries("user.getUser");
+              utils.user.getUser.invalidate();
             },
           });
         }}>
@@ -43,19 +43,17 @@ export const LimitSelect: React.FC<{
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>
-                      `relative flex cursor-default select-none items-center py-2 pl-4 ${
-                        active ? "bg-indigo-100" : "text-gray-900"
+                      `relative flex cursor-default select-none items-center py-2 pl-4 ${active ? "bg-indigo-100" : "text-gray-900"
                       }`
                     }
                     value={item}>
                     {({ selected }) => (
                       <>
                         <span
-                          className={`block truncate ${
-                            selected
-                              ? "font-medium text-indigo-700"
-                              : "font-normal"
-                          }`}>
+                          className={`block truncate ${selected
+                            ? "font-medium text-indigo-700"
+                            : "font-normal"
+                            }`}>
                           {item}
                         </span>
                       </>

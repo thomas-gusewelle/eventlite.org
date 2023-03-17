@@ -2,7 +2,6 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -12,14 +11,14 @@ import { ModalTitle } from "../modalTitle";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { BottomButtons } from "../bottomButtons";
-import { BtnSave } from "../../btn/btnSave";
 import { BtnCancel } from "../../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
-import { trpc } from "../../../utils/trpc";
-import { Availability } from "@prisma/client";
+import { api } from "../../../server/utils/api"
 import { UserContext } from "../../../providers/userProvider";
 import { CircularProgress } from "../../circularProgress";
 import { AlertContext } from "../../../providers/alertProvider";
+import { useQueryClient } from "@tanstack/react-query";
+import { BtnPurple } from "../../btn/btnPurple";
 
 export const DashboardAvaililityModal: React.FC<{
   open: boolean;
@@ -29,9 +28,9 @@ export const DashboardAvaililityModal: React.FC<{
   const user = useContext(UserContext);
   const alertContext = useContext(AlertContext);
   const [dates, setDates] = useState<Date[]>([]);
-  const opts = trpc.useContext();
+  const opts = useQueryClient();
 
-  const existingDates = trpc.useQuery(["avalibility.getUserAvalibility"], {
+  const existingDates = api.avalibility.getUserAvalibility.useQuery(undefined, {
     enabled: !!open,
     onError(err) {
       alertContext.setError({
@@ -41,7 +40,6 @@ export const DashboardAvaililityModal: React.FC<{
     },
     onSuccess(data) {
       if (!data) return;
-      console.log(data);
 
       setDates(
         data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
@@ -49,8 +47,7 @@ export const DashboardAvaililityModal: React.FC<{
     },
   });
 
-  const updateAvailibility = trpc.useMutation(
-    "avalibility.updateUserAvalibility",
+  const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation(
     {
       onSuccess() {
         setOpen(false);
@@ -168,12 +165,7 @@ export const DashboardAvaililityModal: React.FC<{
           </div>
         </ModalBody>
         <BottomButtons>
-          <BtnSave
-            type={"button"}
-            onClick={() => {
-              submit();
-            }}
-          />
+          <BtnPurple isLoading={updateAvailibility.isLoading} func={() => submit()}>Save</BtnPurple>
           <BtnCancel
             onClick={() => {
               setOpen(false);

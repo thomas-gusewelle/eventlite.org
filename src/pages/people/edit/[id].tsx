@@ -5,7 +5,7 @@ import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
 import { MultiSelect } from "../../../components/form/multiSelect";
 import { useContext, useRef, useState } from "react";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../server/utils/api"
 import { UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../../components/circularProgress";
 import { AlertContext } from "../../../providers/alertProvider";
@@ -29,7 +29,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useContext(UserContext);
   const methods = useForm<UserFormValues>();
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const [emailEditModal, setEmailEditModal] = useState(false);
   const [formData, setFormData] = useState<UserFormValues | null>(null);
 
@@ -37,7 +37,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const alertContext = useContext(AlertContext);
   const [roleList, setRoleList] = useState<any[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
-  const roles = trpc.useQuery(["role.getRolesByOrganization"], {
+  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
     enabled: !!(user?.status == "ADMIN"),
     onSuccess(data) {
       setRoleList(data as any);
@@ -51,7 +51,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
     },
   });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
-  const editUser = trpc.useMutation("user.updateUserByID", {
+  const editUser = api.user.updateUserByID.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
         state: false,
@@ -59,7 +59,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       });
     },
   });
-  const userQuery = trpc.useQuery(["user.getUserByID", id], {
+  const userQuery = api.user.getUserByID.useQuery(id, {
     onSuccess(data) {
       if (data != null) {
         data.phoneNumber = formatPhoneNumber(data.phoneNumber ?? "");
@@ -104,7 +104,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
       },
       {
         onSuccess() {
-          utils.invalidateQueries("user.getUsersByOrganization");
+          utils.user.getUsersByOrganization.invalidate();
           router.push("/people");
         },
       }

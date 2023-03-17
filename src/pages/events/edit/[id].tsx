@@ -14,7 +14,7 @@ import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { sidebar } from "../../../components/layout/sidebar";
 
 import { Locations } from "@prisma/client";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../server/utils/api"
 import { useRouter } from "next/router";
 import { formatEventData } from "../../../utils/formatEventData";
 import { EventForm } from "../../../components/form/event/eventForm";
@@ -37,7 +37,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   const methods = useForm<EventFormValues>();
   const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
-  const eventQuery = trpc.useQuery(["events.getEditEvent", id], {
+  const eventQuery = api.events.getEditEvent.useQuery(id, {
     cacheTime: 0,
     onError(err) {
       alertContext.setError({
@@ -51,12 +51,13 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     },
   });
 
+
   const recurringId = rec ? eventQuery.data?.recurringId || "" : "";
 
-  const EventRecurrance = trpc.useQuery(
-    ["events.getEventRecurranceData", recurringId],
+  const EventRecurrance = api.events.getEventRecurranceData.useQuery(
+    recurringId,
     {
-      enabled: !!recurringId,
+      enabled: recurringId != "",
       cacheTime: 0,
       onSuccess(data) {
         if (data) {
@@ -66,16 +67,16 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
       },
     }
   );
-  const createEventReccuranceData = trpc.useMutation(
-    "events.createEventReccurance"
+  useEffect(() => {
+  }, [EventRecurrance])
+  const createEventReccuranceData = api.events.createEventReccurance.useMutation(
   );
-  const editEventRecurranceData = trpc.useMutation(
-    "events.EditEventReccuranceData"
+  const editEventRecurranceData = api.events.EditEventReccuranceData.useMutation(
   );
-  const editEvent = trpc.useMutation("events.editEvent");
-  const editRecurringEvent = trpc.useMutation("events.editRecurringEvent");
+  const editEvent = api.events.editEvent.useMutation();
+  const editRecurringEvent = api.events.editRecurringEvent.useMutation();
 
-  const locationsQuery = trpc.useQuery(["locations.getLocationsByOrg"], {
+  const locationsQuery = api.locations.getLocationsByOrg.useQuery(undefined, {
     onSuccess(data) {
       if (data != undefined) {
         setLocations(data);
@@ -231,6 +232,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     return (
       <div className='flex justify-center'>
         <CircularProgress />
+
       </div>
     );
   }
@@ -267,7 +269,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         </div>
       </Modal>
       {/* The is loading is handled here to make the reset work correctly */}
-      {eventQuery.isFetching || EventRecurrance.isLoading ? (
+      {eventQuery.isLoading || (EventRecurrance.isLoading && recurringId != "") ? (
         <div className='flex justify-center'>
           <CircularProgress />
         </div>
@@ -275,11 +277,10 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         <></>
       )}
       <div
-        className={`${
-          eventQuery.isFetching || EventRecurrance.isLoading
-            ? "hidden"
-            : "block"
-        }`}>
+        className={`${eventQuery.isLoading || (EventRecurrance.isLoading && recurringId != "")
+          ? "hidden"
+          : "block"
+          }`}>
         <div className='mb-8'>
           <SectionHeading>Edit Event</SectionHeading>
         </div>
@@ -296,8 +297,8 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
                 type='submit'
                 className='inline-flex h-10 w-16 items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
                 {editEvent.isLoading ||
-                editRecurringEvent.isLoading ||
-                editEventRecurranceData.isLoading ? (
+                  editRecurringEvent.isLoading ||
+                  editEventRecurranceData.isLoading ? (
                   <CircularProgressSmall />
                 ) : (
                   "Save"

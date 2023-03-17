@@ -1,75 +1,66 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createRouter } from "./context";
+import { createTRPCRouter, adminProcedure } from "./context";
 
-export const roleRouter = createRouter()
-  .middleware(async ({ ctx, next }) => {
-    const user = await prisma?.user.findFirst({
-      where: { id: ctx.data.user?.id },
-      select: {
-        status: true,
-      },
-    });
-    if (user?.status != "ADMIN") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  })
-  .query("getRolesByOrganization", {
-    async resolve({ ctx }) {
-      const org = await prisma?.user.findFirst({
+
+export const roleRouter = createTRPCRouter({
+  
+getRolesByOrganization: adminProcedure.query(async ({ctx}) => {
+    
+      const org = await ctx.prisma?.user.findFirst({
         select: {
           organizationId: true,
         },
         where: {
-          id: ctx.data.user?.id,
+          id: ctx.session.id,
         },
       });
       if (org?.organizationId) {
-        return await prisma?.role.findMany({
+        return await ctx.prisma?.role.findMany({
           where: { organizationId: org?.organizationId },
         });
       }
-    },
-  })
-  .mutation("addRole", {
-    input: z.string(),
-    async resolve({ ctx, input }) {
-      const org = await prisma?.user.findFirst({
+  }),
+
+  addRole: adminProcedure.input(z.string()).mutation(async ({ctx, input}) => {
+    
+      const org = await ctx.prisma?.user.findFirst({
         select: { organizationId: true },
-        where: { id: ctx.data.user?.id },
+        where: { id: ctx.session.id },
       });
       if (org?.organizationId) {
-        return await prisma?.role.create({
+        return await ctx.prisma?.role.create({
           data: {
             name: input,
             organizationId: org?.organizationId,
           },
         });
       }
-    },
-  })
-  .mutation("editRoleById", {
-    input: z.object({
+  }),
+
+  editRoleById: adminProcedure.input(
+         z.object({
       id: z.string(),
       name: z.string(),
     }),
-    async resolve({ input }) {
-      return await prisma?.role.update({
+  ).mutation(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.role.update({
         data: {
           name: input.name,
         },
         where: { id: input.id },
       });
-    },
-  })
-  .mutation("deleteRoleById", {
-    input: z.string(),
-    async resolve({ input }) {
-      return await prisma?.role.delete({
+  }),
+
+  deleteRolebyId: adminProcedure.input(z.string()).mutation(async ({ctx, input}) => {
+    
+      return await ctx.prisma?.role.delete({
         where: {
           id: input,
         },
       });
-    },
-  });
+  })
+
+})
+

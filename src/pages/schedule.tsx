@@ -147,7 +147,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         heading={"Schedule"}
         text={"No events found. Please add an event."}
         func={() => router.push(`/events/addevent?redirect=${router.asPath}`)}
-        btnText={"Add Events"}
+        btnText={"Add Event"}
       />
     );
   }

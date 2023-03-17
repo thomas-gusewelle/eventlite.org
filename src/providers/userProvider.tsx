@@ -26,7 +26,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    console.log(user)
     if (user != null) {
     } else {
       setData(undefined);

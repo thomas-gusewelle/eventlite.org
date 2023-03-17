@@ -90,7 +90,6 @@ const PeoplePage = () => {
   });
 
   const onDelete = (person: User) => {
-    console.log("getting Called");
     if (adminCount.isLoading) return;
     if (adminCount.error) return;
     if (adminCount.data == undefined) return;

@@ -25,7 +25,6 @@ const SignIn = () => {
       email: input.email,
       password: input.password,
     });
-    console.log(data);
     if (error) {
       alert(error.message);
       setIsLoading(false);

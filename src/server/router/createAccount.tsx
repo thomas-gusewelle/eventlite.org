@@ -120,7 +120,6 @@ export const createAccountRouter = createTRPCRouter({
     //     ),
     //   });
     // } catch (error) {
-    //   console.log(error);
     //   throw new TRPCError({
     //     code: "INTERNAL_SERVER_ERROR",
     //     message: "Failed to send invite code",

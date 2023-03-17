@@ -28,7 +28,6 @@ export const FindOrganization = ({
   const searchQuery = api.createAccount.searchForOrg.useQuery(query, {
     enabled: !!(query != ""),
     onSuccess(data) {
-      console.log(data);
     },
   });
   return (
@@ -90,8 +89,8 @@ export const FindOrganization = ({
                             <>
                               <span
                                 className={`block cursor-pointer truncate ${selected
-                                    ? "font-medium text-indigo-700"
-                                    : "font-normal"
+                                  ? "font-medium text-indigo-700"
+                                  : "font-normal"
                                   }`}>
                                 {org.name}
                               </span>
@@ -116,9 +115,7 @@ export const FindOrganization = ({
               </BtnNeutral>
               <BtnPurple
                 func={() => {
-                  console.log(field.value);
                   if (field.value == null) {
-                    console.log("error here");
                     setError("orgName", {
                       type: "required",
                       message: "Please select an existing organization.",

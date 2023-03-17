@@ -145,7 +145,6 @@ const AddEventPage = () => {
   const router = useRouter();
 
   const { redirect } = router.query;
-  console.log(typeof redirect);
 
   if (Array.isArray(redirect)) {
     return <div>Error with redirct link</div>;

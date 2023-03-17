@@ -80,7 +80,6 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   );
 
   useEffect(() => {
-    console.log(getScheduleQuery);
   }, [getScheduleQuery]);
 
   const scheduleUserMutation = api.schedule.updateUserRole.useMutation({
@@ -128,7 +127,6 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   const sumbit = methods.handleSubmit((data) => {
     data = Object.values(data).filter((item) => item.positionId != null);
-    console.log("This is the data", data);
   });
 
   if (getScheduleQuery.isLoading) {

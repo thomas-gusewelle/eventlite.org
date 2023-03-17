@@ -31,7 +31,6 @@ export const AvaililityModal: React.FC<{
 
   //TODO: fix display of dates below calendar
   // useEffect(() => {
-  //   console.log(exisitingDates);
   //   setNewDates(
   //     newDates.filter((date) =>
   //       exisitingDates.map((item) => item.date).includes(date)

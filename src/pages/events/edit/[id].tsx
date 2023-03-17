@@ -68,7 +68,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     }
   );
   useEffect(() => {
-    console.log(EventRecurrance)
   }, [EventRecurrance])
   const createEventReccuranceData = api.events.createEventReccurance.useMutation(
   );

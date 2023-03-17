@@ -61,7 +61,6 @@ export const FeedbackTabs = ({
   }, []);
 
   const submit = handleSubmit(async (data) => {
-    console.log(data);
     const pic = data.picture[0];
     if (pic) {
       const upload = await supabase.storage

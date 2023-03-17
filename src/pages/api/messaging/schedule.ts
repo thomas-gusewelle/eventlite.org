@@ -3,6 +3,8 @@ import { User, Event, EventPositions } from "@prisma/client"
 import { Client } from "@upstash/qstash"
 import { NextApiRequest, NextApiResponse } from "next"
 
+import { prisma } from "../../../server/db/client"
+
 type EventsWithPositions = (Event & {
   positions: (EventPositions & {
     User: User | null

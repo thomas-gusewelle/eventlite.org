@@ -2,7 +2,6 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -12,15 +11,14 @@ import { ModalTitle } from "../modalTitle";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { BottomButtons } from "../bottomButtons";
-import { BtnSave } from "../../btn/btnSave";
 import { BtnCancel } from "../../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
-import { Availability } from "@prisma/client";
 import { api } from "../../../server/utils/api"
 import { UserContext } from "../../../providers/userProvider";
 import { CircularProgress } from "../../circularProgress";
 import { AlertContext } from "../../../providers/alertProvider";
 import { useQueryClient } from "@tanstack/react-query";
+import { BtnPurple } from "../../btn/btnPurple";
 
 export const DashboardAvaililityModal: React.FC<{
   open: boolean;
@@ -167,12 +165,7 @@ export const DashboardAvaililityModal: React.FC<{
           </div>
         </ModalBody>
         <BottomButtons>
-          <BtnSave
-            type={"button"}
-            onClick={() => {
-              submit();
-            }}
-          />
+          <BtnPurple isLoading={updateAvailibility.isLoading} func={() => submit()}>Save</BtnPurple>
           <BtnCancel
             onClick={() => {
               setOpen(false);

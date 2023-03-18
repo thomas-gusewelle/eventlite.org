@@ -1,5 +1,5 @@
 
-import { User, Event, EventPositions, Locations } from "@prisma/client"
+import { User, Event, EventPositions, Locations, Role } from "@prisma/client"
 import { Client } from "@upstash/qstash"
 import { NextApiRequest, NextApiResponse } from "next"
 
@@ -8,6 +8,7 @@ import { prisma } from "../../../server/db/client"
 type EventsWithPositions = (Event & {
   Locations: Locations | null;
   positions: (EventPositions & {
+    Role: Role | null
     User: User | null
   })[];
 })[] | undefined
@@ -40,6 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Locations: true,
       positions: {
         include: {
+          Role: true,
           User: true
         }
       }

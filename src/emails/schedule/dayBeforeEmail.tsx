@@ -3,15 +3,20 @@ import Header from "../components/Header";
 import Heading from "../components/Heading";
 import Text from "../components/Text";
 import Button from "../components/Button";
-import { MjmlWrapper, MjmlColumn, MjmlSection } from "mjml-react";
-import { colors, fontFamily, fontSize, screens } from "../theme";
+import { MjmlWrapper, MjmlColumn, MjmlSection, MjmlGroup, MjmlRaw, MjmlBody, MjmlDivider } from "mjml-react";
+import { colors, fontFamily, fontSize, fontWeight, screens } from "../theme";
 import Footer from "../components/Footer";
-import { EventPositions, User, Event, Locations } from "@prisma/client";
+import { EventPositions, User, Event, Locations, Role } from "@prisma/client";
+import { shortDate } from "../../components/dateTime/dates";
+import { shortTime } from "../../components/dateTime/times";
+import { PicNameRowSmall } from "../../components/profile/PicNameRow";
+import { fullName } from "../../utils/fullName";
 
 
 type EventsWithPositions = (Event & {
-  locations: Locations | null;
+  Locations: Locations | null;
   positions: (EventPositions & {
+    Role: Role | null
     User: User | null
   })[];
 })[] | undefined
@@ -29,6 +34,9 @@ const styles = `
   .mt-6 > * {
     padding-top: 12px !important;
   }
+  .marginTop {
+  margin-top: 18px !important
+}
 
   @media (min-width:${screens.xs}) {
     .h1 > * {
@@ -64,14 +72,37 @@ const DayBeforeEmail = ({ events, user }: { events: EventsWithPositions, user: U
           </MjmlColumn>
         </MjmlSection>
 
-        {events?.map(event => (
-
-          <MjmlSection key={event.id}>
-            <MjmlColumn>
-              <Text color={colors.black}>{event?.name}</Text>
-              <Text color={colors.black}>{event?. }</Text>
-            </MjmlColumn>
-          </MjmlSection>
+        {events?.map((event, index) => (
+          <>
+            <MjmlSection cssClass={index > 0 ? "marginTop" : ""} key={event.id} paddingLeft={10} paddingTop={5} paddingBottom={5} border={"solid rgb(209 213 219)"} borderRadius={"2rem"}>
+              <MjmlColumn>
+                <Text color={colors.black} fontSize={fontSize.lg} fontWeight={fontWeight.bold}>{event?.name}</Text>
+                <Text color={colors.black} fontSize={fontSize.md}>{event?.Locations?.name}</Text>
+                <Text color={colors.black}>{shortDate(event.datetime)}</Text>
+                <Text color={colors.black}>{shortTime(event.datetime)}</Text>
+              </MjmlColumn>
+            </MjmlSection>
+            <MjmlSection border={"solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}>
+              <MjmlGroup>
+                <MjmlColumn borderRight={"solid rgb(209 213 219)"}>
+                  {event.positions.map((pos, index) => (
+                    <>
+                      <Text padding={"10px 10px"} color={colors.black} fontWeight={fontWeight.bold}>{pos.Role?.name}</Text>
+                      {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />}
+                    </>
+                  ))}
+                </MjmlColumn>
+                <MjmlColumn>
+                  {event.positions.map((pos, index) => (
+                    <>
+                      <Text padding={"10px 10px"} color={colors.black}>{fullName(pos.User?.firstName, pos.User?.lastName)}</Text>
+                      {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />}
+                    </>
+                  ))}
+                </MjmlColumn>
+              </MjmlGroup>
+            </MjmlSection>
+          </>
         ))}
         <MjmlSection paddingTop={"30px"}>
           <MjmlColumn>

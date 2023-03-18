@@ -1,5 +1,5 @@
 
-import { EventPositions, User, Event } from "@prisma/client";
+import { EventPositions, User, Event, Locations } from "@prisma/client";
 import { verifySignature, } from "@upstash/qstash/nextjs"
 import { NextApiRequest, NextApiResponse } from "next";
 import sendMail from "../../../emails";
@@ -16,6 +16,7 @@ export const config = {
 
 
 type EventsWithPositions = (Event & {
+  Locations: Locations | null;
   positions: (EventPositions & {
     User: User | null
   })[];
@@ -29,13 +30,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await sendMail({
       to: "tombome119@gmail.com",
       text: "Hello World",
-      subject: "Hello"
+      subject: "Hello",
+      html: `<div>Hello</div>`
+
     })
 
     console.log("here in the try")
   } catch (err) {
+    console.log(err)
     res.status(500).send(null)
   }
 
-  res.status(200).send(null)
+  res.status(200).send("Hello World")
+
 }

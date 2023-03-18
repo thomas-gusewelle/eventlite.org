@@ -1,11 +1,12 @@
 
-import { User, Event, EventPositions } from "@prisma/client"
+import { User, Event, EventPositions, Locations } from "@prisma/client"
 import { Client } from "@upstash/qstash"
 import { NextApiRequest, NextApiResponse } from "next"
 
 import { prisma } from "../../../server/db/client"
 
 type EventsWithPositions = (Event & {
+  Locations: Locations | null;
   positions: (EventPositions & {
     User: User | null
   })[];
@@ -36,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     },
     include: {
+      Locations: true,
       positions: {
         include: {
           User: true
@@ -64,14 +66,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
 
-  const sentEmails = await Promise.all(
-    emails.map(async email => {
-      return await qstashClient.publishJSON({
-        url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
-        body: email,
-      })
-    })
-  )
+  // const sentEmails = await Promise.all(
+  //   emails.map(async email => {
+  //     return await qstashClient.publishJSON({
+  //       url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
+  //       body: email,
+  //     })
+  //   })
+  // )
 
   // res.status(201).json({
   //   today: today.toDateString(), tomorrow: tomorrow.toDateString(),
@@ -79,5 +81,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   events: events?.map(item => ({ name: item.name, date: item.datetime.toDateString() })),
   //   emails: emails.map(item => ({ name: item.user.firstName, events: item.events?.map(ev => ev.name) }))
   // })
-  res.status(201).send(sentEmails)
+  res.status(201).json(emails)
 }

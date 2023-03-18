@@ -67,8 +67,7 @@ const DayBeforeEmail = ({ events, user }: { events: EventsWithPositions, user: U
         <MjmlSection>
           <MjmlColumn>
             <Text color={colors.black} paddingTop={24} paddingBottom={24}>
-              Hi {user.firstName}, below is your upcoming events you are scheduled for.
-            </Text>
+              Hi {user.firstName}, here is a reminder of your upcoming events!            </Text>
           </MjmlColumn>
         </MjmlSection>
 
@@ -104,14 +103,6 @@ const DayBeforeEmail = ({ events, user }: { events: EventsWithPositions, user: U
             </MjmlSection>
           </>
         ))}
-        <MjmlSection paddingTop={"30px"}>
-          <MjmlColumn>
-            <Text color={colors.black} fontSize={fontSize.sm}>
-              If you didn&apos;t request this email, there&apos;s nothing to
-              worry about - you can safely ignore it.
-            </Text>
-          </MjmlColumn>
-        </MjmlSection>
       </MjmlWrapper>
       <Footer />
     </BaseLayout>

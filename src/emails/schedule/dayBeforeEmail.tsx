@@ -73,7 +73,7 @@ const DayBeforeEmail = ({ events, user }: { events: EventsWithPositions, user: U
 
         {events?.map((event, index) => (
           <>
-            <MjmlSection cssClass={index > 0 ? "marginTop" : ""} key={event.id} paddingLeft={10} paddingTop={5} paddingBottom={5} border={"solid rgb(209 213 219)"} borderRadius={"2rem"}>
+            <MjmlSection cssClass={index > 0 ? "marginTop" : ""} key={event.id} paddingLeft={10} paddingTop={5} paddingBottom={5} border={"1px solid rgb(209 213 219)"} borderRadius={"2rem"}>
               <MjmlColumn>
                 <Text color={colors.black} fontSize={fontSize.lg} fontWeight={fontWeight.bold}>{event?.name}</Text>
                 <Text color={colors.black} fontSize={fontSize.md}>{event?.Locations?.name}</Text>
@@ -81,9 +81,9 @@ const DayBeforeEmail = ({ events, user }: { events: EventsWithPositions, user: U
                 <Text color={colors.black}>{shortTime(event.datetime)}</Text>
               </MjmlColumn>
             </MjmlSection>
-            <MjmlSection border={"solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}>
+            <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}>
               <MjmlGroup>
-                <MjmlColumn borderRight={"solid rgb(209 213 219)"}>
+                <MjmlColumn borderRight={"1px solid rgb(209 213 219)"}>
                   {event.positions.map((pos, index) => (
                     <>
                       <Text padding={"10px 10px"} color={colors.black} fontWeight={fontWeight.bold}>{pos.Role?.name}</Text>

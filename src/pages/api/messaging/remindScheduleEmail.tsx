@@ -1,9 +1,10 @@
 
-import { EventPositions, User, Event, Locations } from "@prisma/client";
 import { verifySignature, } from "@upstash/qstash/nextjs"
 import { NextApiRequest, NextApiResponse } from "next";
+import superjson from "superjson"
 import sendMail from "../../../emails";
 import DayBeforeEmail from "../../../emails/schedule/dayBeforeEmail";
+import { ReminderEmailData } from "./schedule";
 
 export const config = {
   api: { bodyParser: false }
@@ -17,20 +18,18 @@ export default verifySignature(handler, {
 
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const body = req.body
-  console.log(body)
+  const body = superjson.parse<ReminderEmailData>(req.body)
 
   try {
     await sendMail({
       to: "tombome119@gmail.com",
       component: <DayBeforeEmail data={
-        req.body
+        body
       } />
     })
 
-    console.log("here in the try")
   } catch (err) {
-    console.log(err)
+    console.error(err)
     res.status(500).send(null)
   }
 

@@ -3,6 +3,7 @@ import { EventPositions, User, Event, Locations } from "@prisma/client";
 import { verifySignature, } from "@upstash/qstash/nextjs"
 import { NextApiRequest, NextApiResponse } from "next";
 import sendMail from "../../../emails";
+import DayBeforeEmail from "../../../emails/schedule/dayBeforeEmail";
 
 export const config = {
   api: { bodyParser: false }
@@ -15,13 +16,6 @@ export const config = {
 
 
 
-type EventsWithPositions = (Event & {
-  Locations: Locations | null;
-  positions: (EventPositions & {
-    User: User | null
-  })[];
-})[] | undefined
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body
   console.log(body)
@@ -29,10 +23,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await sendMail({
       to: "tombome119@gmail.com",
-      text: "Hello World",
-      subject: "Hello",
-      html: `<div>Hello</div>`
-
+      component: <DayBeforeEmail data={
+        req.body
+      } />
     })
 
     console.log("here in the try")

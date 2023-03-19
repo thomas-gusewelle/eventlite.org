@@ -1,4 +1,5 @@
-import { EventPositions, Event, User, Locations, Role } from "@prisma/client";
+import { EventPositions, Event, User, Locations, Role, UserStatus } from "@prisma/client";
+import { ReminderEmailData } from "../../pages/api/messaging/schedule";
 import DayBeforeEmail from "../schedule/dayBeforeEmail";
 
 
@@ -248,18 +249,21 @@ const event: EventsWithPositions =
     }
   ]
 
+const user = {
+  id: "",
+  firstName: "Timmy",
+  lastName: "Test",
+  status: "USER" as UserStatus,
+  email: "test@test.com",
+  emailVerified: null,
+  phoneNumber: null,
+  image: null,
+  organizationId: null,
+  hasLogin: false,
+  userSettingsId: null
+}
+
 export function dayBeforeEmail() {
-  return <DayBeforeEmail events={event} user={{
-    id: "",
-    firstName: "Timmy",
-    lastName: "Test",
-    status: "USER",
-    email: "test@test.com",
-    emailVerified: null,
-    phoneNumber: null,
-    image: null,
-    organizationId: null,
-    hasLogin: false,
-    userSettingsId: null
-  }} />
+  const data: ReminderEmailData = { user: user, events: event }
+  return <DayBeforeEmail data={data} />
 }

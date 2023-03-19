@@ -13,6 +13,11 @@ type EventsWithPositions = (Event & {
   })[];
 })[] | undefined
 
+export type ReminderEmailData = {
+  user: User,
+  events: EventsWithPositions
+}
+
 
 const qstashClient = new Client({
   token: process.env.QSTASH_TOKEN!
@@ -48,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   })
 
-  const emails: { user: User, events: EventsWithPositions }[] = []
+  const emails: ReminderEmailData[] = []
 
   events?.forEach(event => {
     event.positions.forEach(position => {

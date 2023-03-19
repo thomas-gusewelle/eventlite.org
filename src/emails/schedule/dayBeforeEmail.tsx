@@ -2,15 +2,14 @@ import BaseLayout from "../components/BaseLayout";
 import Header from "../components/Header";
 import Heading from "../components/Heading";
 import Text from "../components/Text";
-import Button from "../components/Button";
-import { MjmlWrapper, MjmlColumn, MjmlSection, MjmlGroup, MjmlRaw, MjmlBody, MjmlDivider } from "mjml-react";
-import { colors, fontFamily, fontSize, fontWeight, screens } from "../theme";
+import { MjmlWrapper, MjmlColumn, MjmlSection, MjmlGroup, MjmlDivider } from "mjml-react";
+import { colors, fontSize, fontWeight, screens } from "../theme";
 import Footer from "../components/Footer";
 import { EventPositions, User, Event, Locations, Role } from "@prisma/client";
 import { shortDate } from "../../components/dateTime/dates";
 import { shortTime } from "../../components/dateTime/times";
-import { PicNameRowSmall } from "../../components/profile/PicNameRow";
 import { fullName } from "../../utils/fullName";
+import { ReminderEmailData } from "../../pages/api/messaging/schedule";
 
 
 type EventsWithPositions = (Event & {
@@ -51,7 +50,8 @@ const styles = `
   }
 `;
 
-const DayBeforeEmail = ({ events, user }: { events: EventsWithPositions, user: User }) => {
+const DayBeforeEmail = ({ data }: { data: ReminderEmailData }) => {
+  const { user, events } = data
 
   return (
     <BaseLayout style={styles}>

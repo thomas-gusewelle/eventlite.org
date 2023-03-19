@@ -9,14 +9,14 @@ export const config = {
   api: { bodyParser: false }
 }
 
-// export default verifySignature(handler, {
-//   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
-//   nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
-// })
+export default verifySignature(handler, {
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+})
 
 
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body
   console.log(body)
 

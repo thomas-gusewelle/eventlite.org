@@ -73,14 +73,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
 
-  // const sentEmails = await Promise.all(
-  //   emails.map(async email => {
-  //     return await qstashClient.publishJSON({
-  //       url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
-  //       body: email,
-  //     })
-  //   })
-  // )
+  const sentEmails = await Promise.all(
+    emails.map(async email => {
+      return await qstashClient.publishJSON({
+        url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
+        body: email,
+      })
+    })
+  )
 
   // res.status(201).json({
   //   today: today.toDateString(), tomorrow: tomorrow.toDateString(),

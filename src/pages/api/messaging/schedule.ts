@@ -52,6 +52,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
   })
+  console.log({ today: today, tomorrow: tomorrow, dayAfter: dayAfterTomorrow })
+  console.log(events)
 
   const emails: ReminderEmailData[] = []
 
@@ -73,14 +75,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
 
-  const sentEmails = await Promise.all(
-    emails.map(async email => {
-      return await qstashClient.publishJSON({
-        url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
-        body: superjson.stringify(email),
-      })
-    })
-  )
+  // const sentEmails = await Promise.all(
+  //   emails.map(async email => {
+  //     return await qstashClient.publishJSON({
+  //       url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
+  //       body: superjson.stringify(email),
+  //     })
+  //   })
+  // )
 
   // res.status(201).json({
   //   today: today.toDateString(), tomorrow: tomorrow.toDateString(),
@@ -88,5 +90,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   events: events?.map(item => ({ name: item.name, date: item.datetime.toDateString() })),
   //   emails: emails.map(item => ({ name: item.user.firstName, events: item.events?.map(ev => ev.name) }))
   // })
-  res.status(201).send(sentEmails)
+  res.status(201).send(emails)
 }

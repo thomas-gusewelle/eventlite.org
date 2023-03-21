@@ -109,6 +109,7 @@ model Event {
   Organization     Organization?    @relation(fields: [organizationId], references: [id])
   organizationId   String?
   datetime         DateTime
+  timezone         String          @default("America/Chicago")
   Locations        Locations?       @relation(fields: [locationsId], references: [id])
   locationsId      String?
   positions        EventPositions[]

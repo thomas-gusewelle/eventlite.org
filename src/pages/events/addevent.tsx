@@ -16,7 +16,6 @@ import { findFutureDates } from "../../server/utils/findFutureDates";
 import { v4 as uuidv4 } from "uuid";
 import { EventForm } from "../../components/form/event/eventForm";
 import { sidebar } from "../../components/layout/sidebar";
-import { ErrorAlert } from "../../components/alerts/errorAlert";
 import { AlertContext } from "../../providers/alertProvider";
 
 const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
@@ -50,12 +49,19 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
     },
   });
   const addEvent = api.events.createEvent.useMutation({
-    onError(error, variables, context) { },
+    onError(error) { alertContext.setError({ state: true, message: error.message }) },
   });
   const methods = useForm<EventFormValues>();
   const submit = methods.handleSubmit((data: EventFormValues) => {
     if (!data.isRepeating) {
-      addEvent.mutate(data, {
+      addEvent.mutate({
+        name: data.name,
+        eventDate: data.eventDate,
+        eventTime: data.eventTime,
+        eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        eventLocation: data.eventLocation,
+        positions: data.positions,
+      }, {
         onSuccess() {
           if (redirect) {
             router.push(redirect);
@@ -74,6 +80,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
             name: data.name,
             eventDate: date,
             eventTime: data.eventTime,
+            eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             recurringId: recurringId,
             eventLocation: data.eventLocation,
             positions: data.positions,

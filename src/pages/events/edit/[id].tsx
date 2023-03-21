@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import {
@@ -19,7 +19,6 @@ import { useRouter } from "next/router";
 import { formatEventData } from "../../../utils/formatEventData";
 import { EventForm } from "../../../components/form/event/eventForm";
 import { findFutureDates } from "../../../server/utils/findFutureDates";
-import { ErrorAlert } from "../../../components/alerts/errorAlert";
 import { Modal } from "../../../components/modal/modal";
 import { ModalBody } from "../../../components/modal/modalBody";
 import { ModalTitle } from "../../../components/modal/modalTitle";
@@ -139,6 +138,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           name: data.name,
           eventDate: data.eventDate,
           eventTime: data.eventTime,
+          eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           organization: eventQuery.data.organizationId,
           recurringId: eventQuery.data.recurringId || undefined,
           eventLocation: data.eventLocation,
@@ -183,6 +183,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           id: eventQuery.data.id,
           name: data.name,
           eventTime: data.eventTime,
+          eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           recurringId: eventQuery.data.recurringId || undefined,
           positions: data.positions.map((position) => ({
             eventPositionId: position.eventPositionId,

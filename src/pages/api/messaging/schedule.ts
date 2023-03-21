@@ -1,6 +1,7 @@
 
 import { User, Event, EventPositions, Locations, Role } from "@prisma/client"
 import { Client } from "@upstash/qstash"
+import { verifySignature } from "@upstash/qstash/nextjs"
 import { NextApiRequest, NextApiResponse } from "next"
 import superjson from "superjson"
 import { prisma } from "../../../server/db/client"
@@ -23,7 +24,12 @@ const qstashClient = new Client({
   token: process.env.QSTASH_TOKEN!
 })
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default verifySignature(handler, {
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+})
+
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const test = new Date()

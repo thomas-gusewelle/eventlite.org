@@ -59,7 +59,8 @@ const PeoplePage = () => {
   const adminCount = api.user.getAmdminCount.useQuery();
   const createInvite = api.createAccount.createInviteLinkWithID.useMutation(
     {
-      onError(error, variables, context) {
+      onSuccess: () => { setSuccess({ state: true, message: "Success! Invite link sent." }) },
+      onError(error) {
         setError({
           state: true,
           message: `Error creating invite code. ${error.message}`,
@@ -69,6 +70,7 @@ const PeoplePage = () => {
   );
   const sendResetPassword = api.createAccount.generateResetPassword.useMutation(
     {
+      onSuccess: () => { setSuccess({ state: true, message: "Password reset sent." }) },
       onError(error, variables, context) {
         setError({
           state: true,
@@ -85,6 +87,7 @@ const PeoplePage = () => {
       });
     },
     onSuccess: () => {
+      setSuccess({ state: true, message: "User Deleted" })
       people.refetch();
     },
   });

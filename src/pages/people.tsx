@@ -60,7 +60,7 @@ const PeoplePage = () => {
   const createInvite = api.createAccount.createInviteLinkWithID.useMutation(
     {
       onSuccess: () => { setSuccess({ state: true, message: "Success! Invite link sent." }) },
-      onError(error, variables, context) {
+      onError(error) {
         setError({
           state: true,
           message: `Error creating invite code. ${error.message}`,

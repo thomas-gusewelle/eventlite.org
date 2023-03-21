@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   events?.forEach(event => {
     event.positions.forEach(position => {
-      if (position.User) {
+      if (position.User && position.User.hasLogin) {
         if (emails.map(item => item.user.id).includes(position.User.id)) {
           const index = emails.map(item => item.user.id).indexOf(position.User.id)
           if (index >= 0) {

@@ -28,13 +28,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   return res.status(404).end()
   // }
   const today = new Date()
-  today.setUTCHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+  const test = new Date()
+  test.setHours(0, 0, 0, 0)
+  console.log(test)
   let tomorrow = new Date()
-  tomorrow.setUTCDate(today.getDate() + 1)
-  tomorrow.setUTCHours(0, 0, 0, 0)
+  tomorrow.setDate(today.getDate() + 1)
+  tomorrow.setHours(0, today.getTimezoneOffset(), 0, 0)
   let dayAfterTomorrow = new Date()
-  dayAfterTomorrow.setUTCDate(today.getDate() + 2)
-  dayAfterTomorrow.setUTCHours(0, 0, 0, 0)
+  dayAfterTomorrow.setDate(today.getDate() + 2)
+  dayAfterTomorrow.setHours(0, today.getTimezoneOffset(), 0, 0)
   const events: EventsWithPositions = await prisma?.event.findMany({
     where: {
       datetime: {

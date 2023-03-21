@@ -143,6 +143,9 @@ export const createAccountRouter = createTRPCRouter({
       email: input.email,
       type: "signup",
 
+      options: {
+        redirectTo: "https://www.eventlite.org/dashboard"
+      },
       password: "test",
     });
 
@@ -210,6 +213,9 @@ export const createAccountRouter = createTRPCRouter({
       email: input.email,
       type: "signup",
       password: input.password,
+      options: {
+        redirectTo: "https://www.eventlite.org/dashboard"
+      }
     });
     if (error) {
       throw new TRPCError({

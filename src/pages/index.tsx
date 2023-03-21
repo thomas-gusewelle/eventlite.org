@@ -26,6 +26,7 @@ import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 export async function getServerSideProps(context: any) {
   const supaServer = createServerSupabaseClient(context);
@@ -43,11 +44,17 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-const eventData = {};
 
 const Home = () => {
   const iconSize = 50;
   const router = useRouter();
+
+  const user = useUser()
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard")
+    }
+  }, [user])
 
   return (
     <>

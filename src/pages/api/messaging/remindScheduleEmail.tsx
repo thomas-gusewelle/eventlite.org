@@ -10,14 +10,6 @@ export const config = {
   api: { bodyParser: false },
 };
 
-type Events = (Event & {
-  Locations: Locations | null;
-  positions: (EventPositions & {
-    Role: Role | null
-    User: User | null
-  })[];
-})[] | undefined
-
 export default verifySignature(handler, {
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
   nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
@@ -39,7 +31,6 @@ async function handler(
     res.status(500).send(err)
     return
   }
-  // console.log(test)
 
   try {
     await sendMail({

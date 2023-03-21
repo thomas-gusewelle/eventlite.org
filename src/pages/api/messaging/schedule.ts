@@ -24,15 +24,10 @@ const qstashClient = new Client({
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // if (req.method !== "POST") {
-  //   return res.status(404).end()
-  // }
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const test = new Date()
   test.setHours(0, 0, 0, 0)
-  console.log(test)
-  console.log("Time zone offset", test.getTimezoneOffset())
   let tomorrow = new Date()
   tomorrow.setDate(today.getDate() + 1)
   tomorrow.setHours(0, today.getTimezoneOffset(), 0, 0)
@@ -56,8 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
   })
-  console.log({ today: today, tomorrow: tomorrow, dayAfter: dayAfterTomorrow })
-  console.log(events)
 
   const emails: ReminderEmailData[] = []
 
@@ -79,20 +72,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
 
-  // const sentEmails = await Promise.all(
-  //   emails.map(async email => {
-  //     return await qstashClient.publishJSON({
-  //       url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
-  //       body: superjson.stringify(email),
-  //     })
-  //   })
-  // )
+  const sentEmails = await Promise.all(
+    emails.map(async email => {
+      return await qstashClient.publishJSON({
+        url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
+        body: superjson.stringify(email),
+      })
+    })
+  )
 
-  // res.status(201).json({
-  //   today: today.toDateString(), tomorrow: tomorrow.toDateString(),
-  //   dayAfter: dayAfterTomorrow.toDateString(),
-  //   events: events?.map(item => ({ name: item.name, date: item.datetime.toDateString() })),
-  //   emails: emails.map(item => ({ name: item.user.firstName, events: item.events?.map(ev => ev.name) }))
-  // })
   res.status(201).send(emails)
 }

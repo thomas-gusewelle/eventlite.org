@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   tomorrow.setHours(0, today.getTimezoneOffset(), 0, 0)
   let dayAfterTomorrow = new Date()
   dayAfterTomorrow.setDate(today.getDate() + 2)
-  dayAfterTomorrow.setHours(0, today.getTimezoneOffset(), 0, 0)
+  dayAfterTomorrow.setHours(7, today.getTimezoneOffset(), 0, 0)
   const events: EventsWithPositions = await prisma?.event.findMany({
     where: {
       datetime: {

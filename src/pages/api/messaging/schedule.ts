@@ -30,6 +30,10 @@ export default verifySignature(handler, {
 })
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+  // This is kind of nasty but works for getting the times right
+  // The issue is that events are saved with UTC time that has the timezone offset 
+  // so they can end up in the wrong day if the event is late in the day
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const test = new Date()
@@ -39,6 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   tomorrow.setHours(0, today.getTimezoneOffset(), 0, 0)
   let dayAfterTomorrow = new Date()
   dayAfterTomorrow.setDate(today.getDate() + 2)
+  // Add sevon hours to capture late night events in US timezones
   dayAfterTomorrow.setHours(7, today.getTimezoneOffset(), 0, 0)
   const events: EventsWithPositions = await prisma?.event.findMany({
     where: {

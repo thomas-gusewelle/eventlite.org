@@ -34,7 +34,7 @@ async function handler(
 
   try {
     await sendMail({
-      to: "tombome119@gmail.com",
+      to: body.user.email,
       component: <DayBeforeEmail data={body} />,
     });
   } catch (err) {

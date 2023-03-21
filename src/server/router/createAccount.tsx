@@ -142,7 +142,6 @@ export const createAccountRouter = createTRPCRouter({
     const { data, error } = await _supabase.auth.admin.generateLink({
       email: input.email,
       type: "signup",
-
       options: {
         redirectTo: "https://www.eventlite.org/dashboard"
       },

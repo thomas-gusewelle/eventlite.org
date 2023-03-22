@@ -23,6 +23,7 @@ import { classNames } from "../utils/classnames";
 import { paginate } from "../utils/paginate";
 import { api } from "../server/utils/api"
 import { useQueryClient } from "@tanstack/react-query";
+import { BtnAdd } from "../components/btn/btnAdd";
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -34,7 +35,7 @@ type stateData = (Event & {
 
 const EventsPage = () => {
   const user = useContext(UserContext);
-
+  const router = useRouter()
   const [queryString, setQueryString] = useState("");
 
   const addOptions: TableOptionsDropdown = [
@@ -48,7 +49,7 @@ const EventsPage = () => {
       <div className='mb-3 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Events</SectionHeading>
         <div className='flex justify-end'>
-          {user?.status == "ADMIN" && <AddDropdownMenu options={addOptions} />}
+          {user?.status == "ADMIN" && <BtnAdd onClick={() => router.push("/events/addevent")} />}
         </div>
         <div className='col-span-2'>
           <input
@@ -72,7 +73,7 @@ const EventsPage = () => {
             placeholder='Search'
           />
           {/* <SearchBar /> */}
-          {user?.status == "ADMIN" && <AddDropdownMenu options={addOptions} />}
+          {user?.status == "ADMIN" && <BtnAdd onClick={() => router.push("/events/addevent")} />}
         </div>
       </div>
 

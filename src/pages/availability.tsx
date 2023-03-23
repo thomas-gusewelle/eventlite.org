@@ -20,7 +20,7 @@ import { paginate } from "../utils/paginate";
 import { api } from "../server/utils/api"
 
 const AvailabilityPage = () => {
-  const alertContext = useContext(AlertContext);
+  const { setError, setSuccess } = useContext(AlertContext);
   const [limit, setLimit] = useState(4);
   const [modalOpen, setModalOpen] = useState(false);
   const [dates, setDates] = useState<Availability[]>([]);
@@ -45,9 +45,10 @@ const AvailabilityPage = () => {
     onSuccess(data) {
       setDates(dates.filter((item) => item.id != data?.id));
       getUserAvailibilityQuery.refetch();
+      setSuccess({ statue: true, message: "Date deleted successfully" })
     },
     onError(err) {
-      alertContext.setError({
+      setError({
         state: true,
         message: `There was an error deleting this date. Message: ${err.message}`,
       });
@@ -65,7 +66,7 @@ const AvailabilityPage = () => {
       );
     },
     onError(err) {
-      alertContext.setError({
+      setError({
         state: true,
         message: `There was an error fetching the users. Message: ${err.message}`,
       });
@@ -82,7 +83,7 @@ const AvailabilityPage = () => {
         );
       },
       onError(err) {
-        alertContext.setError({
+        setError({
           state: true,
           message: `There was an error fetching the user availibility. Message: ${err.message}`,
         });

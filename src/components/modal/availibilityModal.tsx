@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
@@ -12,6 +12,7 @@ import { MdDelete } from "react-icons/md";
 import { Availability } from "@prisma/client";
 import { api } from "../../server/utils/api"
 import { useQueryClient } from "@tanstack/react-query";
+import { AlertContext } from "../../providers/alertProvider";
 
 export const AvaililityModal: React.FC<{
   userId: string;
@@ -20,6 +21,7 @@ export const AvaililityModal: React.FC<{
   exisitingDates: Availability[];
   setExisitingDates: Dispatch<SetStateAction<Availability[]>>;
 }> = ({ userId, open, setOpen, exisitingDates, setExisitingDates }) => {
+  const { setError, setSuccess } = useContext(AlertContext)
   const methods = useForm();
   const [dates, setDates] = useState<Date[]>(
     exisitingDates
@@ -27,7 +29,7 @@ export const AvaililityModal: React.FC<{
       .sort((a, b) => a.getTime() - b.getTime())
   );
   const [deletedDates, setDeletedDates] = useState<Date[]>([]);
-  const opts = useQueryClient()
+  const opts = api.useContext()
 
   //TODO: fix display of dates below calendar
   // useEffect(() => {
@@ -42,9 +44,12 @@ export const AvaililityModal: React.FC<{
     {
       onSuccess() {
         setOpen(false);
-        opts.refetchQueries(["avalibility.getUserAvalibilityByID"]);
-        opts.refetchQueries(["events.getUpcomingEventsByUser"]);
+        opts.avalibility.getUserAvalibilityByID.refetch()
+        opts.events.getUpcomingEventsByUser.refetch()
+        setSuccess({ state: true, message: "Avalibility updated successfully" })
       },
+      onError: (err) => setError({ state: true, message: err.message })
+
     }
   );
 
@@ -158,5 +163,6 @@ export const AvaililityModal: React.FC<{
         </BottomButtons>
       </form>
     </Modal>
-  );
+  )
+    ;
 };

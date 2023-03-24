@@ -42,8 +42,8 @@ export const SingleSelect: React.FC<{
                         <>
                           <span
                             className={`block truncate ${selected
-                                ? "font-medium text-indigo-700"
-                                : "font-normal"
+                              ? "font-medium text-indigo-700"
+                              : "font-normal"
                               }`}>
                             {item.name}
                           </span>
@@ -61,7 +61,7 @@ export const SingleSelect: React.FC<{
   );
 };
 
-interface SingleSelectProps<ListItem extends Object> {
+interface SingleSelectProps<ListItem> {
   selected: ListItem;
   setSelected: Dispatch<SetStateAction<ListItem>>;
   list: { item: ListItem; hide?: boolean }[];
@@ -71,7 +71,8 @@ interface SingleSelectProps<ListItem extends Object> {
 }
 
 //this requies data to have an id and name property
-export const NewSingleSelect = <List extends Object>({
+// comma after generic is used ot tell TSX file that it is a type and not a componenet
+export const NewSingleSelect = <List,>({
   selected,
   setSelected,
   list,
@@ -111,8 +112,8 @@ export const NewSingleSelect = <List extends Object>({
                         <>
                           <span
                             className={`block truncate ${selected
-                                ? "font-medium text-indigo-700"
-                                : "font-normal"
+                              ? "font-medium text-indigo-700"
+                              : "font-normal"
                               }`}>
                             {label(item.item)}
                           </span>

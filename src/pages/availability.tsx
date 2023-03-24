@@ -18,8 +18,10 @@ import { UserContext } from "../providers/userProvider";
 import { fullName } from "../utils/fullName";
 import { paginate } from "../utils/paginate";
 import { api } from "../server/utils/api"
+import { useRouter } from "next/router";
 
-const AvailabilityPage = () => {
+const AvailabilityPage = ({ userId }: { userId: string }) => {
+  const router = useRouter()
   const { setError, setSuccess } = useContext(AlertContext);
   const [limit, setLimit] = useState(4);
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,7 +30,7 @@ const AvailabilityPage = () => {
     useState<PaginateData<Availability[]>>();
   const [pageNum, setPageNum] = useState(1);
   const user = useContext(UserContext);
-  const [userSelected, setUserSelected] = useState<User>(user!);
+  const [userSelected, setUserSelected] = useState<User | null>(user?.status == "ADMIN" ? null : user!);
   const [peopleList, setPeopleList] = useState<{ item: User; label: string }[]>(
     []
   );
@@ -41,11 +43,17 @@ const AvailabilityPage = () => {
     }
   }, [dates, pageNum]);
 
+  useEffect(() => {
+    if (userSelected) {
+      router.push(`/availability?userId=${userSelected.id}`)
+    }
+  }, [userSelected])
+
   const deleteDateMutation = api.avalibility.deleteDate.useMutation({
     onSuccess(data) {
       setDates(dates.filter((item) => item.id != data?.id));
       getUserAvailibilityQuery.refetch();
-      setSuccess({ statue: true, message: "Date deleted successfully" })
+      setSuccess({ state: true, message: "Date deleted successfully" })
     },
     onError(err) {
       setError({
@@ -64,6 +72,7 @@ const AvailabilityPage = () => {
           label: fullName(user.firstName, user.lastName) ?? "",
         })) ?? []
       );
+      setUserSelected(data.find((user) => user.id === userId) ?? user!)
     },
     onError(err) {
       setError({
@@ -75,7 +84,7 @@ const AvailabilityPage = () => {
   });
 
   const getUserAvailibilityQuery = api.avalibility.getUserAvalibilityByID.useQuery(
-    userSelected.id,
+    userId,
     {
       onSuccess(data) {
         setDates(
@@ -104,11 +113,15 @@ const AvailabilityPage = () => {
     );
   }
 
+  // if (userSelected === null) {
+  //   return <div>Error</div>
+  // }
+
   if (pagiantedData.data.length <= 0 && user?.status != "ADMIN") {
     return (
       <>
         <AvaililityModal
-          userId={userSelected.id}
+          userId={userId}
           open={modalOpen}
           setOpen={setModalOpen}
           exisitingDates={dates}
@@ -128,7 +141,7 @@ const AvailabilityPage = () => {
     return (
       <>
         <AvaililityModal
-          userId={userSelected.id}
+          userId={userId}
           open={modalOpen}
           setOpen={setModalOpen}
           exisitingDates={dates}
@@ -146,7 +159,7 @@ const AvailabilityPage = () => {
                 selected={userSelected}
                 setSelected={setUserSelected}
                 list={peopleList}
-                label={(item) => fullName(item.firstName, item.lastName)}
+                label={(item) => fullName(item?.firstName, item?.lastName)}
               />
             </div>
           )}
@@ -160,7 +173,7 @@ const AvailabilityPage = () => {
                   selected={userSelected}
                   setSelected={setUserSelected}
                   list={peopleList}
-                  label={(item) => fullName(item.firstName, item.lastName)}
+                  label={(item) => fullName(item?.firstName, item?.lastName)}
                 />
               </div>
             )}
@@ -191,7 +204,7 @@ const AvailabilityPage = () => {
               selected={userSelected}
               setSelected={setUserSelected}
               list={peopleList}
-              label={(item) => fullName(item.firstName, item.lastName)}
+              label={(item) => fullName(item?.firstName, item?.lastName)}
             />
           </div>
         )}
@@ -205,7 +218,7 @@ const AvailabilityPage = () => {
                 selected={userSelected}
                 setSelected={setUserSelected}
                 list={peopleList}
-                label={(item) => fullName(item.firstName, item.lastName)}
+                label={(item) => fullName(item?.firstName, item?.lastName)}
               />
             </div>
           )}
@@ -215,7 +228,7 @@ const AvailabilityPage = () => {
       </div>
 
       <AvaililityModal
-        userId={userSelected.id}
+        userId={userId}
         open={modalOpen}
         setOpen={setModalOpen}
         exisitingDates={dates}
@@ -273,6 +286,18 @@ const AvailabilityPage = () => {
   );
 };
 
-AvailabilityPage.getLayout = sidebar;
+const AvalibiltyWrapper = () => {
+  const router = useRouter()
+  const { userId } = router.query
 
-export default AvailabilityPage;
+  if (!userId || typeof userId != "string") {
+    return <div>Error</div>
+
+  }
+
+  return <AvailabilityPage userId={decodeURIComponent(userId)} />
+}
+
+AvalibiltyWrapper.getLayout = sidebar;
+
+export default AvalibiltyWrapper;

@@ -89,7 +89,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
       { name: "Events", href: "/events", show: true, icon: MdEvent },
       {
         name: "Availability",
-        href: "/availability",
+        href: `/availability?userId=${encodeURIComponent(user?.id ?? "")}`,
         show: true,
         icon: MdPermContactCalendar,
       },
@@ -168,11 +168,10 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       onClick={() => setShow(false)}>
                       <li
                         key={index}
-                        className={`${
-                          router.asPath == link.href
+                        className={`${router.asPath == link.href
                             ? "text-indigo-700"
                             : "text-gray-500"
-                        } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}>
+                          } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}>
                         <div className='flex items-center'>
                           <div>
                             <link.icon size={20}></link.icon>
@@ -189,11 +188,10 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
           {/*Mobile responsive sidebar*/}
           <div
             className={`
-                          ${
-                            show
-                              ? "absolute z-40 h-full w-full  translate-x-0  transform "
-                              : "   absolute z-40 h-full w-full  -translate-x-full transform"
-                          } 200ms transform ease-out`}
+                          ${show
+                ? "absolute z-40 h-full w-full  translate-x-0  transform "
+                : "   absolute z-40 h-full w-full  -translate-x-full transform"
+              } 200ms transform ease-out`}
             id='mobile-nav'>
             <div
               className='absolute h-full w-full bg-gray-800 opacity-50 lg:hidden'
@@ -264,11 +262,10 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                             href={link.href as any}
                             onClick={() => setShow(false)}>
                             <li
-                              className={`${
-                                router.asPath == link.href
+                              className={`${router.asPath == link.href
                                   ? "text-indigo-700"
                                   : "text-gray-600"
-                              } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}>
+                                } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}>
                               <div className='flex items-center'>
                                 <link.icon size={20}></link.icon>
 

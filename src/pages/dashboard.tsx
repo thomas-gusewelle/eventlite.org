@@ -1,5 +1,5 @@
 import { sidebar } from "../components/layout/sidebar";
-import { api } from "../server/utils/api"
+import { api } from "../server/utils/api";
 import { useContext, useEffect, useState } from "react";
 import { AlertContext } from "../providers/alertProvider";
 import { BtnPurple } from "../components/btn/btnPurple";
@@ -34,8 +34,7 @@ const Dashboard = () => {
   const [eventsData, setEventsData] = useState<stateData>([]);
   const [approvalEventsData, setApprovalEventsData] = useState<stateData>([]);
 
-  const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(
-    undefined, {
+  const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(undefined, {
     onSuccess(data) {
       if (data != undefined) {
         if (data.upcoming != undefined) {
@@ -52,8 +51,7 @@ const Dashboard = () => {
         message: `Error getting upcoming events. ${err.message}`,
       });
     },
-  }
-  );
+  });
   const userResponseMutation = api.events.updateUserResponse.useMutation({
     onError(error, variables, context) {
       alertContext.setError({
@@ -71,9 +69,9 @@ const Dashboard = () => {
       // puls the item from approval list if changing to False or True
       let item:
         | (Event & {
-          Locations: Locations | null;
-          positions: (EventPositions & { User: User | null; Role: Role })[];
-        })
+            Locations: Locations | null;
+            positions: (EventPositions & { User: User | null; Role: Role })[];
+          })
         | undefined = undefined;
       if (variables.response == "NULL") {
         item = eventsData.find((item) =>
@@ -134,7 +132,7 @@ const Dashboard = () => {
 
   if (eventsQuery.isLoading) {
     return (
-      <div className='my-6 flex justify-center'>
+      <div className="my-6 flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -146,21 +144,21 @@ const Dashboard = () => {
         open={availabilityModal}
         setOpen={setAvailabilityModal}
       />
-      <div className='flex justify-center gap-3'>
+      <div className="flex justify-center gap-3">
         <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
         </BtnPurple>
       </div>
 
       {approvalEventsData.length == 0 && eventsData.length == 0 && (
-        <div className='mt-12 flex flex-col items-center md:mt-3'>
+        <div className="mt-12 flex flex-col items-center md:mt-3">
           <Lottie
-            className='max-w-[80%] sm:max-w-[24rem] md:max-w-[28rem]'
+            className="max-w-[80%] sm:max-w-[24rem] md:max-w-[28rem]"
             animationData={scheduleLottie}
             loop={0}
             initialSegment={[0, 40]}
           />
-          <h3 className='text-center text-lg font-medium md:text-2xl'>
+          <h3 className="text-center text-lg font-medium md:text-2xl">
             Breath easy, your schedule is clear.
           </h3>
         </div>
@@ -168,10 +166,10 @@ const Dashboard = () => {
 
       {approvalEventsData.length > 0 && (
         <>
-          <div className='mt-8 flex justify-center'>
+          <div className="mt-8 flex justify-center">
             <SectionHeading>Needs Approval</SectionHeading>
           </div>
-          <div className='my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3'>
+          <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3">
             {approvalEventsData.map((event) => {
               let userResponse = event.positions.find(
                 (item) => item.userId == user?.id
@@ -179,53 +177,66 @@ const Dashboard = () => {
               return (
                 <div
                   key={event.id}
-                  className='flex flex-col border-gray-300 pt-4'>
+                  className="flex flex-col border-gray-300 pt-4"
+                >
                   <div
-                    className={`rounded-t-lg pt-2 ${userResponse?.userResponse == null
+                    className={`rounded-t-lg pt-2 ${
+                      userResponse?.userResponse == null
                         ? ""
                         : "rounded-b-lg border-b"
-                      } round border-t border-r border-l shadow`}>
-                    <div className='mb-4 flex flex-col px-3'>
-                      <div className='flex justify-between'>
-                        <h3 className='text-xl font-bold'>{event.name}</h3>
+                    } round border-t border-r border-l shadow`}
+                  >
+                    <div className="mb-4 flex flex-col px-3">
+                      <div className="flex justify-between">
+                        <h3 className="text-xl font-bold">{event.name}</h3>
                       </div>
 
-                      <span className='text-lg font-medium'>
+                      <span className="text-lg font-medium">
                         {event.Locations?.name}
                       </span>
                       <span>{shortDate(event.datetime)}</span>
                       <span>{shortTime(event.datetime)}</span>
                     </div>
-                    <div className=''>
-                      {event.positions.map((position) => {
-                        return (
-                          <div
-                            className='grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0'
-                            key={position.id}>
-                            <span className='py-3 px-3 font-medium'>
-                              {position.Role.name}
-                            </span>
-                            {position.User ? (
-                              <div
-                                className={`flex h-full py-1 px-3 text-center ${position.userResponse == null && "bg-gray-100"
+                    <div className="">
+                      {event.positions
+                        .sort((a, b) => {
+                          if (a.Role.name < b.Role.name) return -1;
+                          else if (a.Role.name > b.Role.name) return 1;
+                          else return 0;
+                        })
+                        .map((position) => {
+                          return (
+                            <div
+                              className="grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0"
+                              key={position.id}
+                            >
+                              <span className="py-3 px-3 font-medium">
+                                {position.Role.name}
+                              </span>
+                              {position.User ? (
+                                <div
+                                  className={`flex h-full py-1 px-3 text-center ${
+                                    position.userResponse == null &&
+                                    "bg-gray-100"
                                   }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
-                    `}>
-                                <PicNameRowSmall user={position?.User} />
-                              </div>
-                            ) : (
-                              <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'></div>
-                            )}
-                          </div>
-                        );
-                      })}
+                    `}
+                                >
+                                  <PicNameRowSmall user={position?.User} />
+                                </div>
+                              ) : (
+                                <div className="flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4"></div>
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
                   {/* User approval section */}
                   {userResponse?.userResponse == null && (
-                    <div className='mt-3 grid grid-cols-2 gap-3 overflow-hidden'>
-                      <div className='grid w-full overflow-hidden rounded-lg shadow'>
+                    <div className="mt-3 grid grid-cols-2 gap-3 overflow-hidden">
+                      <div className="grid w-full overflow-hidden rounded-lg shadow">
                         <BtnApprove
                           func={() =>
                             userResponseMutation.mutate({
@@ -235,7 +246,7 @@ const Dashboard = () => {
                           }
                         />
                       </div>
-                      <div className='grid w-full overflow-hidden rounded-xl shadow'>
+                      <div className="grid w-full overflow-hidden rounded-xl shadow">
                         <BtnDeny
                           func={() =>
                             userResponseMutation.mutate({
@@ -255,11 +266,11 @@ const Dashboard = () => {
       )}
       {eventsData.length > 0 && (
         <>
-          <div className='mt-8 flex justify-center'>
+          <div className="mt-8 flex justify-center">
             <SectionHeading>Upcoming Events</SectionHeading>
           </div>
 
-          <div className='my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3'>
+          <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-3">
             {eventsData.map((event) => {
               let userResponse = event.positions.find(
                 (item) => item.userId == user?.id
@@ -267,15 +278,18 @@ const Dashboard = () => {
               return (
                 <div
                   key={event.id}
-                  className='flex flex-col border-gray-300 pt-4'>
+                  className="flex flex-col border-gray-300 pt-4"
+                >
                   <div
-                    className={`rounded-t-lg pt-2 ${userResponse?.userResponse == null
+                    className={`rounded-t-lg pt-2 ${
+                      userResponse?.userResponse == null
                         ? ""
                         : "rounded-b-lg border-b"
-                      } round border-t border-r border-l shadow`}>
-                    <div className='mb-4 flex flex-col px-3'>
-                      <div className='flex justify-between'>
-                        <h3 className='text-xl font-bold'>{event.name}</h3>
+                    } round border-t border-r border-l shadow`}
+                  >
+                    <div className="mb-4 flex flex-col px-3">
+                      <div className="flex justify-between">
+                        <h3 className="text-xl font-bold">{event.name}</h3>
                         {userResponse?.userResponse != null && (
                           <TableDropdown
                             options={[
@@ -292,34 +306,43 @@ const Dashboard = () => {
                         )}
                       </div>
 
-                      <span className='text-lg font-medium'>
+                      <span className="text-lg font-medium">
                         {event.Locations?.name}
                       </span>
                       <span>{shortDate(event.datetime)}</span>
                       <span>{shortTime(event.datetime)}</span>
                     </div>
-                    <div className=''>
-                      {event.positions.map((position) => (
-                        <div
-                          className='grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0'
-                          key={position.id}>
-                          <span className='py-3 px-3 font-medium'>
-                            {position.Role.name}
-                          </span>
-                          {position.User ? (
-                            <div
-                              className={`flex h-full py-1 px-3 text-center ${position.userResponse == null && "bg-gray-100"
+                    <div className="">
+                      {event.positions
+                        .sort((a, b) => {
+                          if (a.Role.name < b.Role.name) return -1;
+                          else if (a.Role.name > b.Role.name) return 1;
+                          else return 0;
+                        })
+                        .map((position) => (
+                          <div
+                            className="grid grid-cols-[1fr_1.5fr] items-center border-t last:border-b last:pb-0"
+                            key={position.id}
+                          >
+                            <span className="py-3 px-3 font-medium">
+                              {position.Role.name}
+                            </span>
+                            {position.User ? (
+                              <div
+                                className={`flex h-full py-1 px-3 text-center ${
+                                  position.userResponse == null && "bg-gray-100"
                                 }
                     ${position.userResponse == true && "bg-green-200"}
                     ${position.userResponse == false && "bg-red-200"}
-                    `}>
-                              <PicNameRowSmall user={position?.User} />
-                            </div>
-                          ) : (
-                            <div className='flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4'></div>
-                          )}
-                        </div>
-                      ))}
+                    `}
+                              >
+                                <PicNameRowSmall user={position?.User} />
+                              </div>
+                            ) : (
+                              <div className="flex h-full items-center justify-center bg-gray-100 py-3 px-6 text-center leading-4"></div>
+                            )}
+                          </div>
+                        ))}
                     </div>
                   </div>
                 </div>

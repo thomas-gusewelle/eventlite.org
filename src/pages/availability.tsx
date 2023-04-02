@@ -103,9 +103,10 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
 
   if (
     pagiantedData == undefined ||
-    getUsersQuery.isLoading ||
+    (getUsersQuery.isLoading && user?.status == "ADMIN") ||
     getUserAvailibilityQuery.isLoading
   ) {
+    console.log(getUsersQuery)
     return (
       <div className='flex justify-center'>
         <CircularProgress />

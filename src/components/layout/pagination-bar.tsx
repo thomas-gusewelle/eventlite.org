@@ -39,22 +39,27 @@ export const PaginationBar: React.FC<{
     setPageNums(_paginate);
   }, [pageNum, pageRow, paginateData.total_pages]);
 
+  // TODO: add in window scroll to top on click
   const pageUp = () => {
+    window.scrollTo({ top: 0 })
     if (pageNum == paginateData.total_pages) return;
     setPageNum(pageNum + 1);
   };
 
   const pageDown = () => {
+    window.scrollTo({ top: 0 })
     if (pageNum == 1) return;
     setPageNum(pageNum - 1);
   };
 
   const rowUp = () => {
+    window.scrollTo({ top: 0 })
     if (pageRow == pageNums?.total_pages) return;
     setPageNum(5 * pageRow + 1);
     // setPageRow(pageRow + 1);
   };
   const rowDown = () => {
+    window.scrollTo({ top: 0 })
     if (pageRow == 1) return;
     setPageNum(5 * (pageRow - 1));
   };
@@ -96,10 +101,13 @@ export const PaginationBar: React.FC<{
             {pageNums?.data.map((page, index) => (
               <button
                 key={page}
-                onClick={() => setPageNum(page)}
+                onClick={() => {
+                  window.scrollTo({ top: 0 });
+                  setPageNum(page)
+                }}
                 className={`${pageNum == page
-                    ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
-                    : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                  ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
+                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                   } relative inline-flex items-center px-4 py-2 border text-sm font-medium`}>
                 {page}
               </button>

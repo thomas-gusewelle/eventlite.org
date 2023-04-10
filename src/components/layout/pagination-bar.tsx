@@ -39,24 +39,29 @@ export const PaginationBar: React.FC<{
     setPageNums(_paginate);
   }, [pageNum, pageRow, paginateData.total_pages]);
 
+  // TODO: add in window scroll to top on click
   const pageUp = () => {
     if (pageNum == paginateData.total_pages) return;
     setPageNum(pageNum + 1);
+    window.scroll(0, 0)
   };
 
   const pageDown = () => {
     if (pageNum == 1) return;
     setPageNum(pageNum - 1);
+    window.scroll(0, 0)
   };
 
   const rowUp = () => {
     if (pageRow == pageNums?.total_pages) return;
     setPageNum(5 * pageRow + 1);
+    window.scrollTo(0, 0)
     // setPageRow(pageRow + 1);
   };
   const rowDown = () => {
     if (pageRow == 1) return;
     setPageNum(5 * (pageRow - 1));
+    window.scrollTo(0, 0)
   };
 
   if (pageNums == undefined || paginateData.total_pages < 1) {
@@ -93,13 +98,16 @@ export const PaginationBar: React.FC<{
               <MdChevronLeft className='h-5 w-5' aria-hidden='true' />
             </button>
             {/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
-            {pageNums?.data.map((page, index) => (
+            {pageNums?.data.map((page) => (
               <button
                 key={page}
-                onClick={() => setPageNum(page)}
+                onClick={() => {
+                  setPageNum(page)
+                  window.scrollTo({ top: 0 });
+                }}
                 className={`${pageNum == page
-                    ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
-                    : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                  ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
+                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                   } relative inline-flex items-center px-4 py-2 border text-sm font-medium`}>
                 {page}
               </button>

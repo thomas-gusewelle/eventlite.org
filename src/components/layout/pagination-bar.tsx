@@ -41,27 +41,27 @@ export const PaginationBar: React.FC<{
 
   // TODO: add in window scroll to top on click
   const pageUp = () => {
-    window.scrollTo({ top: 0 })
     if (pageNum == paginateData.total_pages) return;
     setPageNum(pageNum + 1);
+    window.scroll(0, 0)
   };
 
   const pageDown = () => {
-    window.scrollTo({ top: 0 })
     if (pageNum == 1) return;
     setPageNum(pageNum - 1);
+    window.scroll(0, 0)
   };
 
   const rowUp = () => {
-    window.scrollTo({ top: 0 })
     if (pageRow == pageNums?.total_pages) return;
     setPageNum(5 * pageRow + 1);
+    window.scrollTo(0, 0)
     // setPageRow(pageRow + 1);
   };
   const rowDown = () => {
-    window.scrollTo({ top: 0 })
     if (pageRow == 1) return;
     setPageNum(5 * (pageRow - 1));
+    window.scrollTo(0, 0)
   };
 
   if (pageNums == undefined || paginateData.total_pages < 1) {
@@ -98,12 +98,12 @@ export const PaginationBar: React.FC<{
               <MdChevronLeft className='h-5 w-5' aria-hidden='true' />
             </button>
             {/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
-            {pageNums?.data.map((page, index) => (
+            {pageNums?.data.map((page) => (
               <button
                 key={page}
                 onClick={() => {
-                  window.scrollTo({ top: 0 });
                   setPageNum(page)
+                  window.scrollTo({ top: 0 });
                 }}
                 className={`${pageNum == page
                   ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"

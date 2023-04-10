@@ -4,9 +4,9 @@
 
 /* These two selectors are to customize the datepciker for the unavilable dates selector to facilitate allowing for picking multiple dates. The first removes the styling when selected and the second makes the hjighlight styling custom */
 @layer components {
-  html {
-    @apply scroll-smooth;
-  }
+  /* html { */
+  /*   @apply scroll-smooth; */
+  /* } */
   body {
     @apply max-h-full min-h-screen;
   }

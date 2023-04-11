@@ -32,7 +32,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 
 import { classNames } from "../../utils/classnames";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { CircularProgress } from "../circularProgress";
 import { FeedbackTabs } from "../feedback/feedback";
 import { createPortal } from "react-dom";
@@ -46,7 +46,6 @@ type SideLink = {
 
 export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isScroll, setIsScroll] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [sideLinks, setSideLinks] = useState<SideLink>([]);
   const [show, setShow] = useState(false);
@@ -55,22 +54,6 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const user = useContext(UserContext);
   const supabase = useSupabaseClient();
 
-  // useEffect(() => {
-  //   const observer = new ResizeObserver((item) => {
-  //     const { height } = item[0]!.contentRect;
-  //     if (height > window.innerHeight) {
-  //       setIsScroll(true);
-  //     } else {
-  //       setIsScroll(false);
-  //     }
-  //   });
-
-  //   if (scrollRef.current) {
-  //     observer.observe(scrollRef.current);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   return () => observer.unobserve(scrollRef.current!);
-  // }, []);
 
   useEffect(() => {
     setSideLinks([
@@ -122,13 +105,6 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
     }
   }, [show, windowWidth]);
 
-  // if (user == undefined || user == null) {
-  //   return (
-  //     <div className='mt-6 flex justify-center'>
-  //       <CircularProgress />
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
@@ -169,8 +145,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                       <li
                         key={index}
                         className={`${router.asPath == link.href
-                            ? "text-indigo-700"
-                            : "text-gray-500"
+                          ? "text-indigo-700"
+                          : "text-gray-500"
                           } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}>
                         <div className='flex items-center'>
                           <div>
@@ -263,8 +239,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                             onClick={() => setShow(false)}>
                             <li
                               className={`${router.asPath == link.href
-                                  ? "text-indigo-700"
-                                  : "text-gray-600"
+                                ? "text-indigo-700"
+                                : "text-gray-600"
                                 } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}>
                               <div className='flex items-center'>
                                 <link.icon size={20}></link.icon>
@@ -343,6 +319,23 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 )}
                               </Menu.Item>
                               <Menu.Item key={2}>
+                                {({ active }) => (
+                                  <button className='w-full text-left'>
+                                    <Link
+                                      href={`/account/settings`}
+                                      onClick={() => setShow(false)}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Settings
+                                    </Link>
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item key={3}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <a
@@ -441,6 +434,23 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 )}
                               </Menu.Item>
                               <Menu.Item key={2}>
+                                {({ active }) => (
+                                  <button className='w-full text-left'>
+                                    <Link
+                                      href={`/account/settings`}
+                                      onClick={() => setShow(false)}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Settings
+                                    </Link>
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item key={3}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <a

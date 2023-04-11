@@ -45,6 +45,7 @@ const EventsPage = () => {
 
   return (
     <>
+
       {/* MD Top Bar */}
       <div className='mb-3 grid grid-cols-2 gap-4 md:hidden'>
         <SectionHeading>Events</SectionHeading>

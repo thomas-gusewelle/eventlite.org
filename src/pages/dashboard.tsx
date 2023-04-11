@@ -145,7 +145,7 @@ const Dashboard = () => {
         setOpen={setAvailabilityModal}
       />
       <div className="flex justify-center gap-3">
-        <BtnPurple func={() => setAvailabilityModal(!availabilityModal)}>
+        <BtnPurple onClick={() => setAvailabilityModal(!availabilityModal)}>
           Update Availability
         </BtnPurple>
       </div>

@@ -165,7 +165,7 @@ export const DashboardAvaililityModal: React.FC<{
           </div>
         </ModalBody>
         <BottomButtons>
-          <BtnPurple isLoading={updateAvailibility.isLoading} func={() => submit()}>Save</BtnPurple>
+          <BtnPurple isLoading={updateAvailibility.isLoading} onClick={() => submit()}>Save</BtnPurple>
           <BtnCancel
             onClick={() => {
               setOpen(false);

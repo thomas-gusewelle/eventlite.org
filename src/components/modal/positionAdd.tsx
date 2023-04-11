@@ -63,7 +63,7 @@ export const PositionAddModal = ({
             </div>
           </ModalBody>
           <BottomButtons>
-            <BtnPurple isLoading={addPosition.isLoading} func={() => submit()}>
+            <BtnPurple isLoading={addPosition.isLoading} onClick={() => submit()}>
               Save
             </BtnPurple>
             <BtnCancel

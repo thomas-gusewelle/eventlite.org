@@ -66,7 +66,7 @@ export const LocationAddModel = ({
             </div>
           </ModalBody>
           <BottomButtons>
-            <BtnPurple func={() => submit()} isLoading={addLocation.isLoading}>
+            <BtnPurple onClick={() => submit()} isLoading={addLocation.isLoading}>
               Save
             </BtnPurple>
             <BtnCancel

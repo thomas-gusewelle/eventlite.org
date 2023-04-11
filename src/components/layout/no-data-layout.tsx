@@ -18,7 +18,7 @@ export const NoDataLayout = ({
       <div className='ali mt-10 flex flex-col items-center justify-center gap-3'>
         <p className='w-96 text-center text-2xl md:w-auto'>{text}</p>
         <div className='flex justify-center'>
-          <BtnPurple func={func}>{btnText}</BtnPurple>
+          <BtnPurple onClick={func}>{btnText}</BtnPurple>
         </div>
       </div>
     </div>

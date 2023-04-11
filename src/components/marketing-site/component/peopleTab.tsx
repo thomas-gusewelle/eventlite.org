@@ -219,7 +219,7 @@ const ViewProfile = ({
         </section>
       </div>
       <BottomButtons>
-        <BtnPurple func={() => setOpen(false)}>Close</BtnPurple>
+        <BtnPurple onClick={() => setOpen(false)}>Close</BtnPurple>
       </BottomButtons>
     </Modal>
   );

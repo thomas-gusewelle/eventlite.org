@@ -187,7 +187,7 @@ export const CreateOrganization = ({
 
         <BtnPurple
           fullWidth={true}
-          func={() => submitNext()} >
+          onClick={() => submitNext()} >
           Next
         </BtnPurple>
       </div>

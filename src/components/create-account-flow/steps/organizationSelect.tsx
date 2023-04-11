@@ -15,7 +15,7 @@ export const OrganizationSelect = ({
       <div className='mt-8 flex flex-col justify-center gap-6 sm:flex-row'>
         <div className='flex justify-center'>
           <BtnPurple
-            func={() => {
+            onClick={() => {
               setStep(2);
               setOrgSetting("FIND");
             }}>
@@ -24,7 +24,7 @@ export const OrganizationSelect = ({
         </div>
         <div className='flex justify-center'>
           <BtnPurple
-            func={() => {
+            onClick={() => {
               setStep(2);
               setOrgSetting("CREATE");
             }}>

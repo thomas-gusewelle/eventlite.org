@@ -56,6 +56,8 @@ model UserSettings {
   userId                 String  @unique
   scheduleShowAmount     Int     @default(4)
   showInactiveInSchedule Boolean @default(false)
+  sendReminderEmail      Boolean @default(true) // turns on or off 24 hour before reminder emails
+  hidePhoneNum           Boolean @default(false) // setting for hiding user phone number from non-admin users 
 }
 
 enum UserStatus {
@@ -109,7 +111,7 @@ model Event {
   Organization     Organization?    @relation(fields: [organizationId], references: [id])
   organizationId   String?
   datetime         DateTime
-  timezone         String          @default("America/Chicago")
+  timezone         String           @default("America/Chicago")
   Locations        Locations?       @relation(fields: [locationsId], references: [id])
   locationsId      String?
   positions        EventPositions[]

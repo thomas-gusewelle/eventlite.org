@@ -16,9 +16,6 @@ export const userSettingsRouter = createTRPCRouter({
       throw new TRPCError({ code: "BAD_REQUEST", message: "Emails do not match" })
     }
     // setup supabase client
-    let req = ctx.req
-    let res = ctx.res
-    // const supabase = createServerSupabaseClient({ req, res, })
     const supabase = createSupaServerClient()
     //update user email on supabase
     const supaUpdate = await supabase.auth.admin.updateUserById(ctx.session.id, { email: input.email })
@@ -44,5 +41,20 @@ export const userSettingsRouter = createTRPCRouter({
     }
 
     return dbUpdate
+  }),
+
+  changePassword: loggedInProcedure.input(z.object({ password: z.string(), confirmPassword: z.string() })).mutation(async ({ input, ctx }) => {
+    // Check to ensure that the passwords match
+    if (input.password != input.confirmPassword) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Passwords do not match." })
+    }
+    // setup supabase
+    const supabase = createSupaServerClient();
+    //update password
+    const passUpdate = await supabase.auth.admin.updateUserById(ctx.session.id, { password: input.password })
+    if (passUpdate.error) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating password" })
+    }
+    return passUpdate
   })
 })

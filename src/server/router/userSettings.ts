@@ -56,5 +56,44 @@ export const userSettingsRouter = createTRPCRouter({
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating password" })
     }
     return passUpdate
+  }),
+
+  changeHidePhoneNum: loggedInProcedure.input(z.object(
+    {
+      hidePhoneNum: z.boolean(),
+      sendReminderEmail: z.boolean(),
+    }
+  )).mutation(async ({ ctx, input }) => {
+    const update = await prisma?.userSettings.update({
+      where: {
+        userId: ctx.session.id
+      },
+      data: {
+        hidePhoneNum: input.hidePhoneNum,
+        sendReminderEmail: input.sendReminderEmail
+      }
+    })
+    if (update == undefined) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating setting" })
+    }
+    return update
+  }),
+  // param: boolean
+  // changes the reminder email setting which is jj
+  changeRemidnerEmails: loggedInProcedure.input(z.boolean()).mutation(async ({ ctx, input }) => {
+    const update = await prisma?.userSettings.update({
+      where: {
+        userId: ctx.session.id
+      },
+      data: {
+        sendReminderEmail: input
+      }
+    })
+    if (update == undefined) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating setting" })
+    }
+    return update
+
+
   })
 })

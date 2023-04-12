@@ -9,6 +9,7 @@ import { organizationRouter } from "./organization";
 import { feedbackRouter } from "./feedback";
 import { AdminRouter } from "./admin";
 import { createTRPCRouter } from "./context";
+import { userSettingsRouter } from "./userSettings";
 
 /**
  * This is the primary router for your server.
@@ -25,7 +26,8 @@ export const appRouter = createTRPCRouter({
   createAccount: createAccountRouter,
   organization: organizationRouter,
   feedback: feedbackRouter,
-  admin: AdminRouter
+  admin: AdminRouter,
+  userSettings: userSettingsRouter
 });
 
 

@@ -2,6 +2,7 @@ import { createTRPCRouter, loggedInProcedure } from "./context";
 import { z } from "zod"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { TRPCError } from "@trpc/server";
+import { createSupaServerClient } from "../../utils/serverSupaClient";
 
 export const userSettingsRouter = createTRPCRouter({
   updateEmail: loggedInProcedure.input(
@@ -17,10 +18,12 @@ export const userSettingsRouter = createTRPCRouter({
     // setup supabase client
     let req = ctx.req
     let res = ctx.res
-    const supabase = createServerSupabaseClient({ req, res, })
+    // const supabase = createServerSupabaseClient({ req, res, })
+    const supabase = createSupaServerClient()
     //update user email on supabase
     const supaUpdate = await supabase.auth.admin.updateUserById(ctx.session.id, { email: input.email })
     if (supaUpdate.error) {
+      console.log(supaUpdate.error)
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating email with supabase" })
     }
 

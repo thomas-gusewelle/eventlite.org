@@ -1,19 +1,19 @@
 import { useFormContext } from "react-hook-form";
 
-export const EmailInput = () => {
+// isConfirm is for switching between typical email address and confirm email
+export const EmailInput = ({ isConfirm = false }: { isConfirm?: boolean }) => {
   const {
     register,
     formState: { errors },
   } = useFormContext();
   return (
     <>
-      {" "}
       <label htmlFor='email-address' className='form-label'>
-        Email address
+        {isConfirm ? "Confirm Email" : "Email address"}
       </label>
       <input
         type='text'
-        {...register("email", {
+        {...register(isConfirm ? "confirmEmail" : "email", {
           required: "Email is required",
           pattern: {
             value:

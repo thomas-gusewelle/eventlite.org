@@ -1,5 +1,5 @@
 
-import { Dispatch, SetStateAction, useContext, useState } from "react"
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { AlertContext } from "../../../providers/alertProvider"
 import { UserContext } from "../../../providers/userProvider"
@@ -22,6 +22,28 @@ export const EmailChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatc
   const [formData, setFormData] = useState<FormData | null>(null)
   const changeEmailMutation = api.userSettings.updateEmail.useMutation()
   const methods = useForm<FormData>()
+
+  // event listener for enter key
+  useEffect(() => {
+    function handleEnter(event: KeyboardEvent) {
+      if (event.key == "Enter") {
+        console.log(event)
+        event.preventDefault()
+        if (showConfirm == false) {
+          preSubmit()
+        }
+        else {
+          submit()
+        }
+      }
+    }
+    document.addEventListener("keypress", handleEnter)
+    return () => {
+      document.removeEventListener("keypress", handleEnter)
+    }
+  }, [showConfirm])
+
+  // preSubmit handles checking for errors and then showing confirm screen
   const preSubmit = methods.handleSubmit((data) => {
 
     if (data.email == user?.email) {
@@ -35,6 +57,8 @@ export const EmailChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatc
     setFormData(data)
     setShowConfirm(true)
   })
+
+  //handles submitting actual data
   const submit = () => {
     if (formData == null) {
       setError({ state: true, message: "Error changing email" })

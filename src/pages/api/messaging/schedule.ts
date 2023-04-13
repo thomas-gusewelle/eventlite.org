@@ -1,5 +1,5 @@
 
-import { User, Event, EventPositions, Locations, Role } from "@prisma/client"
+import { User, Event, EventPositions, Locations, Role, UserSettings } from "@prisma/client"
 import { Client } from "@upstash/qstash"
 import { verifySignature } from "@upstash/qstash/nextjs"
 import { NextApiRequest, NextApiResponse } from "next"
@@ -10,7 +10,9 @@ type EventsWithPositions = (Event & {
   Locations: Locations | null;
   positions: (EventPositions & {
     Role: Role | null
-    User: User | null
+    User: (User & {
+      UserSettings: UserSettings | null
+    }) | null
   })[];
 })[] | undefined
 
@@ -57,7 +59,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       positions: {
         include: {
           Role: true,
-          User: true
+          User: {
+            include: {
+              UserSettings: true
+            }
+          }
         }
       }
     }
@@ -67,12 +73,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   events?.forEach(event => {
     event.positions.forEach(position => {
-      if (position.User && position.User.hasLogin) {
+      // checks to ensure user.that they have a login, and want to recieve reminder emails
+      if (position.User && position.User.hasLogin && position.User.UserSettings?.sendReminderEmail) {
+        // checks to see if the user is already included in the emails array
         if (emails.map(item => item.user.id).includes(position.User.id)) {
           const index = emails.map(item => item.user.id).indexOf(position.User.id)
+          //if exists adds event to user
           if (index >= 0) {
             emails[index]?.events?.push(event)
           }
+          // if user is not in emails array then adds user and event
         } else {
           emails.push({ user: position.User, events: [event] })
         }
@@ -84,13 +94,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 
   const sentEmails = await Promise.all(
-    emails.map(async email => {
-      return await qstashClient.publishJSON({
+    emails.map(email => {
+      return qstashClient.publishJSON({
         url: `https://${req.headers.host}/api/messaging/remindScheduleEmail`,
         body: superjson.stringify(email),
       })
     })
   )
 
-  res.status(201).send(emails)
+  res.status(201).send(sentEmails)
 }

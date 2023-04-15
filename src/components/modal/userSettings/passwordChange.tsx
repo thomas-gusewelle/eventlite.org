@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useContext } from "react"
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { AlertContext } from "../../../providers/alertProvider"
 import { api } from "../../../server/utils/api"
@@ -10,19 +10,52 @@ import { Modal } from "../modal"
 import { ModalBody } from "../modalBody"
 import { ModalTitle } from "../modalTitle"
 
+type FormData = {
+  password: string, passwordConfirm: string
+}
+
 export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) => {
-  const methods = useForm<{
-    password: string, passwordConfirm: string
-  }>()
+  const methods = useForm<FormData>()
   const { setError, setSuccess } = useContext((AlertContext))
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [formData, setFormData] = useState<FormData | null>(null)
   const changePasswordMutation = api.userSettings.changePassword.useMutation()
-  const submit = methods.handleSubmit((data) => {
+
+  // event listener for enter key
+  useEffect(() => {
+    function handleEnter(event: KeyboardEvent) {
+      if (event.key == "Enter") {
+        console.log(event)
+        event.preventDefault()
+        if (showConfirm == false) {
+          preSubmit()
+        }
+        else {
+          submit()
+        }
+      }
+    }
+    document.addEventListener("keypress", handleEnter)
+    return () => {
+      document.removeEventListener("keypress", handleEnter)
+      setFormData(null)
+    }
+  }, [showConfirm])
+
+  const preSubmit = methods.handleSubmit((data) => {
     if (data.password != data.passwordConfirm) {
       methods.setError("passwordConfirm", { message: "Passwords do not match" })
       return
     }
+    setShowConfirm(true)
+  })
 
-    changePasswordMutation.mutate({ password: data.password, confirmPassword: data.passwordConfirm }, {
+  const submit = () => {
+    if (formData == null) {
+      setError({ state: true, message: "Error changing password." })
+      return
+    }
+    changePasswordMutation.mutate({ password: formData.password, confirmPassword: formData.passwordConfirm }, {
       onError(err) {
         setError({ state: true, message: err.message })
         setOpen(false)
@@ -32,27 +65,48 @@ export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Disp
         setOpen(false)
       }
     })
+  }
 
-  })
-  return (
-    <FormProvider {...methods}>
-      <form>
-        <Modal open={open} setOpen={setOpen}>
-          <ModalBody>
-            <ModalTitle text={"Change email address"} />
-            <div className='py-3'>
-              <PasswordField />
-              <PasswordField isConfirm />
-            </div>
-          </ModalBody>
-          <BottomButtons>
-            <BtnPurple onClick={submit} isLoading={changePasswordMutation.isLoading}>Save</BtnPurple>
-            <BtnNeutral func={() => {
-              setOpen(false)
-            }}>Cancel</BtnNeutral>
-          </BottomButtons>
-        </Modal>
-      </form>
-    </FormProvider>
-  )
+  if (showConfirm == false) {
+    return (
+      <FormProvider {...methods}>
+        <form>
+          <Modal open={open} setOpen={setOpen}>
+            <ModalBody>
+              <ModalTitle text={"Change email address"} />
+              <div className='py-3'>
+                <PasswordField />
+                <PasswordField isConfirm />
+              </div>
+            </ModalBody>
+            <BottomButtons>
+              <BtnPurple onClick={preSubmit}>Save</BtnPurple>
+              <BtnNeutral func={() => {
+                setOpen(false)
+              }}>Cancel</BtnNeutral>
+            </BottomButtons>
+          </Modal>
+        </form>
+      </FormProvider>
+    )
+  }
+  if (showConfirm == true) {
+    return (
+      <Modal open={open} setOpen={setOpen}>
+        <ModalBody>
+          <ModalTitle text={"Are you sure?"} />
+          <div className='py-3'>
+            <p>Are you sure you want to change your account's password?</p>
+          </div>
+        </ModalBody>
+        <BottomButtons>
+          <BtnPurple type="submit" onClick={submit} isLoading={changePasswordMutation.isLoading}>Confirm</BtnPurple>
+          <BtnNeutral func={() => {
+            setShowConfirm(false)
+            setOpen(false)
+          }}>Cancel</BtnNeutral>
+        </BottomButtons>
+      </Modal>
+    )
+  }
 }

@@ -1,6 +1,8 @@
 import { useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { BtnDelete } from "../../components/btn/btnDelete";
 import { BtnPurple } from "../../components/btn/btnPurple";
+import { BtnRed } from "../../components/btn/btnRed";
 import { SliderBtn } from "../../components/btn/SliderBtn";
 import { Divider } from "../../components/divider";
 import { SectionHeading } from "../../components/headers/SectionHeading";
@@ -80,6 +82,10 @@ const UserSettingsPage = () => {
             changePhoneNumMutation.mutate({ sendReminderEmail: reminderEmails.current, hidePhoneNum: hidePhoneNum.current })
           } isChecked={reminderEmails} />
         </div>
+        <Divider />
+      </section>
+      <section>
+        <BtnRed >Delete Account</BtnRed>
       </section>
     </div>
   )

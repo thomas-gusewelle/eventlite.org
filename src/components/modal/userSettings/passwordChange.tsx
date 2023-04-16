@@ -67,6 +67,26 @@ export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Disp
     })
   }
 
+
+  if (showConfirm == true) {
+    return (
+      <Modal open={open} setOpen={setOpen}>
+        <ModalBody>
+          <ModalTitle text={"Are you sure?"} />
+          <div className='py-3'>
+            <p>Are you sure you want to change your account's password?</p>
+          </div>
+        </ModalBody>
+        <BottomButtons>
+          <BtnPurple type="submit" onClick={submit} isLoading={changePasswordMutation.isLoading}>Confirm</BtnPurple>
+          <BtnNeutral func={() => {
+            setShowConfirm(false)
+            setOpen(false)
+          }}>Cancel</BtnNeutral>
+        </BottomButtons>
+      </Modal>
+    )
+  }
   return (
     <FormProvider {...methods}>
       <form>
@@ -88,24 +108,4 @@ export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Disp
       </form>
     </FormProvider>
   )
-
-  if (showConfirm == true) {
-    return (
-      <Modal open={open} setOpen={setOpen}>
-        <ModalBody>
-          <ModalTitle text={"Are you sure?"} />
-          <div className='py-3'>
-            <p>Are you sure you want to change your account's password?</p>
-          </div>
-        </ModalBody>
-        <BottomButtons>
-          <BtnPurple type="submit" onClick={submit} isLoading={changePasswordMutation.isLoading}>Confirm</BtnPurple>
-          <BtnNeutral func={() => {
-            setShowConfirm(false)
-            setOpen(false)
-          }}>Cancel</BtnNeutral>
-        </BottomButtons>
-      </Modal>
-    )
-  }
 }

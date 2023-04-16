@@ -78,6 +78,25 @@ export const EmailChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatc
       }
     })
   }
+
+  if (showConfirm == true) {
+    return (
+      <Modal open={open} setOpen={setOpen}>
+        <ModalBody>
+          <ModalTitle text={"Are you sure?"} />
+          <div className='py-3'>
+            <p>Are you sure you want to change your account's email address to {formData?.email}?</p>
+          </div>
+        </ModalBody>
+        <BottomButtons>
+          <BtnPurple type="submit" onClick={submit} isLoading={changeEmailMutation.isLoading}>Confirm</BtnPurple>
+          <BtnNeutral func={() => {
+            setOpen(false)
+          }}>Cancel</BtnNeutral>
+        </BottomButtons>
+      </Modal>
+    )
+  }
   return (
     <FormProvider {...methods}>
       <form onSubmit={preSubmit}>
@@ -99,23 +118,4 @@ export const EmailChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatc
       </form>
     </FormProvider>
   )
-
-  if (showConfirm == true) {
-    return (
-      <Modal open={open} setOpen={setOpen}>
-        <ModalBody>
-          <ModalTitle text={"Are you sure?"} />
-          <div className='py-3'>
-            <p>Are you sure you want to change your account's email address to {formData?.email}?</p>
-          </div>
-        </ModalBody>
-        <BottomButtons>
-          <BtnPurple type="submit" onClick={submit} isLoading={changeEmailMutation.isLoading}>Confirm</BtnPurple>
-          <BtnNeutral func={() => {
-            setOpen(false)
-          }}>Cancel</BtnNeutral>
-        </BottomButtons>
-      </Modal>
-    )
-  }
 }

@@ -78,29 +78,28 @@ export const EmailChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatc
       }
     })
   }
-  if (showConfirm == false) {
-    return (
-      <FormProvider {...methods}>
-        <form onSubmit={preSubmit}>
-          <Modal open={open} setOpen={setOpen}>
-            <ModalBody>
-              <ModalTitle text={"Change email address"} />
-              <div className='py-3'>
-                <EmailInput />
-                <EmailInput isConfirm />
-              </div>
-            </ModalBody>
-            <BottomButtons>
-              <BtnPurple type="submit" onClick={preSubmit}>Save</BtnPurple>
-              <BtnNeutral func={() => {
-                setOpen(false)
-              }}>Cancel</BtnNeutral>
-            </BottomButtons>
-          </Modal>
-        </form>
-      </FormProvider>
-    )
-  }
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={preSubmit}>
+        <Modal open={open} setOpen={setOpen}>
+          <ModalBody>
+            <ModalTitle text={"Change email address"} />
+            <div className='py-3'>
+              <EmailInput />
+              <EmailInput isConfirm />
+            </div>
+          </ModalBody>
+          <BottomButtons>
+            <BtnPurple type="submit" onClick={preSubmit}>Save</BtnPurple>
+            <BtnNeutral func={() => {
+              setOpen(false)
+            }}>Cancel</BtnNeutral>
+          </BottomButtons>
+        </Modal>
+      </form>
+    </FormProvider>
+  )
+
   if (showConfirm == true) {
     return (
       <Modal open={open} setOpen={setOpen}>

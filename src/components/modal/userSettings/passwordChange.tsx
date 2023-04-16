@@ -67,29 +67,28 @@ export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Disp
     })
   }
 
-  if (showConfirm == false) {
-    return (
-      <FormProvider {...methods}>
-        <form>
-          <Modal open={open} setOpen={setOpen}>
-            <ModalBody>
-              <ModalTitle text={"Change email address"} />
-              <div className='py-3'>
-                <PasswordField />
-                <PasswordField isConfirm />
-              </div>
-            </ModalBody>
-            <BottomButtons>
-              <BtnPurple onClick={preSubmit}>Save</BtnPurple>
-              <BtnNeutral func={() => {
-                setOpen(false)
-              }}>Cancel</BtnNeutral>
-            </BottomButtons>
-          </Modal>
-        </form>
-      </FormProvider>
-    )
-  }
+  return (
+    <FormProvider {...methods}>
+      <form>
+        <Modal open={open} setOpen={setOpen}>
+          <ModalBody>
+            <ModalTitle text={"Change email address"} />
+            <div className='py-3'>
+              <PasswordField />
+              <PasswordField isConfirm />
+            </div>
+          </ModalBody>
+          <BottomButtons>
+            <BtnPurple onClick={preSubmit}>Save</BtnPurple>
+            <BtnNeutral func={() => {
+              setOpen(false)
+            }}>Cancel</BtnNeutral>
+          </BottomButtons>
+        </Modal>
+      </form>
+    </FormProvider>
+  )
+
   if (showConfirm == true) {
     return (
       <Modal open={open} setOpen={setOpen}>

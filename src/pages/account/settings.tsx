@@ -1,6 +1,6 @@
+import { useRouter } from "next/router";
 import { useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { BtnDelete } from "../../components/btn/btnDelete";
 import { BtnPurple } from "../../components/btn/btnPurple";
 import { BtnRed } from "../../components/btn/btnRed";
 import { SliderBtn } from "../../components/btn/SliderBtn";
@@ -19,10 +19,9 @@ const UserSettingsPage = () => {
 
   if (user == undefined || user == null) return
   const context = api.useContext()
+  const router = useRouter()
   const { setError, setSuccess } = useContext(AlertContext)
-  // const [hidePhoneNum, setHidePhoneNum] = useState(user.UserSettings?.hidePhoneNum ?? false)
   const [openEditEmail, setOpenEditEmail] = useState(false)
-  // const [reminderEmails, setReminderEmails] = useState(user.UserSettings?.sendReminderEmail ?? true)
   const [openEditPassword, setOpenEditPassword] = useState(false)
   const hidePhoneNum = useRef(user.UserSettings?.hidePhoneNum ?? false)
   const reminderEmails = useRef(user.UserSettings?.sendReminderEmail ?? true)
@@ -39,6 +38,9 @@ const UserSettingsPage = () => {
       }
     }
   )
+  const [deleteAccountConfirm, setDeleteAccountConfirm] = useState(false)
+  //TODO: finish implementing delete account flow and test it. Need to add success and error state
+  const deleteAccount = api.userSettings.deleteAccount.useMutation({ onSuccess: () => router.push("/") })
   // const settingsMutation = () => { changePhoneNumMutation.mutate({ hidePhoneNum: hidePhoneNum, sendReminderEmail: reminderEmails }) }
   // const changeReminderEmailsMutation = api.userSettings.changeRemidnerEmails.useMutation()
   return (
@@ -85,7 +87,7 @@ const UserSettingsPage = () => {
         <Divider />
       </section>
       <section>
-        <BtnRed >Delete Account</BtnRed>
+        <BtnRed onClick={() => test.mutate()}>Delete Account</BtnRed>
       </section>
     </div>
   )

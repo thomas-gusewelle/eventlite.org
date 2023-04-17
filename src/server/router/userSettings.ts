@@ -1,8 +1,9 @@
 import { createTRPCRouter, loggedInProcedure } from "./context";
 import { z } from "zod"
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { TRPCError } from "@trpc/server";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
+import { PicNameRowSmall } from "../../components/profile/PicNameRow";
+import { redirect } from "next/dist/server/api-utils";
 
 export const userSettingsRouter = createTRPCRouter({
   updateEmail: loggedInProcedure.input(
@@ -93,7 +94,39 @@ export const userSettingsRouter = createTRPCRouter({
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating setting" })
     }
     return update
+  }),
 
-
-  })
+  deleteAccount: loggedInProcedure.mutation(async ({ ctx }) => {
+    const user = await prisma?.user.findFirst({
+      where: {
+        id: ctx.session.id
+      },
+      select: {
+        organizationId: true
+      }
+    })
+    if (user == undefined) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Organization ID not found." })
+    }
+    const orgAdminCount = await prisma?.user.count({
+      where: {
+        organizationId: user?.organizationId,
+        status: "ADMIN"
+      }
+    })
+    if (orgAdminCount == 1 || orgAdminCount == undefined) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "You must have atleast one admin account. If you would like to delete your entire oganization please use the organization settings" })
+    }
+    const deleteUser = await prisma?.user.delete({
+      where: {
+        id: ctx.session.id
+      }
+    })
+    if (deleteUser == undefined) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error deleting user." })
+    }
+    const supabase = createSupaServerClient();
+    const deleteLogin = await supabase.auth.admin.deleteUser(ctx.session.id)
+    return
+  }),
 })

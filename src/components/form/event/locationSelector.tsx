@@ -17,7 +17,7 @@ export const LocationSelector = ({ locations }: { locations: Locations[] }) => {
           <LocationAddModel open={open} setOpen={setOpen} />,
           document.body
         )}
-      <div className='col-span-6 md:col-span-3 '>
+      <div className='col-span-6 md:col-span-4 '>
         <label className='text-gray-700'>Event Location</label>
         <Controller
           name='eventLocation'

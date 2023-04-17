@@ -79,7 +79,7 @@ export const EventForm: React.FC<{
   return (
     <>
       <div className='mb-6 grid grid-cols-6 gap-6 px-6'>
-        <div className='col-span-6 sm:col-span-3'>
+        <div className='col-span-6 sm:col-span-4'>
           <label htmlFor='event-name' className=' text-gray-700'>
             Event Name
           </label>
@@ -94,7 +94,7 @@ export const EventForm: React.FC<{
             <span className='text-red-500'>Event Name is Required</span>
           )}
         </div>
-        <div className='col-span-3 hidden sm:block'></div>
+        <div className='col-span-2 hidden sm:block'></div>
         <div className='col-span-6 md:col-span-2'>
           <label htmlFor='EventDate' className='text-gray-700'>
             Event Date
@@ -133,7 +133,7 @@ export const EventForm: React.FC<{
             />
           </div>
         </div>
-        <div className='col-span-6 md:col-span-2 lg:col-span-1'>
+        <div className='col-span-6 md:col-span-2 lg:col-span-2'>
           <label className='text-gray-700'>Event Time</label>
 
           <Controller
@@ -169,12 +169,12 @@ export const EventForm: React.FC<{
           />
         </div>
         {/* Fill space div */}
-        <div className='hidden md:col-span-2 md:block lg:col-span-3'></div>
+        <div className='hidden md:col-span-2 md:block lg:col-span-2'></div>
 
         {/* Event Location */}
         <LocationSelector locations={locations} />
         {/* Fill space div */}
-        <div className='hidden md:col-span-3 md:block '></div>
+        <div className='hidden md:col-span-2 md:block '></div>
 
         {/* Event recurring switch */}
         {(alreadyRec == false || alreadyRec == null || rec == true) && (
@@ -196,8 +196,8 @@ export const EventForm: React.FC<{
                       <span
                         aria-hidden='true'
                         className={`${value
-                            ? "translate-x-9 bg-white"
-                            : "translate-x-0 bg-white"
+                          ? "translate-x-9 bg-white"
+                          : "translate-x-0 bg-white"
                           }
         pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`}
                       />

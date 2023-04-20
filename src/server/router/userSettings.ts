@@ -2,8 +2,6 @@ import { createTRPCRouter, loggedInProcedure } from "./context";
 import { z } from "zod"
 import { TRPCError } from "@trpc/server";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
-import { PicNameRowSmall } from "../../components/profile/PicNameRow";
-import { redirect } from "next/dist/server/api-utils";
 
 export const userSettingsRouter = createTRPCRouter({
   updateEmail: loggedInProcedure.input(
@@ -19,7 +17,7 @@ export const userSettingsRouter = createTRPCRouter({
     // setup supabase client
     const supabase = createSupaServerClient()
     //update user email on supabase
-    const supaUpdate = await supabase.auth.admin.updateUserById(ctx.session.id, { email: input.email })
+    const supaUpdate = await supabase.auth.admin.updateUserById(ctx.session.user.id, { email: input.email })
     if (supaUpdate.error) {
       console.log(supaUpdate.error)
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating email with supabase" })
@@ -28,7 +26,7 @@ export const userSettingsRouter = createTRPCRouter({
     //update user table in DB
     const dbUpdate = await prisma?.user.update({
       where: {
-        id: ctx.session.id
+        id: ctx.session.user.id
       },
       data: {
         email: input.email
@@ -37,7 +35,7 @@ export const userSettingsRouter = createTRPCRouter({
 
     // Checks dbUpdate and if failed reverts email in supabase and throws
     if (dbUpdate == undefined) {
-      await supabase.auth.admin.updateUserById(ctx.session.id, { email: ctx.session.email })
+      await supabase.auth.admin.updateUserById(ctx.session.user.id, { email: ctx.session.user.email })
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Unable to update email" })
     }
 
@@ -52,7 +50,7 @@ export const userSettingsRouter = createTRPCRouter({
     // setup supabase
     const supabase = createSupaServerClient();
     //update password
-    const passUpdate = await supabase.auth.admin.updateUserById(ctx.session.id, { password: input.password })
+    const passUpdate = await supabase.auth.admin.updateUserById(ctx.session.user.id, { password: input.password })
     if (passUpdate.error) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error updating password" })
     }
@@ -67,7 +65,7 @@ export const userSettingsRouter = createTRPCRouter({
   )).mutation(async ({ ctx, input }) => {
     const update = await prisma?.userSettings.update({
       where: {
-        userId: ctx.session.id
+        userId: ctx.session.user.id
       },
       data: {
         hidePhoneNum: input.hidePhoneNum,
@@ -84,7 +82,7 @@ export const userSettingsRouter = createTRPCRouter({
   changeRemidnerEmails: loggedInProcedure.input(z.boolean()).mutation(async ({ ctx, input }) => {
     const update = await prisma?.userSettings.update({
       where: {
-        userId: ctx.session.id
+        userId: ctx.session.user.id
       },
       data: {
         sendReminderEmail: input
@@ -99,10 +97,11 @@ export const userSettingsRouter = createTRPCRouter({
   deleteAccount: loggedInProcedure.mutation(async ({ ctx }) => {
     const user = await prisma?.user.findFirst({
       where: {
-        id: ctx.session.id
+        id: ctx.session.user.id
       },
       select: {
-        organizationId: true
+        organizationId: true,
+        status: true
       }
     })
     if (user == undefined) {
@@ -114,19 +113,20 @@ export const userSettingsRouter = createTRPCRouter({
         status: "ADMIN"
       }
     })
-    if (orgAdminCount == 1 || orgAdminCount == undefined) {
+    if ((orgAdminCount == 1 && user.status == "ADMIN") || orgAdminCount == undefined) {
       throw new TRPCError({ code: "BAD_REQUEST", message: "You must have atleast one admin account. If you would like to delete your entire oganization please use the organization settings" })
     }
     const deleteUser = await prisma?.user.delete({
       where: {
-        id: ctx.session.id
+        id: ctx.session.user.id
       }
     })
     if (deleteUser == undefined) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error deleting user." })
     }
     const supabase = createSupaServerClient();
-    const deleteLogin = await supabase.auth.admin.deleteUser(ctx.session.id)
+    await supabase.auth.admin.deleteUser(ctx.session.user.id)
+    await supabase.auth.admin.signOut(ctx.session.access_token)
     return
   }),
 })

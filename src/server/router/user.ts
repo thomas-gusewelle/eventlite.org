@@ -8,7 +8,7 @@ export const userRouter = createTRPCRouter({
   getUser: publicProcedure.query(async ({ ctx }) => {
     const userInfo = await ctx.prisma?.user.findFirst({
       where: {
-        id: ctx?.session?.id
+        id: ctx?.session?.user.id
       },
       include: {
         UserSettings: true,
@@ -31,7 +31,7 @@ export const userRouter = createTRPCRouter({
   getUsersByOrganization: publicProcedure.query(async ({ ctx }) => {
 
     const orgID = await prisma?.user.findFirst({
-      where: { id: ctx?.session?.id },
+      where: { id: ctx?.session?.user.id },
       select: { organizationId: true },
     });
 
@@ -66,10 +66,10 @@ export const userRouter = createTRPCRouter({
   ).mutation(async ({ ctx, input }) => {
 
     const user = await ctx.prisma?.user.findFirst({
-      where: { id: ctx?.session?.id },
+      where: { id: ctx?.session?.user.id },
       select: { status: true },
     });
-    if (ctx?.session?.id != input.id && user?.status != "ADMIN") {
+    if (ctx?.session?.user.id != input.id && user?.status != "ADMIN") {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "Error. Not Approved.",
@@ -102,7 +102,7 @@ export const userRouter = createTRPCRouter({
   getAmdminCount: adminProcedure.query(async ({ ctx }) => {
 
     const orgID = await ctx.prisma?.user.findFirst({
-      where: { id: ctx?.session?.id },
+      where: { id: ctx?.session?.user.id },
       select: { organizationId: true },
     });
     return await ctx.prisma?.user.count({
@@ -123,7 +123,7 @@ export const userRouter = createTRPCRouter({
   ).mutation(async ({ ctx, input }) => {
 
     const orgID = await ctx.prisma?.user.findFirst({
-      where: { id: ctx?.session?.id },
+      where: { id: ctx?.session?.user.id },
       select: { organizationId: true },
     });
 

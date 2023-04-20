@@ -7,6 +7,7 @@ import { SliderBtn } from "../../components/btn/SliderBtn";
 import { Divider } from "../../components/divider";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { sidebar } from "../../components/layout/sidebar";
+import { DeleteAccountConfirm } from "../../components/modal/userSettings/deleteAccountConfirm";
 import { EmailChange } from "../../components/modal/userSettings/emailChange";
 import { PasswordChange } from "../../components/modal/userSettings/passwordChange";
 import { AlertContext } from "../../providers/alertProvider";
@@ -39,8 +40,12 @@ const UserSettingsPage = () => {
     }
   )
   const [deleteAccountConfirm, setDeleteAccountConfirm] = useState(false)
-  //TODO: finish implementing delete account flow and test it. Need to add success and error state
-  const deleteAccount = api.userSettings.deleteAccount.useMutation({ onSuccess: () => router.push("/") })
+  const deleteAccount = api.userSettings.deleteAccount.useMutation({
+    onSuccess: () => router.push("/"),
+    onError(err) {
+      setError({ state: true, message: err.message })
+    }
+  })
   // const settingsMutation = () => { changePhoneNumMutation.mutate({ hidePhoneNum: hidePhoneNum, sendReminderEmail: reminderEmails }) }
   // const changeReminderEmailsMutation = api.userSettings.changeRemidnerEmails.useMutation()
   return (
@@ -87,7 +92,9 @@ const UserSettingsPage = () => {
         <Divider />
       </section>
       <section>
-        <BtnRed onClick={() => test.mutate()}>Delete Account</BtnRed>
+        <BtnRed onClick={() => setDeleteAccountConfirm(true)}>Delete Account</BtnRed>
+        {deleteAccountConfirm && createPortal(<DeleteAccountConfirm open={deleteAccountConfirm} setOpen={setDeleteAccountConfirm} submit={() => deleteAccount.mutate()}
+          isLoading={deleteAccount.isLoading} />, document.body)}
       </section>
     </div>
   )

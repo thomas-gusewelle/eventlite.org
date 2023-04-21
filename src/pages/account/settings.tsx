@@ -1,3 +1,4 @@
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -21,6 +22,7 @@ const UserSettingsPage = () => {
   if (user == undefined || user == null) return
   const context = api.useContext()
   const router = useRouter()
+  const supabase = useSupabaseClient()
   const { setError, setSuccess } = useContext(AlertContext)
   const [openEditEmail, setOpenEditEmail] = useState(false)
   const [openEditPassword, setOpenEditPassword] = useState(false)
@@ -41,7 +43,10 @@ const UserSettingsPage = () => {
   )
   const [deleteAccountConfirm, setDeleteAccountConfirm] = useState(false)
   const deleteAccount = api.userSettings.deleteAccount.useMutation({
-    onSuccess: () => router.push("/"),
+    onSuccess: async () => {
+      await supabase.auth.signOut();
+      router.push("/")
+    },
     onError(err) {
       setError({ state: true, message: err.message })
     }

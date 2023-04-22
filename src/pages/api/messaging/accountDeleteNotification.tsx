@@ -17,6 +17,9 @@ export default verifySignature(handler, {
   nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
 })
 
+export type AccountDeleteNotifierApiData = {
+  names: string[], orgId: string
+}
 
 async function handler(
   req: NextApiRequest,
@@ -24,7 +27,7 @@ async function handler(
 ) {
 
 
-  let body: { names: string[], orgId: string } | null = null
+  let body: AccountDeleteNotifierApiData | null = null
   try {
     body = JSON.parse(req.body)
   } catch (err) {

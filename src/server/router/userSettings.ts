@@ -2,6 +2,8 @@ import { createTRPCRouter, loggedInProcedure } from "./context";
 import { z } from "zod"
 import { TRPCError } from "@trpc/server";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
+import { Client } from "@upstash/qstash/nodejs";
+import { AccountDeleteNotifierApiData } from "../../pages/api/messaging/accountDeleteNotification";
 
 export const userSettingsRouter = createTRPCRouter({
   updateEmail: loggedInProcedure.input(
@@ -101,7 +103,9 @@ export const userSettingsRouter = createTRPCRouter({
       },
       select: {
         organizationId: true,
-        status: true
+        status: true,
+        firstName: true,
+        lastName: true
       }
     })
     if (user == undefined) {
@@ -127,6 +131,24 @@ export const userSettingsRouter = createTRPCRouter({
     const supabase = createSupaServerClient();
     await supabase.auth.admin.deleteUser(ctx.session.user.id)
     await supabase.auth.admin.signOut(ctx.session.access_token)
+
+
+    const qstashClient = new Client({
+      token: process.env.QSTASH_TOKEN!
+    })
+
+    if (user.organizationId != null) {
+      const deleteNotificationData: AccountDeleteNotifierApiData = { names: [`${user.firstName} ${user.lastName}`], orgId: user.organizationId }
+      try {
+        await qstashClient.publishJSON({
+          url: `https://${ctx.req.headers.host}/api/messaging/remindScheduleEmail`,
+          body: JSON.stringify(deleteNotificationData),
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
     return
   }),
 })

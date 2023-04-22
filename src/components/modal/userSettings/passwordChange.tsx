@@ -74,7 +74,7 @@ export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Disp
         <ModalBody>
           <ModalTitle text={"Are you sure?"} />
           <div className='py-3'>
-            <p>Are you sure you want to change your account's password?</p>
+            <p>Are you sure you want to change your account&apos;s password?</p>
           </div>
         </ModalBody>
         <BottomButtons>

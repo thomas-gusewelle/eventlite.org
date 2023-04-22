@@ -85,7 +85,7 @@ export const EmailChange = ({ open, setOpen }: { open: boolean, setOpen: Dispatc
         <ModalBody>
           <ModalTitle text={"Are you sure?"} />
           <div className='py-3'>
-            <p>Are you sure you want to change your account's email address to {formData?.email}?</p>
+            <p>Are you sure you want to change your account&apos;s email address to {formData?.email}?</p>
           </div>
         </ModalBody>
         <BottomButtons>

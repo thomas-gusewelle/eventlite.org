@@ -44,7 +44,8 @@ const ViewProfile = ({ id }: { id: string }) => {
             </label>
             <span className='mt-1'>{userQuery.data?.email}</span>
           </div>
-          {userQuery.data?.phoneNumber && (
+          {/* make sure phone number exisits and then only show if user is admin, profile owner, or if user does not have it hidden in privacy settings  */}
+          {(userQuery.data?.phoneNumber && (user?.status == "ADMIN" || user?.id == userQuery.data.id || !userQuery.data.UserSettings?.hidePhoneNum)) && (
             <div className='col-span-6 sm:col-span-4'>
               <label className='mb-1 block text-sm font-medium text-gray-700'>
                 Phone

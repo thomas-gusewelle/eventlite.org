@@ -183,7 +183,7 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
           </div>
         </div>
         <div className='flex justify-center'>
-          <BtnPurple func={() => setModalOpen(true)}>
+          <BtnPurple onClick={() => setModalOpen(true)}>
             Add Unavailable Dates
           </BtnPurple>
         </div>

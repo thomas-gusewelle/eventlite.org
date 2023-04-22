@@ -59,7 +59,7 @@ const BetaPage = () => {
             recieve an email soon with an invitation to the beta.
           </p>
           <div className='mt-6'>
-            <BtnPurple fullWidth func={() => router.push("/")}>
+            <BtnPurple fullWidth onClick={() => router.push("/")}>
               Return Home
             </BtnPurple>
           </div>

@@ -10,7 +10,7 @@ export const eventsRouter = createTRPCRouter({
   getUpcomingEventsByOrganization: loggedInProcedure.query(async ({ ctx }) => {
 
     const org = await ctx.prisma?.user.findFirst({
-      where: { id: ctx.session.id },
+      where: { id: ctx.session.user.id },
       select: { organizationId: true },
     });
     return await ctx.prisma?.event.findMany({
@@ -39,7 +39,7 @@ export const eventsRouter = createTRPCRouter({
   getPastEventsByOrganization: loggedInProcedure.query(async ({ ctx }) => {
 
     const org = await ctx.prisma?.user.findFirst({
-      where: { id: ctx.session.id },
+      where: { id: ctx.session.user.id },
       select: { organizationId: true },
     });
     return await ctx.prisma?.event.findMany({
@@ -72,7 +72,7 @@ export const eventsRouter = createTRPCRouter({
     const upcomingPositions = await ctx.prisma?.eventPositions.findMany({
       where: {
         User: {
-          id: ctx.session.id,
+          id: ctx.session.user.id,
         },
         OR: [
           {
@@ -112,7 +112,7 @@ export const eventsRouter = createTRPCRouter({
     const approvalPositions = await ctx.prisma?.eventPositions.findMany({
       where: {
         User: {
-          id: ctx.session.id,
+          id: ctx.session.user.id,
         },
         userResponse: null,
       },
@@ -279,7 +279,7 @@ export const eventsRouter = createTRPCRouter({
   ).mutation(async ({ ctx, input }) => {
 
     const org = await ctx.prisma?.user.findFirst({
-      where: { id: ctx.session.id },
+      where: { id: ctx.session.user.id },
       select: { organizationId: true },
     });
 

@@ -19,7 +19,7 @@ const ConfirmEmail = ({ email }: { email: string }) => {
         </p>
         <BtnPurple
           fullWidth={true}
-          func={() => resendEmail.mutate({ email: email })}>
+          onClick={() => resendEmail.mutate({ email: email })}>
           Resend Confirmation
         </BtnPurple>
       </LoginCard>

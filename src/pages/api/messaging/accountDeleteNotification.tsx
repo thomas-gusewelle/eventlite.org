@@ -1,7 +1,10 @@
+
 import { verifySignature } from "@upstash/qstash/nextjs";
 import { NextApiRequest, NextApiResponse } from "next";
+import { json } from "stream/consumers";
 import superjson from "superjson";
 import sendMail from "../../../emails";
+import AccountDeleteNotification from "../../../emails/accounts/accountDeleteNotification";
 import DayBeforeEmail from "../../../emails/schedule/dayBeforeEmail";
 import { ReminderEmailData } from "./schedule";
 
@@ -14,6 +17,9 @@ export default verifySignature(handler, {
   nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
 })
 
+export type AccountDeleteNotifierApiData = {
+  names: string[], orgId: string
+}
 
 async function handler(
   req: NextApiRequest,
@@ -21,20 +27,35 @@ async function handler(
 ) {
 
 
-
-  let body: ReminderEmailData | null = null
+  let body: AccountDeleteNotifierApiData | null = null
   try {
-    body = superjson.parse<ReminderEmailData>(req.body)
+    body = JSON.parse(req.body)
   } catch (err) {
     console.error(err)
     res.status(500).send(err)
     return
   }
+  //ensures the body is not null
+  if (body == null) {
+    res.status(500)
+  }
+
+  // gets admin emails for org
+  const emails = await prisma?.user.findMany({
+    where: {
+      status: "ADMIN",
+      organizationId: body?.orgId
+    },
+    select: {
+      email: true
+    }
+  })
 
   try {
     await sendMail({
-      to: body.user.email,
-      component: <DayBeforeEmail data={body} />,
+      to: emails?.map(user => user.email),
+      // needed ! becasue ts thought it was still null even with the check
+      component: <AccountDeleteNotification names={body!.names} />
     });
   } catch (err) {
     console.error(err);

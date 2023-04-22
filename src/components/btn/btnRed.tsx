@@ -1,7 +1,8 @@
+
 import { ReactNode } from "react";
 import { CircularProgressSmall } from "../circularProgress";
 
-export const BtnPurple = ({
+export const BtnRed = ({
   children,
   onClick,
   type = "button",
@@ -21,8 +22,8 @@ export const BtnPurple = ({
       disabled={disabled}
       type={type}
       tabIndex={1}
-      className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2  sm:text-sm ${fullWidth ? "" : "sm:w-auto"
-        }`}
+      className={`
+ inline-flex w-full justify-center rounded-md border border-red-400 bg-red-300 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2  sm:text-sm ${fullWidth ? "" : "sm:w-auto"}`}
       onClick={onClick}>
       {isLoading ? <CircularProgressSmall /> : children}
     </button>

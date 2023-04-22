@@ -1,16 +1,16 @@
-import { EventPositions, Event, User, Locations, Role, UserStatus } from "@prisma/client";
-import { ReminderEmailData } from "../../pages/api/messaging/schedule";
+import { UserStatus } from "@prisma/client";
+import { EventsWithPositions, ReminderEmailData } from "../../pages/api/messaging/schedule";
 import DayBeforeEmail from "../schedule/dayBeforeEmail";
 
 
 
-type EventsWithPositions = (Event & {
-  Locations: Locations | null;
-  positions: (EventPositions & {
-    Role: Role | null
-    User: User | null
-  })[];
-})[] | undefined
+// type EventsWithPositions = (Event & {
+//   Locations: Locations | null;
+//   positions: (EventPositions & {
+//     Role: Role | null
+//     User: User | null
+//   })[];
+// })[] | undefined
 
 const event: EventsWithPositions =
   [
@@ -51,7 +51,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: true,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         },
         {
@@ -76,7 +77,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: false,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         },
         {
@@ -101,7 +103,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: true,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         },
         {
@@ -126,7 +129,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: false,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         }
       ]
@@ -169,7 +173,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: true,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         },
         {
@@ -194,7 +199,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: false,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         },
         {
@@ -219,7 +225,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: true,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         },
         {
@@ -244,7 +251,8 @@ const event: EventsWithPositions =
             image: null,
             organizationId: "79f18de6-ffeb-11ec-b939-0242ac120002",
             hasLogin: false,
-            userSettingsId: null
+            userSettingsId: null,
+            UserSettings: null
           }
         }
       ]

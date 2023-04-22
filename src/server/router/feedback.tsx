@@ -30,14 +30,14 @@ export const feedbackRouter = createTRPCRouter({
       data: {
         type: input.type,
         text: input.text,
-        userId: ctx?.session?.id,
+        userId: ctx?.session?.user.id,
         url: input.route,
         picUrl: picUrl,
       },
     });
     const user = await ctx.prisma?.user.findFirst({
       where: {
-        id: ctx?.session?.id,
+        id: ctx?.session?.user.id,
       },
     });
     try {

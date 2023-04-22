@@ -39,7 +39,7 @@ const ForgotPasswordPage = () => {
             provided. Please use the link in the email to reset your password.
             If you do not see the email please check your spam.
           </p>
-          <BtnPurple fullWidth={true} func={() => setIsSubmit(false)}>
+          <BtnPurple fullWidth={true} onClick={() => setIsSubmit(false)}>
             Back
           </BtnPurple>
         </LoginCard>

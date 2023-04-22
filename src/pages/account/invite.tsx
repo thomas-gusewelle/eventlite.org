@@ -66,7 +66,7 @@ const Invite = ({
                 <BtnPurple
                   fullWidth={true}
                   type='button'
-                  func={() => {
+                  onClick={() => {
                     if (password != confirmPassword) {
                       methods.setError("passwordConfirm", {
                         type: "validate",

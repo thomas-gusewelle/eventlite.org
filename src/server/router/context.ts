@@ -15,11 +15,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 
   const supabaseServer = createServerSupabaseClient({ req, res });
-  const { data } = await supabaseServer.auth.getUser();
+  const { data } = await supabaseServer.auth.getSession();
 
   // make session nullable so typing overrides isn't hellish
 
-  return { session: data.user, prisma, req, res};
+  return { session: data.session, prisma, req, res };
 };
 
 /**
@@ -62,7 +62,7 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.id) {
+  if (!ctx.session || !ctx.session.user.id) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
@@ -83,23 +83,23 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  */
 export const loggedInProcedure = t.procedure.use(enforceUserIsAuthed);
 
-const enforeIsAdmin = t.middleware(async ({ctx, next}) => {
-  if (!ctx.session || !ctx.session.id){
-    throw new TRPCError({code: "UNAUTHORIZED"})
+const enforeIsAdmin = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user.id) {
+    throw new TRPCError({ code: "UNAUTHORIZED" })
   }
   const user = await prisma.user.findFirst({
-    where:{
-      id: ctx?.session?.id   
-       } 
+    where: {
+      id: ctx?.session?.user.id
+    }
   })
 
-  if (user == undefined || user.status 
- != "ADMIN"){
-    throw new TRPCError({code: "UNAUTHORIZED"})
+  if (user == undefined || user.status
+    != "ADMIN") {
+    throw new TRPCError({ code: "UNAUTHORIZED" })
   }
   return next({
     ctx: {
-      session: ctx.session  
+      session: ctx.session
     }
   })
 })
@@ -107,15 +107,15 @@ const enforeIsAdmin = t.middleware(async ({ctx, next}) => {
 export const adminProcedure = t.procedure.use(enforeIsAdmin)
 
 
-const enforceIsEventLiteAdmin = t.middleware(async ({ctx, next}) => {
-  
-  if (!ctx.session || !ctx.session.id){
-    throw new TRPCError({code: "UNAUTHORIZED"})
+const enforceIsEventLiteAdmin = t.middleware(async ({ ctx, next }) => {
+
+  if (!ctx.session || !ctx.session.user.id) {
+    throw new TRPCError({ code: "UNAUTHORIZED" })
   }
-    if (ctx.session.email != "tgusewelle@eventlite.org") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
+  if (ctx.session.user.email != "tgusewelle@eventlite.org") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next();
 })
 
 export const elAdminProcedure = t.procedure.use(enforceIsEventLiteAdmin)

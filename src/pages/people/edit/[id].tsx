@@ -1,10 +1,9 @@
 import { sidebar } from "../../../components/layout/sidebar";
-import { useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
 import { MultiSelect } from "../../../components/form/multiSelect";
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { api } from "../../../server/utils/api"
 import { UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../../components/circularProgress";
@@ -21,7 +20,6 @@ import {
 import { UserFormValues } from "../../../../types/userFormValues";
 import { BtnCancel } from "../../../components/btn/btnCancel";
 import { EmailChangeModal } from "../../../components/modal/emailChangeConfirm";
-import { BtnSave } from "../../../components/btn/btnSave";
 import { UserContext } from "../../../providers/userProvider";
 import { BtnPurple } from "../../../components/btn/btnPurple";
 

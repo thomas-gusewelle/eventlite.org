@@ -65,7 +65,7 @@ const ResetPasswordPage = () => {
         <LoginCard>
           <CardHeader>Email Not Found</CardHeader>
           <div className='mt-6'>
-            <BtnPurple fullWidth={true} func={() => router.back()}>
+            <BtnPurple fullWidth={true} onClick={() => router.back()}>
               Back
             </BtnPurple>
           </div>

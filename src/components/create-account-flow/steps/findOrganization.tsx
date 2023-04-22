@@ -114,7 +114,7 @@ export const FindOrganization = ({
                 Back
               </BtnNeutral>
               <BtnPurple
-                func={() => {
+                onClick={() => {
                   if (field.value == null) {
                     setError("orgName", {
                       type: "required",

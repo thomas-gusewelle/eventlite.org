@@ -23,7 +23,6 @@ const UserSettingsPage = () => {
   const { setError, setSuccess } = useContext(AlertContext)
   const [openEditEmail, setOpenEditEmail] = useState(false)
   const [openEditPassword, setOpenEditPassword] = useState(false)
-  // if (user == undefined || user == null) return
   const hidePhoneNum = useRef(user?.UserSettings?.hidePhoneNum ?? false)
   const reminderEmails = useRef(user?.UserSettings?.sendReminderEmail ?? true)
   const changePhoneNumMutation = api.userSettings.changeHidePhoneNum.useMutation(

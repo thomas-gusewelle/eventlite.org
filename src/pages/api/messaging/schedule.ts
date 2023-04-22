@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import superjson from "superjson"
 import { prisma } from "../../../server/db/client"
 
-type EventsWithPositions = (Event & {
+export type EventsWithPositions = (Event & {
   Locations: Locations | null;
   positions: (EventPositions & {
     Role: Role | null

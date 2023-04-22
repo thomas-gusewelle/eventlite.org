@@ -17,22 +17,20 @@ import { api } from "../../server/utils/api";
 
 const UserSettingsPage = () => {
   const user = useContext(UserContext);
-  console.log(user);
-
-  if (user == undefined || user == null) return
   const context = api.useContext()
   const router = useRouter()
   const supabase = useSupabaseClient()
   const { setError, setSuccess } = useContext(AlertContext)
   const [openEditEmail, setOpenEditEmail] = useState(false)
   const [openEditPassword, setOpenEditPassword] = useState(false)
-  const hidePhoneNum = useRef(user.UserSettings?.hidePhoneNum ?? false)
-  const reminderEmails = useRef(user.UserSettings?.sendReminderEmail ?? true)
+  // if (user == undefined || user == null) return
+  const hidePhoneNum = useRef(user?.UserSettings?.hidePhoneNum ?? false)
+  const reminderEmails = useRef(user?.UserSettings?.sendReminderEmail ?? true)
   const changePhoneNumMutation = api.userSettings.changeHidePhoneNum.useMutation(
     {
       onError(err) {
-        hidePhoneNum.current = user.UserSettings?.hidePhoneNum ?? false
-        reminderEmails.current = user.UserSettings?.sendReminderEmail ?? true
+        hidePhoneNum.current = user?.UserSettings?.hidePhoneNum ?? false
+        reminderEmails.current = user?.UserSettings?.sendReminderEmail ?? true
         setError({ state: true, message: err.message })
       },
       onSuccess() {

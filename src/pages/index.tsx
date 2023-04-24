@@ -30,7 +30,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 
 export async function getServerSideProps(context: any) {
   const supaServer = createServerSupabaseClient(context);
-  const user = await supaServer.auth.getSession();
+  const user = await supaServer.auth.getUser();
 
   if (user && !user.error) {
     return {

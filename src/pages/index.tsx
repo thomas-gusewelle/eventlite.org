@@ -6,7 +6,7 @@ import { PicNameRowSmall } from "../components/profile/PicNameRow";
 import { UserStatus } from "@prisma/client";
 import { BtnApprove } from "../components/btn/btnApprove";
 import { BtnDeny } from "../components/btn/btnDeny";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import {
@@ -26,11 +26,11 @@ import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useUser } from "@supabase/auth-helpers-react";
 
 export async function getServerSideProps(context: any) {
   const supaServer = createServerSupabaseClient(context);
-  const user = await supaServer.auth.getUser();
+  const user = await supaServer.auth.getSession();
 
   if (user && !user.error) {
     return {

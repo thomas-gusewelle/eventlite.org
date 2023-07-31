@@ -1,6 +1,7 @@
 import { UserStatus } from "@prisma/client";
 import { EventsWithPositions, ReminderEmailData } from "../../pages/api/messaging/schedule";
 import DayBeforeEmail from "../schedule/dayBeforeEmail";
+import UpcomingScheduleEmail from "../schedule/upcomingSchedule";
 
 
 
@@ -276,4 +277,9 @@ const user = {
 export function dayBeforeEmail() {
   const data: ReminderEmailData = { user: user, events: event }
   return <DayBeforeEmail data={data} />
+}
+
+export function upomingSchedule() {
+  const data: ReminderEmailData = { user: user, events: event }
+  return <UpcomingScheduleEmail data={data} startingDate={new Date()} endingDate={new Date()} />
 }

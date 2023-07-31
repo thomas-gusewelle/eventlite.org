@@ -315,7 +315,7 @@ export const eventsRouter = createTRPCRouter({
 
       DEndSelect: z
         .object({
-          id: z.union([z.literal("Num"), z.literal("Date")]),
+          id: z.union([z.literal("Num"), z.literal("Date")]).nullable(),
           name: z.string(),
         })
         .optional(),
@@ -324,7 +324,7 @@ export const eventsRouter = createTRPCRouter({
       DDate: z.date().optional(),
       WEndSelect: z
         .object({
-          id: z.union([z.literal("Num"), z.literal("Date")]),
+          id: z.union([z.literal("Num"), z.literal("Date")]).nullable(),
           name: z.string(),
         })
         .optional(),
@@ -333,7 +333,7 @@ export const eventsRouter = createTRPCRouter({
       WDate: z.date().optional(),
       WCEndSelect: z
         .object({
-          id: z.union([z.literal("Num"), z.literal("Date")]),
+          id: z.union([z.literal("Num"), z.literal("Date")]).nullable(),
           name: z.string(),
         })
         .optional(),
@@ -349,7 +349,7 @@ export const eventsRouter = createTRPCRouter({
       WCSat: z.boolean().optional(),
       MEndSelect: z
         .object({
-          id: z.union([z.literal("Num"), z.literal("Date")]),
+          id: z.union([z.literal("Num"), z.literal("Date")]).nullable(),
           name: z.string(),
         })
         .optional(),

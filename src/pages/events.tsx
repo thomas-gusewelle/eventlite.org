@@ -3,7 +3,6 @@ import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { PaginateData } from "../../types/paginate";
-import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnCancel } from "../components/btn/btnCancel";
 import { BtnDelete } from "../components/btn/btnDelete";
 import { CircularProgress } from "../components/circularProgress";
@@ -12,7 +11,6 @@ import { SectionHeading } from "../components/headers/SectionHeading";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
 import { sidebar } from "../components/layout/sidebar";
-import { AddDropdownMenu } from "../components/menus/addDropdown";
 import { BottomButtons } from "../components/modal/bottomButtons";
 import { Modal } from "../components/modal/modal";
 import { ModalBody } from "../components/modal/modalBody";
@@ -38,10 +36,6 @@ const EventsPage = () => {
   const router = useRouter()
   const [queryString, setQueryString] = useState("");
 
-  const addOptions: TableOptionsDropdown = [
-    { name: "New Event", href: "/events/addevent" },
-    { name: "From Template", href: "#" },
-  ];
 
   return (
     <>
@@ -116,16 +110,6 @@ const EventsPage = () => {
   );
 };
 
-// const EventsWrapper = () => {
-//   const router = useRouter();
-//   const { page } = router.query;
-//   if (!page || typeof page != "string") {
-//     return <div>Error with page number</div>;
-//   }
-//   const num = parseInt(page);
-
-//   return <EventsPage pageNum={num} />;
-// };
 
 EventsPage.getLayout = sidebar;
 

@@ -289,6 +289,10 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
                 show: event.recurringId ? true : false,
               },
               {
+                name: "Duplicate Event",
+                href: `/events/addevent?duplicateId=${event.id}`
+              },
+              {
                 name: "Delete",
                 function: () => {
                   eventId.current.id = event.id;

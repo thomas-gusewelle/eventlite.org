@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import sendMail from "../../emails";
 import UpcomingScheduleEmail from "../../emails/schedule/upcomingSchedule";
@@ -10,6 +11,20 @@ export const eventEmailsRouter = createTRPCRouter({
     endingDate: z.date(),
     includeNonRegisteredAccounts: z.boolean()
   })).mutation(async ({ ctx, input }) => {
+
+    const org = await prisma?.user.findFirst({
+      where: {
+        id: ctx.session.user.id
+      },
+      select: {
+        organizationId: true
+      }
+    })
+
+
+    if (org == undefined || org == null) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Cannot find organization." })
+    }
 
     // This is kind of nasty but works for getting the times right
     // The issue is that events are saved with UTC time that has the timezone offset 
@@ -27,7 +42,8 @@ export const eventEmailsRouter = createTRPCRouter({
         datetime: {
           gt: startingDate,
           lt: dayAfterEndingDate
-        }
+        },
+        organizationId: org.organizationId,
       },
       include: {
         Locations: true,

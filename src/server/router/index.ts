@@ -10,6 +10,7 @@ import { feedbackRouter } from "./feedback";
 import { AdminRouter } from "./admin";
 import { createTRPCRouter } from "./context";
 import { userSettingsRouter } from "./userSettings";
+import { eventEmailsRouter } from "./eventEmails";
 
 /**
  * This is the primary router for your server.
@@ -27,7 +28,8 @@ export const appRouter = createTRPCRouter({
   organization: organizationRouter,
   feedback: feedbackRouter,
   admin: AdminRouter,
-  userSettings: userSettingsRouter
+  userSettings: userSettingsRouter,
+  eventEmails: eventEmailsRouter
 });
 
 

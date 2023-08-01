@@ -18,3 +18,10 @@ export function longDate(date: Date, timeZone?: string) {
     timeZone: timeZone
   }).format(date);
 }
+
+
+export function oneMonthInFuture(): Date {
+  const date = new Date();
+  date.setMonth(date.getMonth() + 1);
+  return date
+}

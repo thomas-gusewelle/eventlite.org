@@ -27,6 +27,9 @@ import { shortTime } from "../components/dateTime/times";
 import { AlertContext } from "../providers/alertProvider";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { useQueryClient } from "@tanstack/react-query";
+import { createPortal } from "react-dom";
+import { EmailScheduleModal } from "../components/modal/emailScheduleModal";
+import { BtnPurple } from "../components/btn/btnPurple";
 
 const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   cursor,
@@ -37,6 +40,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
+  const [openEmailScheduleModal, setOpenEmailScheduleModal] = useState(false);
 
   const alertContext = useContext(AlertContext);
 
@@ -183,14 +187,15 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         <form onSubmit={sumbit}>
           <div className='mb-8 flex justify-between gap-4 md:hidden'>
             <SectionHeading>Schedule</SectionHeading>
-            <div>
-              <span></span>
+            <div className="flex gap-3 items-start">
+              <div className="w-full"><BtnPurple fullWidth onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}>Email Schedule</BtnPurple></div>
               <LimitSelect selected={limit} setSelected={setLimit} />
             </div>
           </div>
           <div className='mb-8 hidden justify-between md:flex'>
             <SectionHeading>Schedule</SectionHeading>
-            <div>
+            <div className="flex gap-3 min-w-max items-start self-stretch">
+              <BtnPurple fullWidth onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}>Email Schedule</BtnPurple>
               <LimitSelect selected={limit} setSelected={setLimit} />
             </div>
           </div>
@@ -395,6 +400,8 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
           </div>
         </form>
       </div>
+      {/* Schedule Email Modal*/}
+      {createPortal(<EmailScheduleModal open={openEmailScheduleModal} setOpen={setOpenEmailScheduleModal} />, document.body)}
     </>
   );
 };

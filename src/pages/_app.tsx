@@ -9,6 +9,7 @@ import {
   Session,
 } from "@supabase/auth-helpers-nextjs";
 import "../styles/globals.css";
+import "react-datepicker/dist/react-datepicker.css"
 import { NextPage } from "next";
 import { ReactNode, useState } from "react";
 import { AppProps } from "next/app";

@@ -5,21 +5,17 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   MdAccessTime,
-  MdAddCircleOutline,
   MdOutlineCalendarToday,
 } from "react-icons/md";
-import { NewSingleSelect, SingleSelect } from "../singleSelect";
+import { SingleSelect } from "../singleSelect";
 import { Switch } from "@headlessui/react";
 import { Locations } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { EventRepeatFrequency } from "../../../../types/eventFormValues";
 import { findWeekday } from "../../../utils/findWeekday";
-import { NIL } from "uuid";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { yearsFromToday } from "../../../server/utils/dateTimeModifers";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { AddSelection } from "../AddSelection";
 import { LocationSelector } from "./locationSelector";
 
 export const EventForm: React.FC<{

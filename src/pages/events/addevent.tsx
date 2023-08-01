@@ -17,11 +17,45 @@ import { v4 as uuidv4 } from "uuid";
 import { EventForm } from "../../components/form/event/eventForm";
 import { sidebar } from "../../components/layout/sidebar";
 import { AlertContext } from "../../providers/alertProvider";
+import { formatEventData } from "../../utils/formatEventData";
 
-const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
-  const utils = api.useContext();
+const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, duplicateId: string | undefined }) => {
   const router = useRouter();
   const alertContext = useContext(AlertContext);
+  const methods = useForm<EventFormValues>();
+  const [recuringId, setRecuringId] = useState<string | null>(null);
+
+
+  const eventQuery = api.events.getEditEvent.useQuery(duplicateId ?? "", {
+    cacheTime: 0,
+    enabled: !!duplicateId,
+    onError(err) {
+      alertContext.setError({
+        state: true,
+        message: `There was an issue getting your event. Message: ${err.message}`,
+      });
+    },
+    onSuccess(data) {
+      if (data) {
+        if (data.recurringId == undefined) {
+          methods.reset(formatEventData(data))
+        } else {
+          setRecuringId(data.recurringId)
+        }
+      }
+    },
+  });
+
+  const eventRecurringInfo =
+    api.events.getEventRecurranceData.useQuery(recuringId ?? "", {
+      enabled: !!recuringId,
+      onSuccess(recdata) {
+        if (recdata && eventQuery.data) {
+          methods.reset(formatEventData(eventQuery.data, recdata))
+        }
+      }
+    })
+
   const locationsQuery = api.locations.getLocationsByOrg.useQuery(undefined, {
     onSuccess(data) {
       if (data != undefined) {
@@ -41,7 +75,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
   ]);
 
   const addEventRecurrance = api.events.createEventReccurance.useMutation({
-    onError(error, variables, context) {
+    onError(error) {
       alertContext.setError({
         state: true,
         message: `There was an error saving the reccurance structure. Message: ${error.message}`,
@@ -51,7 +85,6 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
   const addEvent = api.events.createEvent.useMutation({
     onError(error) { alertContext.setError({ state: true, message: error.message }) },
   });
-  const methods = useForm<EventFormValues>();
   const submit = methods.handleSubmit((data: EventFormValues) => {
     if (!data.isRepeating) {
       addEvent.mutate({
@@ -74,7 +107,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
     if (data.isRepeating) {
       const newDates = findFutureDates(data);
       const recurringId = uuidv4();
-      newDates?.map((date, index) => {
+      newDates?.map((date) => {
         addEvent.mutate(
           {
             name: data.name,
@@ -86,7 +119,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
             positions: data.positions,
           },
           {
-            onError(error, variables, context) {
+            onError(error) {
               alertContext.setError({
                 state: true,
                 message: `There was an error creating your event. Please try again. Message: ${error.message}`,
@@ -114,7 +147,7 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
     }
   });
 
-  if (locationsQuery.isLoading) {
+  if (locationsQuery.isLoading || duplicateId ? (eventQuery.isLoading || recuringId ? eventRecurringInfo.isLoading : false) : false) {
     return (
       <div className='flex justify-center'>
         <CircularProgress />
@@ -151,13 +184,14 @@ const AddEvent = ({ redirect }: { redirect: string | undefined }) => {
 const AddEventPage = () => {
   const router = useRouter();
 
-  const { redirect } = router.query;
+  //TODO: check type of new things and pass them to the page
+  const { redirect, duplicateId } = router.query;
 
-  if (Array.isArray(redirect)) {
+  if (Array.isArray(redirect) || Array.isArray(duplicateId)) {
     return <div>Error with redirct link</div>;
   }
 
-  return <AddEvent redirect={redirect} />;
+  return <AddEvent redirect={redirect} duplicateId={duplicateId} />;
 };
 
 AddEventPage.getLayout = sidebar;

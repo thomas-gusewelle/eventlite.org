@@ -1,4 +1,6 @@
 import { z } from "zod";
+import sendMail from "../../emails";
+import UpcomingScheduleEmail from "../../emails/schedule/upcomingSchedule";
 import { EventsWithPositions, ReminderEmailData } from "../../pages/api/messaging/schedule";
 import { createTRPCRouter, adminProcedure } from "./context";
 
@@ -16,15 +18,15 @@ export const eventEmailsRouter = createTRPCRouter({
     startingDate.setHours(0, 0, 0, 0)
     let endingDate = input.endingDate;
     endingDate.setHours(0, startingDate.getTimezoneOffset(), 0, 0)
-    let dayAfterTomorrow = new Date(endingDate)
-    dayAfterTomorrow.setDate(startingDate.getDate() + 2)
+    let dayAfterEndingDate = new Date(endingDate)
+    dayAfterEndingDate.setDate(startingDate.getDate() + 2)
     // Add sevon hours to capture late night events in US timezones
-    dayAfterTomorrow.setHours(7, startingDate.getTimezoneOffset(), 0, 0)
+    dayAfterEndingDate.setHours(7, startingDate.getTimezoneOffset(), 0, 0)
     const events: EventsWithPositions = await prisma?.event.findMany({
       where: {
         datetime: {
-          gt: endingDate,
-          lt: dayAfterTomorrow
+          gt: startingDate,
+          lt: dayAfterEndingDate
         }
       },
       include: {
@@ -41,6 +43,8 @@ export const eventEmailsRouter = createTRPCRouter({
         }
       }
     })
+
+    console.log("Number: ", events?.length)
 
     const emails: ReminderEmailData[] = []
 
@@ -63,6 +67,16 @@ export const eventEmailsRouter = createTRPCRouter({
             emails.push({ user: position.User, events: [event] })
           }
         }
+      })
+    })
+
+
+    emails.forEach(async (email) => {
+      await sendMail({
+        to: email.user.email, component: <UpcomingScheduleEmail data={{
+          user: email.user,
+          events: email.events?.sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
+        }} startingDate={input.startingDate} endingDate={input.endingDate} />
       })
     })
 

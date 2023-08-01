@@ -44,7 +44,6 @@ export const eventEmailsRouter = createTRPCRouter({
       }
     })
 
-    console.log("Number: ", events?.length)
 
     const emails: ReminderEmailData[] = []
 

@@ -1,5 +1,5 @@
 
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { MdOutlineCalendarToday } from "react-icons/md";
 import { yearsFromToday } from "../../server/utils/dateTimeModifers";
@@ -16,6 +16,8 @@ import { oneMonthInFuture } from "../dateTime/dates";
 import { Switch } from "@headlessui/react";
 import { api } from "../../server/utils/api";
 import { AlertContext } from "../../providers/alertProvider";
+import { InviteLink, Role, User } from "@prisma/client";
+import { MultiSelect } from "../form/multiSelect";
 
 export const EmailScheduleModal = ({
   open,
@@ -27,6 +29,21 @@ export const EmailScheduleModal = ({
   const methods = useForm<{ startingDate: Date, endingDate: Date, includeNonRegisteredAccounts: boolean }>();
   const sendEmailMutatin = api.eventEmails.upcomingSchedule.useMutation()
   const { setSuccess, setError } = useContext(AlertContext)
+  const [allUsers, setAllUsers] = useState<(User & {
+    InviteLink: InviteLink | null;
+    roles: Role[];
+  })[] | null>(null)
+
+  const [selectedUsers, setSelectedUsers] = useState<(User & {
+    InviteLink: InviteLink | null;
+    roles: Role[];
+  })[] | null>(null)
+
+  const allUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
+    onSuccess(data) {
+      setAllUsers(data)
+    }
+  })
 
 
   const submit = methods.handleSubmit((data) => {
@@ -119,34 +136,42 @@ export const EmailScheduleModal = ({
                 )}
               />
             </div>
+            <label className='block text-sm font-medium text-gray-700'>
+              Positions
+            </label>
+            <MultiSelect
+              selected={selectedUsers}
+              setSelected={setSelectedUsers}
+              list={allUsers}
+              setList={setAllUsers}></MultiSelect>
 
-            <div className='col-span-2 sm:col-span-1'>
-              <label className='text-gray-700'>Include Non-Registered Users?</label>
-              <div className='mt-1'>
-                <Controller
-                  name='includeNonRegisteredAccounts'
-                  control={methods.control}
-                  defaultValue={false}
-                  render={({ field: { onChange, value } }) => (
-                    <Switch
-                      checked={value}
-                      onChange={onChange}
-                      className={`${value ? "bg-indigo-700" : "bg-gray-200"}
-    relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}>
-                      <span className='sr-only'>Is Repeating</span>
-                      <span
-                        aria-hidden='true'
-                        className={`${value
-                          ? "translate-x-9 bg-white"
-                          : "translate-x-0 bg-white"
-                          }
-        pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`}
-                      />
-                    </Switch>
-                  )}
-                />
-              </div>
-            </div>
+            {/*         <div className='col-span-2 sm:col-span-1'> */}
+            {/*           <label className='text-gray-700'>Include Non-Registered Users?</label> */}
+            {/*           <div className='mt-1'> */}
+            {/*             <Controller */}
+            {/*               name='includeNonRegisteredAccounts' */}
+            {/*               control={methods.control} */}
+            {/*               defaultValue={false} */}
+            {/*               render={({ field: { onChange, value } }) => ( */}
+            {/*                 <Switch */}
+            {/*                   checked={value} */}
+            {/*                   onChange={onChange} */}
+            {/*                   className={`${value ? "bg-indigo-700" : "bg-gray-200"} */}
+            {/* relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}> */}
+            {/*                   <span className='sr-only'>Is Repeating</span> */}
+            {/*                   <span */}
+            {/*                     aria-hidden='true' */}
+            {/*                     className={`${value */}
+            {/*                       ? "translate-x-9 bg-white" */}
+            {/*                       : "translate-x-0 bg-white" */}
+            {/*                       } */}
+            {/*     pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`} */}
+            {/*                   /> */}
+            {/*                 </Switch> */}
+            {/*               )} */}
+            {/*             /> */}
+            {/*           </div> */}
+            {/*         </div> */}
           </form>
         </div>
       </ModalBody>

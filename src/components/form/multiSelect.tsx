@@ -1,4 +1,4 @@
-import { Dispatch, Dispatch, FormEvent, Fragment, ReactNode, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FormEvent, Fragment, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
@@ -102,9 +102,9 @@ export const MultiSelect: React.FC<{
 };
 
 
-interface MultiSelectProps<ListItem> {
-  selected: ListItem;
-  setSelected: Dispatch<SetStateAction<ListItem[] | null>>;
+interface MultiSelectProps<ListItem extends { id: string }> {
+  selected: ListItem[];
+  setSelected: Dispatch<SetStateAction<ListItem[]>>;
   list: { item: ListItem; hide?: boolean }[];
   label: (item: ListItem) => any;
   showAdd?: boolean;
@@ -114,7 +114,7 @@ interface MultiSelectProps<ListItem> {
 
 //this requies data to have an id and name property
 // comma after generic is used ot tell TSX file that it is a type and not a componenet
-export const NewSingleSelect = <List,>({
+export const NewSingleSelect = <List extends { id: string },>({
   selected,
   setSelected,
   list,
@@ -123,6 +123,14 @@ export const NewSingleSelect = <List,>({
   showAddComponent = <></>,
   disabled = false,
 }: MultiSelectProps<List>) => {
+
+
+  function removeSelected(item: List, e: FormEvent): void {
+    e.stopPropagation();
+    setSelected(selected.filter((e) => e.id != item.id));
+    // setList((arr: any) => [...arr, item]);
+
+  }
   return (
     <>
       {/*TODO: work out the generic version of multiselect for email schedule*/}
@@ -130,7 +138,7 @@ export const NewSingleSelect = <List,>({
         <Listbox
           disabled={disabled}
           value={selected}
-          onChange={(value) => setSelected([...selected, value])}
+          onChange={(value) => setSelected(value)}
           multiple>
           <div className='relative mt-1 '>
             <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
@@ -143,7 +151,7 @@ export const NewSingleSelect = <List,>({
                       if (disabled) return;
                       removeSelected(item, e);
                     }}>
-                    {item.name}
+                    {label(item)}
                     {disabled == false && (
                       <AiOutlineCloseCircle
                         size={15}
@@ -163,9 +171,9 @@ export const NewSingleSelect = <List,>({
               leaveFrom='opacity-100'
               leaveTo='opacity-0'>
               <Listbox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
-                {list.map((item) => (
+                {list.map((item, i) => (
                   <Listbox.Option
-                    key={item.id}
+                    key={i}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
                       }`
@@ -178,7 +186,7 @@ export const NewSingleSelect = <List,>({
                             ? "font-medium text-indigo-700"
                             : "font-normal"
                             }`}>
-                          {item.name}
+                          {label(item.item)}
                         </span>
                       </>
                     )}
@@ -190,53 +198,6 @@ export const NewSingleSelect = <List,>({
         </Listbox>
       </div>
 
-      <div className=' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
-        <Listbox value={selected} onChange={(value) => setSelected(value)}>
-          <div className='relative mt-1 '>
-            <Listbox.Button className='relative h-full w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
-              <div className='flex min-h-[1.5rem] flex-wrap'>
-                {label(selected)}
-              </div>
-              <div className='absolute right-1 top-1/2 -translate-y-1/2'>
-                <MdOutlineKeyboardArrowDown size={20} className='text-gray-500' />
-              </div>
-            </Listbox.Button>
-            <Transition
-              as={Fragment}
-              leave='transition ease-in duration-100'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'>
-              <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
-                {list.map((item, index) => {
-                  if (item.hide != true) {
-                    return (
-                      <Listbox.Option
-                        key={index}
-                        className={({ active }) =>
-                          `relative cursor-default select-none py-2 pl-4 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
-                          }`
-                        }
-                        value={item.item}>
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${selected
-                                ? "font-medium text-indigo-700"
-                                : "font-normal"
-                                }`}>
-                              {label(item.item)}
-                            </span>
-                          </>
-                        )}
-                      </Listbox.Option>
-                    );
-                  }
-                })}
-                {showAddComponent}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </Listbox>
-      </div></>
+    </>
   );
 };

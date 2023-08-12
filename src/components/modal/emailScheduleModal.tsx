@@ -17,7 +17,7 @@ import { Switch } from "@headlessui/react";
 import { api } from "../../server/utils/api";
 import { AlertContext } from "../../providers/alertProvider";
 import { InviteLink, Role, User } from "@prisma/client";
-import { MultiSelect } from "../form/multiSelect";
+import { MultiSelect, NewMultiSelect } from "../form/multiSelect";
 
 export const EmailScheduleModal = ({
   open,
@@ -32,12 +32,12 @@ export const EmailScheduleModal = ({
   const [allUsers, setAllUsers] = useState<(User & {
     InviteLink: InviteLink | null;
     roles: Role[];
-  })[] | null>(null)
+  })[]>([])
 
   const [selectedUsers, setSelectedUsers] = useState<(User & {
     InviteLink: InviteLink | null;
     roles: Role[];
-  })[] | null>(null)
+  })[]>([])
 
   const allUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
     onSuccess(data) {
@@ -139,11 +139,7 @@ export const EmailScheduleModal = ({
             <label className='block text-sm font-medium text-gray-700'>
               Positions
             </label>
-            <MultiSelect
-              selected={selectedUsers}
-              setSelected={setSelectedUsers}
-              list={allUsers}
-              setList={setAllUsers}></MultiSelect>
+            <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers.map((u) => ({ item: u, hide: false }))} label={(item) => item.email}></NewMultiSelect>
 
             {/*         <div className='col-span-2 sm:col-span-1'> */}
             {/*           <label className='text-gray-700'>Include Non-Registered Users?</label> */}

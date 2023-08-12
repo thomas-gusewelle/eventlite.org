@@ -114,7 +114,7 @@ interface MultiSelectProps<ListItem extends { id: string }> {
 
 //this requies data to have an id and name property
 // comma after generic is used ot tell TSX file that it is a type and not a componenet
-export const NewSingleSelect = <List extends { id: string },>({
+export const NewMultiSelect = <List extends { id: string },>({
   selected,
   setSelected,
   list,

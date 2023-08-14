@@ -18,6 +18,13 @@ import { api } from "../../server/utils/api";
 import { AlertContext } from "../../providers/alertProvider";
 import { InviteLink, Role, User } from "@prisma/client";
 import { MultiSelect, NewMultiSelect } from "../form/multiSelect";
+import { ListWithHide } from "../../../types/genericTypes";
+import { fullName } from "../../utils/fullName";
+
+type user = ListWithHide<(User & {
+  InviteLink: InviteLink | null;
+  roles: Role[];
+})>
 
 export const EmailScheduleModal = ({
   open,
@@ -29,19 +36,13 @@ export const EmailScheduleModal = ({
   const methods = useForm<{ startingDate: Date, endingDate: Date, includeNonRegisteredAccounts: boolean }>();
   const sendEmailMutatin = api.eventEmails.upcomingSchedule.useMutation()
   const { setSuccess, setError } = useContext(AlertContext)
-  const [allUsers, setAllUsers] = useState<(User & {
-    InviteLink: InviteLink | null;
-    roles: Role[];
-  })[]>([])
+  const [allUsers, setAllUsers] = useState<user>([])
 
-  const [selectedUsers, setSelectedUsers] = useState<(User & {
-    InviteLink: InviteLink | null;
-    roles: Role[];
-  })[]>([])
+  const [selectedUsers, setSelectedUsers] = useState<user>([])
 
   const allUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
     onSuccess(data) {
-      setAllUsers(data)
+      setAllUsers(data.map(user => ({ item: user, hide: false })))
     }
   })
 
@@ -139,7 +140,7 @@ export const EmailScheduleModal = ({
             <label className='block text-sm font-medium text-gray-700'>
               Positions
             </label>
-            <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers.map((u) => ({ item: u, hide: false }))} label={(item) => item.email}></NewMultiSelect>
+            <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers} label={(item) => fullName(item.item.firstName, item.item.lastName)}></NewMultiSelect>
 
             {/*         <div className='col-span-2 sm:col-span-1'> */}
             {/*           <label className='text-gray-700'>Include Non-Registered Users?</label> */}

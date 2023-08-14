@@ -2,6 +2,7 @@ import { Dispatch, FormEvent, Fragment, ReactNode, SetStateAction, useEffect, us
 import { Listbox, Transition } from "@headlessui/react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import { boolean } from "zod";
 
 //this requies data to have an id and name property
 export const MultiSelect: React.FC<{
@@ -102,10 +103,14 @@ export const MultiSelect: React.FC<{
 };
 
 
+type ListWithHide<T> = {
+  item: T, hide?: boolean
+}[]
+
 interface MultiSelectProps<ListItem extends { id: string }> {
   selected: ListItem[];
   setSelected: Dispatch<SetStateAction<ListItem[]>>;
-  list: { item: ListItem; hide?: boolean }[];
+  list: ListWithHide<ListItem>;
   label: (item: ListItem) => any;
   showAdd?: boolean;
   showAddComponent?: ReactNode;
@@ -114,7 +119,7 @@ interface MultiSelectProps<ListItem extends { id: string }> {
 
 //this requies data to have an id and name property
 // comma after generic is used ot tell TSX file that it is a type and not a componenet
-export const NewMultiSelect = <List extends { id: string },>({
+export const NewSingleSelect = <List extends { id: string },>({
   selected,
   setSelected,
   list,
@@ -133,12 +138,12 @@ export const NewMultiSelect = <List extends { id: string },>({
   }
   return (
     <>
-      {/*TODO: work out the generic version of multiselect for email schedule*/}
+      {/*TODO: implement generic multiselect on page and add ability to select all*/}
       <div className='mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
         <Listbox
           disabled={disabled}
           value={selected}
-          onChange={(value) => { console.log("this is the value", value); setSelected(value) }}
+          onChange={(value) => setSelected(value)}
           multiple>
           <div className='relative mt-1 '>
             <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>

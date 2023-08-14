@@ -13,14 +13,14 @@ import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
 import { ModalTitle } from "./modalTitle";
 import { oneMonthInFuture } from "../dateTime/dates";
-import { Switch } from "@headlessui/react";
 import { api } from "../../server/utils/api";
 import { AlertContext } from "../../providers/alertProvider";
 import { InviteLink, Role, User } from "@prisma/client";
-import { MultiSelect, NewMultiSelect } from "../form/multiSelect";
+import { NewMultiSelect } from "../form/multiSelect";
 import { ListWithHide } from "../../../types/genericTypes";
 import { fullName } from "../../utils/fullName";
 
+// Wraps the prisma user query with the hide type to give it {item: T, hide?:boolean}[] type
 type user = ListWithHide<(User & {
   InviteLink: InviteLink | null;
   roles: Role[];
@@ -141,34 +141,6 @@ export const EmailScheduleModal = ({
               Positions
             </label>
             <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers} label={(item) => fullName(item.item.firstName, item.item.lastName)}></NewMultiSelect>
-
-            {/*         <div className='col-span-2 sm:col-span-1'> */}
-            {/*           <label className='text-gray-700'>Include Non-Registered Users?</label> */}
-            {/*           <div className='mt-1'> */}
-            {/*             <Controller */}
-            {/*               name='includeNonRegisteredAccounts' */}
-            {/*               control={methods.control} */}
-            {/*               defaultValue={false} */}
-            {/*               render={({ field: { onChange, value } }) => ( */}
-            {/*                 <Switch */}
-            {/*                   checked={value} */}
-            {/*                   onChange={onChange} */}
-            {/*                   className={`${value ? "bg-indigo-700" : "bg-gray-200"} */}
-            {/* relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}> */}
-            {/*                   <span className='sr-only'>Is Repeating</span> */}
-            {/*                   <span */}
-            {/*                     aria-hidden='true' */}
-            {/*                     className={`${value */}
-            {/*                       ? "translate-x-9 bg-white" */}
-            {/*                       : "translate-x-0 bg-white" */}
-            {/*                       } */}
-            {/*     pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`} */}
-            {/*                   /> */}
-            {/*                 </Switch> */}
-            {/*               )} */}
-            {/*             /> */}
-            {/*           </div> */}
-            {/*         </div> */}
           </form>
         </div>
       </ModalBody>

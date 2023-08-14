@@ -3,6 +3,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { boolean } from "zod";
+import { ItemWithHide, ListWithHide } from "../../../types/genericTypes";
 
 //this requies data to have an id and name property
 export const MultiSelect: React.FC<{
@@ -103,15 +104,12 @@ export const MultiSelect: React.FC<{
 };
 
 
-type ListWithHide<T> = {
-  item: T, hide?: boolean
-}[]
 
 interface MultiSelectProps<ListItem extends { id: string }> {
-  selected: ListItem[];
-  setSelected: Dispatch<SetStateAction<ListItem[]>>;
+  selected: ListWithHide<ListItem>;
+  setSelected: Dispatch<SetStateAction<ListWithHide<ListItem>>>;
   list: ListWithHide<ListItem>;
-  label: (item: ListItem) => any;
+  label: (item: ItemWithHide<ListItem>) => any;
   showAdd?: boolean;
   showAddComponent?: ReactNode;
   disabled?: boolean
@@ -119,7 +117,7 @@ interface MultiSelectProps<ListItem extends { id: string }> {
 
 //this requies data to have an id and name property
 // comma after generic is used ot tell TSX file that it is a type and not a componenet
-export const NewSingleSelect = <List extends { id: string },>({
+export const NewMultiSelect = <List extends { id: string },>({
   selected,
   setSelected,
   list,
@@ -130,9 +128,9 @@ export const NewSingleSelect = <List extends { id: string },>({
 }: MultiSelectProps<List>) => {
 
 
-  function removeSelected(item: List, e: FormEvent): void {
+  function removeSelected(item: { item: List, hide?: boolean }, e: FormEvent): void {
     e.stopPropagation();
-    setSelected(selected.filter((e) => e.id != item.id));
+    setSelected(selected.filter((e) => e.item.id != item.item.id));
     // setList((arr: any) => [...arr, item]);
 
   }
@@ -151,7 +149,7 @@ export const NewSingleSelect = <List extends { id: string },>({
                 {selected.map((item) => (
                   <div
                     className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
-                    key={item.id}
+                    key={item.item.id}
                     onClick={(e) => {
                       if (disabled) return;
                       removeSelected(item, e);
@@ -191,7 +189,7 @@ export const NewSingleSelect = <List extends { id: string },>({
                             ? "font-medium text-indigo-700"
                             : "font-normal"
                             }`}>
-                          {label(item.item)}
+                          {label(item)}
                         </span>
                       </>
                     )}

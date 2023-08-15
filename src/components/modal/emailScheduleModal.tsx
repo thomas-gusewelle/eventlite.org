@@ -33,7 +33,7 @@ export const EmailScheduleModal = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const methods = useForm<{ startingDate: Date, endingDate: Date, includeNonRegisteredAccounts: boolean }>();
+  const methods = useForm<{ startingDate: Date, endingDate: Date, includedUsers: { id: string, email: string }[] }>();
   const sendEmailMutatin = api.eventEmails.upcomingSchedule.useMutation()
   const { setSuccess, setError } = useContext(AlertContext)
   const [allUsers, setAllUsers] = useState<user>([])
@@ -48,7 +48,7 @@ export const EmailScheduleModal = ({
 
 
   const submit = methods.handleSubmit((data) => {
-    sendEmailMutatin.mutate(data, {
+    sendEmailMutatin.mutate({ startingDate: data.startingDate, endingDate: data.endingDate, includedUsers: selectedUsers.map(u => ({ id: u.item.id, email: u.item.email })) }, {
       onSuccess() {
         setOpen(false),
           setSuccess({ state: true, message: "Emails successfully sent." })

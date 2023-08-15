@@ -11,14 +11,10 @@ import { shortTime } from "../../components/dateTime/times";
 import { fullName } from "../../utils/fullName";
 import { ReminderEmailData } from "../../pages/api/messaging/schedule";
 
-
-type EventsWithPositions = (Event & {
-  Locations: Locations | null;
-  positions: (EventPositions & {
-    Role: Role | null
-    User: User | null
-  })[];
-})[] | undefined
+type events =
+  (Event & {
+    Locations: Locations | null;
+  })[] | undefined
 
 const styles = `
   .h1 > * {
@@ -50,7 +46,7 @@ const styles = `
   }
 `;
 
-const UpcomingScheduleEmail = ({ data, startingDate, endingDate }: { data: ReminderEmailData, startingDate: Date, endingDate: Date }) => {
+const UpcomingScheduleEmail = ({ data, startingDate, endingDate }: { data: { user: { id: string, email: string, firstName: string }, events: events }, startingDate: Date, endingDate: Date }) => {
   const { user, events } = data
 
   return (
@@ -82,26 +78,26 @@ const UpcomingScheduleEmail = ({ data, startingDate, endingDate }: { data: Remin
                 <Text color={colors.black}>{shortTime(event.datetime, event.timezone)}</Text>
               </MjmlColumn>
             </MjmlSection>
-            <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}>
-              <MjmlGroup>
-                <MjmlColumn borderRight={"1px solid rgb(209 213 219)"}>
-                  {event.positions.map((pos, index) => (
-                    <>
-                      <Text padding={"10px 10px"} color={colors.black} fontWeight={fontWeight.bold}>{pos.Role?.name}</Text>
-                      {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />}
-                    </>
-                  ))}
-                </MjmlColumn>
-                <MjmlColumn>
-                  {event.positions.map((pos, index) => (
-                    <>
-                      <Text padding={"10px 10px"} color={colors.black}>{fullName(pos.User?.firstName, pos.User?.lastName)}</Text>
-                      {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />}
-                    </>
-                  ))}
-                </MjmlColumn>
-              </MjmlGroup>
-            </MjmlSection>
+            {/* <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}> */}
+            {/*   <MjmlGroup> */}
+            {/*     <MjmlColumn borderRight={"1px solid rgb(209 213 219)"}> */}
+            {/*       {event.positions.map((pos, index) => ( */}
+            {/*         <> */}
+            {/*           <Text padding={"10px 10px"} color={colors.black} fontWeight={fontWeight.bold}>{pos.Role?.name}</Text> */}
+            {/*           {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />} */}
+            {/*         </> */}
+            {/*       ))} */}
+            {/*     </MjmlColumn> */}
+            {/*     <MjmlColumn> */}
+            {/*       {event.positions.map((pos, index) => ( */}
+            {/*         <> */}
+            {/*           <Text padding={"10px 10px"} color={colors.black}>{fullName(pos.User?.firstName, pos.User?.lastName)}</Text> */}
+            {/*           {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />} */}
+            {/*         </> */}
+            {/*       ))} */}
+            {/*     </MjmlColumn> */}
+            {/*   </MjmlGroup> */}
+            {/* </MjmlSection> */}
           </>
         ))}
       </MjmlWrapper>

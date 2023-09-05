@@ -1,8 +1,6 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import sendMail from "../../emails";
 import UpcomingScheduleEmail from "../../emails/schedule/upcomingSchedule";
-import { EventsWithPositions, ReminderEmailData } from "../../pages/api/messaging/schedule";
 import { createTRPCRouter, adminProcedure } from "./context";
 
 export const eventEmailsRouter = createTRPCRouter({
@@ -10,25 +8,11 @@ export const eventEmailsRouter = createTRPCRouter({
     startingDate: z.date(),
     endingDate: z.date(),
     includedUsers: z.object({
-      id: z.string().uuid(),
+      id: z.string(),
       email: z.string().email(),
       firstName: z.string()
     }).array()
   })).mutation(async ({ ctx, input }) => {
-
-    const org = await prisma?.user.findFirst({
-      where: {
-        id: ctx.session.user.id
-      },
-      select: {
-        organizationId: true
-      }
-    })
-
-
-    if (org == undefined || org == null) {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Cannot find organization." })
-    }
 
     // This is kind of nasty but works for getting the times right
     // The issue is that events are saved with UTC time that has the timezone offset 
@@ -69,63 +53,5 @@ export const eventEmailsRouter = createTRPCRouter({
         }} startingDate={input.startingDate} endingDate={input.endingDate} />
       })
     }))
-    // const events: EventsWithPositions = await prisma?.event.findMany({
-    //   where: {
-    //     datetime: {
-    //       gt: startingDate,
-    //       lt: dayAfterEndingDate
-    //     },
-    //     organizationId: org.organizationId,
-    //   },
-    //   include: {
-    //     Locations: true,
-    //     positions: {
-    //       include: {
-    //         Role: true,
-    //         User: {
-    //           include: {
-    //             UserSettings: true
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // })
-
-
-    // const emails: ReminderEmailData[] = []
-    //
-    // events?.forEach(event => {
-    //   event.positions.forEach(position => {
-    //     // checks to ensure user.that they have a login, and want to recieve reminder emails
-    //     const isUserRegistered = position.User?.hasLogin;
-    //     const shouldISend = isUserRegistered ? position.User?.UserSettings?.sendReminderEmail : input.includeNonRegisteredAccounts;
-    //
-    //     if (position.User && shouldISend) {
-    //       // checks to see if the user is already included in the emails array
-    //       if (emails.map(item => item.user.id).includes(position.User.id)) {
-    //         const index = emails.map(item => item.user.id).indexOf(position.User.id)
-    //         //if exists adds event to user
-    //         if (index >= 0) {
-    //           emails[index]?.events?.push(event)
-    //         }
-    //         // if user is not in emails array then adds user and event
-    //       } else {
-    //         emails.push({ user: position.User, events: [event] })
-    //       }
-    //     }
-    //   })
-    // })
-    //
-    //
-    // emails.forEach(async (email) => {
-    //   await sendMail({
-    //     to: email.user.email, component: <UpcomingScheduleEmail data={{
-    //       user: email.user,
-    //       events: email.events?.sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
-    //     }} startingDate={input.startingDate} endingDate={input.endingDate} />
-    //   })
-    // })
-
   })
 })

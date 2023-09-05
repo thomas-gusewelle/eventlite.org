@@ -156,6 +156,7 @@ export const NewMultiSelect = <List extends { id: string },>({
                 {isAllSelected && <div
                   className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
                   key={"All"}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {"All"}
                   {disabled == false && (
@@ -175,6 +176,7 @@ export const NewMultiSelect = <List extends { id: string },>({
                       <div
                         className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
                         key={item.item.id}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {label(item)}
                         {disabled == false && (

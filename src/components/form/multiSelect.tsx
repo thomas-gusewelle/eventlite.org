@@ -127,16 +127,23 @@ export const NewMultiSelect = <List extends { id: string },>({
   disabled = false,
 }: MultiSelectProps<List>) => {
 
+  // We are not using a useState for this because 
+  // the state will already set when the list changes and everything rerenders
+  const isAllSelected = selected.length == list.length;
 
   function removeSelected(item: { item: List, hide?: boolean }, e: FormEvent): void {
     e.stopPropagation();
     setSelected(selected.filter((e) => e.item.id != item.item.id));
-    // setList((arr: any) => [...arr, item]);
-
   }
+
+
+  function toggleAll() {
+    isAllSelected ? setSelected([]) : setSelected(list);
+  }
+
   return (
     <>
-      {/*TODO: implement generic multiselect on page and add ability to select all*/}
+      {/*TODO: fix issues with toggling between selecting all and not all*/}
       <div className='mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
         <Listbox
           disabled={disabled}
@@ -146,23 +153,43 @@ export const NewMultiSelect = <List extends { id: string },>({
           <div className='relative mt-1 '>
             <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
               <div className='flex min-h-[1rem] flex-wrap gap-2'>
-                {selected.map((item) => (
-                  <div
-                    className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
-                    key={item.item.id}
-                    onClick={(e) => {
-                      if (disabled) return;
-                      removeSelected(item, e);
-                    }}>
-                    {label(item)}
-                    {disabled == false && (
-                      <AiOutlineCloseCircle
-                        size={15}
-                        className='cursor-pointer'
-                      />
-                    )}
-                  </div>
-                ))}
+                {isAllSelected && <div
+                  className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
+                  key={"All"}
+                >
+                  {"All"}
+                  {disabled == false && (
+                    <AiOutlineCloseCircle
+                      size={15}
+                      onClick={(e) => {
+                        if (disabled) return;
+                        toggleAll();
+                      }}
+                      className='cursor-pointer'
+                    />
+                  )}
+                </div>}
+                {!isAllSelected &&
+                  <>
+                    {selected.map((item) => (
+                      <div
+                        className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
+                        key={item.item.id}
+                      >
+                        {label(item)}
+                        {disabled == false && (
+                          <AiOutlineCloseCircle
+                            size={15}
+                            className='cursor-pointer'
+                            onClick={(e) => {
+                              if (disabled) return;
+                              removeSelected(item, e);
+                            }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </>}
               </div>
               <div className='absolute right-1 top-1/2 -translate-y-1/2'>
                 <MdOutlineKeyboardArrowDown size={20} className='text-gray-500' />
@@ -174,6 +201,16 @@ export const NewMultiSelect = <List extends { id: string },>({
               leaveFrom='opacity-100'
               leaveTo='opacity-0'>
               <Listbox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+                <div onClick={() => toggleAll()} className={`relative cursor-default select-none py-2 pl-10 pr-4 ${isAllSelected ? "bg-indigo-100" : "text-gray-900"}`}>
+
+                  <span
+                    className={`block truncate ${isAllSelected
+                      ? "font-medium text-indigo-700"
+                      : "font-normal"
+                      }`}>
+                    {"Select All"}
+                  </span>
+                </div>
                 {list.map((item, i) => (
                   <Listbox.Option
                     key={i}

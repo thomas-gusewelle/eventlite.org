@@ -138,7 +138,7 @@ export const EmailScheduleModal = ({
               />
             </div>
             <label className='block text-sm font-medium text-gray-700'>
-              Positions
+              People
             </label>
             <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers} label={(item) => fullName(item.item.firstName, item.item.lastName)}></NewMultiSelect>
           </form>

@@ -48,7 +48,7 @@ export const EmailScheduleModal = ({
 
 
   const submit = methods.handleSubmit((data) => {
-    sendEmailMutatin.mutate({ startingDate: data.startingDate, endingDate: data.endingDate, includedUsers: selectedUsers.map(u => ({ id: u.item.id, email: u.item.email })) }, {
+    sendEmailMutatin.mutate({ startingDate: data.startingDate, endingDate: data.endingDate, includedUsers: selectedUsers.map(u => ({ id: u.item.id, email: u.item.email, firstName: u.item.firstName })) }, {
       onSuccess() {
         setOpen(false),
           setSuccess({ state: true, message: "Emails successfully sent." })

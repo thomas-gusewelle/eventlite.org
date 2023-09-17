@@ -143,7 +143,7 @@ export const NewMultiSelect = <List extends { id: string },>({
 
   return (
     <>
-      {/*TODO: fix issues with toggling between selecting all and not all*/}
+      {/*TODO: Look into adding check boxes and center aligning of text on mobile*/}
       <div className='mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
         <Listbox
           disabled={disabled}
@@ -202,7 +202,7 @@ export const NewMultiSelect = <List extends { id: string },>({
               leave='transition ease-in duration-100'
               leaveFrom='opacity-100'
               leaveTo='opacity-0'>
-              <Listbox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+              <Listbox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm text-left'>
                 <div onClick={() => toggleAll()} className={`relative cursor-default select-none py-2 pl-10 pr-4 ${isAllSelected ? "bg-indigo-100" : "text-gray-900"}`}>
 
                   <span

@@ -40,7 +40,7 @@ export const EmailScheduleModal = ({
 
   const [selectedUsers, setSelectedUsers] = useState<user>([])
 
-  const allUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
+  api.user.getActiveUsersByOrganization.useQuery(undefined, {
     onSuccess(data) {
       setAllUsers(data.map(user => ({ item: user, hide: false })))
     }

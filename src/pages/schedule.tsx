@@ -185,20 +185,23 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
       </Modal>
       <div className='relative'>
         <form onSubmit={sumbit}>
-          <div className='mb-8 flex justify-between gap-4 md:hidden'>
+          <div className='mb-3 flex justify-between gap-4 md:hidden'>
             <SectionHeading>Schedule</SectionHeading>
             <div className="flex gap-3 items-start">
-              <div className="w-full"><BtnPurple fullWidth onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}>Email Schedule</BtnPurple></div>
               <LimitSelect selected={limit} setSelected={setLimit} />
             </div>
           </div>
-          <div className='mb-8 hidden justify-between md:flex'>
+          <div className='mb-3 hidden justify-between md:flex'>
             <SectionHeading>Schedule</SectionHeading>
             <div className="flex gap-3 min-w-max items-start self-stretch">
-              <BtnPurple fullWidth onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}>Email Schedule</BtnPurple>
               <LimitSelect selected={limit} setSelected={setLimit} />
             </div>
           </div>
+
+          <div className="flex mb-8">
+            <BtnPurple onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}>Email Schedule</BtnPurple>
+          </div>
+
           <div>
             <div className='mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
               {getScheduleQuery?.data.items?.map((event) => (

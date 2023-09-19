@@ -1,5 +1,5 @@
 
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { MdOutlineCalendarToday } from "react-icons/md";
 import { yearsFromToday } from "../../server/utils/dateTimeModifers";
@@ -13,9 +13,18 @@ import { Modal } from "./modal";
 import { ModalBody } from "./modalBody";
 import { ModalTitle } from "./modalTitle";
 import { oneMonthInFuture } from "../dateTime/dates";
-import { Switch } from "@headlessui/react";
 import { api } from "../../server/utils/api";
 import { AlertContext } from "../../providers/alertProvider";
+import { InviteLink, Role, User } from "@prisma/client";
+import { NewMultiSelect } from "../form/multiSelect";
+import { ListWithHide } from "../../../types/genericTypes";
+import { fullName } from "../../utils/fullName";
+
+// Wraps the prisma user query with the hide type to give it {item: T, hide?:boolean}[] type
+type user = ListWithHide<(User & {
+  InviteLink: InviteLink | null;
+  roles: Role[];
+})>
 
 export const EmailScheduleModal = ({
   open,
@@ -24,13 +33,22 @@ export const EmailScheduleModal = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const methods = useForm<{ startingDate: Date, endingDate: Date, includeNonRegisteredAccounts: boolean }>();
+  const methods = useForm<{ startingDate: Date, endingDate: Date, includedUsers: { id: string, email: string }[] }>();
   const sendEmailMutatin = api.eventEmails.upcomingSchedule.useMutation()
   const { setSuccess, setError } = useContext(AlertContext)
+  const [allUsers, setAllUsers] = useState<user>([])
+
+  const [selectedUsers, setSelectedUsers] = useState<user>([])
+
+  api.user.getActiveUsersByOrganization.useQuery(undefined, {
+    onSuccess(data) {
+      setAllUsers(data.map(user => ({ item: user, hide: false })))
+    }
+  })
 
 
   const submit = methods.handleSubmit((data) => {
-    sendEmailMutatin.mutate(data, {
+    sendEmailMutatin.mutate({ startingDate: data.startingDate, endingDate: data.endingDate, includedUsers: selectedUsers.map(u => ({ id: u.item.id, email: u.item.email, firstName: u.item.firstName })) }, {
       onSuccess() {
         setOpen(false),
           setSuccess({ state: true, message: "Emails successfully sent." })
@@ -119,34 +137,10 @@ export const EmailScheduleModal = ({
                 )}
               />
             </div>
-
-            <div className='col-span-2 sm:col-span-1'>
-              <label className='text-gray-700'>Include Non-Registered Users?</label>
-              <div className='mt-1'>
-                <Controller
-                  name='includeNonRegisteredAccounts'
-                  control={methods.control}
-                  defaultValue={false}
-                  render={({ field: { onChange, value } }) => (
-                    <Switch
-                      checked={value}
-                      onChange={onChange}
-                      className={`${value ? "bg-indigo-700" : "bg-gray-200"}
-    relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}>
-                      <span className='sr-only'>Is Repeating</span>
-                      <span
-                        aria-hidden='true'
-                        className={`${value
-                          ? "translate-x-9 bg-white"
-                          : "translate-x-0 bg-white"
-                          }
-        pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full  shadow-lg ring-0 transition duration-200 ease-in-out`}
-                      />
-                    </Switch>
-                  )}
-                />
-              </div>
-            </div>
+            <label className='block text-sm font-medium text-gray-700'>
+              People
+            </label>
+            <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers} label={(item) => fullName(item.item.firstName, item.item.lastName)}></NewMultiSelect>
           </form>
         </div>
       </ModalBody>

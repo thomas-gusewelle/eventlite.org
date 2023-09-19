@@ -1,8 +1,7 @@
-import { Dispatch, FormEvent, Fragment, ReactNode, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FormEvent, Fragment, ReactNode, SetStateAction, useEffect } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { MdOutlineKeyboardArrowDown, MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { boolean } from "zod";
 import { ItemWithHide, ListWithHide } from "../../../types/genericTypes";
 
 //this requies data to have an id and name property
@@ -83,7 +82,8 @@ export const MultiSelect: React.FC<{
                   }
                   value={item}>
                   {({ selected }) => (
-                    <>
+                    <div>
+                      <MdCheckBoxOutlineBlank />
                       <span
                         className={`block truncate ${selected
                           ? "font-medium text-indigo-700"
@@ -91,7 +91,7 @@ export const MultiSelect: React.FC<{
                           }`}>
                         {item.name}
                       </span>
-                    </>
+                    </div>
                   )}
                 </Listbox.Option>
               ))}
@@ -130,6 +130,7 @@ export const NewMultiSelect = <List extends { id: string },>({
   // We are not using a useState for this because 
   // the state will already set when the list changes and everything rerenders
   const isAllSelected = selected.length == list.length;
+  const ICON_SIZE = 20;
 
   function removeSelected(item: { item: List, hide?: boolean }, e: FormEvent): void {
     e.stopPropagation();
@@ -203,8 +204,9 @@ export const NewMultiSelect = <List extends { id: string },>({
               leaveFrom='opacity-100'
               leaveTo='opacity-0'>
               <Listbox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm text-left'>
-                <div onClick={() => toggleAll()} className={`relative cursor-default select-none py-2 pl-10 pr-4 ${isAllSelected ? "bg-indigo-100" : "text-gray-900"}`}>
+                <div onClick={() => toggleAll()} className={`flex gap-3 items-center relative cursor-default select-none py-2 pl-10 pr-4 ${isAllSelected ? "bg-indigo-100" : "text-gray-900"}`}>
 
+                  {isAllSelected ? <MdCheckBox className="text-indigo-700" size={ICON_SIZE} /> : <MdCheckBoxOutlineBlank size={ICON_SIZE} />}
                   <span
                     className={`block truncate ${isAllSelected
                       ? "font-medium text-indigo-700"
@@ -222,7 +224,8 @@ export const NewMultiSelect = <List extends { id: string },>({
                     }
                     value={item}>
                     {({ selected }) => (
-                      <>
+                      <div className="flex gap-3 items-center">
+                        {selected ? <MdCheckBox className="text-indigo-700" size={ICON_SIZE} /> : <MdCheckBoxOutlineBlank size={ICON_SIZE} />}
                         <span
                           className={`block truncate ${selected
                             ? "font-medium text-indigo-700"
@@ -230,7 +233,7 @@ export const NewMultiSelect = <List extends { id: string },>({
                             }`}>
                           {label(item)}
                         </span>
-                      </>
+                      </div>
                     )}
                   </Listbox.Option>
                 ))}

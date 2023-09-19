@@ -144,7 +144,6 @@ export const NewMultiSelect = <List extends { id: string },>({
 
   return (
     <>
-      {/*TODO: Look into adding check boxes and center aligning of text on mobile*/}
       <div className='mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
         <Listbox
           disabled={disabled}

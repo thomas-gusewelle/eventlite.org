@@ -12,7 +12,7 @@ export const eventEmailsRouter = createTRPCRouter({
       email: z.string().email(),
       firstName: z.string()
     }).array()
-  })).mutation(async ({ ctx, input }) => {
+  })).mutation(async ({ input }) => {
 
     // This is kind of nasty but works for getting the times right
     // The issue is that events are saved with UTC time that has the timezone offset 
@@ -46,12 +46,17 @@ export const eventEmailsRouter = createTRPCRouter({
       return { user: user, events: eventQuery }
     }))
     return Promise.all(events.map(async (event) => {
-      sendMail({
-        to: event.user.email, component: <UpcomingScheduleEmail data={{
-          user: event.user,
-          events: event.events?.sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
-        }} startingDate={input.startingDate} endingDate={input.endingDate} />
-      })
+      // filter out users who do not have any events scheduled
+      if (event != undefined && event.events != undefined) {
+        if (event.events.length > 0) {
+          sendMail({
+            to: event.user.email, component: <UpcomingScheduleEmail data={{
+              user: event.user,
+              events: event.events?.sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
+            }} startingDate={input.startingDate} endingDate={input.endingDate} />
+          })
+        }
+      }
     }))
   })
 })

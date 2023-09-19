@@ -47,6 +47,28 @@ export const userRouter = createTRPCRouter({
     });
   }),
 
+  getActiveUsersByOrganization: publicProcedure.query(async ({ ctx }) => {
+
+    const orgID = await prisma?.user.findFirst({
+      where: { id: ctx?.session?.user.id },
+      select: { organizationId: true },
+    });
+
+    return await ctx.prisma?.user.findMany({
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      where: {
+        organizationId: orgID?.organizationId,
+        OR: [
+          { status: "ADMIN" },
+          { status: "USER" }
+        ]
+      },
+      include: {
+        roles: true,
+        InviteLink: true,
+      },
+    });
+  }),
 
 
   // mutation is here to facilate updating by logged in user

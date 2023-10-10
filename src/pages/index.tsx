@@ -30,9 +30,9 @@ import { PoepleTab } from "../components/marketing-site/component/peopleTab";
 
 export async function getServerSideProps(context: any) {
   const supaServer = createServerSupabaseClient(context);
-  const user = await supaServer.auth.getSession();
+  const {data: {session}} = await supaServer.auth.getSession();
 
-  if (user.data && !user.error) {
+  if (session?.user) {
     return {
       redirect: {
         destination: "/dashboard",

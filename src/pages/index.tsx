@@ -26,13 +26,13 @@ import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
-import { useUser } from "@supabase/auth-helpers-react";
+// import { useUser } from "@supabase/auth-helpers-react";
 
 export async function getServerSideProps(context: any) {
   const supaServer = createServerSupabaseClient(context);
-  const user = await supaServer.auth.getUser();
+  const {data: {session}} = await supaServer.auth.getSession();
 
-  if (user && !user.error) {
+  if (session?.user) {
     return {
       redirect: {
         destination: "/dashboard",
@@ -49,12 +49,12 @@ const Home = () => {
   const iconSize = 50;
   const router = useRouter();
 
-  const user = useUser()
-  useEffect(() => {
-    if (user) {
-      router.push("/dashboard")
-    }
-  }, [user])
+  // const user = useUser()
+  // useEffect(() => {
+  //   if (user) {
+  //     router.push("/dashboard")
+  //   }
+  // }, [user])
 
   return (
     <>

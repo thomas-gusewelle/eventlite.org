@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import superjson from "superjson";
 import sendMail from "../../../emails";
 import UpcomingScheduleEmail from "../../../emails/schedule/upcomingSchedule";
+import { prisma } from "../../../server/db/client";
 
 export const config = {
   api: { bodyParser: false },

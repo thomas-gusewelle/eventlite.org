@@ -1,4 +1,4 @@
-import { Client } from "@upstash/qstash/nodejs";
+import { Client } from "@upstash/qstash";
 import superjson from "superjson";
 import { z } from "zod";
 import { createTRPCRouter, adminProcedure } from "./context";

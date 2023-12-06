@@ -1,7 +1,7 @@
 
 import { User, Event, EventPositions, Locations, Role, UserSettings } from "@prisma/client"
 import { Client } from "@upstash/qstash"
-import { verifySignature } from "@upstash/qstash/nextjs"
+import { verifySignature } from "@upstash/qstash/dist/nextjs"
 import { NextApiRequest, NextApiResponse } from "next"
 import superjson from "superjson"
 import { prisma } from "../../../server/db/client"

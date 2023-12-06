@@ -22,7 +22,7 @@
     "@trpc/next": "^10.14.1",
     "@trpc/react-query": "^10.14.1",
     "@trpc/server": "^10.14.1",
-    "@upstash/qstash": "^0.3.6",
+    "@upstash/qstash": "2.3.0",
     "framer-motion": "^8.5.0",
     "lottie-react": "^2.3.1",
     "mailing-core": "^0.9.10",

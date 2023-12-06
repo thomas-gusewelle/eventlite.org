@@ -1,12 +1,8 @@
 
-import { verifySignature } from "@upstash/qstash/nextjs";
+import { verifySignature } from "@upstash/qstash/dist/nextjs";
 import { NextApiRequest, NextApiResponse } from "next";
-import { json } from "stream/consumers";
-import superjson from "superjson";
 import sendMail from "../../../emails";
 import AccountDeleteNotification from "../../../emails/accounts/accountDeleteNotification";
-import DayBeforeEmail from "../../../emails/schedule/dayBeforeEmail";
-import { ReminderEmailData } from "./schedule";
 
 export const config = {
   api: { bodyParser: false },

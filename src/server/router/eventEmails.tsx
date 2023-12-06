@@ -1,62 +1,55 @@
+import { Client } from "@upstash/qstash/nodejs";
+import superjson from "superjson";
 import { z } from "zod";
-import sendMail from "../../emails";
-import UpcomingScheduleEmail from "../../emails/schedule/upcomingSchedule";
 import { createTRPCRouter, adminProcedure } from "./context";
 
 export const eventEmailsRouter = createTRPCRouter({
-  upcomingSchedule: adminProcedure.input(z.object({
-    startingDate: z.date(),
-    endingDate: z.date(),
-    includedUsers: z.object({
-      id: z.string(),
-      email: z.string().email(),
-      firstName: z.string()
-    }).array()
-  })).mutation(async ({ input }) => {
-
-    // This is kind of nasty but works for getting the times right
-    // The issue is that events are saved with UTC time that has the timezone offset 
-    // so they can end up in the wrong day if the event is late in the day
-    const startingDate = input.startingDate;
-    startingDate.setHours(0, 0, 0, 0)
-    let endingDate = input.endingDate;
-    endingDate.setHours(0, startingDate.getTimezoneOffset(), 0, 0)
-    let dayAfterEndingDate = new Date(endingDate)
-    dayAfterEndingDate.setDate(startingDate.getDate() + 2)
-    // Add sevon hours to capture late night events in US timezones
-    dayAfterEndingDate.setHours(7, startingDate.getTimezoneOffset(), 0, 0)
-
-    const events = await Promise.all(input.includedUsers.map(async (user) => {
-      const eventQuery = await prisma?.event.findMany({
-        where: {
-          positions: {
-            some: {
-              userId: user.id
-            }
-          },
-          datetime: {
-            gt: startingDate,
-            lt: dayAfterEndingDate
-          }
-        },
-        include: {
-          Locations: true
-        }
-      })
-      return { user: user, events: eventQuery }
-    }))
-    return Promise.all(events.map(async (event) => {
-      // filter out users who do not have any events scheduled
-      if (event != undefined && event.events != undefined) {
-        if (event.events.length > 0) {
-          sendMail({
-            to: event.user.email, component: <UpcomingScheduleEmail data={{
-              user: event.user,
-              events: event.events?.sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
-            }} startingDate={input.startingDate} endingDate={input.endingDate} />
+  upcomingSchedule: adminProcedure
+    .input(
+      z.object({
+        startingDate: z.date(),
+        endingDate: z.date(),
+        includedUsers: z
+          .object({
+            id: z.string(),
+            email: z.string().email(),
+            firstName: z.string(),
+            orgId: z.string(),
           })
-        }
-      }
-    }))
-  })
-})
+          .array(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      type reqData = {
+        userId: string;
+        email: string;
+        firstName: string;
+        orgId: string;
+        startingDate: Date;
+        endingDate: Date;
+      };
+
+      const qstashClient = new Client({
+        token: process.env.QSTASH_TOKEN!,
+      });
+
+      const messages = Promise.all(
+        input.includedUsers.map((user) => {
+          let resData: reqData = {
+            userId: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            orgId: user.orgId,
+            startingDate: input.startingDate,
+            endingDate: input.endingDate,
+          };
+
+          return qstashClient.publishJSON({
+            url: `https://${ctx.req.headers.host}/api/messaging/emailUserEvents`,
+            body: superjson.stringify(resData),
+          });
+        })
+      );
+    return messages
+    }),
+});

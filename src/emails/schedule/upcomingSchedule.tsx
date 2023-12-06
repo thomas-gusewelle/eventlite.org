@@ -44,7 +44,7 @@ const styles = `
   }
 `;
 
-const UpcomingScheduleEmail = ({ data, startingDate, endingDate }: { data: { user: { id: string, email: string, firstName: string }, events: events }, startingDate: Date, endingDate: Date }) => {
+const UpcomingScheduleEmail = ({ data, startingDate, endingDate }: { data: { user: {  firstName: string }, events: events }, startingDate: Date, endingDate: Date }) => {
   const { user, events } = data
 
   return (

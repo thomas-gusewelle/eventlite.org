@@ -2,7 +2,7 @@ import { createTRPCRouter, loggedInProcedure } from "./context";
 import { z } from "zod"
 import { TRPCError } from "@trpc/server";
 import { createSupaServerClient } from "../../utils/serverSupaClient";
-import { Client } from "@upstash/qstash/nodejs";
+import { Client } from "@upstash/qstash";
 import { AccountDeleteNotifierApiData } from "../../pages/api/messaging/accountDeleteNotification";
 
 export const userSettingsRouter = createTRPCRouter({

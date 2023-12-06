@@ -1,5 +1,5 @@
 import { Event, Locations } from "@prisma/client";
-import { verifySignature } from "@upstash/qstash/nextjs";
+import { verifySignature } from "@upstash/qstash/dist/nextjs";
 import { NextApiRequest, NextApiResponse } from "next";
 import superjson from "superjson";
 import sendMail from "../../../emails";

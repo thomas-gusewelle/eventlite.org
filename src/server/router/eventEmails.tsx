@@ -50,6 +50,6 @@ export const eventEmailsRouter = createTRPCRouter({
           });
         })
       );
-    return messages
+      return messages;
     }),
 });

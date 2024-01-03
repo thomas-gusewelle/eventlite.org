@@ -1,10 +1,10 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import {
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
   PreviewData,
 } from "next";
+import { cookies } from "next/headers";
 import { ParsedUrlQuery } from "querystring";
 import { useContext } from "react";
 import { SectionHeading } from "../../components/headers/SectionHeading";
@@ -13,6 +13,7 @@ import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { AlertContext } from "../../providers/alertProvider";
 import { api } from "../../server/utils/api"
+import { createClient } from "../../utils/supabase/server";
 
 export async function getServerSideProps(
   context:
@@ -22,7 +23,7 @@ export async function getServerSideProps(
       res: NextApiResponse;
     }
 ) {
-  const supabase = createServerSupabaseClient(context);
+  const supabase = createClient(cookies());
   const user = await supabase.auth.getUser();
   if (user.data.user?.email != "tgusewelle@eventlite.org") {
     return {

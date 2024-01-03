@@ -1,4 +1,3 @@
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -14,12 +13,13 @@ import { PasswordChange } from "../../components/modal/userSettings/passwordChan
 import { AlertContext } from "../../providers/alertProvider";
 import { UserContext } from "../../providers/userProvider";
 import { api } from "../../server/utils/api";
+import { createClient } from "../../utils/supabase/client";
 
 const UserSettingsPage = () => {
   const user = useContext(UserContext);
   const context = api.useContext()
   const router = useRouter()
-  const supabase = useSupabaseClient()
+  const supabase = createClient()
   const { setError, setSuccess } = useContext(AlertContext)
   const [openEditEmail, setOpenEditEmail] = useState(false)
   const [openEditPassword, setOpenEditPassword] = useState(false)
@@ -103,3 +103,4 @@ const UserSettingsPage = () => {
 }
 UserSettingsPage.getLayout = sidebar;
 export default UserSettingsPage;
+

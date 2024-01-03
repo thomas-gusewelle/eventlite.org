@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "../utils/supabase/server";
 import {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -17,7 +17,7 @@ export async function getServerSideProps(
       res: NextApiResponse;
     }
 ) {
-  const supabase = createServerSupabaseClient(context);
+  const supabase = createClient(cookeies());
   const user = await supabase.auth.getUser();
 
   if (user.data.user?.email != "tgusewelle@eventlite.org") {
@@ -44,3 +44,7 @@ const AdminPage = () => {
 
 AdminPage.getLayout = sidebar;
 export default AdminPage;
+function cookeies(): import("next/dist/compiled/@edge-runtime/cookies").RequestCookies | import("next/dist/server/app-render").ReadonlyRequestCookies {
+  throw new Error("Function not implemented.");
+}
+

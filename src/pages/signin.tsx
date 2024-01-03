@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
@@ -9,13 +9,13 @@ import { BtnPurple } from "../components/btn/btnPurple";
 import { FormProvider, useForm } from "react-hook-form";
 import { EmailInput } from "../components/form/emailInput";
 import { PasswordField } from "../components/form/password";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { UserContext } from "../providers/userProvider";
+import { createClient } from "../utils/supabase/client";
 
 const SignIn = () => {
   const router = useRouter();
   const methods = useForm<{ email: string; password: string }>();
-  const supabase = useSupabaseClient();
+  const supabase = createClient();
   const user = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
 

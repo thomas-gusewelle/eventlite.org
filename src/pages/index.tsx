@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { CookieOptions, createServerClient, serialize } from "@supabase/ssr";
 import { navbar } from "../components/marketing-site/layout/navbar";
 import { longDate, shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
@@ -26,11 +26,12 @@ import TeamLottie from "../../public/lottie/test.json";
 import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
-// import { useUser } from "@supabase/auth-helpers-react";
+import { createClient } from "../utils/supabase/server";
+import { cookies } from "next/headers";
 
-export async function getServerSideProps(context: any) {
-  const supaServer = createServerSupabaseClient(context);
-  const {data: {session}} = await supaServer.auth.getSession();
+export async function getServerSideProps() {
+  const supabase = createClient(cookies());
+  const { data: { session } } = await supabase.auth.getSession();
 
   if (session?.user) {
     return {

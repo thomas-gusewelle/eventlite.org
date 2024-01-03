@@ -1,5 +1,4 @@
 // src/server/router/context.ts
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
 
@@ -14,7 +13,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 
 
-  const supabaseServer = createServerSupabaseClient({ req, res });
+  const supabaseServer = createClient(cookies());
   const { data } = await supabaseServer.auth.getSession();
 
   // make session nullable so typing overrides isn't hellish
@@ -29,6 +28,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { createClient } from "../../utils/supabase/server";
+import { cookies } from "next/headers";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

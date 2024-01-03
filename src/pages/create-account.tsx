@@ -17,7 +17,7 @@ import { AlertContext } from "../providers/alertProvider";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { createClient } from "../utils/supabase/client";
 
 const CreateAccount = ({
   firstName,
@@ -34,9 +34,8 @@ const CreateAccount = ({
   const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(1);
   const methods = useForm<CreateAccountForm>();
-  const supabaseClient = useSupabaseClient();
   const createOrg = api.organization.createOrg.useMutation({
-    onError(error, variables, context) {
+    onError(error, _variables, _context) {
       setError({
         state: true,
         message: `Error creating organization. Message: ${error.message}`,
@@ -44,7 +43,7 @@ const CreateAccount = ({
     },
   });
   const createUser = api.user.addUser.useMutation({
-    onError(error, variables, context) {
+    onError(error, _variables, _context) {
       setError({
         state: true,
         message: `Error creating user. Message: ${error.message}`,
@@ -71,7 +70,7 @@ const CreateAccount = ({
         onError(err) {
           alert(err);
         },
-        onSuccess(retunredData, variables, context) {
+        onSuccess(_retunredData, _variables, _context) {
           router.push("/dashboard");
         },
       }
@@ -147,7 +146,6 @@ const Steps = ({
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
-  const [orgSetting, setOrgSetting] = useState<"FIND" | "CREATE" | null>(null);
   switch (step) {
     case 1:
       return <CreateOrganization setStep={setStep} />;

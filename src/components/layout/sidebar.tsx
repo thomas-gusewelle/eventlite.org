@@ -32,10 +32,10 @@ import { Menu, Transition } from "@headlessui/react";
 import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 
 import { classNames } from "../../utils/classnames";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { CircularProgress } from "../circularProgress";
 import { FeedbackTabs } from "../feedback/feedback";
 import { createPortal } from "react-dom";
+import { createClient } from "../../utils/supabase/client";
 
 type SideLink = {
   name: string;
@@ -52,7 +52,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const windowWidth = useWindowWidth();
   const router = useRouter();
   const user = useContext(UserContext);
-  const supabase = useSupabaseClient();
+  const supabase = createClient();
 
 
   useEffect(() => {

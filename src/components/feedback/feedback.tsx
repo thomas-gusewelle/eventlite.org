@@ -8,27 +8,8 @@ import submitLottie from "./check-tick.json";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import { useRouter } from "next/router";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { api } from "../../server/utils/api"
-// export const Feedback = ({ isScroll }: { isScroll: boolean }) => {
-//   const [open, setOpen] = useState(true);
-//   return (
-//     <div
-//       className={`${
-//         isScroll ? "sticky" : "absolute"
-//       } bottom-2 right-0 mr-2 flex origin-bottom-right cursor-pointer justify-end`}>
-//       {open ? (
-//         <FeedbackTabs setOpen={setOpen} />
-//       ) : (
-//         <div
-//           onClick={() => setOpen(true)}
-//           className='rounded-lg bg-gray-800 p-3 shadow'>
-//           <MdQuestionAnswer size={20} className='text-gray-50' />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
+import { createClient } from "../../utils/supabase/client";
 
 export const FeedbackTabs = ({
   open,
@@ -39,7 +20,7 @@ export const FeedbackTabs = ({
 }) => {
   const router = useRouter();
   const [isSubmited, setIsSubmited] = useState(false);
-  const supabase = useSupabaseClient();
+  const supabase = createClient();
   const [elementHeight, setElementHeight] = useState(0);
   const reportMutation = api.feedback.submitReport.useMutation();
   const {

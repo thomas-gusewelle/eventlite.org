@@ -1,17 +1,8 @@
-// src/pages/_app.tsx
-// import { withTRPC } from "@trpc/next";
-// import type { AppRouter } from "../server/router";
-
-// import superjson from "superjson";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import {
-  createBrowserSupabaseClient,
-  Session,
-} from "@supabase/auth-helpers-nextjs";
+import { api } from "../server/utils/api"
+import { ReactNode } from "react";
 import "../styles/globals.css";
 import "react-datepicker/dist/react-datepicker.css"
 import { NextPage } from "next";
-import { ReactNode, useState } from "react";
 import { AppProps } from "next/app";
 import { UserProvider as LoginProvider } from "../providers/userProvider";
 import Head from "next/head";
@@ -22,26 +13,19 @@ export type NextPageWithLayout = NextPage & {
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
-  initialSession: Session;
 };
 
 const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
   const layout = getLayout(<Component {...pageProps} />);
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
   return (
     <>
       <Head>
         <title>EventLite.org</title>
       </Head>
-      <SessionContextProvider
-        supabaseClient={supabaseClient}
-        initialSession={pageProps.initialSession}>
         <LoginProvider>{layout}</LoginProvider>
-      </SessionContextProvider>
     </>);
 };
 
-import { api } from "../server/utils/api"
 
 export default api.withTRPC(MyApp)

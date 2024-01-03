@@ -17,7 +17,6 @@ import { AlertContext } from "../providers/alertProvider";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
-import { createClient } from "../utils/supabase/client";
 
 const CreateAccount = ({
   firstName,

@@ -1,5 +1,4 @@
 import { User, UserSettings } from "@prisma/client";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../server/utils/api"
 import { createClient } from "../utils/supabase/client";

@@ -1,4 +1,3 @@
-import { CookieOptions, createServerClient, serialize } from "@supabase/ssr";
 import { navbar } from "../components/marketing-site/layout/navbar";
 import { longDate, shortDate } from "../components/dateTime/dates";
 import { shortTime } from "../components/dateTime/times";
@@ -23,14 +22,34 @@ import MessageLottie from "../../public/lottie/message.json";
 import FormLottie from "../../public/lottie/form3.json";
 import App3 from "../../public/lottie/app4.json";
 import TeamLottie from "../../public/lottie/test.json";
-import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
+// import { LottiePlayer } from "../components/marketing-site/component/lottiePlayer";
 import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
-import { createClient } from "../utils/supabase/server";
-import { cookies } from "next/headers";
+import { GetServerSidePropsContext } from "next";
+import { CookieOptions, createServerClient, serialize } from "@supabase/ssr";
 
-export async function getServerSideProps() {
-  const supabase = createClient(cookies());
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return context.req.cookies[name];
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          context.res.setHeader(
+            "Set-Cookie",
+            serialize(name, value, options)
+          );
+        },
+        remove(name: string, options: CookieOptions) {
+          context.res.setHeader("Set-Cookie", serialize(name, "", options));
+        },
+      },
+    }
+  )
   const { data: { session } } = await supabase.auth.getSession();
 
   if (session?.user) {
@@ -90,7 +109,6 @@ const Home = () => {
           animate={{ opacity: 1, height: "auto" }}
           transition={{ duration: 1 }}
           className='mx-auto max-w-lg'>
-          <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
         </motion.div>
       </section>
 
@@ -287,11 +305,6 @@ const Home = () => {
             to interact seamlessly from anywhere, at any time.
           </p>
 
-          <LottiePlayer
-            animationData={App3}
-            loop={1}
-            divClasses='w-[90%] md:w-[50%] lg:w-[26rem]'
-          />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -309,11 +322,6 @@ const Home = () => {
             you&apos;re using.
           </p>
           {/* <Lottie animationData={MessageLottie} loop={0} /> */}
-          <LottiePlayer
-            animationData={MessageLottie}
-            loop={0}
-            divClasses='mx-auto'
-          />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -329,11 +337,6 @@ const Home = () => {
             streamlines the process of collecting and managing data.
           </p>
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
-          <LottiePlayer
-            animationData={FormLottie}
-            loop={0}
-            divClasses='w-[90%] md:w-[70%] lg:w-[50%] xl:w-[30%] mt-6'
-          />
         </div>
       </section>
 

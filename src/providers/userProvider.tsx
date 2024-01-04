@@ -1,7 +1,8 @@
 import { User, UserSettings } from "@prisma/client";
+import { useUser } from "@supabase/auth-helpers-react";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../server/utils/api"
-import { createClient } from "../utils/supabase/client";
+
 export const UserContext = createContext<
   | (User & {
     UserSettings: UserSettings | null;
@@ -19,12 +20,13 @@ type UserProviderData =
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<UserProviderData>(undefined);
-  const supabase = createClient();
-  const user = supabase.auth.getSession();
+  const user = useUser()
+  console.log("User provider", user)
   api.user.getUser.useQuery(undefined, {
     enabled: !!user,
     onSuccess: (data) => setData(data),
   });
+
 
   useEffect(() => {
     if (user != null) {

@@ -27,6 +27,9 @@ import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
 import { GetServerSidePropsContext } from "next";
 import { CookieOptions, createServerClient, serialize } from "@supabase/ssr";
+import dynamic from "next/dynamic";
+
+const LottiePlayer = dynamic(() => import("../components/marketing-site/component/lottiePlayer"), {loading: () => <></>, ssr: false})
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 
@@ -104,12 +107,7 @@ const Home = () => {
           </button>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0.1, height: 500 }}
-          animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 1 }}
-          className='mx-auto max-w-lg'>
-        </motion.div>
+          <LottiePlayer animationData={TeamLottie} divClasses='lg:-mt-12' />
       </section>
 
       {/* Divider */}
@@ -305,6 +303,11 @@ const Home = () => {
             to interact seamlessly from anywhere, at any time.
           </p>
 
+          <LottiePlayer
+            animationData={App3}
+            loop={1}
+            divClasses='w-[90%] md:w-[50%] lg:w-[26rem]'
+          />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -322,6 +325,11 @@ const Home = () => {
             you&apos;re using.
           </p>
           {/* <Lottie animationData={MessageLottie} loop={0} /> */}
+          <LottiePlayer
+            animationData={MessageLottie}
+            loop={0}
+            divClasses='mx-auto'
+          />
         </div>
         <div className='flex flex-col items-center'>
           <div className='my-2 h-16 w-[1px] bg-white' />
@@ -337,6 +345,11 @@ const Home = () => {
             streamlines the process of collecting and managing data.
           </p>
           {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
+          <LottiePlayer
+            animationData={FormLottie}
+            loop={0}
+            divClasses='w-[90%] md:w-[70%] lg:w-[50%] xl:w-[30%] mt-6'
+          />
         </div>
       </section>
 

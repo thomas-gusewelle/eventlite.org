@@ -1,3 +1,4 @@
+"use client"
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
@@ -34,6 +35,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (user != undefined || user != null) {
+      console.log(user);
       router.push("/dashboard");
     }
   }, [user, router]);

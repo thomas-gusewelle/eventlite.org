@@ -2,7 +2,7 @@ import Lottie, { LottieRef, LottieRefCurrentProps } from "lottie-react";
 import { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 
-export const LottiePlayer = ({
+ const LottiePlayer = ({
   animationData,
   loop,
   divClasses,
@@ -34,3 +34,4 @@ export const LottiePlayer = ({
     </div>
   );
 };
+ export default LottiePlayer;

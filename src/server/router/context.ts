@@ -1,6 +1,9 @@
 // src/server/router/context.ts
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
+import { createApiClient } from "../../utils/supabase/server";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -13,7 +16,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 
 
-  const supabaseServer = createClient(cookies());
+  const supabaseServer = createApiClient(req, res);
   const { data } = await supabaseServer.auth.getSession();
 
   // make session nullable so typing overrides isn't hellish
@@ -26,10 +29,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 *
  * This is where the tRPC API is initialized, connecting the context and transformer.
  */
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
-import { createClient } from "../../utils/supabase/server";
-import { cookies } from "next/headers";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

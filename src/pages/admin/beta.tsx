@@ -1,11 +1,4 @@
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-  PreviewData,
-} from "next";
-import { cookies } from "next/headers";
-import { ParsedUrlQuery } from "querystring";
+import { GetServerSidePropsContext } from "next";
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CircularProgress } from "../../components/circularProgress";
@@ -14,18 +7,11 @@ import { AdminLayout } from "../../components/layout/admin";
 import { sidebar } from "../../components/layout/sidebar";
 import { TableDropdown } from "../../components/menus/tableDropdown";
 import { AreYouSureModal } from "../../components/modal/areYouSure";
-import { api } from "../../server/utils/api"
+import { api } from "../../server/utils/api";
 import { createClient } from "../../utils/supabase/server";
 
-export async function getServerSideProps(
-  context:
-    | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
-    | {
-      req: NextApiRequest;
-      res: NextApiResponse;
-    }
-) {
-  const supabase = createClient(cookies());
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const supabase = createClient(context);
   const user = await supabase.auth.getUser();
   if (user.data.user?.email != "tgusewelle@eventlite.org") {
     return {
@@ -49,7 +35,7 @@ const AdminBetaPage = () => {
   if (getBetaRequest.isLoading) {
     return (
       <AdminLayout>
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <CircularProgress />
         </div>
       </AdminLayout>
@@ -59,10 +45,10 @@ const AdminBetaPage = () => {
   return (
     <AdminLayout>
       <SectionHeading>Beta Requests</SectionHeading>
-      <table className='mt-6 w-full table-auto text-left'>
+      <table className="mt-6 w-full table-auto text-left">
         <thead>
           <tr>
-            <th className='hidden md:table-cell'>ID</th>
+            <th className="hidden md:table-cell">ID</th>
             <th>Org Name</th>
             <th>Name</th>
             <th>Email</th>
@@ -70,11 +56,11 @@ const AdminBetaPage = () => {
         </thead>
         <tbody>
           {getBetaRequest.data?.map((req) => (
-            <tr className='border-t last:border-b' key={req.id}>
-              <td className='hidden md:table-cell'>{req.id}</td>
-              <td className='py-4'>{req.orgName}</td>
+            <tr className="border-t last:border-b" key={req.id}>
+              <td className="hidden md:table-cell">{req.id}</td>
+              <td className="py-4">{req.orgName}</td>
               <td>{req.firstName + " " + req.lastName}</td>
-              <td className='truncate'>{req.email}</td>
+              <td className="truncate">{req.email}</td>
               <td>
                 <TableDropdown
                   options={[
@@ -121,7 +107,8 @@ const AdminBetaPage = () => {
             }}
             open={deleteConfirm}
             setOpen={setDeleteConfirm}
-            title='Are you sure?'>
+            title="Are you sure?"
+          >
             Are you sure you want to delete the request?
           </AreYouSureModal>,
           document.body

@@ -32,6 +32,7 @@ const SignIn = () => {
     }
   });
 
+  // if user is already logged in forward them to dashboard
   useEffect(() => {
     if (user != undefined || user != null) {
       router.push("/dashboard");

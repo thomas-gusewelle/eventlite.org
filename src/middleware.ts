@@ -15,6 +15,7 @@ export async function middleware(req: NextRequest) {
   // Check auth condition
   if (session?.user) {
     // Authentication successful, forward request to protected route.
+    console.log("here 18")
     return res;
   }
 

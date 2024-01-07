@@ -16,14 +16,9 @@ import { api } from "../../server/utils/api"
 import { createClient } from "../../utils/supabase/server";
 
 export async function getServerSideProps(
-  context:
-    | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
-    | {
-      req: NextApiRequest;
-      res: NextApiResponse;
-    }
+  context: GetServerSidePropsContext
 ) {
-  const supabase = createClient(cookies());
+  const supabase = createClient(context);
   const user = await supabase.auth.getUser();
   if (user.data.user?.email != "tgusewelle@eventlite.org") {
     return {

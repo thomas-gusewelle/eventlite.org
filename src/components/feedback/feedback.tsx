@@ -6,10 +6,12 @@ import { BtnPurple } from "../btn/btnPurple";
 import { Modal } from "../modal/modal";
 import submitLottie from "./check-tick.json";
 import { motion } from "framer-motion";
-import Lottie from "lottie-react";
 import { useRouter } from "next/router";
 import { api } from "../../server/utils/api"
 import { createClient } from "../../utils/supabase/client";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), {ssr: false})
 
 export const FeedbackTabs = ({
   open,

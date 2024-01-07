@@ -6,6 +6,10 @@ import { createClient } from "@supabase/supabase-js";
 import { publicProcedure, adminProcedure } from "../router/context"
 export const userRouter = createTRPCRouter({
   getUser: publicProcedure.query(async ({ ctx }) => {
+    //if user does not have a seession return null
+    if (ctx.session == null) {
+      return null
+    }
     const userInfo = await ctx.prisma?.user.findFirst({
       where: {
         id: ctx?.session?.user.id

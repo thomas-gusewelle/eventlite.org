@@ -4,8 +4,6 @@ import {
   NextApiResponse,
   PreviewData,
 } from "next";
-import { cookies } from "next/headers";
-import { ParsedUrlQuery } from "querystring";
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CircularProgress } from "../../components/circularProgress";
@@ -17,15 +15,8 @@ import { AreYouSureModal } from "../../components/modal/areYouSure";
 import { api } from "../../server/utils/api"
 import { createClient } from "../../utils/supabase/server";
 
-export async function getServerSideProps(
-  context:
-    | GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
-    | {
-      req: NextApiRequest;
-      res: NextApiResponse;
-    }
-) {
-  const supabase = createClient(cookies());
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const supabase = createClient(context);
   const user = await supabase.auth.getUser();
   if (user.data.user?.email != "tgusewelle@eventlite.org") {
     return {

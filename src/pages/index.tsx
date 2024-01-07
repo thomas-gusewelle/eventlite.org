@@ -55,13 +55,6 @@ const Home = () => {
   const iconSize = 50;
   const router = useRouter();
 
-  // const user = useUser()
-  // useEffect(() => {
-  //   if (user) {
-  //     router.push("/dashboard")
-  //   }
-  // }, [user])
-
   return (
     <>
       {/* Hero */}

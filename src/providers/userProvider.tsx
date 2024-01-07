@@ -20,29 +20,6 @@ type UserProviderData =
   | null
   | undefined;
 
-// export const UserProvider = ({ children }: { children: ReactNode }) => {
-//   const [data, setData] = useState<UserProviderData>(undefined);
-//   const user = useUser()
-//   console.log("User provider", user)
-//   api.user.getUser.useQuery(undefined, {
-//     enabled: !!user,
-//     onSuccess: (data) => setData(data),
-//   });
-//
-//
-//   useEffect(() => {
-//     if (user != null) {
-//     } else {
-//       setData(undefined);
-//     }
-//   }, [user]);
-
-// supabaseClient.auth.onAuthStateChange((event, session) => {
-//   if (event == "SIGNED_IN") {
-//     query.refetch();
-//   }
-// });
-
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<UserProviderData>(undefined);
   const supabase = createClient();

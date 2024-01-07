@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.2",
+    "@types/mjml-react": "^2.0.10",
     "@types/node": "18.0.0",
     "@types/react": "^18.0.14",
     "@types/react-datepicker": "^4.4.2",

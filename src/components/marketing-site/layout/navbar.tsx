@@ -16,7 +16,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
   const links = [
     { name: "Home", href: "" },
     { name: "Features", href: "#features" },
-    { name: "Roadmap", href: "#roadmap" },
+    { name: "Pricing", href: "#pricing" },
   ];
   // Takes window width and automatically closes mobile menu on resize
   useEffect(() => {

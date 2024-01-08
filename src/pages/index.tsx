@@ -18,15 +18,15 @@ import {
 import { RiPagesFill } from "react-icons/ri";
 
 import { AnimatePresence, motion } from "framer-motion";
-import MessageLottie from "../../public/lottie/message.json";
-import FormLottie from "../../public/lottie/form3.json";
-import App3 from "../../public/lottie/app4.json";
 import TeamLottie from "../../public/lottie/test.json";
 import { useRouter } from "next/router";
 import { PoepleTab } from "../components/marketing-site/component/peopleTab";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
 import { createClient } from "../utils/supabase/server";
+import { BtnNeutral } from "../components/btn/btnNeutral";
+import { BtnPurple } from "../components/btn/btnPurple";
+import { IndexPricingLayout } from "../components/marketing-site/component/pricing";
 
 const LottiePlayer = dynamic(
   () => import("../components/marketing-site/component/lottiePlayer"),
@@ -256,84 +256,8 @@ const Home = () => {
         </div>
       </section> */}
 
-      {/* Roadmap Section */}
-      <section
-        id="roadmap"
-        className="bg-gradient-to-tl from-indigo-500 to-indigo-900 py-16 px-2 text-lg text-white"
-      >
-        <div className="mx-auto grid max-w-xl px-2 text-center text-lg">
-          <h2 className="text-4xl font-bold xl:text-5xl">
-            What&apos;s coming soon
-          </h2>
-          <p className="mt-0 text-gray-300 sm:mt-3">
-            Volunteer scheduling is just the tip of the iceberg. We&apos;re
-            constantly working on new developments and updates that will help
-            you manage your team of volunteers more effectively.
-          </p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="my-2 h-16 w-[1px] bg-white" />
-          <div className="flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900">
-            1
-          </div>
-          <h3 className="mt-6 text-3xl font-bold xl:text-4xl">Mobile App</h3>
-          <p className="max-w-lg pt-6 text-center text-gray-300">
-            EventLite is dedicated to revolutionizing the way you manage your
-            volunteers. Our first step in achieving this goal is to provide you
-            with a user-friendly mobile app that allows you and your volunteers
-            to interact seamlessly from anywhere, at any time.
-          </p>
-
-          <LottiePlayer
-            animationData={App3}
-            loop={1}
-            divClasses="w-[90%] md:w-[50%] lg:w-[26rem]"
-          />
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="my-2 h-16 w-[1px] bg-white" />
-          <div className="flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900">
-            2
-          </div>
-
-          <h3 className="mt-6 text-2xl font-bold xl:text-2xl">
-            Team Messaging
-          </h3>
-          <p className="max-w-lg pt-6 text-center text-gray-300">
-            Our next feature, team messaging, will seamlessly syncs across our
-            website and mobile app, enabling you to stay connected with your
-            team of volunteers, no matter where you are or what device
-            you&apos;re using.
-          </p>
-          {/* <Lottie animationData={MessageLottie} loop={0} /> */}
-          <LottiePlayer
-            animationData={MessageLottie}
-            loop={0}
-            divClasses="mx-auto"
-          />
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="my-2 h-16 w-[1px] bg-white" />
-          <div className="flex aspect-square h-8 items-center justify-center rounded-full bg-white font-bold text-gray-900">
-            3
-          </div>
-          <h3 className="mt-6 text-2xl font-bold xl:text-2xl">Forms</h3>
-          <p className="max-w-lg pt-6 text-center text-gray-300">
-            EventLite&apos;s vision for the future is to create a comprehensive
-            suite of tools that meet the unique needs of every organization.
-            We&apos;re excited to announce that the first of these tools will be
-            EventLite Forms, a powerful, yet easy-to-use application that
-            streamlines the process of collecting and managing data.
-          </p>
-          {/* <Lottie animationData={FormLottie} className='w-[90%]' /> */}
-          <LottiePlayer
-            animationData={FormLottie}
-            loop={0}
-            divClasses="w-[90%] md:w-[70%] lg:w-[50%] xl:w-[30%] mt-6"
-          />
-        </div>
-      </section>
-
+      {/* Pricing Section */}
+      <IndexPricingLayout />
       {/* CTA Section */}
       {/* <section className='bg-gray-100 py-16'>
         <div className='mx-auto grid max-w-md gap-6 px-2 text-center text-lg'>

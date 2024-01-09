@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^2.9.11",
     "@prisma/client": "^5.7.1",
     "@sendgrid/mail": "^7.7.0",
+    "@stripe/stripe-js": "^2.3.0",
     "@supabase/auth-helpers-react": "^0.4.2",
     "@supabase/ssr": "^0.0.10",
     "@supabase/supabase-js": "^2.39.2",
@@ -33,6 +34,7 @@
     "react-hook-form": "^7.33.1",
     "react-icons": "^4.4.0",
     "react-intersection-observer": "^9.4.1",
+    "stripe": "^14.11.0",
     "superjson": "^1.9.1",
     "uuid": "^8.3.2",
     "zod": "^3.20.6"

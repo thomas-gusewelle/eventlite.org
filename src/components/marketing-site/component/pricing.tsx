@@ -14,14 +14,14 @@ export const IndexPricingLayout = () => {
       name: "Medium",
       tag: "All included. Free Forever",
       price: 10,
-      btnText: "Get Started",
+      btnText: "Subscribe Now",
       features: ["20 Team members", "Real-time scheduling", "Email reminders", "Powerful team management"],
     },
     {
       name: "Unlimited",
       tag: "All included. Free Forever",
       price: 15,
-      btnText: "Get Started",
+      btnText: "Subsribe Now",
       features: ["Unlimited Team members", "Real-time scheduling", "Email reminders", "Powerful team management"],
     },
   ];
@@ -50,8 +50,8 @@ export const IndexPricingLayout = () => {
               </p>
               <BtnPurple>{tier.btnText}</BtnPurple>
               <ul className="pt-6">
-                {tier.features.map((feat) => (
-                  <li className="flex items-center gap-3">
+                {tier.features.map((feat, i) => (
+                  <li key-={i} className="flex items-center gap-3">
                     <MdCheck className="text-indigo-600" />
                     <p>{feat}</p>
                   </li>

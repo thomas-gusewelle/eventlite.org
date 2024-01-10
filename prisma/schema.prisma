@@ -35,6 +35,8 @@ model User {
   ResetPassword    ResetPassword[]
   BugFeatureReport BugFeatureReport[]
 
+  stripeCustomerId String?
+
   @@index([id, organizationId, userSettingsId])
 }
 

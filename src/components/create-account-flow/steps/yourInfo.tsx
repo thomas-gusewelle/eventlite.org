@@ -7,6 +7,8 @@ import { LastNameInput } from "../../form/lastNameInput";
 import { PhoneInput } from "../../form/phoneInput";
 import { CardHeader } from "../components/cardHeader";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { BtnNeutral } from "../../btn/btnNeutral";
+import { BtnPurple } from "../../btn/btnPurple";
 
 export const YourInfoStep = ({
   setStep,
@@ -103,7 +105,22 @@ export const YourInfoStep = ({
               {errors.passwordConfirm.message}
             </ErrorSpan>
           )}
-        </>
+       <div
+        onClick={(e) => e.preventDefault()}
+        className='mt-6 flex items-center justify-center gap-6'>
+        <BtnNeutral
+          fullWidth
+          func={() => {
+            setStep(2);
+          }}>
+          Back
+        </BtnNeutral> 
+        <BtnPurple
+          fullWidth
+          onClick={() => null} >
+          Next
+        </BtnPurple>
+      </div> </>
       </section>
     </>
   );

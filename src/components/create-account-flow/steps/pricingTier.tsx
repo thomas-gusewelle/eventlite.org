@@ -4,6 +4,7 @@ import { CardHeader } from "../components/cardHeader";
 import { MdCheck } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
 import { BtnNeutral } from "../../btn/btnNeutral";
+import { useFormKeyboardControls } from "../../../hooks/useFormKeyboardControls";
 
 const plans = [
   {
@@ -22,6 +23,7 @@ const plans = [
 
 export const PricingTiers = ({ tier, setStep }: { tier: string | undefined , setStep: Dispatch<SetStateAction<number>>}) => {
   const [selected, setSelected] = useState(plans[0]);
+  useFormKeyboardControls(() => setStep(2))
   return (
     <>
       <CardHeader>Choose your plan</CardHeader>

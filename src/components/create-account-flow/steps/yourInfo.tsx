@@ -1,31 +1,44 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { ErrorSpan } from "../../errors/errorSpan";
+import { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { EmailInput } from "../../form/emailInput";
 import { FirstNameInput } from "../../form/firstNameInput";
 import { LastNameInput } from "../../form/lastNameInput";
 import { PhoneInput } from "../../form/phoneInput";
 import { CardHeader } from "../components/cardHeader";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
-import { removeDashes } from "../../../utils/formatPhoneNumber";
 import { PasswordField } from "../../form/password";
+import { CreateOrgContext } from "../dataStore";
+import { useFormKeyboardControls } from "../../../hooks/useFormKeyboardControls";
 
 export const YourInfoStep = ({
   setStep,
 }: {
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
+  const { state, setState } = useContext(CreateOrgContext)!;
   const methods = useForm();
-  const {
-    formState: { errors },
-  } = methods;
-  const iconSize = 20;
 
   const handleSubmit = methods.handleSubmit((data) => {
+    setState((prev) => ({
+      ...prev,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phoneNumber: data.phoneNumber,
+      email: data.email,
+      password: data.password,
+      passwordConfirm: data.passwordConfirm,
+    }));
+    setStep(3);
+  });
 
-  })
+  useEffect(() => {
+    methods.reset(state);
+  }, []);
+
+  useFormKeyboardControls(handleSubmit);
+
+  //TODO: Solve issue with the password confirm not autofilling
 
   return (
     <>
@@ -39,18 +52,17 @@ export const YourInfoStep = ({
             <EmailInput />
             <PasswordField />
             <PasswordField isConfirm />
-            <div
-              className="mt-6 flex items-center justify-center gap-6"
-            >
+            <div className="mt-6 flex items-center justify-center gap-6">
               <BtnNeutral
                 fullWidth
                 func={() => {
+                  console.log("back being called");
                   setStep(1);
                 }}
               >
                 Back
               </BtnNeutral>
-              <BtnPurple type="submit" fullWidth >
+              <BtnPurple type="submit" fullWidth>
                 Next
               </BtnPurple>
             </div>

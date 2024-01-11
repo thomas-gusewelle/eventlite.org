@@ -18,6 +18,7 @@ import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 import { PricingTiers } from "../components/create-account-flow/steps/pricingTier";
+import { CreateOrgProvider } from "../components/create-account-flow/dataStore";
 
 const CreateAccount = ({
   firstName,
@@ -35,7 +36,6 @@ const CreateAccount = ({
   const router = useRouter();
   const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(2);
-  const methods = useForm<CreateAccountForm>();
   const createOrg = api.organization.createOrg.useMutation({
     onError(error, _variables, _context) {
       setError({
@@ -53,66 +53,68 @@ const CreateAccount = ({
     },
   });
 
-  const submit = methods.handleSubmit(async (data) => {
-    //if no OrgID == create organization
-
-    createOrg.mutate(
-      {
-        orgName: data.orgName,
-        orgPhoneNumber: data.orgPhoneNumber,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        phoneNumber: data.phoneNumber,
-        status: "ADMIN",
-      },
-
-      {
-        onError(err) {
-          alert(err);
-        },
-        onSuccess(_retunredData, _variables, _context) {
-          router.push("/dashboard");
-        },
-      }
-    );
-  });
-
-  useEffect(() => {
-    methods.reset({
-      orgName: orgName,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-    });
-  }, [email, firstName, lastName, methods, orgName]);
+  // const submit = methods.handleSubmit(async (data) => {
+  //   //if no OrgID == create organization
+  //
+  //   createOrg.mutate(
+  //     {
+  //       orgName: data.orgName,
+  //       orgPhoneNumber: data.orgPhoneNumber,
+  //       firstName: data.firstName,
+  //       lastName: data.lastName,
+  //       email: data.email,
+  //       password: data.password,
+  //       phoneNumber: data.phoneNumber,
+  //       status: "ADMIN",
+  //     },
+  //
+  //     {
+  //       onError(err) {
+  //         alert(err);
+  //       },
+  //       onSuccess(_retunredData, _variables, _context) {
+  //         router.push("/dashboard");
+  //       },
+  //     }
+  //   );
+  // });
+  //
+  // useEffect(() => {
+  //   methods.reset({
+  //     orgName: orgName,
+  //     email: email,
+  //     firstName: firstName,
+  //     lastName: lastName,
+  //   });
+  // }, [email, firstName, lastName, methods, orgName]);
   return (
     <>
       <VerticalLogo />
       {/* <StepCounter signUpState={step} totalNum={2} /> */}
-      <LoginCard>
-        <Steps step={step} setStep={setStep} />
-        {step == 4 && (
-          <div className="mt-6 flex justify-center gap-6">
-            <BtnNeutral
-              fullWidth={true}
-              func={() => {
-                setStep(1);
-              }}
-            >
-              Back
-            </BtnNeutral>
-            <BtnPurple
-              isLoading={createOrg.isLoading}
-              fullWidth={true}
-              type="submit"
-            >
-              Submit
-            </BtnPurple>
-          </div>
-        )}
-      </LoginCard>
+      <CreateOrgProvider>
+        <LoginCard>
+          <Steps step={step} setStep={setStep} />
+        {/*  {step == 4 && (
+            <div className="mt-6 flex justify-center gap-6">
+              <BtnNeutral
+                fullWidth={true}
+                func={() => {
+                  setStep(1);
+                }}
+              >
+                Back
+              </BtnNeutral>
+              <BtnPurple
+                isLoading={createOrg.isLoading}
+                fullWidth={true}
+                type="submit"
+              >
+                Submit
+              </BtnPurple>
+            </div>
+          )} */}
+        </LoginCard>
+      </CreateOrgProvider>
     </>
   );
 };

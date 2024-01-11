@@ -1,57 +1,34 @@
-import { CreateRouterInner } from "@trpc/server";
-import {
-  Context,
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+//TODO: Must use setState or else data is erased
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 
 type CreateAccountForm = {
-  orgID?: string;
   orgName: string;
-  orgPhoneNumber?: string;
+  orgPhoneNumber: string;
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
   password: string;
-  confirmPassword: string;
+  passwordConfirm: string;
 };
-export const CreateOrgContext = createContext<CreateAccountForm>({
-  orgID: undefined,
-  orgName: "",
-  orgPhoneNumber: "",
-  firstName: "",
-  lastName: "",
-  email: "",
-  phoneNumber: "",
-  password: "",
-  confirmPassword: "",
-});
+export const CreateOrgContext = createContext<{state: CreateAccountForm, setState: Dispatch<SetStateAction<CreateAccountForm>>} | undefined>(undefined);
 
 export function CreateOrgProvider({ children }: { children: any }) {
-const value = {
-  orgID: undefined,
-  orgName: "",
-  orgPhoneNumber: "",
-  firstName: "",
-  lastName: "",
-  email: "",
-  phoneNumber: "",
-  password: "",
-  confirmPassword: "",
-}
+  const value: CreateAccountForm = {
+    orgName: "",
+    orgPhoneNumber: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    passwordConfirm: "",
+  };
+  const [state, setState] = useState(value);
   useEffect(() => {
-    console.log(value);
-  }, [value])
-  return (
-    <CreateOrgContext.Provider
-      value={value}
-    ></CreateOrgContext.Provider>
-  );
+    console.log(state);
+  }, [state]);
+  return <CreateOrgContext.Provider value={{state, setState}}>{children}</CreateOrgContext.Provider>;
 }
 
 export function useAppState() {

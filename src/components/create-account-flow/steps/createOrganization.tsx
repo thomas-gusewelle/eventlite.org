@@ -8,7 +8,6 @@ import { PhoneInput } from "../../form/phoneInput";
 import { CardHeader } from "../components/cardHeader";
 import { CreateOrgContext } from "../dataStore";
 
-// TODO: finish validation of URL and error reporting
 export const CreateOrganization = ({
   setStep,
 }: {
@@ -18,20 +17,24 @@ export const CreateOrganization = ({
   const {
     formState: { errors },
   } = methods;
-  const orgFormContext = useContext(CreateOrgContext);
+  const { state, setState } = useContext(CreateOrgContext!);
 
   const handleSubmit = methods.handleSubmit((data) => {
-    orgFormContext.orgName = data.orgName;
-    orgFormContext.orgPhoneNumber = data.phoneNumber;
+    setState((prev) => ({
+      ...prev,
+      orgName: data.orgName,
+      orgPhoneNumber: data.phoneNumber,
+    }));
     setStep(2);
   });
 
   useEffect(() => {
-    methods.setValue("orgName", orgFormContext.orgName)
-    methods.setValue("phoneNumber", orgFormContext.orgPhoneNumber)
+    methods.setValue("orgName", state.orgName);
+    methods.setValue("phoneNumber", state.orgPhoneNumber);
   }, []);
+
   useFormKeyboardControls(handleSubmit);
- 
+
   return (
     <>
       <CardHeader>Create Organization</CardHeader>

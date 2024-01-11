@@ -11,6 +11,9 @@ export function useFormKeyboardControls(onSubmit: Function) {
 
     document.addEventListener("keydown", (e) => handleKey(e));
 
-    return () => document.removeEventListener("keydown", (e) => handleKey(e));
+    return () =>{
+      console.log("removed")
+document.removeEventListener("keydown", (e) => handleKey(e));
+    } 
   }, []);
 }

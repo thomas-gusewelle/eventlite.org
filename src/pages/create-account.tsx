@@ -12,26 +12,29 @@ import { CreateOrganization } from "../components/create-account-flow/steps/crea
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
 import { BtnNeutral } from "../components/btn/btnNeutral";
 import { BtnPurple } from "../components/btn/btnPurple";
-import { api } from "../server/utils/api"
+import { api } from "../server/utils/api";
 import { AlertContext } from "../providers/alertProvider";
 import { LoginCard } from "../components/create-account-flow/components/card";
 import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
+import { PricingTiers } from "../components/create-account-flow/steps/pricingTier";
 
 const CreateAccount = ({
   firstName,
   lastName,
   orgName,
   email,
+  tier,
 }: {
   firstName: string | undefined;
   lastName: string | undefined;
   orgName: string | undefined;
   email: string | undefined;
+  tier: string | undefined;
 }) => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const methods = useForm<CreateAccountForm>();
   const createOrg = api.organization.createOrg.useMutation({
     onError(error, _variables, _context) {
@@ -89,28 +92,26 @@ const CreateAccount = ({
       <VerticalLogo />
       {/* <StepCounter signUpState={step} totalNum={2} /> */}
       <LoginCard>
-        <FormProvider {...methods}>
-          <form onSubmit={submit}>
-            <Steps step={step} setStep={setStep} />
-            {step == 2 && (
-              <div className='mt-6 flex justify-center gap-6'>
-                <BtnNeutral
-                  fullWidth={true}
-                  func={() => {
-                    setStep(1);
-                  }}>
-                  Back
-                </BtnNeutral>
-                <BtnPurple
-                  isLoading={createOrg.isLoading}
-                  fullWidth={true}
-                  type='submit'>
-                  Submit
-                </BtnPurple>
-              </div>
-            )}
-          </form>
-        </FormProvider>
+        <Steps step={step} setStep={setStep} />
+        {step == 4 && (
+          <div className="mt-6 flex justify-center gap-6">
+            <BtnNeutral
+              fullWidth={true}
+              func={() => {
+                setStep(1);
+              }}
+            >
+              Back
+            </BtnNeutral>
+            <BtnPurple
+              isLoading={createOrg.isLoading}
+              fullWidth={true}
+              type="submit"
+            >
+              Submit
+            </BtnPurple>
+          </div>
+        )}
       </LoginCard>
     </>
   );
@@ -118,11 +119,16 @@ const CreateAccount = ({
 
 const CreateAcountPage = () => {
   const router = useRouter();
-  const { orgName, firstName, lastName, email } = router.query;
+  const { orgName, firstName, lastName, email, tier } = router.query;
 
-  if (Array.isArray(orgName) || Array.isArray(firstName) || Array.isArray(lastName) || Array.isArray(email)) {
-    return <div>Error with invite link
-    </div>
+  if (
+    Array.isArray(orgName) ||
+    Array.isArray(firstName) ||
+    Array.isArray(lastName) ||
+    Array.isArray(email) ||
+    Array.isArray(tier)
+  ) {
+    return <div>Error with invite link</div>;
   }
 
   return (
@@ -131,6 +137,7 @@ const CreateAcountPage = () => {
       lastName={lastName}
       firstName={firstName}
       email={email}
+      tier={tier}
     />
   );
 };
@@ -150,7 +157,8 @@ const Steps = ({
       return <CreateOrganization setStep={setStep} />;
     case 2:
       return <YourInfoStep setStep={setStep} />;
-
+    case 3:
+      return <PricingTiers tier={undefined} setStep={setStep} />;
     default:
       return <div></div>;
   }

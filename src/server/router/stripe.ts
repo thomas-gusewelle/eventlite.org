@@ -5,9 +5,10 @@ import { loadStripe } from "@stripe/stripe-js"
 export const stripeRouter = createTRPCRouter({
   createCustomer: publicProcedure.input(z.object({
     orgName: z.string(),
-    email: z.string()
-  })).mutation(async ({ ctx }) {
+    email: z.string().email()
+  })).mutation(async ({ ctx }) =>  {
     //TODO: finish create customer implementation
-    const stripe = loadStripe(process.env.STRIPE_SECRET_KEY!)
+    const stripe = await loadStripe(process.env.STRIPE_SECRET_KEY!)
+    const customer = await stripe?.customer.create({})
   })
 }); 

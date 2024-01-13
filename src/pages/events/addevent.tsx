@@ -184,7 +184,6 @@ const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, dup
 const AddEventPage = () => {
   const router = useRouter();
 
-  //TODO: check type of new things and pass them to the page
   const { redirect, duplicateId } = router.query;
 
   if (Array.isArray(redirect) || Array.isArray(duplicateId)) {

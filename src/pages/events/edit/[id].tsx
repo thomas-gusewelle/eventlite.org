@@ -211,7 +211,6 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               message: `There was an error updating you event. Please try again. ${error.message}`,
             });
           },
-          // TODO: create new eventReccuranceData for event that was not already recuring
           onSuccess(returnedData) {
             let _data: any = data;
 

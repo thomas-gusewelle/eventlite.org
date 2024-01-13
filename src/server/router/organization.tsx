@@ -36,6 +36,9 @@ export const organizationRouter = createTRPCRouter({
       email: input.email,
       type: "signup",
       password: input.password,
+      options: {
+        redirectTo: "https://www.eventlite.org/dashboard"
+      }
     });
     if (error) {
       throw new TRPCError({

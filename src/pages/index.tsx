@@ -381,7 +381,6 @@ const EventsTab = () => {
               userResponse: true,
             },
           ].map((position) => {
-            // TODO: implement input field for entering name
             if (position.id == 1) {
               return (
                 <div

@@ -36,7 +36,6 @@ export const YourInfoStep = ({
     methods.reset(state);
   }, []);
 
-  useFormKeyboardControls(handleSubmit);
 
   //TODO: Solve issue with the password confirm not autofilling
 

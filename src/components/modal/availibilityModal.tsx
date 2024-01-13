@@ -31,14 +31,6 @@ export const AvaililityModal: React.FC<{
   const [deletedDates, setDeletedDates] = useState<Date[]>([]);
   const opts = api.useContext()
 
-  //TODO: fix display of dates below calendar
-  // useEffect(() => {
-  //   setNewDates(
-  //     newDates.filter((date) =>
-  //       exisitingDates.map((item) => item.date).includes(date)
-  //     )
-  //   );
-  // }, [exisitingDates, newDates]);
 
   const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation(
     {

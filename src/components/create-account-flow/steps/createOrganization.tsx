@@ -17,7 +17,7 @@ export const CreateOrganization = ({
   const {
     formState: { errors },
   } = methods;
-  const { state, setState } = useContext(CreateOrgContext!);
+  const { state, setState } = useContext(CreateOrgContext)!;
 
   const handleSubmit = methods.handleSubmit((data) => {
     setState((prev) => ({
@@ -33,7 +33,6 @@ export const CreateOrganization = ({
     methods.setValue("phoneNumber", state.orgPhoneNumber);
   }, []);
 
-  useFormKeyboardControls(handleSubmit);
 
   return (
     <>

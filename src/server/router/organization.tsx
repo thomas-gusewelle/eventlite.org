@@ -7,6 +7,7 @@ import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
 import { createTRPCRouter, publicProcedure, adminProcedure } from "./context";
 
 
+// take in tier 
 export const organizationRouter = createTRPCRouter({
   createOrg: publicProcedure.input(
     z.object({

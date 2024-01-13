@@ -1,29 +1,46 @@
 import { RadioGroup } from "@headlessui/react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { CardHeader } from "../components/cardHeader";
 import { MdCheck } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
 import { BtnNeutral } from "../../btn/btnNeutral";
-import { useFormKeyboardControls } from "../../../hooks/useFormKeyboardControls";
+import { CreateOrgContext } from "../dataStore";
 
-const plans = [
-  {
-    name: "Free",
-    description: "Up to 5 users",
-  },
-  {
-    name: "Medium",
-    description: "Up to 20 users",
-  },
-  {
-    name: "Unlimited",
-    description: "Unlimited users",
-  },
-];
+const plans: {
+  name: string;
+  tier: "free" | "medium" | "unlimited";
+  description: string;
+}[] = [
+    {
+      name: "Free",
+      tier: "free",
+      description: "Up to 5 users",
+    },
+    {
+      name: "Medium",
+      tier: "medium",
+      description: "Up to 20 users",
+    },
+    {
+      name: "Unlimited",
+      tier: "unlimited",
+      description: "Unlimited users",
+    },
+  ];
 
-export const PricingTiers = ({ tier, setStep }: { tier: string | undefined , setStep: Dispatch<SetStateAction<number>>}) => {
-  const [selected, setSelected] = useState(plans[0]);
-  useFormKeyboardControls(() => setStep(2))
+export const PricingTiers = ({
+  tier,
+  setStep,
+}: {
+  tier: string | undefined;
+  setStep: Dispatch<SetStateAction<number>>;
+}) => {
+  const orgFormContext = useContext(CreateOrgContext);
+  const [selected, setSelected] = useState<{
+    name: string;
+    tier: "free" | "medium" | "unlimited";
+    description: string;
+  }>(plans[0]!);
   return (
     <>
       <CardHeader>Choose your plan</CardHeader>
@@ -72,17 +89,31 @@ export const PricingTiers = ({ tier, setStep }: { tier: string | undefined , set
       </RadioGroup>
       <div
         onClick={(e) => e.preventDefault()}
-        className='mt-6 flex items-center justify-center gap-6'>
+        className="mt-6 flex items-center justify-center gap-6"
+      >
         <BtnNeutral
           fullWidth
           func={() => {
             setStep(2);
-          }}>
+          }}
+        >
           Back
-        </BtnNeutral> 
+        </BtnNeutral>
         <BtnPurple
           fullWidth
-          onClick={() => null} >
+          onClick={() => {
+            orgFormContext?.setState((prev) => ({
+              ...prev,
+              tier: selected.tier,
+            }));
+            if (selected.tier == "free") {
+              setStep(5);
+              
+            } else {
+              setStep(4);
+            }
+          }}
+        >
           Next
         </BtnPurple>
       </div>

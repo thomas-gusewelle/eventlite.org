@@ -39,7 +39,6 @@ export const PaginationBar: React.FC<{
     setPageNums(_paginate);
   }, [pageNum, pageRow, paginateData.total_pages]);
 
-  // TODO: add in window scroll to top on click
   const pageUp = () => {
     if (pageNum == paginateData.total_pages) return;
     setPageNum(pageNum + 1);

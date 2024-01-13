@@ -2,16 +2,11 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { useRouter } from "next/router";
-import { FormProvider, useForm } from "react-hook-form";
-import { CreateAccountForm } from "../../types/createAccountFormValues";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
-import { BtnNeutral } from "../components/btn/btnNeutral";
-import { BtnPurple } from "../components/btn/btnPurple";
 import { api } from "../server/utils/api";
 import { AlertContext } from "../providers/alertProvider";
 import { LoginCard } from "../components/create-account-flow/components/card";
@@ -19,6 +14,7 @@ import { loginFlowLayout } from "../components/layout/login-flow-layout";
 import { VerticalLogo } from "../components/create-account-flow/components/VerticalLogo";
 import { PricingTiers } from "../components/create-account-flow/steps/pricingTier";
 import { CreateOrgProvider } from "../components/create-account-flow/dataStore";
+import { CreateAccountIdentifier } from "../components/create-account-flow/steps/creatingAccountIndicator";
 
 const CreateAccount = ({
   firstName,
@@ -35,7 +31,7 @@ const CreateAccount = ({
 }) => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const createOrg = api.organization.createOrg.useMutation({
     onError(error, _variables, _context) {
       setError({
@@ -94,7 +90,7 @@ const CreateAccount = ({
       <CreateOrgProvider>
         <LoginCard>
           <Steps step={step} setStep={setStep} />
-        {/*  {step == 4 && (
+          {/*  {step == 4 && (
             <div className="mt-6 flex justify-center gap-6">
               <BtnNeutral
                 fullWidth={true}
@@ -161,6 +157,8 @@ const Steps = ({
       return <YourInfoStep setStep={setStep} />;
     case 3:
       return <PricingTiers tier={undefined} setStep={setStep} />;
+    case 5:
+      return <CreateAccountIdentifier />;
     default:
       return <div></div>;
   }

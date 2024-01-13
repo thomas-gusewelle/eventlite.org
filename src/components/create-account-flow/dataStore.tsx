@@ -1,4 +1,3 @@
-//TODO: Must use setState or else data is erased
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 
 type CreateAccountForm = {
@@ -10,6 +9,7 @@ type CreateAccountForm = {
   phoneNumber: string;
   password: string;
   passwordConfirm: string;
+  tier: "free" | "medium" | "unlimited"
 };
 export const CreateOrgContext = createContext<{state: CreateAccountForm, setState: Dispatch<SetStateAction<CreateAccountForm>>} | undefined>(undefined);
 
@@ -23,6 +23,7 @@ export function CreateOrgProvider({ children }: { children: any }) {
     phoneNumber: "",
     password: "",
     passwordConfirm: "",
+    tier: "free"
   };
   const [state, setState] = useState(value);
   useEffect(() => {

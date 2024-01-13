@@ -28,7 +28,6 @@ type stateData = (Event & {
   })[];
 })[];
 
-// TODO: fix spacing issue when one event is approve and the other is not
 
 const Dashboard = () => {
   const user = useContext(UserContext);

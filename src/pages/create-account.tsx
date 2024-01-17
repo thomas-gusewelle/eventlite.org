@@ -15,6 +15,7 @@ import { VerticalLogo } from "../components/create-account-flow/components/Verti
 import { PricingTiers } from "../components/create-account-flow/steps/pricingTier";
 import { CreateOrgProvider } from "../components/create-account-flow/dataStore";
 import { CreateAccountIdentifier } from "../components/create-account-flow/steps/creatingAccountIndicator";
+import { CardInfoSection } from "../components/create-account-flow/steps/cardInfo";
 
 const CreateAccount = ({
   firstName,
@@ -31,7 +32,7 @@ const CreateAccount = ({
 }) => {
   const router = useRouter();
   const { setError } = useContext(AlertContext);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(4);
   const createOrg = api.organization.createOrg.useMutation({
     onError(error, _variables, _context) {
       setError({
@@ -157,6 +158,8 @@ const Steps = ({
       return <YourInfoStep setStep={setStep} />;
     case 3:
       return <PricingTiers tier={undefined} setStep={setStep} />;
+    case 4:
+      return <CardInfoSection />;
     case 5:
       return <CreateAccountIdentifier />;
     default:

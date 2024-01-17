@@ -1,7 +1,7 @@
 import type Stripe from "stripe";
 import { prisma } from "../db/client";
 
-export async function getUserOrCreate({
+export async function getCustomerOrCreate({
 	stripe,
 	userId,
 }: {

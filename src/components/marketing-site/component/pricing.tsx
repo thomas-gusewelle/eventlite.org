@@ -1,7 +1,9 @@
+import { useRouter } from "next/router";
 import { MdCheck } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
 
 export const IndexPricingLayout = () => {
+  const router = useRouter();
   const tiers = [
     {
       name: "Free",
@@ -9,6 +11,7 @@ export const IndexPricingLayout = () => {
       price: 0,
       btnText: "Get Started",
       features: ["5 Team members", "Real-time scheduling", "Email reminders", "Powerful team management"],
+      priceId: "price_1OWkdVKjgiEDHq2AesuPdTmq"
     },
     {
       name: "Medium",
@@ -16,6 +19,7 @@ export const IndexPricingLayout = () => {
       price: 10,
       btnText: "Subscribe Now",
       features: ["20 Team members", "Real-time scheduling", "Email reminders", "Powerful team management"],
+      priceId: "price_1OWkdjKjgiEDHq2AOHNwODgi"
     },
     {
       name: "Unlimited",
@@ -23,6 +27,7 @@ export const IndexPricingLayout = () => {
       price: 15,
       btnText: "Subsribe Now",
       features: ["Unlimited Team members", "Real-time scheduling", "Email reminders", "Powerful team management"],
+      priceId: "price_1OWkdyKjgiEDHq2AnKIzRjEY"
     },
   ];
   return (
@@ -48,7 +53,7 @@ export const IndexPricingLayout = () => {
               <p className="py-6">
                 <span className="text-2xl font-bold">${tier.price}</span>/month
               </p>
-              <BtnPurple>{tier.btnText}</BtnPurple>
+              <BtnPurple onClick={() => router.push(`/create-account?tier=${tier.priceId}`)}>{tier.btnText}</BtnPurple>
               <ul className="pt-6">
                 {tier.features.map((feat, i) => (
                   <li key-={i} className="flex items-center gap-3">

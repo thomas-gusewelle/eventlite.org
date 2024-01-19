@@ -68,7 +68,7 @@ const Home = () => {
             className="mt-6 text-4xl font-bold tracking-wide sm:text-5xl 2xl:text-6xl"
           >
             <h1>
-              Volunteer scheduling{" "}
+              Volunteer scheduling
               <span className="text-indigo-600">organized and simple</span>
             </h1>
           </div>
@@ -82,7 +82,7 @@ const Home = () => {
             tabIndex={1}
             className={`flex w-full justify-center rounded-lg border border-transparent bg-indigo-600 px-6 py-2 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 lg:w-auto`}
           >
-            Join the Beta Now
+            Get Started Now
           </button>
         </div>
 

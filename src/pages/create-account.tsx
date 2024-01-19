@@ -1,9 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
@@ -20,55 +15,74 @@ import { GetServerSidePropsContext } from "next";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
 import { stripe } from "../server/stripe/client";
 
-export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   let stripeSubscriptionId: string;
 
   const { tier } = context.query;
   if (Array.isArray(tier)) {
-    throw new Error("Tier must be a single string")
+    throw new Error("Tier must be a single string");
   }
   console.log(tier);
 
-  if (hasCookie('stripeSubscriptionId', { req: context.req, res: context.res })) {
-    stripeSubscriptionId = getCookie('stripeSubscriptionId', { req: context.req, res: context.res }) as string;
-    const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId, { expand: ['latest_invoice.payment_intent'] });
+  if (
+    hasCookie("stripeSubscriptionId", { req: context.req, res: context.res })
+  ) {
+    stripeSubscriptionId = getCookie("stripeSubscriptionId", {
+      req: context.req,
+      res: context.res,
+    }) as string;
+    const subscription = await stripe.subscriptions.retrieve(
+      stripeSubscriptionId,
+      { expand: ["latest_invoice.payment_intent"] }
+    );
 
     //check to make sure subscription is the same as the selected tier and if not update it to reflect the chosen tier
     if (tier && subscription.items.data[0]?.price.id != tier) {
-      const updatedSubscription = await stripe.subscriptions.update(stripeSubscriptionId, {
-        cancel_at_period_end: false, items: [
-          {
-            id: subscription?.items?.data[0]?.id,
-            price: tier
-          }
-        ], expand: ['latest_invoice.payment_intent']
-      })
-      return { props: { updatedSubscription } }
+      const updatedSubscription = await stripe.subscriptions.update(
+        stripeSubscriptionId,
+        {
+          cancel_at_period_end: false,
+          items: [
+            {
+              id: subscription?.items?.data[0]?.id,
+              price: tier,
+            },
+          ],
+          expand: ["latest_invoice.payment_intent"],
+        }
+      );
+      return { props: { updatedSubscription } };
     }
 
-    return { props: { subscription } }
+    return { props: { subscription } };
   }
 
   // if there is no existing subscription in cookies then create on
   const customer = await stripe.customers.create();
   const subscription = await stripe.subscriptions.create({
     customer: customer.id,
-    items: [{
-      // takes in the priceID from the selectedID or uses the fier tier
-      price: tier ?? "price_1OWkdVKjgiEDHq2AesuPdTmq",
-    }],
-    payment_behavior: 'default_incomplete',
-    payment_settings: { save_default_payment_method: 'on_subscription' },
-    expand: ['latest_invoice.payment_intent'],
+    items: [
+      {
+        // takes in the priceID from the selectedID or uses the fier tier
+        price: tier ?? "price_1OWkdVKjgiEDHq2AesuPdTmq",
+      },
+    ],
+    payment_behavior: "default_incomplete",
+    payment_settings: { save_default_payment_method: "on_subscription" },
+    expand: ["latest_invoice.payment_intent"],
   });
 
-  setCookie('stripeSubscriptionId', subscription.id, { req: context.req, res: context.res });
+  setCookie("stripeSubscriptionId", subscription.id, {
+    req: context.req,
+    res: context.res,
+  });
 
-
+  return { props: { subscription } };
 
   // get stripe customer if exists in cookies
-
-})
+};
 
 const CreateAccount = ({
   firstName,

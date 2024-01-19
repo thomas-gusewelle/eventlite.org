@@ -102,7 +102,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
                     ))}
                     <li className='mt-6 md:mt-0 md:ml-6'>
                       <BtnPurple fullWidth onClick={() => router.push("/create-account")}>
-                        Join the Beta Now
+                        Get Started 
                       </BtnPurple>
                     </li>
                     <li>
@@ -131,7 +131,7 @@ const NavbarLayout: React.FC<{ children: any }> = ({ children }) => {
           </div>
           <div className='item-center hidden gap-3 md:flex '>
             <BtnPurple onClick={() => router.push("/create-account")}>
-              Join the Beta
+              Get Started 
             </BtnPurple>
             <BtnNeutral func={() => router.push("/signin")}>Login</BtnNeutral>
           </div>

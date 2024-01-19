@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "./context";
-import { loadStripe } from "@stripe/stripe-js";
 import { stripe } from "../stripe/client";
 import { getCustomerOrCreate } from "../stripe/stripeHandlers";
 import { TRPCError } from "@trpc/server";

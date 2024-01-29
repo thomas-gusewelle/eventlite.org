@@ -1,6 +1,20 @@
-import { loadedStripe as stripe } from "../../../server/stripe/client"
+import { Elements, PaymentElement } from "@stripe/react-stripe-js";
+import { loadedStripe } from "../../../server/stripe/client";
+export const CardInfoSection = ({
+  stripeClientSecret,
+}: {
+  stripeClientSecret: string | null;
+}) => {
+  if (stripeClientSecret == null) {
+    return <></>;
+  }
 
-export const CardInfoSection =  () => {
-
-return <></>
-}
+  return (
+    <Elements
+      stripe={loadedStripe}
+      options={{ clientSecret: stripeClientSecret }}
+    >
+      <PaymentElement />
+    </Elements>
+  );
+};

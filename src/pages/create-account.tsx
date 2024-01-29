@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/router";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
@@ -11,9 +17,14 @@ import { PricingTiers } from "../components/create-account-flow/steps/pricingTie
 import { CreateOrgProvider } from "../components/create-account-flow/dataStore";
 import { CreateAccountIdentifier } from "../components/create-account-flow/steps/creatingAccountIndicator";
 import { CardInfoSection } from "../components/create-account-flow/steps/cardInfo";
-import { GetServerSidePropsContext } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
 import { stripe } from "../server/stripe/client";
+import Stripe from "stripe";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
@@ -24,7 +35,6 @@ export const getServerSideProps = async (
   if (Array.isArray(tier)) {
     throw new Error("Tier must be a single string");
   }
-  console.log(tier);
 
   if (
     hasCookie("stripeSubscriptionId", { req: context.req, res: context.res })
@@ -53,9 +63,17 @@ export const getServerSideProps = async (
           expand: ["latest_invoice.payment_intent"],
         }
       );
-      return { props: { updatedSubscription } };
+
+  let invoice: Stripe.Invoice = subscription.latest_invoice as Stripe.Invoice;
+  let paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+      console.log(paymentIntent.client_secret)
+      return { props: { subscription: updatedSubscription } };
     }
 
+  let invoice: Stripe.Invoice = subscription.latest_invoice as Stripe.Invoice;
+    console.log(invoice)
+  let paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+      console.log(paymentIntent.client_secret)
     return { props: { subscription } };
   }
 
@@ -90,12 +108,14 @@ const CreateAccount = ({
   orgName,
   email,
   tier,
+  clientSecret,
 }: {
   firstName: string | undefined;
   lastName: string | undefined;
   orgName: string | undefined;
   email: string | undefined;
   tier: string | undefined;
+  clientSecret: string | null;
 }) => {
   const { setError } = useContext(AlertContext);
   const [step, setStep] = useState(4);
@@ -115,48 +135,23 @@ const CreateAccount = ({
       });
     },
   });
-
-  // const submit = methods.handleSubmit(async (data) => {
-  //   //if no OrgID == create organization
+  // console.log(subscription)
   //
-  //   createOrg.mutate(
-  //     {
-  //       orgName: data.orgName,
-  //       orgPhoneNumber: data.orgPhoneNumber,
-  //       firstName: data.firstName,
-  //       lastName: data.lastName,
-  //       email: data.email,
-  //       password: data.password,
-  //       phoneNumber: data.phoneNumber,
-  //       status: "ADMIN",
-  //     },
-  //
-  //     {
-  //       onError(err) {
-  //         alert(err);
-  //       },
-  //       onSuccess(_retunredData, _variables, _context) {
-  //         router.push("/dashboard");
-  //       },
-  //     }
-  //   );
-  // });
-  //
-  // useEffect(() => {
-  //   methods.reset({
-  //     orgName: orgName,
-  //     email: email,
-  //     firstName: firstName,
-  //     lastName: lastName,
-  //   });
-  // }, [email, firstName, lastName, methods, orgName]);
+  // console.log(subscription.subscription.latest_invoice)
+  // let invoice: Stripe.Invoice = subscription.subscription
+  //   .latest_invoice as Stripe.Invoice;
+  // let paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
   return (
     <>
       <VerticalLogo />
       {/* <StepCounter signUpState={step} totalNum={2} /> */}
       <CreateOrgProvider>
         <LoginCard>
-          <Steps step={step} setStep={setStep} />
+          <Steps
+            step={step}
+            setStep={setStep}
+            stripeClientSecret={clientSecret}
+          />
           {/*  {step == 4 && (
             <div className="mt-6 flex justify-center gap-6">
               <BtnNeutral
@@ -182,9 +177,24 @@ const CreateAccount = ({
   );
 };
 
-const CreateAcountPage = () => {
+const CreateAcountPage = ({
+  subscription,
+}: {
+  subscription: InferGetServerSidePropsType<typeof getServerSideProps>;
+}) => {
   const router = useRouter();
   const { orgName, firstName, lastName, email, tier } = router.query;
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+  useEffect(() => {
+    const invoice = subscription.subscription.latest_invoice as Stripe.Invoice;
+    const payemntIntent = invoice.payment_intent as Stripe.PaymentIntent;
+    setClientSecret(payemntIntent.client_secret);
+  }, []);
+
+  useEffect(() => {
+    console.log(clientSecret)
+  }, [clientSecret])
 
   if (
     Array.isArray(orgName) ||
@@ -203,6 +213,7 @@ const CreateAcountPage = () => {
       firstName={firstName}
       email={email}
       tier={tier}
+      clientSecret={clientSecret}
     />
   );
 };
@@ -213,9 +224,11 @@ export default CreateAcountPage;
 const Steps = ({
   step,
   setStep,
+  stripeClientSecret,
 }: {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
+  stripeClientSecret: string | null;
 }) => {
   switch (step) {
     case 1:
@@ -225,7 +238,7 @@ const Steps = ({
     case 3:
       return <PricingTiers tier={undefined} setStep={setStep} />;
     case 4:
-      return <CardInfoSection />;
+      return <CardInfoSection stripeClientSecret={stripeClientSecret} />;
     case 5:
       return <CreateAccountIdentifier />;
     default:

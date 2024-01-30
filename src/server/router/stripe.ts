@@ -20,7 +20,7 @@ export const stripeRouter = createTRPCRouter({
         name: input.orgName,
         email: input.email,
       });
-    return customer
+      return customer;
     }),
 
   createSubscription: publicProcedure
@@ -66,5 +66,24 @@ export const stripeRouter = createTRPCRouter({
       } catch (error: any) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
       }
+    }),
+
+  createSetupIntent: publicProcedure
+    .input(z.object({ customerId: z.string() }))
+    .query(async ({ input }) => {
+      // check for existing setup before creating new one
+      const existingIntents = await stripe.setupIntents.list({
+        customer: input.customerId,
+      });
+      if (existingIntents.data.length > 0) {
+        return { clientSecret: existingIntents.data[0]?.client_secret };
+      }
+
+      const intent = await stripe.setupIntents.create({
+        customer: input.customerId,
+        automatic_payment_methods: { enabled: true },
+      });
+
+      return { clientSecret: intent.client_secret };
     }),
 });

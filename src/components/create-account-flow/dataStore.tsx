@@ -1,4 +1,11 @@
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type CreateAccountForm = {
   orgName: string;
@@ -9,9 +16,17 @@ type CreateAccountForm = {
   phoneNumber: string;
   password: string;
   passwordConfirm: string;
-  tier: "free" | "medium" | "unlimited"
+  tier: "free" | "medium" | "unlimited";
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
 };
-export const CreateOrgContext = createContext<{state: CreateAccountForm, setState: Dispatch<SetStateAction<CreateAccountForm>>} | undefined>(undefined);
+export const CreateOrgContext = createContext<
+  | {
+    state: CreateAccountForm;
+    setState: Dispatch<SetStateAction<CreateAccountForm>>;
+  }
+  | undefined
+>(undefined);
 
 export function CreateOrgProvider({ children }: { children: any }) {
   const value: CreateAccountForm = {
@@ -23,13 +38,19 @@ export function CreateOrgProvider({ children }: { children: any }) {
     phoneNumber: "",
     password: "",
     passwordConfirm: "",
-    tier: "free"
+    tier: "free",
+    stripeCustomerId: "",
+    stripeSubscriptionId: "",
   };
   const [state, setState] = useState(value);
   useEffect(() => {
     console.log(state);
   }, [state]);
-  return <CreateOrgContext.Provider value={{state, setState}}>{children}</CreateOrgContext.Provider>;
+  return (
+    <CreateOrgContext.Provider value={{ state, setState }}>
+      {children}
+    </CreateOrgContext.Provider>
+  );
 }
 
 export function useAppState() {

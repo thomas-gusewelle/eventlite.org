@@ -10,8 +10,10 @@ import { CreateOrgContext } from "../dataStore";
 
 export const CreateOrganization = ({
   setStep,
+  stripeCustomerId
 }: {
   setStep: Dispatch<SetStateAction<number>>;
+    stripeCustomerId: string
 }) => {
   const methods = useForm();
   const {
@@ -20,10 +22,12 @@ export const CreateOrganization = ({
   const { state, setState } = useContext(CreateOrgContext)!;
 
   const handleSubmit = methods.handleSubmit((data) => {
+    // set the submited data and the stripe customer id into the data store
     setState((prev) => ({
       ...prev,
       orgName: data.orgName,
       orgPhoneNumber: data.phoneNumber,
+      stripeCustomerId: stripeCustomerId
     }));
     setStep(2);
   });

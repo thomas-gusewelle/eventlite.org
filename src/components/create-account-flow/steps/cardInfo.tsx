@@ -38,7 +38,7 @@ const CardForm = ({
   setStep: Dispatch<SetStateAction<number>>;
   customerId: string;
 }) => {
-  const {state} = useContext(CreateOrgContext)!
+  const { state } = useContext(CreateOrgContext)!;
   const stripe = useStripe();
   const elements = useElements();
   const clientSecret = api.stripe.createOrRetrieveSetupIntent.useQuery(
@@ -57,6 +57,7 @@ const CardForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [secret, setSecret] = useState("");
 
+  //TODO: implement and test
   const handleSubmit = async (e: FormDataEvent) => {
     e.preventDefault();
 
@@ -64,7 +65,7 @@ const CardForm = ({
       return;
     }
     setIsLoading(true);
-    //TODO: Finish the handle submit for adding a card to user
+
     const { error: submitError } = await elements.submit();
 
     if (submitError) {
@@ -77,15 +78,13 @@ const CardForm = ({
       elements: elements,
       clientSecret: secret,
       confirmParams: {
-        return_url: `${window.location.origin}/create-account/setup?name=${state.name}`
-      }
+        return_url: `${window.location.origin}/account/confirm-account?email=${state.email}`,
+      },
     });
     if (error) {
-      setIsLoading(false)
-      console.error(error)
+      setIsLoading(false);
+      console.error(error);
       return;
-    } else {
-      setStep(5)
     }
   };
 

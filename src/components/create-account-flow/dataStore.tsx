@@ -19,6 +19,7 @@ type CreateAccountForm = {
   tier: "free" | "medium" | "unlimited";
   stripeCustomerId: string;
   stripeSubscriptionId: string;
+  orgId: string,
 };
 export const CreateOrgContext = createContext<
   | {
@@ -41,6 +42,7 @@ export function CreateOrgProvider({ children }: { children: any }) {
     tier: "free",
     stripeCustomerId: "",
     stripeSubscriptionId: "",
+    orgId: ""
   };
   const [state, setState] = useState(value);
   useEffect(() => {

@@ -68,7 +68,7 @@ export const stripeRouter = createTRPCRouter({
       }
     }),
 
-  createSetupIntent: publicProcedure
+  createOrRetrieveSetupIntent: publicProcedure
     .input(z.object({ customerId: z.string() }))
     .query(async ({ input }) => {
       // check for existing setup before creating new one

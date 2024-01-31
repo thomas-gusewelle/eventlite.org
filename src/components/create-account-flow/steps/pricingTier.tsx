@@ -43,6 +43,7 @@ export const PricingTiers = ({
   }>(plans[0]!);
   return (
     <>
+      {/*TODO: Need to update header to say something about now choose your plan*/}
       <CardHeader>Choose your plan</CardHeader>
       <RadioGroup value={selected} onChange={setSelected}>
         <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
@@ -100,7 +101,7 @@ export const PricingTiers = ({
             }));
             if (selected.tier == "free") {
               setStep(5);
-              
+
             } else {
               setStep(4);
             }

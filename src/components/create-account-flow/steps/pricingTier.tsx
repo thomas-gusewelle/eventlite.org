@@ -91,14 +91,6 @@ export const PricingTiers = ({
         onClick={(e) => e.preventDefault()}
         className="mt-6 flex items-center justify-center gap-6"
       >
-        <BtnNeutral
-          fullWidth
-          func={() => {
-            setStep(2);
-          }}
-        >
-          Back
-        </BtnNeutral>
         <BtnPurple
           fullWidth
           onClick={() => {

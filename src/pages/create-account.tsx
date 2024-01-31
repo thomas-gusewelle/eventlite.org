@@ -160,16 +160,16 @@ const Steps = ({
     case 2:
       return <YourInfoStep setStep={setStep} />;
     case 3:
-      return <PricingTiers tier={undefined} setStep={setStep} />;
+      return <CreateAccountIdentifier />;
     case 4:
+      return <PricingTiers tier={undefined} setStep={setStep} />;
+    case 5:
       return (
         <CardInfoSection
           setStep={setStep}
           stripeCustomerId={stripeCustomerId}
         />
       );
-    case 5:
-      return <CreateAccountIdentifier />;
     default:
       return <div></div>;
   }

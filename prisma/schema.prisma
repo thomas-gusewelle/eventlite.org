@@ -22,8 +22,6 @@ model User {
   emailVerified  DateTime?
   phoneNumber    String?
   image          String?
-  // accounts       Account[]
-  // sessions       Session[]
   Organization   Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId String?
   availability   Availability[]
@@ -34,8 +32,6 @@ model User {
   InviteLink       InviteLink?
   ResetPassword    ResetPassword[]
   BugFeatureReport BugFeatureReport[]
-
-  stripeCustomerId String?
 
   @@index([id, organizationId, userSettingsId])
 }
@@ -76,13 +72,14 @@ model Availability {
 }
 
 model Organization {
-  id           String      @id @default(uuid())
-  name         String
-  phone_number String?
-  users        User[]
-  locations    Locations[]
-  events       Event[]
-  roles        Role[]
+  id               String      @id @default(uuid())
+  name             String
+  phone_number     String?
+  users            User[]
+  locations        Locations[]
+  events           Event[]
+  roles            Role[]
+  stripeCustomerId String?
 
   @@index([id])
 }

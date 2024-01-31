@@ -68,6 +68,38 @@ export const stripeRouter = createTRPCRouter({
       }
     }),
 
+  getSubscriptionByID: publicProcedure
+    .input(z.object({ subId: z.string() }))
+    .query(async ({ input }) => {
+      return await stripe.subscriptions.retrieve(input.subId);
+    }),
+  updateSubscriptionPrice: publicProcedure
+    .input(
+      z.object({
+        subId: z.string(),
+        priceId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const subscription = await stripe.subscriptions.retrieve(input.subId);
+      return await stripe.subscriptions.update(
+        input.subId,
+
+        {
+          cancel_at_period_end: false,
+          items: [
+            {
+              id: subscription?.items?.data[0]?.id,
+              price: input.priceId,
+            },
+          ],
+          payment_behavior: "default_incomplete",
+          payment_settings: { save_default_payment_method: "on_subscription" },
+          expand: ["latest_invoice.payment_intent"],
+        }
+      );
+    }),
+
   createOrRetrieveSetupIntent: publicProcedure
     .input(z.object({ customerId: z.string() }))
     .query(async ({ input }) => {

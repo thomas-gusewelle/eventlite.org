@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useFormKeyboardControls } from "../../../hooks/useFormKeyboardControls";
 import { BtnPurple } from "../../btn/btnPurple";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { PhoneInput } from "../../form/phoneInput";
@@ -10,10 +9,12 @@ import { CreateOrgContext } from "../dataStore";
 
 export const CreateOrganization = ({
   setStep,
-  stripeCustomerId
+  stripeCustomerId,
+  stripeSubscriptionId,
 }: {
   setStep: Dispatch<SetStateAction<number>>;
-    stripeCustomerId: string
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
 }) => {
   const methods = useForm();
   const {
@@ -27,7 +28,8 @@ export const CreateOrganization = ({
       ...prev,
       orgName: data.orgName,
       orgPhoneNumber: data.phoneNumber,
-      stripeCustomerId: stripeCustomerId
+      stripeCustomerId: stripeCustomerId,
+      stripeSubscriptionId: stripeSubscriptionId
     }));
     setStep(2);
   });
@@ -36,7 +38,6 @@ export const CreateOrganization = ({
     methods.setValue("orgName", state.orgName);
     methods.setValue("phoneNumber", state.orgPhoneNumber);
   }, []);
-
 
   return (
     <>

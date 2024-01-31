@@ -14,6 +14,7 @@ import { CardInfoSection } from "../components/create-account-flow/steps/cardInf
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
 import { stripe } from "../server/stripe/client";
+import Stripe from "stripe";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
@@ -117,7 +118,7 @@ const CreateAccount = ({
           <Steps
             step={step}
             setStep={setStep}
-            stripeSubscriptionid={subscription.id}
+            stripeSubscriptionId={subscription.id}
             stripeCustomerId={subscription.customer as string}
           />
         </LoginCard>
@@ -151,16 +152,22 @@ const Steps = ({
 }: {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
-  stripeSubscriptionid: string;
+  stripeSubscriptionId: string;
   stripeCustomerId: string;
 }) => {
   switch (step) {
     case 1:
-      return <CreateOrganization setStep={setStep} />;
+      return (
+        <CreateOrganization
+          setStep={setStep}
+          stripeCustomerId={stripeCustomerId}
+          stripeSubscriptionId={stripeSubscriptionId}
+        />
+      );
     case 2:
       return <YourInfoStep setStep={setStep} />;
     case 3:
-      return <CreateAccountIdentifier />;
+      return <CreateAccountIdentifier setStep={setStep} />;
     case 4:
       return <PricingTiers tier={undefined} setStep={setStep} />;
     case 5:

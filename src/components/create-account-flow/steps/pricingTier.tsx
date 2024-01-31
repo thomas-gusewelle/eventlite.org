@@ -1,32 +1,40 @@
 import { RadioGroup } from "@headlessui/react";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { Dispatch, FormEvent, FormEventHandler, SetStateAction, useContext, useState } from "react";
 import { CardHeader } from "../components/cardHeader";
 import { MdCheck } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { CreateOrgContext } from "../dataStore";
+import { loadedStripe } from "../../../server/stripe/client";
+import { api } from "../../../server/utils/api";
+import { useRouter } from "next/router";
 
-const plans: {
+type plan = {
   name: string;
   tier: "free" | "medium" | "unlimited";
   description: string;
-}[] = [
-    {
-      name: "Free",
-      tier: "free",
-      description: "Up to 5 users",
-    },
-    {
-      name: "Medium",
-      tier: "medium",
-      description: "Up to 20 users",
-    },
-    {
-      name: "Unlimited",
-      tier: "unlimited",
-      description: "Unlimited users",
-    },
-  ];
+  stripeId: string;
+};
+const plans: plan[] = [
+  {
+    name: "Free",
+    tier: "free",
+    description: "Up to 5 users",
+    stripeId: "price_1OWkdVKjgiEDHq2AesuPdTmq",
+  },
+  {
+    name: "Medium",
+    tier: "medium",
+    description: "Up to 20 users",
+    stripeId: "price_1OWkdjKjgiEDHq2AOHNwODgi",
+  },
+  {
+    name: "Unlimited",
+    tier: "unlimited",
+    description: "Unlimited users",
+    stripeId: "price_1OWkdyKjgiEDHq2AnKIzRjEY",
+  },
+];
 
 export const PricingTiers = ({
   tier,
@@ -35,14 +43,48 @@ export const PricingTiers = ({
   tier: string | undefined;
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
-  const orgFormContext = useContext(CreateOrgContext);
-  const [selected, setSelected] = useState<{
-    name: string;
-    tier: "free" | "medium" | "unlimited";
-    description: string;
-  }>(plans[0]!);
+  const router = useRouter();
+  const { state, setState } = useContext(CreateOrgContext)!;
+  const subscription = api.stripe.getSubscriptionByID.useQuery({
+    subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+  });
+  const updateSub = api.stripe.updateSubscriptionPrice.useMutation();
+  const [selected, setSelected] = useState<plan>(plans[0]!);
+
+  const handleSubmit = async (e: FormEvent) => {
+
+    e.preventDefault();
+    setState((prev) => ({
+      ...prev,
+      tier: selected.tier,
+    }));
+
+    // if tier is different then update
+    console.log(subscription.data?.items.data[0]?.price.id != selected.stripeId)
+    if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
+      console.log("here")
+      updateSub.mutate({
+        subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+        priceId: selected.stripeId,
+      }, {
+          onSuccess(data, variables, context) {
+            console.log(data)
+
+          },
+          onError(error, variables, context) {
+            console.error(error)
+          },
+        });
+    }
+
+    if (selected.tier == "free") {
+      router.push(`/account/confirm-email?email=${state.email}`);
+    } else {
+      setStep(5);
+    }
+  };
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       {/*TODO: Need to update header to say something about now choose your plan*/}
       <CardHeader>Choose your plan</CardHeader>
       <RadioGroup value={selected} onChange={setSelected}>
@@ -89,27 +131,12 @@ export const PricingTiers = ({
         </div>
       </RadioGroup>
       <div
-        onClick={(e) => e.preventDefault()}
         className="mt-6 flex items-center justify-center gap-6"
       >
-        <BtnPurple
-          fullWidth
-          onClick={() => {
-            orgFormContext?.setState((prev) => ({
-              ...prev,
-              tier: selected.tier,
-            }));
-            if (selected.tier == "free") {
-              setStep(5);
-
-            } else {
-              setStep(4);
-            }
-          }}
-        >
+        <BtnPurple disabled={subscription.isLoading} isLoading={updateSub.isLoading} type="submit" fullWidth>
           Next
         </BtnPurple>
       </div>
-    </>
+    </form>
   );
 };

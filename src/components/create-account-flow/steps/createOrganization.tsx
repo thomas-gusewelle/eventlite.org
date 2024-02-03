@@ -11,10 +11,12 @@ export const CreateOrganization = ({
   setStep,
   stripeCustomerId,
   stripeSubscriptionId,
+  stripePriceId,
 }: {
   setStep: Dispatch<SetStateAction<number>>;
   stripeCustomerId: string;
   stripeSubscriptionId: string;
+  stripePriceId: string;
 }) => {
   const methods = useForm();
   const {
@@ -29,7 +31,8 @@ export const CreateOrganization = ({
       orgName: data.orgName,
       orgPhoneNumber: data.phoneNumber,
       stripeCustomerId: stripeCustomerId,
-      stripeSubscriptionId: stripeSubscriptionId
+      stripeSubscriptionId: stripeSubscriptionId,
+      tier: stripePriceId,
     }));
     setStep(2);
   });

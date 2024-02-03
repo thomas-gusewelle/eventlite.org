@@ -16,7 +16,7 @@ type CreateAccountForm = {
   phoneNumber: string;
   password: string;
   passwordConfirm: string;
-  tier: "free" | "medium" | "unlimited";
+  tier: string;
   stripeCustomerId: string;
   stripeSubscriptionId: string;
   orgId: string,

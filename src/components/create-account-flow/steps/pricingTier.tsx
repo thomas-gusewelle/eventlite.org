@@ -45,11 +45,23 @@ export const PricingTiers = ({
 }) => {
   const router = useRouter();
   const { state, setState } = useContext(CreateOrgContext)!;
+
+  //TODO: replace hard coded subscription with the sub from context
   const subscription = api.stripe.getSubscriptionByID.useQuery({
     subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+  }, {
+    onSuccess(data) {
+      if (data) {
+        const priceId = data.items.data[0]?.price.id ?? "price_1OWkdVKjgiEDHq2AesuPdTmq";
+        const plan = plans.findIndex(p => p.stripeId === priceId)
+        setSelected(plans[plan == -1 ? 0 : plan]!);
+      }
+    },
   });
   const updateSub = api.stripe.updateSubscriptionPrice.useMutation();
-  const [selected, setSelected] = useState<plan>(plans[0]!);
+
+  const plan = plans.findIndex(p => p.stripeId === state.tier)
+  const [selected, setSelected] = useState<plan>(plans[plan == -1 ? 0 : plan]!);
 
   const handleSubmit = async (e: FormEvent) => {
 
@@ -60,21 +72,20 @@ export const PricingTiers = ({
     }));
 
     // if tier is different then update
-    console.log(subscription.data?.items.data[0]?.price.id != selected.stripeId)
     if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
-      console.log("here")
-      updateSub.mutate({
+      //TODO: Test this and see if it waits for completion
+      await updateSub.mutateAsync({
         subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
         priceId: selected.stripeId,
       }, {
-          onSuccess(data, variables, context) {
-            console.log(data)
+        onSuccess(data, variables, context) {
+          console.log(data)
 
-          },
-          onError(error, variables, context) {
-            console.error(error)
-          },
-        });
+        },
+        onError(error, variables, context) {
+          console.error(error)
+        },
+      });
     }
 
     if (selected.tier == "free") {

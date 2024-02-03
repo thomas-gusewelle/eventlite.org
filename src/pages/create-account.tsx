@@ -120,6 +120,7 @@ const CreateAccount = ({
             setStep={setStep}
             stripeSubscriptionId={subscription.id}
             stripeCustomerId={subscription.customer as string}
+            stripePriceId={subscription.items.data[0]?.price.id!}
           />
         </LoginCard>
       </CreateOrgProvider>
@@ -149,11 +150,13 @@ const Steps = ({
   setStep,
   stripeSubscriptionId,
   stripeCustomerId,
+  stripePriceId,
 }: {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
   stripeSubscriptionId: string;
   stripeCustomerId: string;
+  stripePriceId: string;
 }) => {
   switch (step) {
     case 1:
@@ -162,6 +165,7 @@ const Steps = ({
           setStep={setStep}
           stripeCustomerId={stripeCustomerId}
           stripeSubscriptionId={stripeSubscriptionId}
+          stripePriceId={stripePriceId}
         />
       );
     case 2:

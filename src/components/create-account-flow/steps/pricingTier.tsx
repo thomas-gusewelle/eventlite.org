@@ -1,11 +1,15 @@
 import { RadioGroup } from "@headlessui/react";
-import { Dispatch, FormEvent, FormEventHandler, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { CardHeader } from "../components/cardHeader";
 import { MdCheck } from "react-icons/md";
 import { BtnPurple } from "../../btn/btnPurple";
-import { BtnNeutral } from "../../btn/btnNeutral";
 import { CreateOrgContext } from "../dataStore";
-import { loadedStripe } from "../../../server/stripe/client";
 import { api } from "../../../server/utils/api";
 import { useRouter } from "next/router";
 
@@ -47,24 +51,27 @@ export const PricingTiers = ({
   const { state, setState } = useContext(CreateOrgContext)!;
 
   //TODO: replace hard coded subscription with the sub from context
-  const subscription = api.stripe.getSubscriptionByID.useQuery({
-    subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
-  }, {
-    onSuccess(data) {
-      if (data) {
-        const priceId = data.items.data[0]?.price.id ?? "price_1OWkdVKjgiEDHq2AesuPdTmq";
-        const plan = plans.findIndex(p => p.stripeId === priceId)
-        setSelected(plans[plan == -1 ? 0 : plan]!);
-      }
+  const subscription = api.stripe.getSubscriptionByID.useQuery(
+    {
+      subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
     },
-  });
+    {
+      onSuccess(data) {
+        if (data) {
+          const priceId =
+            data.items.data[0]?.price.id ?? "price_1OWkdVKjgiEDHq2AesuPdTmq";
+          const plan = plans.findIndex((p) => p.stripeId === priceId);
+          setSelected(plans[plan == -1 ? 0 : plan]!);
+        }
+      },
+    }
+  );
   const updateSub = api.stripe.updateSubscriptionPrice.useMutation();
 
-  const plan = plans.findIndex(p => p.stripeId === state.tier)
+  const plan = plans.findIndex((p) => p.stripeId === state.tier);
   const [selected, setSelected] = useState<plan>(plans[plan == -1 ? 0 : plan]!);
 
   const handleSubmit = async (e: FormEvent) => {
-
     e.preventDefault();
     setState((prev) => ({
       ...prev,
@@ -74,18 +81,20 @@ export const PricingTiers = ({
     // if tier is different then update
     if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
       //TODO: Test this and see if it waits for completion
-      await updateSub.mutateAsync({
-        subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
-        priceId: selected.stripeId,
-      }, {
-        onSuccess(data, variables, context) {
-          console.log(data)
-
+      await updateSub.mutateAsync(
+        {
+          subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+          priceId: selected.stripeId,
         },
-        onError(error, variables, context) {
-          console.error(error)
-        },
-      });
+        {
+          onSuccess(data, variables, context) {
+            console.log(data);
+          },
+          onError(error, variables, context) {
+            console.error(error);
+          },
+        }
+      );
     }
 
     if (selected.tier == "free") {
@@ -141,10 +150,13 @@ export const PricingTiers = ({
           ))}
         </div>
       </RadioGroup>
-      <div
-        className="mt-6 flex items-center justify-center gap-6"
-      >
-        <BtnPurple disabled={subscription.isLoading} isLoading={updateSub.isLoading} type="submit" fullWidth>
+      <div className="mt-6 flex items-center justify-center gap-6">
+        <BtnPurple
+          disabled={subscription.isLoading}
+          isLoading={updateSub.isLoading}
+          type="submit"
+          fullWidth
+        >
           Next
         </BtnPurple>
       </div>

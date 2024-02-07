@@ -73,6 +73,22 @@ export const stripeRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return await stripe.subscriptions.retrieve(input.subId);
     }),
+
+  getSubscriptionSecretByID: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const sub = await stripe.subscriptions.retrieve(input.id, {
+        expand: ["latest_invoice.payment_intent"],
+      });
+      try {
+        const invoice = sub.latest_invoice as Stripe.Invoice;
+        const intent = invoice.payment_intent as Stripe.PaymentIntent;
+        return { clientSecret: intent.client_secret };
+      } catch (_error) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+    }),
+
   updateSubscriptionPrice: publicProcedure
     .input(
       z.object({

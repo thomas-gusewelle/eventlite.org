@@ -27,16 +27,11 @@ export const CardInfoSection = ({
   const { state } = useContext(CreateOrgContext)!;
   const [secret, setSecret] = useState("");
 
-  useEffect(() => {
-    console.log("This is the secret: ", secret);
-  }, [secret]);
-  const clientSecret = api.stripe.createOrRetrieveSetupIntent.useQuery(
-    {
-      customerId: state.stripeCustomerId,
-    },
+  const clientSecret = api.stripe.getSubscriptionSecretByID.useQuery(
+    { id: state.stripeSubscriptionId },
     {
       onSuccess(data) {
-        if (typeof data.clientSecret == "string") {
+        if (typeof data.clientSecret === "string") {
           setSecret(data.clientSecret);
         }
       },
@@ -93,7 +88,6 @@ const CardForm = ({
 
     const { error } = await stripe.confirmPayment({
       elements: elements,
-      clientSecret: secret,
       confirmParams: {
         return_url: `${window.location.origin}/account/confirm-email?email=${state.email}`,
       },

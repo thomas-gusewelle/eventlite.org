@@ -50,10 +50,9 @@ export const PricingTiers = ({
   const router = useRouter();
   const { state, setState } = useContext(CreateOrgContext)!;
 
-  //TODO: replace hard coded subscription with the sub from context
   const subscription = api.stripe.getSubscriptionByID.useQuery(
     {
-      subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+      subId: state.stripeSubscriptionId,
     },
     {
       onSuccess(data) {
@@ -75,22 +74,21 @@ export const PricingTiers = ({
     e.preventDefault();
     setState((prev) => ({
       ...prev,
-      tier: selected.tier,
+      tier: selected.stripeId,
     }));
 
     // if tier is different then update
     if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
-      //TODO: Test this and see if it waits for completion
       await updateSub.mutateAsync(
         {
-          subId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+          subId: state.stripeSubscriptionId,
           priceId: selected.stripeId,
         },
         {
-          onSuccess(data, variables, context) {
+          onSuccess(data, _variables, _context) {
             console.log(data);
           },
-          onError(error, variables, context) {
+          onError(error, _variables, _context) {
             console.error(error);
           },
         }

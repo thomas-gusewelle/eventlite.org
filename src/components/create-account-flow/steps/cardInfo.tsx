@@ -4,64 +4,81 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { loadedStripe } from "../../../server/stripe/client";
 import { api } from "../../../server/utils/api";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
+import { CircularProgress } from "../../circularProgress";
 import { CardHeader } from "../components/cardHeader";
 import { CreateOrgContext } from "../dataStore";
 export const CardInfoSection = ({
   setStep,
-  stripeCustomerId,
 }: {
   setStep: Dispatch<SetStateAction<number>>;
-  stripeCustomerId: string;
 }) => {
+  const { state } = useContext(CreateOrgContext)!;
+  const [secret, setSecret] = useState("");
+
+  useEffect(() => {
+    console.log("This is the secret: ", secret);
+  }, [secret]);
+  const clientSecret = api.stripe.createOrRetrieveSetupIntent.useQuery(
+    {
+      customerId: state.stripeCustomerId,
+    },
+    {
+      onSuccess(data) {
+        if (typeof data.clientSecret == "string") {
+          setSecret(data.clientSecret);
+        }
+      },
+    }
+  );
+
+  if (clientSecret.isLoading || secret === "") {
+    return (
+      <div className="flex items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
   return (
     <>
       <CardHeader>Setup your payment method</CardHeader>
-      <Elements
-        stripe={loadedStripe}
-        options={{ mode: "setup", currency: "usd" }}
-      >
-        <CardForm setStep={setStep} customerId={stripeCustomerId} />
+      <Elements stripe={loadedStripe} options={{ clientSecret: secret }}>
+        <CardForm setStep={setStep} secret={secret} />
       </Elements>
     </>
   );
 };
 
 const CardForm = ({
+  secret,
   setStep,
-  customerId,
 }: {
+  secret: string;
   setStep: Dispatch<SetStateAction<number>>;
-  customerId: string;
 }) => {
   const { state } = useContext(CreateOrgContext)!;
   const stripe = useStripe();
   const elements = useElements();
-  const clientSecret = api.stripe.createOrRetrieveSetupIntent.useQuery(
-    {
-      customerId: customerId,
-    },
-    {
-      onSuccess(data) {
-        if (typeof data == "string") {
-          setSecret(data);
-        }
-      },
-    }
-  );
 
   const [isLoading, setIsLoading] = useState(false);
-  const [secret, setSecret] = useState("");
 
   //TODO: implement and test
-  const handleSubmit = async (e: FormDataEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!stripe || !elements || secret === "") {
+      console.log("here");
       return;
     }
     setIsLoading(true);
@@ -74,13 +91,14 @@ const CardForm = ({
       return;
     }
 
-    const { error } = await stripe.confirmSetup({
+    const { error } = await stripe.confirmPayment({
       elements: elements,
       clientSecret: secret,
       confirmParams: {
-        return_url: `${window.location.origin}/account/confirm-account?email=${state.email}`,
+        return_url: `${window.location.origin}/account/confirm-email?email=${state.email}`,
       },
     });
+
     if (error) {
       setIsLoading(false);
       console.error(error);
@@ -89,7 +107,7 @@ const CardForm = ({
   };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <PaymentElement />
       <div className="mt-6 flex items-center justify-center gap-6">
         <BtnNeutral
@@ -101,12 +119,7 @@ const CardForm = ({
         >
           Back
         </BtnNeutral>
-        <BtnPurple
-          disabled={clientSecret.isLoading}
-          isLoading={isLoading}
-          type="submit"
-          fullWidth
-        >
+        <BtnPurple isLoading={isLoading} type="submit" fullWidth>
           Save
         </BtnPurple>
       </div>

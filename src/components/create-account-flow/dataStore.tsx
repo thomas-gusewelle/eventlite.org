@@ -35,13 +35,13 @@ export function CreateOrgProvider({ children }: { children: any }) {
     orgPhoneNumber: "",
     firstName: "",
     lastName: "",
-    email: "",
+    email: "test@test.com",
     phoneNumber: "",
     password: "",
     passwordConfirm: "",
-    tier: "free",
-    stripeCustomerId: "",
-    stripeSubscriptionId: "",
+    tier: "price_1OWkdjKjgiEDHq2AOHNwODgi",
+    stripeCustomerId: "cus_PTI2Sgue1oShvj",
+    stripeSubscriptionId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
     orgId: ""
   };
   const [state, setState] = useState(value);
@@ -58,7 +58,6 @@ export function CreateOrgProvider({ children }: { children: any }) {
 export function useAppState() {
   const context = useContext(CreateOrgContext);
 
-  //TODO: use this info to break each form into individual form allowing for me to not have to do custom validation.
   if (!context) {
     throw new Error("useAppState must be used within the AppProvider");
   }

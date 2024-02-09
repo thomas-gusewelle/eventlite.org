@@ -6,23 +6,6 @@ import { TRPCError } from "@trpc/server";
 import Stripe from "stripe";
 
 export const stripeRouter = createTRPCRouter({
-  createCustomer: publicProcedure
-    .input(
-      z.object({
-        orgName: z.string(),
-        email: z.string().email(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      //TODO: finish create customer implementation
-
-      const customer = await stripe?.customers.create({
-        name: input.orgName,
-        email: input.email,
-      });
-      return customer;
-    }),
-
   createSubscription: publicProcedure
     .input(
       z.object({

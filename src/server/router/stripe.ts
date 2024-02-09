@@ -94,6 +94,7 @@ export const stripeRouter = createTRPCRouter({
       z.object({
         subId: z.string(),
         priceId: z.string(),
+        disableProration: z.boolean().optional().default(false)
       })
     )
     .mutation(async ({ input }) => {
@@ -111,6 +112,7 @@ export const stripeRouter = createTRPCRouter({
           ],
           payment_behavior: "default_incomplete",
           payment_settings: { save_default_payment_method: "on_subscription" },
+        proration_behavior: input.disableProration ? "none" : "create_prorations",
           expand: ["latest_invoice.payment_intent"],
         }
       );

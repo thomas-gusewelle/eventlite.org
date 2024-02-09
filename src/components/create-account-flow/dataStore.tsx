@@ -39,9 +39,9 @@ export function CreateOrgProvider({ children }: { children: any }) {
     phoneNumber: "",
     password: "",
     passwordConfirm: "",
-    tier: "price_1OWkdjKjgiEDHq2AOHNwODgi",
+    tier: "price_1OWkdVKjgiEDHq2AesuPdTmq",
     stripeCustomerId: "cus_PTI2Sgue1oShvj",
-    stripeSubscriptionId: "sub_1OeLSpKjgiEDHq2Agl7ZmBpb",
+    stripeSubscriptionId: "sub_1OhDhzKjgiEDHq2A4KrMgAiA",
     orgId: ""
   };
   const [state, setState] = useState(value);

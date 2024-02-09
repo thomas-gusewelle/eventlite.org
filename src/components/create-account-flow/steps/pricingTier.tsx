@@ -79,10 +79,13 @@ export const PricingTiers = ({
 
     // if tier is different then update
     if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
+      // since the subscription has never been active
+      // we want to charge the change immediately 
       await updateSub.mutateAsync(
         {
           subId: state.stripeSubscriptionId,
           priceId: selected.stripeId,
+          chargeChangeImmediately: true
         },
         {
           onSuccess(data, _variables, _context) {

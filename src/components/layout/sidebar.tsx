@@ -299,6 +299,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              {/* TODO: Think about removing this for full release*/}
                               <Menu.Item key={1}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
@@ -336,6 +337,23 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 )}
                               </Menu.Item>
                               <Menu.Item key={3}>
+                                {({ active }) => (
+                                  <button className='w-full text-left'>
+                                    <Link
+                                      href={`/account/billing`}
+                                      onClick={() => setShow(false)}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Billing
+                                    </Link>
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item key={4}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <a
@@ -414,6 +432,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              {/* TODO: Look at removing the bug reporting for full release*/}
                               <Menu.Item key={1}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
@@ -451,6 +470,23 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                 )}
                               </Menu.Item>
                               <Menu.Item key={3}>
+                                {({ active }) => (
+                                  <button className='w-full text-left'>
+                                    <Link
+                                      href={`/account/billing`}
+                                      onClick={() => setShow(false)}
+                                      className={classNames(
+                                        active
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-700",
+                                        "block px-4 py-2 text-sm"
+                                      )}>
+                                      Settings
+                                    </Link>
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item key={4}>
                                 {({ active }) => (
                                   <button className='w-full text-left'>
                                     <a

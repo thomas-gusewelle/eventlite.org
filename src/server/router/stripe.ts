@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "./context";
+import { adminProcedure, createTRPCRouter, publicProcedure } from "./context";
 import { stripe } from "../stripe/client";
 import { getCustomerOrCreate } from "../stripe/stripeHandlers";
 import { TRPCError } from "@trpc/server";
@@ -77,7 +77,7 @@ export const stripeRouter = createTRPCRouter({
       z.object({
         subId: z.string(),
         priceId: z.string(),
-        chargeChangeImmediately: z.boolean().optional().default(false)
+        chargeChangeImmediately: z.boolean().optional().default(false),
       })
     )
     .mutation(async ({ input }) => {
@@ -95,7 +95,9 @@ export const stripeRouter = createTRPCRouter({
           ],
           payment_behavior: "default_incomplete",
           payment_settings: { save_default_payment_method: "on_subscription" },
-        proration_behavior: input.chargeChangeImmediately ? "always_invoice" : "create_prorations",
+          proration_behavior: input.chargeChangeImmediately
+            ? "always_invoice"
+            : "create_prorations",
           expand: ["latest_invoice.payment_intent"],
         }
       );
@@ -119,4 +121,39 @@ export const stripeRouter = createTRPCRouter({
 
       return { clientSecret: intent.client_secret };
     }),
+
+  getAllInvoices: adminProcedure.query(async ({ ctx }) => {
+    const orgId = await prisma?.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+      select: {
+        organizationId: true,
+      },
+    });
+    if (!orgId) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Unable to find organization",
+      });
+    }
+
+    const org = await prisma?.organization.findUnique({
+      where: {
+        id: orgId?.organizationId ?? undefined,
+      },
+      select: {
+        stripeCustomerId: true,
+      },
+    });
+
+    if (!org || !org.stripeCustomerId) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error finding organization",
+      });
+    }
+
+    return await stripe.invoices.list({ customer: org.stripeCustomerId });
+  }),
 });

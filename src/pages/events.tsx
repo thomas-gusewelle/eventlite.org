@@ -90,7 +90,7 @@ const EventsPage = () => {
                   "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
                   selected
                     ? "bg-white text-indigo-700 shadow"
-                    : " text-gray-600 hover:bg-white/[0.12] hover:text-white"
+                    : " text-gray-600 hover:bg-white/[0.9] hover:text-indigo-600"
                 )
               }>
               {item.name}

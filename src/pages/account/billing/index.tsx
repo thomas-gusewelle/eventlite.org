@@ -1,8 +1,18 @@
+import { GetServerSidePropsContext } from "next";
 import { sidebar } from "../../../components/layout/sidebar";
 
-const BillingIndex = () => {
-  return <div>Hello</div>
-}
+export const getServerSideProps = (ctx: GetServerSidePropsContext) => {
+  return {
+    redirect: {
+      destination: "/account/billing/history",
+      permanent: false,
+    },
+  };
+};
 
-BillingIndex.getLayout = sidebar; 
+const BillingIndex = () => {
+  return <></>;
+};
+
+BillingIndex.getLayout = sidebar;
 export default BillingIndex;

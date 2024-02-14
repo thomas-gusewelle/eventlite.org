@@ -2,6 +2,7 @@ import { Tab } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
 import { classNames } from "../../../utils/classnames";
+import { SectionHeading } from "../../headers/SectionHeading";
 
 export const BillingLayout = ({ children }: { children: ReactNode }) => {
   const routes = [
@@ -13,7 +14,7 @@ export const BillingLayout = ({ children }: { children: ReactNode }) => {
       },
     },
     {
-      name: "Billing Settings",
+      name: "Settings",
       slug: "settings",
       onClick: () => {
         router.push("/account/billing/settings");
@@ -34,6 +35,8 @@ export const BillingLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
+      <div className="mb-3"><SectionHeading>Billing</SectionHeading></div>
+
       <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
         <Tab.List className="mb-6 flex justify-start space-x-1 rounded-xl bg-gray-100 p-1 sm:w-fit">
           {routes.map((item, index) => (

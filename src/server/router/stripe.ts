@@ -122,38 +122,49 @@ export const stripeRouter = createTRPCRouter({
       return { clientSecret: intent.client_secret };
     }),
 
-  getAllInvoices: adminProcedure.query(async ({ ctx }) => {
-    const orgId = await prisma?.user.findUnique({
-      where: {
-        id: ctx.session.user.id,
-      },
-      select: {
-        organizationId: true,
-      },
-    });
-    if (!orgId) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Unable to find organization",
+  getAllInvoices: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().optional().default(12),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const orgId = await prisma?.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+        select: {
+          organizationId: true,
+        },
       });
-    }
+      if (!orgId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to find organization",
+        });
+      }
 
-    const org = await prisma?.organization.findUnique({
-      where: {
-        id: orgId?.organizationId ?? undefined,
-      },
-      select: {
-        stripeCustomerId: true,
-      },
-    });
-
-    if (!org || !org.stripeCustomerId) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error finding organization",
+      const org = await prisma?.organization.findUnique({
+        where: {
+          id: orgId?.organizationId ?? undefined,
+        },
+        select: {
+          stripeCustomerId: true,
+        },
       });
-    }
 
-    return await stripe.invoices.list({ customer: org.stripeCustomerId });
-  }),
+      if (!org || !org.stripeCustomerId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error finding organization",
+        });
+      }
+
+      return await stripe.invoices.list({
+        customer: org.stripeCustomerId,
+        limit: input.limit,
+        starting_after: input.cursor ?? undefined,
+      });
+    }),
 });

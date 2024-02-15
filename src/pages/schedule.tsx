@@ -373,7 +373,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
               ))}
             </div>
           </div>
-          <div className='mx-6 flex justify-between'>
+          <div className='flex justify-between'>
             {getScheduleQuery.data.lastCursor &&
               getScheduleQuery.data.lastCursor.datetime.getTime() <
               getScheduleQuery.data.items[0]!.datetime.getTime() && (

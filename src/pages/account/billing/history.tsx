@@ -5,9 +5,20 @@ import { CircularProgress } from "../../../components/circularProgress";
 import { MdDownload } from "react-icons/md";
 import { shortDate } from "../../../components/dateTime/dates";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
-const BillingHistory = () => {
-  const invoicesQuery = api.stripe.getAllInvoices.useQuery({});
+// TODO: Test the forward and backwards pagination
+const BillingHistory = ({
+  cursor,
+  limit,
+  forward,
+}: {
+  cursor: string | undefined;
+  limit: number | undefined;
+  forward: boolean;
+}) => {
+  const invoicesQuery = api.stripe.getInvoices.useQuery({ cursor, limit, forward });
+  const router = useRouter();
 
   if (invoicesQuery.isLoading) {
     return (
@@ -54,30 +65,66 @@ const BillingHistory = () => {
           })}
         </tbody>
       </table>
-
-      <div className="mx-6 flex justify-between">
-        <button
-          onClick={() => {}}
-          className="inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
-        >
-          Prev Page
-        </button>
-
-        <button
-          onClick={() => {}}
-          className="ml-auto inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
-        >
-          Next Page
-        </button>
+      <div className=" flex justify-between">
+        {cursor != undefined && (
+          <button
+            onClick={() => {
+              router.push(
+                `/account/billing/history?cursor=${cursor}&forward="false"`
+              );
+            }}
+            className="inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+          >
+            Prev Page
+          </button>
+        )}
+        {invoicesQuery.data?.has_more && (
+          <button
+            onClick={() => {
+              router.push(
+                `/account/billing/history?cursor=${cursor}&forward="true"`
+              );
+            }}
+            className="ml-auto inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+          >
+            Next Page
+          </button>
+        )}
       </div>
     </BillingLayout>
   );
 };
 
-
 const BillingHistoryPage = () => {
-  return <BillingHistory/>
-}
+  const router = useRouter();
+  const { cursor, limit, forward } = router.query;
+  if (
+    typeof cursor != "string" ||
+    Array.isArray(limit) ||
+    Array.isArray(forward)
+  ) {
+    return <></>;
+  }
+
+  // False if undefined or not "true"
+  const forwardBool =
+    forward == undefined
+      ? false
+      : forward.toLowerCase() === "true"
+      ? true
+      : false;
+
+  return (
+    // Cursor must be undefined or a string becasue of the Stripe api.
+    // You can not pass an empty string to the API
+    // for starting_after or ending_before
+    <BillingHistory
+      cursor={cursor == "" ? undefined : cursor}
+      limit={limit ? parseInt(limit) : undefined}
+      forward={forwardBool}
+    />
+  );
+};
 
 BillingHistoryPage.getLayout = sidebar;
 export default BillingHistoryPage;

@@ -4,7 +4,7 @@ import { sidebar } from "../../../components/layout/sidebar";
 export const getServerSideProps = (ctx: GetServerSidePropsContext) => {
   return {
     redirect: {
-      destination: "/account/billing/history",
+      destination: "/account/billing/history?cursor=",
       permanent: false,
     },
   };

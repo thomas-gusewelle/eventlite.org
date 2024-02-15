@@ -6,7 +6,7 @@ import { MdDownload } from "react-icons/md";
 import { shortDate } from "../../../components/dateTime/dates";
 import Link from "next/link";
 
-const BillingHistoryPage = () => {
+const BillingHistory = () => {
   const invoicesQuery = api.stripe.getAllInvoices.useQuery({});
 
   if (invoicesQuery.isLoading) {
@@ -31,48 +31,7 @@ const BillingHistoryPage = () => {
           </tr>
         </thead>
         <tbody>
-          {/*            {peopleList.map((person, index) => {
-              const options: TableOptionsDropdown = [
-                {
-                  name: person.InviteLink ? "Resend Invite" : "Invite user",
-                  function: () => createInvite.mutate({ userId: person.id }),
-                  show: !person.hasLogin && user?.status == "ADMIN",
-                },
-                {
-                  name: "View Profile",
-                  href: `/people/view/${person.id}`,
-                },
-                {
-                  name: "Reset Password",
-                  function: () =>
-                    sendResetPassword.mutate(
-                      { email: person.email.trim() },
-                      {
-                        onSuccess() {
-                          setSuccess({
-                            state: true,
-                            message: "Password Reset Email Sent",
-                          });
-                        },
-                      }
-                    ),
-                  show: user?.status == "ADMIN" && person.hasLogin,
-                },
-                {
-                  name: "Edit",
-                  href: `/people/edit/${person.id}`,
-                  show: user?.status == "ADMIN" || person.id == user?.id,
-                },
-                {
-                  name: "Delete",
-                  function: () => onDelete(person),
-                  show: user?.status == "ADMIN",
-                },
-              ];
-*/}
-
           {invoicesQuery.data?.data.map((person, index) => {
-            console.log(person);
             const paidAt = person.status_transitions.paid_at;
             return (
               <tr key={index} className="border-t last:border-b">
@@ -95,9 +54,30 @@ const BillingHistoryPage = () => {
           })}
         </tbody>
       </table>
+
+      <div className="mx-6 flex justify-between">
+        <button
+          onClick={() => {}}
+          className="inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+        >
+          Prev Page
+        </button>
+
+        <button
+          onClick={() => {}}
+          className="ml-auto inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+        >
+          Next Page
+        </button>
+      </div>
     </BillingLayout>
   );
 };
+
+
+const BillingHistoryPage = () => {
+  return <BillingHistory/>
+}
 
 BillingHistoryPage.getLayout = sidebar;
 export default BillingHistoryPage;

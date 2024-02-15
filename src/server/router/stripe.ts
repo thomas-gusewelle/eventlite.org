@@ -122,11 +122,12 @@ export const stripeRouter = createTRPCRouter({
       return { clientSecret: intent.client_secret };
     }),
 
-  getAllInvoices: adminProcedure
+  getInvoices: adminProcedure
     .input(
       z.object({
         limit: z.number().optional().default(12),
         cursor: z.string().nullish(),
+        forward: z.boolean().optional().default(true),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -161,10 +162,20 @@ export const stripeRouter = createTRPCRouter({
         });
       }
 
-      return await stripe.invoices.list({
-        customer: org.stripeCustomerId,
-        limit: input.limit,
-        starting_after: input.cursor ?? undefined,
-      });
+    // call the correct query for if we are
+    // pading forward or backward
+      if (input.forward) {
+        return await stripe.invoices.list({
+          customer: org.stripeCustomerId,
+          limit: input.limit,
+          starting_after: input.cursor ?? undefined,
+        });
+      } else {
+        return await stripe.invoices.list({
+          customer: org.stripeCustomerId,
+          limit: input.limit,
+          ending_before: input.cursor ?? undefined,
+        });
+      }
     }),
 });

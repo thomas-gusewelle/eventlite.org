@@ -10,7 +10,7 @@ export const userRouter = createTRPCRouter({
     if (ctx.session == null) {
       return null
     }
-    const userInfo = await ctx.prisma?.user.findFirst({
+    const userInfo = await ctx.prisma?.user.findUnique({
       where: {
         id: ctx?.session?.user.id
       },

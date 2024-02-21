@@ -1,6 +1,4 @@
 import { User, UserSettings } from "@prisma/client";
-import { useUser } from "@supabase/auth-helpers-react";
-import { stat } from "fs";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../server/utils/api"
 import { createClient } from "../utils/supabase/client";
@@ -23,9 +21,6 @@ export const UserContext = createContext<
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const query = api.user.getUser.useQuery(undefined);
   const supabase = createClient();
-
-
-
 
   useEffect(() => {
     const status = supabase.auth.onAuthStateChange((event, session) => {

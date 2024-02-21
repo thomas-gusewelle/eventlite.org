@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { adminProcedure, createTRPCRouter, publicProcedure } from "./context";
+import {
+  adminOrgProcedure,
+  adminProcedure,
+  createTRPCRouter,
+  publicProcedure,
+} from "./context";
 import { stripe } from "../stripe/client";
 import { getCustomerOrCreate } from "../stripe/stripeHandlers";
 import { TRPCError } from "@trpc/server";
@@ -162,8 +167,8 @@ export const stripeRouter = createTRPCRouter({
         });
       }
 
-    // call the correct query for if we are
-    // pading forward or backward
+      // call the correct query for if we are
+      // pading forward or backward
       if (input.forward) {
         return await stripe.invoices.list({
           customer: org.stripeCustomerId,
@@ -178,4 +183,28 @@ export const stripeRouter = createTRPCRouter({
         });
       }
     }),
+  getDefaultPaymentMethod: adminOrgProcedure.query(async ({ ctx }) => {
+    if (ctx.org.stripeCustomerId == null) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No Stripe Customer on Organization.",
+      });
+    }
+
+    // await new Promise(r => setTimeout(r, 2000));
+
+    const customer = (await stripe.customers.retrieve(
+      ctx.org.stripeCustomerId
+    )) as Stripe.Customer;
+
+    if (typeof customer.invoice_settings.default_payment_method != "string") {
+      return { paymentMethod: null };
+    }
+
+    const paymentMethod = await stripe.paymentMethods.retrieve(
+      customer.invoice_settings.default_payment_method
+    );
+
+    return { paymentMethod: paymentMethod };
+  }),
 });

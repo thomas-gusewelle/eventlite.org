@@ -30,30 +30,25 @@ type stateData = (Event & {
 
 
 const Dashboard = () => {
+ 
   const user = useContext(UserContext);
   const alertContext = useContext(AlertContext);
   const [availabilityModal, setAvailabilityModal] = useState(false);
   const [eventsData, setEventsData] = useState<stateData>([]);
   const [approvalEventsData, setApprovalEventsData] = useState<stateData>([]);
 
-  const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(undefined, {
-    onSuccess(data) {
-      if (data != undefined) {
-        if (data.upcoming != undefined) {
-          setEventsData(data.upcoming);
-        }
-        if (data.needApproval != undefined) {
-          setApprovalEventsData(data.needApproval);
-        }
-      }
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `Error getting upcoming events. ${err.message}`,
-      });
-    },
+ const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(undefined, {
+    // onError(err) {
+    //   alertContext.setError({
+    //     state: true,
+    //     message: `Error getting upcoming events. ${err.message}`,
+    //   });
+    // },
   });
+  useEffect(() => {
+    setEventsData(eventsQuery.data?.upcoming ?? []);
+    setApprovalEventsData(eventsQuery.data?.needApproval ?? []);
+  }, [eventsQuery.data])
   const userResponseMutation = api.events.updateUserResponse.useMutation({
     onError(error, variables, context) {
       alertContext.setError({

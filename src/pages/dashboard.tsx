@@ -37,20 +37,14 @@ const Dashboard = () => {
   const [eventsData, setEventsData] = useState<stateData>([]);
   const [approvalEventsData, setApprovalEventsData] = useState<stateData>([]);
 
- const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(undefined, {
-    // onError(err) {
-    //   alertContext.setError({
-    //     state: true,
-    //     message: `Error getting upcoming events. ${err.message}`,
-    //   });
-    // },
-  });
+ const eventsQuery = api.events.getUpcomingEventsByUser.useQuery(undefined);
   useEffect(() => {
     setEventsData(eventsQuery.data?.upcoming ?? []);
     setApprovalEventsData(eventsQuery.data?.needApproval ?? []);
   }, [eventsQuery.data])
+
   const userResponseMutation = api.events.updateUserResponse.useMutation({
-    onError(error, variables, context) {
+    onError(error, _variables, _context) {
       alertContext.setError({
         state: true,
         message: `Error updating response. ${error.message}`,
@@ -104,6 +98,7 @@ const Dashboard = () => {
       }
 
       if (variables.response == "NULL") {
+        // we should probably be using a refetch instead
         setApprovalEventsData(
           [item, ...approvalEventsData].sort(
             (a, b) => a.datetime.getTime() - b.datetime.getTime()

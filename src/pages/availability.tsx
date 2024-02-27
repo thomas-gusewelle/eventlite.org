@@ -1,12 +1,15 @@
 import { Availability, User } from "@prisma/client";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import { PaginateData } from "../../types/paginate";
 import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { BtnAdd } from "../components/btn/btnAdd";
 import { BtnPurple } from "../components/btn/btnPurple";
 import { CircularProgress } from "../components/circularProgress";
 import { longDate } from "../components/dateTime/dates";
-import { NewSingleSelect } from "../components/form/singleSelect";
+import {
+  NewSingleSelect,
+  UncontrolledSingleSelect,
+} from "../components/form/singleSelect";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { NoDataLayout } from "../components/layout/no-data-layout";
 import { PaginationBar } from "../components/layout/pagination-bar";
@@ -30,9 +33,6 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
     useState<PaginateData<Availability[]>>();
   const [pageNum, setPageNum] = useState(1);
   const user = useContext(UserContext);
-  const [userSelected, setUserSelected] = useState<User | null>(
-    user?.status == "ADMIN" ? null : user!
-  );
   const [peopleList, setPeopleList] = useState<{ item: User; label: string }[]>(
     []
   );
@@ -44,12 +44,6 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
       // setlocationPaginated(_paginated.data);
     }
   }, [dates, pageNum]);
-
-  useEffect(() => {
-    if (userSelected) {
-      router.push(`/availability?userId=${encodeURIComponent(userSelected.id)}`);
-    }
-  }, [userSelected]);
 
   const deleteDateMutation = api.avalibility.deleteDate.useMutation({
     onSuccess(data) {
@@ -64,31 +58,6 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
       });
     },
   });
-
-  // TODO: Find a way to get rid of these useEffects
-  const getUsersQuery = api.user.getUsersByOrganization.useQuery(undefined, {
-    enabled: !!(user?.status == "ADMIN"),
-  });
-  useEffect(() => {
-    if (getUsersQuery.isSuccess) {
-      let list =   getUsersQuery.data?.map((user) => ({
-          item: user,
-          label: fullName(user.firstName, user.lastName) ?? "",
-        })) ?? []
-      if (peopleList.length != list.length){
-        setPeopleList(list);
-      }
-      setUserSelected(
-        getUsersQuery.data.find((user) => user.id === userId) ?? user!
-      );
-    } else if (getUsersQuery.isError) {
-      setError({
-        state: true,
-        message: `There was an error fetching the users. Message: ${getUsersQuery.error.message}`,
-      });
-      getUsersQuery.refetch();
-    }
-  }, [getUsersQuery]);
 
   const getUserAvailibilityQuery =
     api.avalibility.getUserAvalibilityByID.useQuery(userId);
@@ -108,12 +77,7 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
     }
   }, [getUserAvailibilityQuery]);
 
-  if (
-    pagiantedData == undefined ||
-    (getUsersQuery.isLoading && user?.status == "ADMIN") ||
-    getUserAvailibilityQuery.isLoading
-  ) {
-    console.log(getUsersQuery);
+  if (pagiantedData == undefined || getUserAvailibilityQuery.isLoading) {
     return (
       <div className="flex justify-center">
         <CircularProgress />
@@ -162,28 +126,18 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
             {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
           </div>
           {user?.status == "ADMIN" && (
-            <div className="col-span-2">
-              <NewSingleSelect
-                selected={userSelected}
-                setSelected={setUserSelected}
-                list={peopleList}
-                label={(item) => fullName(item?.firstName, item?.lastName)}
-              />
-            </div>
+            <Suspense fallback={<></>}>
+              <AdminUserSelector selectedUser={userId} />
+            </Suspense>
           )}
         </div>
         <div className="mb-8 hidden justify-between md:flex">
           <SectionHeading>Unavailable Dates</SectionHeading>
           <div className="flex gap-4">
             {user?.status == "ADMIN" && (
-              <div className="min-w-[10rem]">
-                <NewSingleSelect
-                  selected={userSelected}
-                  setSelected={setUserSelected}
-                  list={peopleList}
-                  label={(item) => fullName(item?.firstName, item?.lastName)}
-                />
-              </div>
+              <Suspense fallback={<></>}>
+                <AdminUserSelector selectedUser={userId} />
+              </Suspense>
             )}
             <BtnAdd onClick={() => setModalOpen(true)} />
             {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
@@ -207,28 +161,18 @@ const AvailabilityPage = ({ userId }: { userId: string }) => {
           {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
         </div>
         {user?.status == "ADMIN" && (
-          <div className="col-span-2">
-            <NewSingleSelect
-              selected={userSelected}
-              setSelected={setUserSelected}
-              list={peopleList}
-              label={(item) => fullName(item?.firstName, item?.lastName)}
-            />
-          </div>
+          <Suspense fallback={<></>}>
+            <AdminUserSelector selectedUser={userId} />
+          </Suspense>
         )}
       </div>
       <div className="mb-8 hidden justify-between md:flex">
         <SectionHeading>Unavailable Dates</SectionHeading>
         <div className="flex gap-4">
           {user?.status == "ADMIN" && (
-            <div className="min-w-[10rem]">
-              <NewSingleSelect
-                selected={userSelected}
-                setSelected={setUserSelected}
-                list={peopleList}
-                label={(item) => fullName(item?.firstName, item?.lastName)}
-              />
-            </div>
+          <Suspense fallback={<></>}>
+            <AdminUserSelector selectedUser={userId} />
+          </Suspense>
           )}
           <BtnAdd onClick={() => setModalOpen(true)} />
           {/* <LimitSelect selected={limit} setSelected={setLimit} /> */}
@@ -308,3 +252,32 @@ const AvalibiltyWrapper = () => {
 AvalibiltyWrapper.getLayout = sidebar;
 
 export default AvalibiltyWrapper;
+
+const AdminUserSelector = ({ selectedUser }: { selectedUser: string }) => {
+  const router = useRouter();
+  const user = useContext(UserContext);
+  if (user?.status != "ADMIN") {
+    return null;
+  }
+
+  const [users, getUsersQuery] =
+    api.user.getUsersByOrganization.useSuspenseQuery(undefined);
+
+  // const currentUserIndex = users.findIndex((user) => user.id === selectedUser);
+
+  return (
+    <div className="col-span-2">
+        <UncontrolledSingleSelect
+          defaultValue={
+            users[users.findIndex((user) => user.id === selectedUser)]
+          }
+          onChange={(item) => {
+            console.log("here");
+            router.push(`/availability?userId=${encodeURIComponent(item!.id)}`);
+          }}
+          list={users.map((user) => ({ item: user, show: true }))}
+          label={(item) => item?.firstName + " " + item?.lastName}
+        />
+    </div>
+  );
+};

@@ -57,7 +57,8 @@ const PeoplePage = () => {
         setPeopleUnPageList(data);
       }
     }
-  });
+  }, [people]);
+
   const adminCount = api.user.getAmdminCount.useQuery();
   const createInvite = api.createAccount.createInviteLinkWithID.useMutation({
     onSuccess: () => {

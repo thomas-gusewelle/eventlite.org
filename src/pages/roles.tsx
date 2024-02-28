@@ -19,7 +19,7 @@ import { ModalBody } from "../components/modal/modalBody";
 import { ModalTitle } from "../components/modal/modalTitle";
 import { AlertContext } from "../providers/alertProvider";
 import { paginate } from "../utils/paginate";
-import { api } from "../server/utils/api"
+import { api } from "../server/utils/api";
 
 const Roles = () => {
   const [editOpen, setEditOpen] = useState(false);
@@ -38,11 +38,13 @@ const Roles = () => {
     reset,
   } = useForm();
 
-  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
-    onSuccess(data) {
-      setRoleList(data);
-    },
-  });
+  const roles = api.role.getRolesByOrganization.useQuery(undefined);
+
+  useEffect(() => {
+    if (roles.isSuccess) {
+      setRoleList(roles.data);
+    }
+  }, [roles]);
 
   const addRole = api.role.addRole.useMutation({
     onSuccess(data, variables, context) {
@@ -143,7 +145,7 @@ const Roles = () => {
     paginatedData == undefined
   ) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -153,8 +155,8 @@ const Roles = () => {
     return (
       <>
         <NoDataLayout
-          heading='Roles'
-          btnText='Add Roles'
+          heading="Roles"
+          btnText="Add Roles"
           func={() => setEditOpen(true)}
         />
         <Modal open={editOpen} setOpen={setEditOpen}>
@@ -162,20 +164,21 @@ const Roles = () => {
             <form onSubmit={submit}>
               <ModalBody>
                 <ModalTitle text={editId == null ? "Add Role" : "Edit Role"} />
-                <div className='mt-2'>
+                <div className="mt-2">
                   <label
-                    htmlFor='name'
-                    className='block text-sm font-medium text-gray-700'>
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Role Name
                   </label>
                   <input
-                    type='text'
-                    id='name'
+                    type="text"
+                    id="name"
                     {...register("name", { required: true, minLength: 3 })}
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                   {errors.name && (
-                    <span className='text-red-500'>
+                    <span className="text-red-500">
                       Location Name is Required
                     </span>
                   )}
@@ -203,20 +206,21 @@ const Roles = () => {
           <form onSubmit={submit}>
             <ModalBody>
               <ModalTitle text={editId == null ? "Add Role" : "Edit Role"} />
-              <div className='mt-2'>
+              <div className="mt-2">
                 <label
-                  htmlFor='name'
-                  className='block text-sm font-medium text-gray-700'>
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Role Name
                 </label>
                 <input
-                  type='text'
-                  id='name'
+                  type="text"
+                  id="name"
                   {...register("name", { required: true, minLength: 3 })}
-                  className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 {errors.name && (
-                  <span className='text-red-500'>
+                  <span className="text-red-500">
                     Location Name is Required
                   </span>
                 )}
@@ -235,9 +239,9 @@ const Roles = () => {
       </Modal>
       <>
         {/* MD Top Bar */}
-        <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
+        <div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
           <SectionHeading>Roles</SectionHeading>
-          <div className='flex justify-end'>
+          <div className="flex justify-end">
             <BtnAdd
               onClick={() => {
                 reset({ name: "" });
@@ -246,25 +250,25 @@ const Roles = () => {
               }}
             />
           </div>
-          <div className='col-span-2'>
+          <div className="col-span-2">
             <input
               onChange={(e) => filter(e.target.value)}
-              className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-              type='text'
-              placeholder='Search'
+              className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+              type="text"
+              placeholder="Search"
             />
           </div>
         </div>
 
         {/* Desktop Top Bar */}
-        <div className='mb-8 hidden justify-between md:flex'>
+        <div className="mb-8 hidden justify-between md:flex">
           <SectionHeading>Roles</SectionHeading>
-          <div className='flex gap-4'>
+          <div className="flex gap-4">
             <input
               onChange={(e) => filter(e.target.value)}
-              className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-              type='text'
-              placeholder='Search'
+              className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+              type="text"
+              placeholder="Search"
             />
             {/* <SearchBar /> */}
             <BtnAdd
@@ -277,8 +281,8 @@ const Roles = () => {
           </div>
         </div>
 
-        <div className='w-full'>
-          <table className='w-full table-auto text-left'>
+        <div className="w-full">
+          <table className="w-full table-auto text-left">
             <thead>
               <tr>
                 <th>Name</th>
@@ -305,8 +309,8 @@ const Roles = () => {
                 ];
 
                 return (
-                  <tr key={index} className='border-t last:border-b'>
-                    <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
+                  <tr key={index} className="border-t last:border-b">
+                    <td className="py-4 text-base leading-4 text-gray-800 md:text-xl">
                       {role.name}
                     </td>
                     <td>

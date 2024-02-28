@@ -5,8 +5,7 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { ItemWithHide, ListWithHide } from "../../../types/genericTypes";
 
 //this requies data to have an id and name property
-export const MultiSelect: React.FC<{
-  selected: any[];
+export const MultiSelect: React.FC<{ selected: any[];
   setSelected: Function;
   list: any[];
   setList: Function;
@@ -106,10 +105,10 @@ export const MultiSelect: React.FC<{
 
 
 interface MultiSelectProps<ListItem extends { id: string }> {
-  selected: ListWithHide<ListItem>;
-  setSelected: Dispatch<SetStateAction<ListWithHide<ListItem>>>;
+  selected: ListItem[];
+  setSelected: Dispatch<SetStateAction<ListItem[]>>;
   list: ListWithHide<ListItem>;
-  label: (item: ItemWithHide<ListItem>) => any;
+  label: (item: ListItem) => ReactNode;
   showAdd?: boolean;
   showAddComponent?: ReactNode;
   disabled?: boolean
@@ -132,14 +131,14 @@ export const NewMultiSelect = <List extends { id: string },>({
   const isAllSelected = selected.length == list.length;
   const ICON_SIZE = 20;
 
-  function removeSelected(item: { item: List, hide?: boolean }, e: FormEvent): void {
+  function removeSelected(item: List, e: FormEvent): void {
     e.stopPropagation();
-    setSelected(selected.filter((e) => e.item.id != item.item.id));
+    setSelected(selected.filter((e) => e.id != item.id));
   }
 
 
   function toggleAll() {
-    isAllSelected ? setSelected([]) : setSelected(list);
+    isAllSelected ? setSelected([]) : setSelected(list.map(item => item.item));
   }
 
   return (
@@ -175,7 +174,7 @@ export const NewMultiSelect = <List extends { id: string },>({
                     {selected.map((item) => (
                       <div
                         className='flex items-center gap-2 rounded bg-indigo-100 py-1 px-2'
-                        key={item.item.id}
+                        key={item.id}
                         onClick={(e) => e.stopPropagation()}
                       >
                         {label(item)}
@@ -222,15 +221,15 @@ export const NewMultiSelect = <List extends { id: string },>({
                       }`
                     }
                     value={item}>
-                    {({ selected }) => (
+                    {({ }) => (
                       <div className="flex gap-3 items-center">
-                        {selected ? <MdCheckBox className="text-indigo-700" size={ICON_SIZE} /> : <MdCheckBoxOutlineBlank size={ICON_SIZE} />}
+                        {selected.map(s => s.id).includes(item.item.id) ? <MdCheckBox className="text-indigo-700" size={ICON_SIZE} /> : <MdCheckBoxOutlineBlank size={ICON_SIZE} />}
                         <span
-                          className={`block truncate ${selected
+                          className={`block truncate ${selected.map(s => s.id).includes(item.item.id)
                             ? "font-medium text-indigo-700"
                             : "font-normal"
                             }`}>
-                          {label(item)}
+                          {label(item.item)}
                         </span>
                       </div>
                     )}

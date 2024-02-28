@@ -62,7 +62,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
   const userQuery = api.user.getUserByID.useQuery(id);
 
   useEffect(() => {
-    if (userQuery.isSuccess &&isLoading) {
+    if (userQuery.isSuccess && isLoading) {
       if (userQuery.data != null) {
         userQuery.data.phoneNumber = formatPhoneNumber(
           userQuery.data.phoneNumber ?? ""
@@ -120,7 +120,7 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
 
   if (isLoading) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -141,34 +141,28 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
         />
       )}
       <FormProvider {...methods}>
-        <div className='mb-8'>
+        <div className="mb-8">
           <SectionHeading>Edit User</SectionHeading>
         </div>
-        <form onSubmit={preSubmit} className='shadow'>
-          <div className='mb-6 grid grid-cols-6 gap-6 px-6'>
-            <div className='col-span-6 sm:col-span-3'>
+        <form onSubmit={preSubmit} className="shadow">
+          <div className="mb-6 grid grid-cols-6 gap-6 px-6">
+            <div className="col-span-6 sm:col-span-3">
               <FirstNameInput />
             </div>
 
-            <div className='col-span-6 sm:col-span-3'>
+            <div className="col-span-6 sm:col-span-3">
               <LastNameInput />
             </div>
-            <div className='col-span-6 sm:col-span-4'>
+            <div className="col-span-6 sm:col-span-4">
               <EmailInput />
             </div>
-            <div className='col-span-6 sm:col-span-4'>
+            <div className="col-span-6 sm:col-span-4">
               <PhoneInput />
             </div>
-            <div className='col-span-6 sm:col-span-3'>
-              <label className='block text-sm font-medium text-gray-700'>
+            <div className="col-span-6 sm:col-span-3">
+              <label className="block text-sm font-medium text-gray-700">
                 Positions
               </label>
-              {/*<MultiSelect
-                disabled={user.status != "ADMIN"}
-                selected={selectedRoles}
-                setSelected={setSelectedRoles}
-                list={roleList}
-                setLit={setRoleList}></MultiSelect>*/}
               <NewMultiSelect
                 selected={selectedRoles}
                 setSelected={setSelectedRoles}
@@ -176,14 +170,14 @@ const EditUser: React.FC<{ id: string }> = ({ id }) => {
                 label={(item) => item.name}
               />
             </div>
-            <div className='hidden sm:col-span-3 sm:block'></div>
-            <div className='sm:ropw col-span-6 sm:col-span-3'>
+            <div className="hidden sm:col-span-3 sm:block"></div>
+            <div className="sm:ropw col-span-6 sm:col-span-3">
               <UserStatusInputSelector userRoles={userRoles} />
             </div>
           </div>
-          <div className='flex justify-end gap-3 bg-gray-50 px-4 py-3 text-right sm:px-6'>
+          <div className="flex justify-end gap-3 bg-gray-50 px-4 py-3 text-right sm:px-6">
             <BtnCancel onClick={() => router.back()} />
-            <BtnPurple isLoading={editUser.isPending} type='submit'>
+            <BtnPurple isLoading={editUser.isPending} type="submit">
               Save
             </BtnPurple>
           </div>

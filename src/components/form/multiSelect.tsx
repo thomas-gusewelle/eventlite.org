@@ -147,7 +147,7 @@ export const NewMultiSelect = <List extends { id: string },>({
         <Listbox
           disabled={disabled}
           value={selected}
-          onChange={(value) => setSelected(value)}
+          onChange={(value) => {console.log(value); setSelected(value)}}
           multiple>
           <div className='relative mt-1 '>
             <Listbox.Button className='relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
@@ -220,7 +220,7 @@ export const NewMultiSelect = <List extends { id: string },>({
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
                       }`
                     }
-                    value={item}>
+                    value={item.item}>
                     {({ }) => (
                       <div className="flex gap-3 items-center">
                         {selected.map(s => s.id).includes(item.item.id) ? <MdCheckBox className="text-indigo-700" size={ICON_SIZE} /> : <MdCheckBoxOutlineBlank size={ICON_SIZE} />}

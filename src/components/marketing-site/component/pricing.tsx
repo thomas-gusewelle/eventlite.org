@@ -62,7 +62,10 @@ export const IndexPricingLayout = () => {
 
         <div className="grid gap-6 pt-9 md:grid-cols-3">
           {tiers.map((tier, i) => (
-            <div key={i} className="flex flex-col rounded-xl bg-white py-6 px-6 text-black shadow">
+            <div
+              key={i}
+              className="flex flex-col rounded-xl bg-white py-6 px-6 text-black shadow"
+            >
               <h3 className="text-xl font-bold">{tier.name}</h3>
               <p className="pt-3">{tier.tag}</p>
               <p className="py-6">
@@ -77,7 +80,7 @@ export const IndexPricingLayout = () => {
               </BtnPurple>
               <ul className="pt-6">
                 {tier.features.map((feat, i) => (
-                  <li key-={i} className="flex items-center gap-3">
+                  <li key={i} className="flex items-center gap-3">
                     <MdCheck className="text-indigo-600" />
                     <p>{feat}</p>
                   </li>

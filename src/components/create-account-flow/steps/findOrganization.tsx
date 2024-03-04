@@ -2,7 +2,7 @@ import { Combobox, Transition } from "@headlessui/react";
 import { Organization } from "@prisma/client";
 import { Dispatch, FormEvent, Fragment, SetStateAction, useState } from "react";
 import { Controller, FormProvider, useFormContext } from "react-hook-form";
-import { api } from "../../../server/utils/api"
+import { api } from "../../../server/utils/api";
 import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
 import { CircularProgress } from "../../circularProgress";
@@ -27,8 +27,6 @@ export const FindOrganization = ({
   const [query, setQuery] = useState("");
   const searchQuery = api.createAccount.searchForOrg.useQuery(query, {
     enabled: !!(query != ""),
-    onSuccess(data) {
-    },
   });
   return (
     <>
@@ -36,21 +34,22 @@ export const FindOrganization = ({
 
       <Controller
         control={control}
-        name='orgName'
+        name="orgName"
         defaultValue={null}
         rules={{ required: "Please select an organization." }}
         render={({ field, formState, fieldState }) => (
           <>
-            <section className='mt-6'>
+            <section className="mt-6">
               <Combobox
                 value={field.value}
                 onChange={(value: Organization) => {
                   field.onChange(value.name);
                   setValue("orgID", value.id);
-                }}>
-                <div className='relative'>
+                }}
+              >
+                <div className="relative">
                   <Combobox.Input
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     onChange={(e) => {
                       setQuery(e.target.value);
                       field.onChange(null);
@@ -61,19 +60,20 @@ export const FindOrganization = ({
                   )}
                   <Transition
                     as={Fragment}
-                    leave='transition ease-in duration-100'
-                    leaveFrom='opacity-100'
-                    leaveTo='opacity-0'>
-                    <Combobox.Options className='absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Combobox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                       {searchQuery.isLoading && (
-                        <div className='flex justify-center py-2'>
+                        <div className="flex justify-center py-2">
                           <CircularProgress />
                         </div>
                       )}
                       {!searchQuery.isLoading &&
                         (searchQuery.isError ||
                           searchQuery.data?.length == 0) && (
-                          <div className='py-2 pl-10'>
+                          <div className="py-2 pl-10">
                             Organization Not Found
                           </div>
                         )}
@@ -82,16 +82,20 @@ export const FindOrganization = ({
                           key={org.id}
                           value={org}
                           className={({ active }) =>
-                            `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-indigo-100" : "text-gray-900"
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                              active ? "bg-indigo-100" : "text-gray-900"
                             }`
-                          }>
+                          }
+                        >
                           {({ selected }) => (
                             <>
                               <span
-                                className={`block cursor-pointer truncate ${selected
-                                  ? "font-medium text-indigo-700"
-                                  : "font-normal"
-                                  }`}>
+                                className={`block cursor-pointer truncate ${
+                                  selected
+                                    ? "font-medium text-indigo-700"
+                                    : "font-normal"
+                                }`}
+                              >
                                 {org.name}
                               </span>
                             </>
@@ -105,12 +109,14 @@ export const FindOrganization = ({
             </section>
             <div
               onClick={(e) => e.preventDefault()}
-              className='mt-6 flex items-center justify-center gap-6'>
+              className="mt-6 flex items-center justify-center gap-6"
+            >
               <BtnNeutral
                 func={() => {
                   field.onChange(null);
                   setStep(1);
-                }}>
+                }}
+              >
                 Back
               </BtnNeutral>
               <BtnPurple
@@ -124,7 +130,8 @@ export const FindOrganization = ({
                     clearErrors("orgName");
                     setStep(3);
                   }
-                }}>
+                }}
+              >
                 Next
               </BtnPurple>
             </div>

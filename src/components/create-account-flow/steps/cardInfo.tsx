@@ -19,26 +19,21 @@ import { BtnPurple } from "../../btn/btnPurple";
 import { CircularProgress } from "../../circularProgress";
 import { CardHeader } from "../components/cardHeader";
 import { CreateOrgContext } from "../dataStore";
+
 export const CardInfoSection = ({
   setStep,
 }: {
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
   const { state } = useContext(CreateOrgContext)!;
-  const [secret, setSecret] = useState("");
 
-  const clientSecret = api.stripe.getSubscriptionSecretByID.useQuery(
-    { id: state.stripeSubscriptionId },
-    {
-      onSuccess(data) {
-        if (typeof data.clientSecret === "string") {
-          setSecret(data.clientSecret);
-        }
-      },
-    }
-  );
+  const clientSecret = api.stripe.getSubscriptionSecretByID.useQuery({
+    id: state.stripeSubscriptionId,
+  });
 
-  if (clientSecret.isLoading || secret === "") {
+  let secret = clientSecret.data?.clientSecret;
+
+  if (clientSecret.isLoading || secret == null) {
     return (
       <div className="flex items-center justify-center">
         <CircularProgress />

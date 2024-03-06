@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/router";
 import { CreateOrganization } from "../components/create-account-flow/steps/createOrganization";
 import { YourInfoStep } from "../components/create-account-flow/steps/yourInfo";
@@ -11,7 +17,11 @@ import { PricingTiers } from "../components/create-account-flow/steps/pricingTie
 import { CreateOrgProvider } from "../components/create-account-flow/dataStore";
 import { CreateAccountIdentifier } from "../components/create-account-flow/steps/creatingAccountIndicator";
 import { CardInfoSection } from "../components/create-account-flow/steps/cardInfo";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
 import { stripe } from "../server/stripe/client";
 import Stripe from "stripe";
@@ -54,11 +64,10 @@ export const getServerSideProps = async (
         }
       );
 
-      const subscription = updatedSubscription;
-      return { props: { subscription } };
+      return { props: { subscription: updatedSubscription } };
     }
 
-    return { props: { subscription } };
+    return { props: { subscription: subscription } };
   }
 
   // if there is no existing subscription in cookies then create on
@@ -81,18 +90,25 @@ export const getServerSideProps = async (
     res: context.res,
   });
 
-  return { props: { subscription } };
+    return { props: { subscription: subscription } };
+
 };
 
 const CreateAccount = ({
+  firstName,
+  lastName,
+  orgName,
+  email,
   tier,
-  subscription,
 }: {
+  firstName: string | undefined;
+  lastName: string | undefined;
+  orgName: string | undefined;
+  email: string | undefined;
   tier: string | undefined;
-  subscription: Stripe.Response<Stripe.Subscription>;
 }) => {
   const { setError } = useContext(AlertContext);
-  const [step, setStep] = useState(4);
+  const [step, setStep] = useState(1);
   const createOrg = api.organization.createOrg.useMutation({
     onError(error, _variables, _context) {
       setError({
@@ -118,28 +134,57 @@ const CreateAccount = ({
           <Steps
             step={step}
             setStep={setStep}
-            stripeSubscriptionId={subscription.id}
-            stripeCustomerId={subscription.customer as string}
-            stripePriceId={subscription.items.data[0]?.price.id!}
           />
+          {/*  {step == 4 && (
+            <div className="mt-6 flex justify-center gap-6">
+              <BtnNeutral
+                fullWidth={true}
+                func={() => {
+                  setStep(1);
+                }}
+              >
+                Back
+              </BtnNeutral>
+              <BtnPurple
+                isLoading={createOrg.isLoading}
+                fullWidth={true}
+                type="submit"
+              >
+                Submit
+              </BtnPurple>
+            </div>
+          )} */}
         </LoginCard>
       </CreateOrgProvider>
     </>
   );
 };
 
-const CreateAcountPage = ({
-  subscription,
-}: {
-  subscription: InferGetServerSidePropsType<typeof getServerSideProps>;
-}) => {
+const CreateAcountPage = (
+  subscription: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { tier } = router.query;
+  const { orgName, firstName, lastName, email, tier } = router.query;
 
-  if (Array.isArray(tier)) {
+
+  if (
+    Array.isArray(orgName) ||
+    Array.isArray(firstName) ||
+    Array.isArray(lastName) ||
+    Array.isArray(email) ||
+    Array.isArray(tier)
+  ) {
     return <div>Error with invite link</div>;
   }
-  return <CreateAccount tier={tier} subscription={subscription} />;
+
+  return (
+    <CreateAccount
+      orgName={orgName}
+      lastName={lastName}
+      firstName={firstName}
+      email={email}
+      tier={tier}
+    />
+  );
 };
 
 CreateAcountPage.getLayout = loginFlowLayout;
@@ -148,39 +193,21 @@ export default CreateAcountPage;
 const Steps = ({
   step,
   setStep,
-  stripeSubscriptionId,
-  stripeCustomerId,
-  stripePriceId,
 }: {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
-  stripeSubscriptionId: string;
-  stripeCustomerId: string;
-  stripePriceId: string;
 }) => {
   switch (step) {
     case 1:
-      return (
-        <CreateOrganization
-          setStep={setStep}
-          stripeCustomerId={stripeCustomerId}
-          stripeSubscriptionId={stripeSubscriptionId}
-          stripePriceId={stripePriceId}
-        />
-      );
+      return <CreateOrganization setStep={setStep} stripeCustomerId={""} stripeSubscriptionId={""} stripePriceId={""} />;
     case 2:
       return <YourInfoStep setStep={setStep} />;
     case 3:
-      return <CreateAccountIdentifier setStep={setStep} />;
-    case 4:
       return <PricingTiers tier={undefined} setStep={setStep} />;
+    case 4:
+      return <CardInfoSection setStep={setStep}/>;
     case 5:
-      return (
-        <CardInfoSection
-          setStep={setStep}
-          stripeCustomerId={stripeCustomerId}
-        />
-      );
+      return <CreateAccountIdentifier setStep={setStep} />;
     default:
       return <div></div>;
   }

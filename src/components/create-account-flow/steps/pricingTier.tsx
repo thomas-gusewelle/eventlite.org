@@ -67,6 +67,9 @@ export const PricingTiers = ({
   );
   const updateSub = api.stripe.updateSubscriptionPrice.useMutation();
 
+  const priceId =
+    subscription.data.items.data[0]?.price.id ?? "price_1OWkdVKjgiEDHq2AesuPdTmq";
+
   const plan = plans.findIndex((p) => p.stripeId === state.tier);
   const [selected, setSelected] = useState<plan>(plans[plan == -1 ? 0 : plan]!);
 
@@ -80,12 +83,12 @@ export const PricingTiers = ({
     // if tier is different then update
     if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
       // since the subscription has never been active
-      // we want to charge the change immediately 
+      // we want to charge the change immediately
       await updateSub.mutateAsync(
         {
           subId: state.stripeSubscriptionId,
           priceId: selected.stripeId,
-          chargeChangeImmediately: true
+          chargeChangeImmediately: true,
         },
         {
           onSuccess(data, _variables, _context) {

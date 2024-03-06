@@ -45,9 +45,6 @@ export function CreateOrgProvider({ children }: { children: any }) {
     orgId: ""
   };
   const [state, setState] = useState(value);
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
   return (
     <CreateOrgContext.Provider value={{ state, setState }}>
       {children}

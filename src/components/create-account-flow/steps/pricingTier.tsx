@@ -12,6 +12,7 @@ import { BtnPurple } from "../../btn/btnPurple";
 import { CreateOrgContext } from "../dataStore";
 import { api } from "../../../server/utils/api";
 import { useRouter } from "next/router";
+import { AlertContext } from "../../../providers/alertProvider";
 
 type plan = {
   name: string;

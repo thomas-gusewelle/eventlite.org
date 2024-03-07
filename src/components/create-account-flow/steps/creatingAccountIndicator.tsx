@@ -18,7 +18,7 @@ export const CreateAccountIdentifier = ({
 }) => {
   const { state, setState } = useContext(CreateOrgContext)!;
   const createOrg = api.organization.createOrg.useMutation();
-  const [text, setText] = useState("Setting up your organization...");
+  const [text, _setText] = useState("Setting up your organization...");
 
   // used for creating the user and the organziation and then continueing to the pricing tier phase
   useEffect(() => {

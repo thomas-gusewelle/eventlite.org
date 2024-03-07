@@ -41,10 +41,8 @@ const plans: plan[] = [
 ];
 
 export const PricingTiers = ({
-  tier,
   setStep,
 }: {
-  tier: string | undefined;
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
   const router = useRouter();

@@ -9,9 +9,9 @@ import {
   FormEvent,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
+import { AlertContext } from "../../../providers/alertProvider";
 import { loadedStripe } from "../../../server/stripe/client";
 import { api } from "../../../server/utils/api";
 import { BtnNeutral } from "../../btn/btnNeutral";
@@ -58,17 +58,16 @@ const CardForm = ({
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
   const { state } = useContext(CreateOrgContext)!;
+  const { setError } = useContext(AlertContext)!;
   const stripe = useStripe();
   const elements = useElements();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  //TODO: implement and test
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!stripe || !elements || secret === "") {
-      console.log("here");
       return;
     }
     setIsLoading(true);
@@ -77,7 +76,10 @@ const CardForm = ({
 
     if (submitError) {
       setIsLoading(false);
-      console.error(submitError);
+      setError({
+        state: true,
+        message: "Error verifying card information. Please try again.",
+      });
       return;
     }
 
@@ -90,7 +92,10 @@ const CardForm = ({
 
     if (error) {
       setIsLoading(false);
-      console.error(error);
+      setError({
+        state: true,
+        message: "Error submitting payment. Please try again.",
+      });
       return;
     }
   };

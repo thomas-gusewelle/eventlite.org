@@ -47,26 +47,11 @@ export const PricingTiers = ({
 }) => {
   const router = useRouter();
   const { state, setState } = useContext(CreateOrgContext)!;
-
-  const subscription = api.stripe.getSubscriptionByID.useQuery(
-    {
-      subId: state.stripeSubscriptionId,
-    },
-    {
-      onSuccess(data) {
-        if (data) {
-          const priceId =
-            data.items.data[0]?.price.id ?? "price_1OWkdVKjgiEDHq2AesuPdTmq";
-          const plan = plans.findIndex((p) => p.stripeId === priceId);
-          setSelected(plans[plan == -1 ? 0 : plan]!);
-        }
-      },
-    }
-  );
+  const { setError } = useContext(AlertContext)!;
   const updateSub = api.stripe.updateSubscriptionPrice.useMutation();
 
   const priceId =
-    subscription.data.items.data[0]?.price.id ?? "price_1OWkdVKjgiEDHq2AesuPdTmq";
+    state.tier === "" ? state.tier : "price_1OWkdVKjgiEDHq2AesuPdTmq";
 
   const plan = plans.findIndex((p) => p.stripeId === state.tier);
   const [selected, setSelected] = useState<plan>(plans[plan == -1 ? 0 : plan]!);
@@ -79,7 +64,7 @@ export const PricingTiers = ({
     }));
 
     // if tier is different then update
-    if (subscription.data?.items.data[0]?.price.id != selected.stripeId) {
+    if (priceId != selected.stripeId) {
       // since the subscription has never been active
       // we want to charge the change immediately
       await updateSub.mutateAsync(
@@ -89,11 +74,11 @@ export const PricingTiers = ({
           chargeChangeImmediately: true,
         },
         {
-          onSuccess(data, _variables, _context) {
-            console.log(data);
-          },
           onError(error, _variables, _context) {
-            console.error(error);
+            setError({
+              state: true,
+              message: "Error saving the selected plan. Please try again.",
+            });
           },
         }
       );
@@ -107,7 +92,6 @@ export const PricingTiers = ({
   };
   return (
     <form onSubmit={handleSubmit}>
-      {/*TODO: Need to update header to say something about now choose your plan*/}
       <CardHeader>Choose your plan</CardHeader>
       <RadioGroup value={selected} onChange={setSelected}>
         <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
@@ -154,8 +138,8 @@ export const PricingTiers = ({
       </RadioGroup>
       <div className="mt-6 flex items-center justify-center gap-6">
         <BtnPurple
-          disabled={subscription.isLoading}
-          isLoading={updateSub.isLoading}
+          disabled={updateSub.isPending}
+          isLoading={updateSub.isPending}
           type="submit"
           fullWidth
         >

@@ -9,7 +9,6 @@ import { BtnNeutral } from "../../btn/btnNeutral";
 import { BtnPurple } from "../../btn/btnPurple";
 import { PasswordField } from "../../form/password";
 import { CreateOrgContext } from "../dataStore";
-import { api } from "../../../server/utils/api";
 
 export const YourInfoStep = ({
   setStep,
@@ -18,10 +17,7 @@ export const YourInfoStep = ({
 }) => {
   const { state, setState } = useContext(CreateOrgContext)!;
   const methods = useForm();
-  const createOrgMutation = api.organization.createOrg.useMutation();
 
-  //TODO: finish implemeting createOrgMutation to create the user and org here.
-  //We are doing this to simplify the stripe process.
   const handleSubmit = methods.handleSubmit((data) => {
     setState((prev) => ({
       ...prev,
@@ -32,18 +28,12 @@ export const YourInfoStep = ({
       password: data.password,
       passwordConfirm: data.passwordConfirm,
     }));
-
-
-
     setStep(3);
   });
 
   useEffect(() => {
     methods.reset(state);
   }, []);
-
-
-  //TODO: Solve issue with the password confirm not autofilling
 
   return (
     <>
@@ -61,7 +51,6 @@ export const YourInfoStep = ({
               <BtnNeutral
                 fullWidth
                 func={() => {
-                  console.log("back being called");
                   setStep(1);
                 }}
               >

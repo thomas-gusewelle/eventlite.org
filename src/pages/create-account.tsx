@@ -136,20 +136,13 @@ const Steps = ({
 }) => {
   switch (step) {
     case 1:
-      return (
-        <CreateOrganization
-          setStep={setStep}
-          stripeCustomerId={""}
-          stripeSubscriptionId={""}
-          stripePriceId={""}
-        />
-      );
+      return <CreateOrganization setStep={setStep} />;
     case 2:
       return <YourInfoStep setStep={setStep} />;
     case 3:
       return <CreateAccountIdentifier setStep={setStep} />;
     case 4:
-      return <PricingTiers tier={undefined} setStep={setStep} />;
+      return <PricingTiers setStep={setStep} />;
     case 5:
       return <CardInfoSection setStep={setStep} />;
     default:

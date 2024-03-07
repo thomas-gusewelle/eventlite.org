@@ -43,7 +43,7 @@ export const CreateAccountIdentifier = ({
             setStep(4);
           }
         },
-        onError(error, _variables, _context) {
+        onError(_error, _variables, _context) {
           //TODO: implement a better system for displaying errors
           //this can be done alert provider and Error alert and Success alert I have already made
           alert("Error creating your account. Please try again.");

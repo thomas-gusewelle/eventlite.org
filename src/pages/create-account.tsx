@@ -90,100 +90,32 @@ export const getServerSideProps = async (
     res: context.res,
   });
 
-    return { props: { subscription: subscription } };
-
+  return { props: { subscription: subscription } };
 };
 
-const CreateAccount = ({
-  firstName,
-  lastName,
-  orgName,
-  email,
-  tier,
-}: {
-  firstName: string | undefined;
-  lastName: string | undefined;
-  orgName: string | undefined;
-  email: string | undefined;
-  tier: string | undefined;
-}) => {
-  const { setError } = useContext(AlertContext);
+const CreateAccount = () => {
   const [step, setStep] = useState(1);
-  const createOrg = api.organization.createOrg.useMutation({
-    onError(error, _variables, _context) {
-      setError({
-        state: true,
-        message: `Error creating organization. Message: ${error.message}`,
-      });
-    },
-  });
-  const createUser = api.user.addUser.useMutation({
-    onError(error, _variables, _context) {
-      setError({
-        state: true,
-        message: `Error creating user. Message: ${error.message}`,
-      });
-    },
-  });
 
   return (
     <>
       <VerticalLogo />
-      <CreateOrgProvider>
         <LoginCard>
-          <Steps
-            step={step}
-            setStep={setStep}
-          />
-          {/*  {step == 4 && (
-            <div className="mt-6 flex justify-center gap-6">
-              <BtnNeutral
-                fullWidth={true}
-                func={() => {
-                  setStep(1);
-                }}
-              >
-                Back
-              </BtnNeutral>
-              <BtnPurple
-                isLoading={createOrg.isLoading}
-                fullWidth={true}
-                type="submit"
-              >
-                Submit
-              </BtnPurple>
-            </div>
-          )} */}
+          <Steps step={step} setStep={setStep} />
         </LoginCard>
-      </CreateOrgProvider>
     </>
   );
 };
 
 const CreateAcountPage = (
-  subscription: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter();
-  const { orgName, firstName, lastName, email, tier } = router.query;
-
-
-  if (
-    Array.isArray(orgName) ||
-    Array.isArray(firstName) ||
-    Array.isArray(lastName) ||
-    Array.isArray(email) ||
-    Array.isArray(tier)
-  ) {
-    return <div>Error with invite link</div>;
-  }
-
+  subscription: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
+  console.log(subscription);
+  //TODO:Fix property not there
   return (
-    <CreateAccount
-      orgName={orgName}
-      lastName={lastName}
-      firstName={firstName}
-      email={email}
-      tier={tier}
-    />
+
+    <CreateOrgProvider subId={subscription.subscription.id} customerId={subscription.subscription.customer} tier={subscription.subscription.plan.id}>
+      <CreateAccount />
+    </CreateOrgProvider>
   );
 };
 
@@ -199,15 +131,22 @@ const Steps = ({
 }) => {
   switch (step) {
     case 1:
-      return <CreateOrganization setStep={setStep} stripeCustomerId={""} stripeSubscriptionId={""} stripePriceId={""} />;
+      return (
+        <CreateOrganization
+          setStep={setStep}
+          stripeCustomerId={""}
+          stripeSubscriptionId={""}
+          stripePriceId={""}
+        />
+      );
     case 2:
       return <YourInfoStep setStep={setStep} />;
     case 3:
-      return <PricingTiers tier={undefined} setStep={setStep} />;
-    case 4:
-      return <CardInfoSection setStep={setStep}/>;
-    case 5:
       return <CreateAccountIdentifier setStep={setStep} />;
+    case 4:
+      return <PricingTiers tier={undefined} setStep={setStep} />;
+    case 5:
+      return <CardInfoSection setStep={setStep} />;
     default:
       return <div></div>;
   }

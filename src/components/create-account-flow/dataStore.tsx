@@ -19,17 +19,27 @@ type CreateAccountForm = {
   tier: string;
   stripeCustomerId: string;
   stripeSubscriptionId: string;
-  orgId: string,
+  orgId: string;
 };
 export const CreateOrgContext = createContext<
   | {
-    state: CreateAccountForm;
-    setState: Dispatch<SetStateAction<CreateAccountForm>>;
-  }
+      state: CreateAccountForm;
+      setState: Dispatch<SetStateAction<CreateAccountForm>>;
+    }
   | undefined
 >(undefined);
 
-export function CreateOrgProvider({ children }: { children: any }) {
+export function CreateOrgProvider({
+  children,
+  customerId,
+  subId,
+  tier,
+}: {
+  children: any;
+  customerId: string;
+  subId: string;
+  tier: string;
+}) {
   const value: CreateAccountForm = {
     orgName: "",
     orgPhoneNumber: "",
@@ -39,10 +49,10 @@ export function CreateOrgProvider({ children }: { children: any }) {
     phoneNumber: "",
     password: "",
     passwordConfirm: "",
-    tier: "price_1OWkdVKjgiEDHq2AesuPdTmq",
-    stripeCustomerId: "cus_PTI2Sgue1oShvj",
-    stripeSubscriptionId: "sub_1OhDhzKjgiEDHq2A4KrMgAiA",
-    orgId: ""
+    tier: tier,
+    stripeCustomerId: customerId,
+    stripeSubscriptionId:subId,
+    orgId: "",
   };
   const [state, setState] = useState(value);
   return (

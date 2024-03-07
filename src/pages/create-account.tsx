@@ -99,9 +99,9 @@ const CreateAccount = () => {
   return (
     <>
       <VerticalLogo />
-        <LoginCard>
-          <Steps step={step} setStep={setStep} />
-        </LoginCard>
+      <LoginCard>
+        <Steps step={step} setStep={setStep} />
+      </LoginCard>
     </>
   );
 };
@@ -109,11 +109,16 @@ const CreateAccount = () => {
 const CreateAcountPage = (
   subscription: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  console.log(subscription);
-  //TODO:Fix property not there
-  return (
+  const subID = subscription.subscription.id;
+  const customerID = subscription.subscription.customer;
+  const tier = subscription.subscription.items.data[0]?.plan.id ?? "";
 
-    <CreateOrgProvider subId={subscription.subscription.id} customerId={subscription.subscription.customer} tier={subscription.subscription.plan.id}>
+  return (
+    <CreateOrgProvider
+      subId={subID}
+      customerId={typeof customerID == "string" ? customerID : ""}
+      tier={tier}
+    >
       <CreateAccount />
     </CreateOrgProvider>
   );

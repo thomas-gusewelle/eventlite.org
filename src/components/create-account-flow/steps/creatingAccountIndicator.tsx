@@ -10,8 +10,6 @@ import { api } from "../../../server/utils/api";
 import { CircularProgress } from "../../circularProgress";
 import { CreateOrgContext } from "../dataStore";
 
-// TODO: add in ability to create org on load
-// need server functionallity linked in
 export const CreateAccountIdentifier = ({
   setStep,
 }: {

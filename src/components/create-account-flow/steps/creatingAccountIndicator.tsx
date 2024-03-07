@@ -17,6 +17,7 @@ export const CreateAccountIdentifier = ({
   setStep: Dispatch<SetStateAction<number>>;
 }) => {
   const { state, setState } = useContext(CreateOrgContext)!;
+  const { setError } = useContext(AlertContext)!;
   const createOrg = api.organization.createOrg.useMutation();
   const [text, _setText] = useState("Setting up your organization...");
 
@@ -44,9 +45,10 @@ export const CreateAccountIdentifier = ({
           }
         },
         onError(_error, _variables, _context) {
-          //TODO: implement a better system for displaying errors
-          //this can be done alert provider and Error alert and Success alert I have already made
-          alert("Error creating your account. Please try again.");
+          setError({
+            state: true,
+            message: "Error creating your account. Please try again.",
+          });
           setStep(2);
         },
       }

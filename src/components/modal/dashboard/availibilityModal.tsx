@@ -2,6 +2,7 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -13,11 +14,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { BottomButtons } from "../bottomButtons";
 import { BtnCancel } from "../../btn/btnCancel";
 import { MdDelete } from "react-icons/md";
-import { api } from "../../../server/utils/api"
+import { api } from "../../../server/utils/api";
 import { UserContext } from "../../../providers/userProvider";
 import { CircularProgress } from "../../circularProgress";
 import { AlertContext } from "../../../providers/alertProvider";
-import { useQueryClient } from "@tanstack/react-query";
 import { BtnPurple } from "../../btn/btnPurple";
 
 export const DashboardAvaililityModal: React.FC<{
@@ -28,34 +28,34 @@ export const DashboardAvaililityModal: React.FC<{
   const user = useContext(UserContext);
   const alertContext = useContext(AlertContext);
   const [dates, setDates] = useState<Date[]>([]);
-  const opts = useQueryClient();
+  const utils = api.useUtils();
 
   const existingDates = api.avalibility.getUserAvalibility.useQuery(undefined, {
     enabled: !!open,
-    onError(err) {
+  });
+  useEffect(() => {
+    if (existingDates.isError) {
       alertContext.setError({
         state: true,
-        message: `Error getting user availability. ${err.message}`,
+        message: `Error getting user availability. ${existingDates.error.message}`,
       });
-    },
-    onSuccess(data) {
-      if (!data) return;
-
+    }
+    if (existingDates.isSuccess && existingDates.data) {
       setDates(
-        data.map((item) => item.date).sort((a, b) => a.getTime() - b.getTime())
+        existingDates.data
+          .map((item) => item.date)
+          .sort((a, b) => a.getTime() - b.getTime())
       );
+    }
+  }, [existingDates]);
+
+  const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation({
+    onSuccess() {
+      setOpen(false);
+      utils.avalibility.getUserAvalibilityByID.refetch();
+      utils.events.getUpcomingEventsByUser.refetch();
     },
   });
-
-  const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation(
-    {
-      onSuccess() {
-        setOpen(false);
-        opts.refetchQueries(["avalibility.getUserAvalibilityByID"]);
-        opts.refetchQueries(["events.getUpcomingEventsByUser"]);
-      },
-    }
-  );
 
   const submit = () => {
     if (user?.id == undefined) return;
@@ -82,7 +82,7 @@ export const DashboardAvaililityModal: React.FC<{
   if (existingDates.isLoading) {
     return (
       <Modal open={open} setOpen={setOpen}>
-        <div className='flex min-h-[200px] min-w-[200px] items-center justify-center'>
+        <div className="flex min-h-[200px] min-w-[200px] items-center justify-center">
           <CircularProgress />
         </div>
       </Modal>
@@ -91,24 +91,24 @@ export const DashboardAvaililityModal: React.FC<{
 
   return (
     <Modal open={open} setOpen={setOpen}>
-      <form onSubmit={submit} className=' '>
+      <form onSubmit={submit} className=" ">
         <ModalBody>
           <ModalTitle text={"Add Unavailable Dates"} />
 
-          <div className='w-full'>
+          <div className="w-full">
             {/* <label className="text-gray-700">End Date</label> */}
-            <div className='mt-6 flex flex-col gap-3'>
+            <div className="mt-6 flex flex-col gap-3">
               <Controller
-                name='Date'
+                name="Date"
                 control={methods.control}
                 rules={{ required: true }}
                 // defaultValue={{ start: new Date(), end: null }}
                 defaultValue={null}
                 render={({ field: { value, onChange } }) => (
-                  <div className='customDate'>
+                  <div className="customDate">
                     <DatePicker
-                      id='aDate'
-                      autoComplete='off'
+                      id="aDate"
+                      autoComplete="off"
                       selected={null}
                       minDate={new Date()}
                       onChange={(date) => {
@@ -133,18 +133,18 @@ export const DashboardAvaililityModal: React.FC<{
                       }}
                       highlightDates={dates}
                       inline
-                      className='customDate m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
+                      className="customDate m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
                     />
                   </div>
                 )}
               />
 
-              <div className='flex flex-col justify-center gap-3'>
+              <div className="flex flex-col justify-center gap-3">
                 {dates.map((date, index) => (
-                  <div key={index} className='grid grid-cols-[2fr_.5fr] gap-3'>
+                  <div key={index} className="grid grid-cols-[2fr_.5fr] gap-3">
                     <span>{date.toDateString()}</span>
                     <button
-                      className='text-red-600'
+                      className="text-red-600"
                       onClick={(e) => {
                         e.preventDefault();
                         setDates(
@@ -152,20 +152,23 @@ export const DashboardAvaililityModal: React.FC<{
                             (item) => item.getTime() != date.getTime()
                           )
                         );
-                      }}>
+                      }}
+                    >
                       <MdDelete size={25} />
                     </button>
                   </div>
                 ))}
               </div>
             </div>
-            {/* {methods.formState.errors.DDate && (
-                            <span className="text-red-500">End Date Required</span>
-                        )} */}
           </div>
         </ModalBody>
         <BottomButtons>
-          <BtnPurple isLoading={updateAvailibility.isLoading} onClick={() => submit()}>Save</BtnPurple>
+          <BtnPurple
+            isLoading={updateAvailibility.isPending}
+            onClick={() => submit()}
+          >
+            Save
+          </BtnPurple>
           <BtnCancel
             onClick={() => {
               setOpen(false);

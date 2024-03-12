@@ -96,7 +96,7 @@ const UserSettingsPage = () => {
       <section>
         <BtnRed onClick={() => setDeleteAccountConfirm(true)}>Delete Account</BtnRed>
         {deleteAccountConfirm && createPortal(<DeleteAccountConfirm open={deleteAccountConfirm} setOpen={setDeleteAccountConfirm} submit={() => deleteAccount.mutate()}
-          isLoading={deleteAccount.isLoading} />, document.body)}
+          isLoading={deleteAccount.isPending} />, document.body)}
       </section>
     </div>
   )

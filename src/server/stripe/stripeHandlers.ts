@@ -9,28 +9,29 @@ export async function getCustomerOrCreate({
 	userId: string;
 })  {
 	const user = await prisma.user.findUnique({ where: { id: userId } });
-	if (!user) {
-		throw new Error("No user exists");
+	const org = await prisma.organization.findUnique({where: {id: user?.organizationId ?? undefined}})
+	if (!user || !org) {
+		throw new Error("Error finding user or organization");
 	}
 
-	if (user.stripeCustomerId) {
-		return user.stripeCustomerId;
+	if (org?.stripeCustomerId) {
+		return org.stripeCustomerId
 	}
 
 	const stripeCustomer = await stripe.customers.create({
-		name: user.firstName + " " + user.lastName,
+		name: org.name,
 		email: user.email,
 		metadata: {
 			userId: userId,
 		},
 	});
-	const updatedPrismaUser = await prisma.user.update({
-		where: { id: userId },
+	const updatedOrg = await prisma.organization.update({
+		where: { id: org?.id },
 		data: {
 			stripeCustomerId: stripeCustomer.id,
 		},
 	});
-	if (updatedPrismaUser.stripeCustomerId){
-		return updatedPrismaUser.stripeCustomerId
+	if (updatedOrg.stripeCustomerId){
+		return updatedOrg.stripeCustomerId
 	}
 }

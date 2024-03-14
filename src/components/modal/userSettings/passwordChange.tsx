@@ -78,7 +78,7 @@ export const PasswordChange = ({ open, setOpen }: { open: boolean, setOpen: Disp
           </div>
         </ModalBody>
         <BottomButtons>
-          <BtnPurple type="submit" onClick={submit} isLoading={changePasswordMutation.isLoading}>Confirm</BtnPurple>
+          <BtnPurple type="submit" onClick={submit} isLoading={changePasswordMutation.isPending}>Confirm</BtnPurple>
           <BtnNeutral func={() => {
             setShowConfirm(false)
             setOpen(false)

@@ -18,7 +18,7 @@ const ForgotPasswordPage = () => {
     generateEmail.mutate(
       { email: data.email },
       {
-        onError(error, variables, context) {
+        onError(error, _variables, _context) {
           methods.setError("email", { message: error.message });
         },
         onSuccess() {
@@ -56,7 +56,7 @@ const ForgotPasswordPage = () => {
           <EmailInput />
           <div className='mt-6'>
             <BtnPurple
-              isLoading={generateEmail.isLoading}
+              isLoading={generateEmail.isPending}
               type='submit'
               fullWidth={true}>
               Submit

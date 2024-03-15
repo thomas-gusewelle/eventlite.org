@@ -76,6 +76,22 @@ export const stripeRouter = createTRPCRouter({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       }
     }),
+  getSubscriptionPlan: adminOrgProcedure.query(async ({ ctx }) => {
+    if (!ctx.org.stripeCustomerId) {
+      throw new TRPCError({ code: "BAD_REQUEST" });
+    }
+    const allSubs = await stripe.subscriptions.list({
+      customer: ctx.org.stripeCustomerId,
+    });
+
+    if (!allSubs.data[0]) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Error: Unable to retreieve the subscription plan.",
+      });
+    }
+    return allSubs.data[0];
+  }),
 
   updateSubscriptionPrice: publicProcedure
     .input(
@@ -136,10 +152,12 @@ export const stripeRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-
-    if (!ctx.org.stripeCustomerId) {
-      throw new TRPCError({code: "BAD_REQUEST", message: "Error: Stripe ID does not exist on organization."})
-    }
+      if (!ctx.org.stripeCustomerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Error: Stripe ID does not exist on organization.",
+        });
+      }
 
       // call the correct query for if we are
       // pading forward or backward
@@ -165,12 +183,11 @@ export const stripeRouter = createTRPCRouter({
       });
     }
 
-    // await new Promise(r => setTimeout(r, 2000));
-
     const customer = (await stripe.customers.retrieve(
       ctx.org.stripeCustomerId
     )) as Stripe.Customer;
 
+    // if the default payment method is not the id of the method then return null
     if (typeof customer.invoice_settings.default_payment_method != "string") {
       return { paymentMethod: null };
     }

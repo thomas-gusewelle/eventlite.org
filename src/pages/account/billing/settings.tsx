@@ -4,7 +4,7 @@ import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { BillingLayout } from "../../../components/layout/billing/layout";
 import { sidebar } from "../../../components/layout/sidebar";
 import { PaymentMethod } from "../../../components/stripe/paymentMethod";
-import { api } from "../../../server/utils/api";
+import { PlanPayment } from "../../../components/stripe/plan";
 
 const BillingSettings =  () => {
 
@@ -19,9 +19,9 @@ const BillingSettings =  () => {
       >
         <section>
           <>
-            {/*TODO: get default payment info and display to user*/}
             <SectionHeading>Billing Information</SectionHeading>
             <PaymentMethod/>
+            <PlanPayment/>
           </>
         </section>
       </Suspense>

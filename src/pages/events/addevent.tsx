@@ -79,7 +79,7 @@ const AddEvent = ({
     } else if (locationsQuery.isSuccess && locationsQuery.data != undefined) {
       setLocations(locationsQuery.data);
     }
-  }, [locationsQuery, alertContext])
+  }, [locationsQuery, alertContext]);
 
   const [locations, setLocations] = useState<Locations[]>([
     { id: "", name: "", organizationId: "" },

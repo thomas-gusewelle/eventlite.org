@@ -19,10 +19,9 @@ import { useRouter } from "next/router";
 import { LocationSelector } from "./locationSelector";
 
 export const EventForm: React.FC<{
-  locations: Locations[];
   rec?: boolean;
   alreadyRec?: boolean | null;
-}> = ({ locations, rec = null, alreadyRec = null }) => {
+}> = ({  rec = null, alreadyRec = null }) => {
   const router = useRouter();
   const { control, register, formState, watch } = useFormContext();
   const [frequncyOptions, setFrequncyOptions] = useState<
@@ -168,7 +167,7 @@ export const EventForm: React.FC<{
         <div className='hidden md:col-span-2 md:block lg:col-span-2'></div>
 
         {/* Event Location */}
-        <LocationSelector locations={locations} />
+        <LocationSelector />
         {/* Fill space div */}
         <div className='hidden md:col-span-2 md:block '></div>
 

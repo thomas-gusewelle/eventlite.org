@@ -1,13 +1,12 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import {
   EventFormValues,
   EventRecurrance,
 } from "../../../types/eventFormValues";
 import { api } from "../../server/utils/api";
 import { useRouter } from "next/router";
-import { Locations } from "@prisma/client";
 import {
   CircularProgress,
   CircularProgressSmall,
@@ -29,61 +28,6 @@ const AddEvent = ({
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const methods = useForm<EventFormValues>();
-  const [recuringId, setRecuringId] = useState<string | null>(null);
-
-  const eventQuery = api.events.getEditEvent.useQuery(duplicateId ?? "", {
-    enabled: !!duplicateId,
-  });
-  useEffect(() => {
-    if (eventQuery.isError) {
-      alertContext.setError({
-        state: true,
-        message: `There was an issue getting your event. Message: ${eventQuery.error.message}`,
-      });
-    } else if (eventQuery.isSuccess) {
-      const data = eventQuery.data;
-      if (!data) return;
-      if (data.recurringId == undefined) {
-        methods.reset(formatEventData(data));
-      } else {
-        setRecuringId(data.recurringId);
-      }
-    }
-  }, [eventQuery, alertContext, methods]);
-
-  const eventRecurringInfo = api.events.getEventRecurranceData.useQuery(
-    recuringId ?? "",
-    {
-      enabled: !!recuringId,
-    }
-  );
-  useEffect(() => {
-    if (
-      eventRecurringInfo.isSuccess &&
-      eventRecurringInfo.data &&
-      eventQuery.data
-    ) {
-      const data = eventRecurringInfo.data;
-      methods.reset(formatEventData(eventQuery.data, data));
-    }
-  }, [eventRecurringInfo, eventQuery.data, methods]);
-
-  const locationsQuery = api.locations.getLocationsByOrg.useQuery(undefined);
-  useEffect(() => {
-    if (locationsQuery.isError) {
-      alertContext.setError({
-        state: true,
-        message: `Error fetching locations. Message; ${locationsQuery.error.message}`,
-      });
-      locationsQuery.refetch();
-    } else if (locationsQuery.isSuccess && locationsQuery.data != undefined) {
-      setLocations(locationsQuery.data);
-    }
-  }, [locationsQuery, alertContext]);
-
-  const [locations, setLocations] = useState<Locations[]>([
-    { id: "", name: "", organizationId: "" },
-  ]);
 
   const addEventRecurrance = api.events.createEventReccurance.useMutation({
     onError(error) {
@@ -163,23 +107,6 @@ const AddEvent = ({
     }
   });
 
-  if (
-    locationsQuery.isLoading || duplicateId
-      ? eventQuery.isLoading || recuringId
-        ? eventRecurringInfo.isLoading
-        : false
-      : false
-  ) {
-    return (
-      <div className="flex justify-center">
-        <CircularProgress />
-      </div>
-    );
-  }
-
-  if (locations == undefined) {
-    return <div></div>;
-  }
 
   return (
     <>
@@ -188,7 +115,7 @@ const AddEvent = ({
       </div>
       <FormProvider {...methods}>
         <form onSubmit={submit} className="shadow">
-          <EventForm locations={locations} />
+          <EventForm />
 
           <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
             <button

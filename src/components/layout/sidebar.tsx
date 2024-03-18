@@ -1,6 +1,7 @@
 import {
   Fragment,
   ReactElement,
+  Suspense,
   useContext,
   useEffect,
   useRef,
@@ -54,7 +55,6 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
   const user = useContext(UserContext);
   const supabase = createClient();
 
-
   useEffect(() => {
     setSideLinks([
       {
@@ -105,54 +105,58 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
     }
   }, [show, windowWidth]);
 
-
   return (
     <>
       <Head>
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <div className='h-full w-full bg-white'>
-        <div className='flex-no-wrap flex'>
+      <div className="h-full w-full bg-white">
+        <div className="flex-no-wrap flex">
           {/* Sidebar starts */}
-          <div className='absolute hidden max-h-full min-h-screen w-64 bg-gray-100 shadow lg:relative lg:block'>
+          <div className="absolute hidden max-h-full min-h-screen w-64 bg-gray-100 shadow lg:relative lg:block">
             <div
               onClick={() => router.push("/dashboard")}
-              className='flex h-16 w-full cursor-pointer items-center gap-3 px-4 text-indigo-600'>
-              <div className='w-10'>
+              className="flex h-16 w-full cursor-pointer items-center gap-3 px-4 text-indigo-600"
+            >
+              <div className="w-10">
                 <svg
-                  fill='currentColor'
-                  id='Layer_2'
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 950 596.2'>
-                  <g id='Layer_1-2'>
-                    <path d='m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z' />
+                  fill="currentColor"
+                  id="Layer_2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 950 596.2"
+                >
+                  <g id="Layer_1-2">
+                    <path d="m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z" />
                   </g>
                 </svg>
               </div>
               {/* <img src='/images/logo1.svg'></img> */}
-              <h1 className='text-2xl font-bold tracking-wide'>
+              <h1 className="text-2xl font-bold tracking-wide">
                 EventLite.org
               </h1>
             </div>
-            <ul className=' py-6'>
+            <ul className=" py-6">
               {sideLinks.map((link, index) => {
                 if (link.show) {
                   return (
                     <Link
                       key={index}
                       href={link.href as any}
-                      onClick={() => setShow(false)}>
+                      onClick={() => setShow(false)}
+                    >
                       <li
                         key={index}
-                        className={`${router.asPath == link.href
-                          ? "text-indigo-700"
-                          : "text-gray-500"
-                          } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}>
-                        <div className='flex items-center'>
+                        className={`${
+                          router.asPath == link.href
+                            ? "text-indigo-700"
+                            : "text-gray-500"
+                        } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal focus:text-indigo-700 focus:outline-none`}
+                      >
+                        <div className="flex items-center">
                           <div>
                             <link.icon size={20}></link.icon>
                           </div>
-                          <span className='ml-2'>{link.name}</span>
+                          <span className="ml-2">{link.name}</span>
                         </div>
                       </li>
                     </Link>
@@ -164,33 +168,36 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
           {/*Mobile responsive sidebar*/}
           <div
             className={`
-                          ${show
-                ? "absolute z-40 h-full w-full  translate-x-0  transform "
-                : "   absolute z-40 h-full w-full  -translate-x-full transform"
-              } 200ms transform ease-out`}
-            id='mobile-nav'>
+                          ${
+                            show
+                              ? "absolute z-40 h-full w-full  translate-x-0  transform "
+                              : "   absolute z-40 h-full w-full  -translate-x-full transform"
+                          } 200ms transform ease-out`}
+            id="mobile-nav"
+          >
             <div
-              className='absolute h-full w-full bg-gray-800 opacity-50 lg:hidden'
+              className="absolute h-full w-full bg-gray-800 opacity-50 lg:hidden"
               onClick={() => setShow(!show)}
             />
-            <div className='absolute z-40 h-full w-72 bg-gray-100 pb-4 shadow transition duration-150 ease-in-out sm:relative md:w-96 lg:hidden'>
-              <div className='flex h-full w-full flex-col justify-between'>
+            <div className="absolute z-40 h-full w-72 bg-gray-100 pb-4 shadow transition duration-150 ease-in-out sm:relative md:w-96 lg:hidden">
+              <div className="flex h-full w-full flex-col justify-between">
                 <div>
-                  <div className='flex items-center justify-start px-4'>
-                    <div className='flex h-16 w-full items-center gap-3 text-indigo-600'>
-                      <div className='w-10'>
+                  <div className="flex items-center justify-start px-4">
+                    <div className="flex h-16 w-full items-center gap-3 text-indigo-600">
+                      <div className="w-10">
                         <svg
-                          fill='currentColor'
-                          id='Layer_2'
-                          xmlns='http://www.w3.org/2000/svg'
-                          viewBox='0 0 950 596.2'>
-                          <g id='Layer_1-2'>
-                            <path d='m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z' />
+                          fill="currentColor"
+                          id="Layer_2"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 950 596.2"
+                        >
+                          <g id="Layer_1-2">
+                            <path d="m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z" />
                           </g>
                         </svg>
                       </div>
                       {/* <img  src='/images/logo1.svg'></img> */}
-                      <h1 className='text-2xl font-bold tracking-wide'>
+                      <h1 className="text-2xl font-bold tracking-wide">
                         EventLite.org
                       </h1>
                       {/* <svg
@@ -209,43 +216,48 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                         </svg> */}
                     </div>
                     <div
-                      id='closeSideBar'
-                      className='flex h-10 w-10 items-center justify-center'
-                      onClick={() => setShow(!show)}>
+                      id="closeSideBar"
+                      className="flex h-10 w-10 items-center justify-center"
+                      onClick={() => setShow(!show)}
+                    >
                       <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='icon icon-tabler icon-tabler-x'
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-x"
                         width={20}
                         height={20}
-                        viewBox='0 0 24 24'
-                        strokeWidth='1.5'
-                        stroke='currentColor'
-                        fill='none'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'>
-                        <path stroke='none' d='M0 0h24v24H0z' />
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" />
                         <line x1={18} y1={6} x2={6} y2={18} />
                         <line x1={6} y1={6} x2={18} y2={18} />
                       </svg>
                     </div>
                   </div>
-                  <ul className=' py-6'>
+                  <ul className=" py-6">
                     {sideLinks.map((link, index) => {
                       if (link.show) {
                         return (
                           <Link
                             key={index}
                             href={link.href as any}
-                            onClick={() => setShow(false)}>
+                            onClick={() => setShow(false)}
+                          >
                             <li
-                              className={`${router.asPath == link.href
-                                ? "text-indigo-700"
-                                : "text-gray-600"
-                                } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}>
-                              <div className='flex items-center'>
+                              className={`${
+                                router.asPath == link.href
+                                  ? "text-indigo-700"
+                                  : "text-gray-600"
+                              } cursor-pointer pl-6  pb-4 pt-5 text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}
+                            >
+                              <div className="flex items-center">
                                 <link.icon size={20}></link.icon>
 
-                                <span className='ml-2 text-base md:text-2xl xl:text-base'>
+                                <span className="ml-2 text-base md:text-2xl xl:text-base">
                                   {link.name}
                                 </span>
                               </div>
@@ -256,35 +268,37 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                     })}
                   </ul>
                 </div>
-                <div className='w-full'>
-                  <div className='border-t border-gray-300'>
-                    <div className='flex w-full items-center justify-between px-6 pt-1'>
-                      <div className='flex items-center'>
+                <div className="w-full">
+                  <div className="border-t border-gray-300">
+                    <div className="flex w-full items-center justify-between px-6 pt-1">
+                      <div className="flex items-center">
                         <Avatar user={user} />
 
-                        <p className='ml-2 text-base leading-4 text-gray-800 md:text-xl'>
+                        <p className="ml-2 text-base leading-4 text-gray-800 md:text-xl">
                           {fullName(user?.firstName, user?.lastName)}
                         </p>
                       </div>
                       <Menu
-                        as='div'
-                        className={"relative inline-block text-left"}>
-                        <Menu.Button className='inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100'>
-                          <BiChevronRight aria-hidden='true' />
+                        as="div"
+                        className={"relative inline-block text-left"}
+                      >
+                        <Menu.Button className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+                          <BiChevronRight aria-hidden="true" />
                         </Menu.Button>
                         <Transition
                           as={Fragment}
-                          enter='transition ease-out duration-100'
-                          enterFrom='transform opacity-0 scale-95'
-                          enterTo='transform opacity-100 scale-100'
-                          leave='transition ease-in duration-75'
-                          leaveFrom='transform opacity-100 scale-100'
-                          leaveTo='transform opacity-0 scale-95'>
-                          <Menu.Items className='absolute right-0 bottom-[150%] z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                            <div className='py-1'>
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 bottom-[150%] z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="py-1">
                               <Menu.Item key={0}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <Link
                                       href={`/people/view/${user?.id}`}
                                       onClick={() => setShow(false)}
@@ -293,7 +307,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       View Profile
                                     </Link>
                                   </button>
@@ -302,7 +317,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               {/* TODO: Think about removing this for full release*/}
                               <Menu.Item key={1}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <a
                                       onClick={() => {
                                         setShow(false);
@@ -313,7 +328,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Bug/Feedback Report
                                     </a>
                                   </button>
@@ -321,7 +337,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               </Menu.Item>
                               <Menu.Item key={2}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <Link
                                       href={`/account/settings`}
                                       onClick={() => setShow(false)}
@@ -330,7 +346,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Settings
                                     </Link>
                                   </button>
@@ -338,7 +355,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               </Menu.Item>
                               <Menu.Item key={3}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <Link
                                       href={`/account/billing`}
                                       onClick={() => setShow(false)}
@@ -347,7 +364,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Billing
                                     </Link>
                                   </button>
@@ -355,7 +373,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               </Menu.Item>
                               <Menu.Item key={4}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <a
                                       onClick={async () => {
                                         await supabase.auth.signOut();
@@ -367,7 +385,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Sign Out
                                     </a>
                                   </button>
@@ -385,40 +404,42 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
           </div>
           {/*Mobile responsive sidebar*/}
           {/* Sidebar ends */}
-          <div ref={scrollRef} className='w-full'>
+          <div ref={scrollRef} className="w-full">
             {/* Navigation starts */}
-            <nav className='relative z-10 flex h-16 items-center justify-end bg-white shadow lg:items-stretch lg:justify-between'>
-              <div className='hidden w-full pr-6 lg:flex'>
-                <div className='hidden w-full lg:flex'>
-                  <div className='flex w-full items-center justify-end pl-8'>
-                    <div className='relative flex cursor-pointer items-center'>
-                      <div className='rounded-full'>
-                        <div className='relative'>
+            <nav className="relative z-10 flex h-16 items-center justify-end bg-white shadow lg:items-stretch lg:justify-between">
+              <div className="hidden w-full pr-6 lg:flex">
+                <div className="hidden w-full lg:flex">
+                  <div className="flex w-full items-center justify-end pl-8">
+                    <div className="relative flex cursor-pointer items-center">
+                      <div className="rounded-full">
+                        <div className="relative">
                           <Avatar user={user} />
                         </div>
                       </div>
-                      <p className='mx-3 text-sm text-gray-800'>
+                      <p className="mx-3 text-sm text-gray-800">
                         {fullName(user?.firstName, user?.lastName)}
                       </p>
                       <Menu
-                        as='div'
-                        className={"relative inline-block text-left"}>
-                        <Menu.Button className='inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100'>
-                          <BiChevronDown aria-hidden='true' />
+                        as="div"
+                        className={"relative inline-block text-left"}
+                      >
+                        <Menu.Button className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+                          <BiChevronDown aria-hidden="true" />
                         </Menu.Button>
                         <Transition
                           as={Fragment}
-                          enter='transition ease-out duration-100'
-                          enterFrom='transform opacity-0 scale-95'
-                          enterTo='transform opacity-100 scale-100'
-                          leave='transition ease-in duration-75'
-                          leaveFrom='transform opacity-100 scale-100'
-                          leaveTo='transform opacity-0 scale-95'>
-                          <Menu.Items className='absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                            <div className='py-1'>
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="py-1">
                               <Menu.Item key={0}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <Link
                                       href={`/people/view/${user?.id}`}
                                       className={classNames(
@@ -426,7 +447,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       View Profile
                                     </Link>
                                   </button>
@@ -435,7 +457,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               {/* TODO: Look at removing the bug reporting for full release*/}
                               <Menu.Item key={1}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <a
                                       onClick={() => {
                                         setShow(false);
@@ -446,7 +468,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Bug/Feedback Report
                                     </a>
                                   </button>
@@ -454,7 +477,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               </Menu.Item>
                               <Menu.Item key={2}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <Link
                                       href={`/account/settings`}
                                       onClick={() => setShow(false)}
@@ -463,7 +486,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Settings
                                     </Link>
                                   </button>
@@ -471,7 +495,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               </Menu.Item>
                               <Menu.Item key={3}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <Link
                                       href={`/account/billing`}
                                       onClick={() => setShow(false)}
@@ -480,7 +504,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Billing
                                     </Link>
                                   </button>
@@ -488,7 +513,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                               </Menu.Item>
                               <Menu.Item key={4}>
                                 {({ active }) => (
-                                  <button className='w-full text-left'>
+                                  <button className="w-full text-left">
                                     <a
                                       onClick={async () => {
                                         await supabase.auth.signOut();
@@ -499,7 +524,8 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                           ? "bg-gray-100 text-gray-900"
                                           : "text-gray-700",
                                         "block px-4 py-2 text-sm"
-                                      )}>
+                                      )}
+                                    >
                                       Sign Out
                                     </a>
                                   </button>
@@ -513,22 +539,24 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   </div>
                 </div>
               </div>
-              <div className='visible relative mr-8 ml-4 flex w-full items-center justify-between text-gray-600 lg:hidden'>
+              <div className="visible relative mr-8 ml-4 flex w-full items-center justify-between text-gray-600 lg:hidden">
                 <div
-                  className='flex cursor-pointer gap-3 text-indigo-600'
-                  onClick={() => router.push("/")}>
+                  className="flex cursor-pointer gap-3 text-indigo-600"
+                  onClick={() => router.push("/")}
+                >
                   <svg
                     width={40}
-                    fill='currentColor'
-                    id='Layer_2'
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 950 596.2'>
-                    <g id='Layer_1-2'>
-                      <path d='m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z' />
+                    fill="currentColor"
+                    id="Layer_2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 950 596.2"
+                  >
+                    <g id="Layer_1-2">
+                      <path d="m0,317.76c.62,153.03,125.29,278.44,278.45,278.44s278.44-124.9,278.44-278.44v-39.31c0-63.22,51.44-114.66,114.65-114.66s114.67,51.44,114.67,114.66c0,18.09,14.66,32.76,32.75,32.76h98.28c18.09,0,32.75-14.67,32.75-32.76C950,124.91,825.1,0,671.56,0s-278.45,124.91-278.45,278.45v39.31c0,63.23-51.44,114.65-114.65,114.65s-114.66-51.42-114.66-114.65c0-18.09-14.67-32.76-32.76-32.76H32.76c-18.09,0-32.76,14.67-32.76,32.76Z" />
                     </g>
                   </svg>
 
-                  <h1 className='text-2xl font-bold tracking-wide'>
+                  <h1 className="text-2xl font-bold tracking-wide">
                     EventLite.org
                   </h1>
                 </div>
@@ -538,19 +566,20 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                   <>
                     <svg
                       onClick={() => setShow(!show)}
-                      aria-label='Main Menu'
-                      aria-haspopup='true'
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='icon icon-tabler icon-tabler-menu cursor-pointer'
+                      aria-label="Main Menu"
+                      aria-haspopup="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="icon icon-tabler icon-tabler-menu cursor-pointer"
                       width={30}
                       height={30}
-                      viewBox='0 0 24 24'
-                      strokeWidth='1.5'
-                      stroke='currentColor'
-                      fill='none'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'>
-                      <path stroke='none' d='M0 0h24v24H0z' />
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" />
                       <line x1={4} y1={8} x2={20} y2={8} />
                       <line x1={4} y1={16} x2={20} y2={16} />
                     </svg>
@@ -561,20 +590,28 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
             {/* Navigation ends */}
             {/* Remove class [ h-64 ] when adding a card block */}
 
-            <div className='pb-42 container mx-auto px-4 pt-4 pb-52 sm:pt-10 2xl:pb-10'>
+            <div className="pb-42 container mx-auto px-4 pt-4 pb-52 sm:pt-10 2xl:pb-10">
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
               <AlertProvider>
-                <div className='h-full w-full rounded'>
+                <div className="h-full w-full rounded">
                   <>
                     <ErrorAlert />
                     <SuccdssAlert />
                     {user == undefined || user == null ? (
-                      <div className='flex justify-center'>
+                      <div className="flex justify-center">
                         <CircularProgress />
                       </div>
                     ) : (
                       <>
-                        {children}
+                        <Suspense
+                          fallback={
+                            <div className="flex justify-center">
+                              <CircularProgress />
+                            </div>
+                          }
+                        >
+                          {children}
+                        </Suspense>
 
                         {showReport &&
                           createPortal(

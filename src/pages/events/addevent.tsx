@@ -1,23 +1,20 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
-import { Suspense, useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import {
   EventFormValues,
   EventRecurrance,
 } from "../../../types/eventFormValues";
 import { api } from "../../server/utils/api";
 import { useRouter } from "next/router";
-import {
-  CircularProgress,
-  CircularProgressSmall,
-} from "../../components/circularProgress";
+import { CircularProgressSmall } from "../../components/circularProgress";
 import { findFutureDates } from "../../server/utils/findFutureDates";
 import { v4 as uuidv4 } from "uuid";
 import { EventForm } from "../../components/form/event/eventForm";
 import { sidebar } from "../../components/layout/sidebar";
 import { AlertContext } from "../../providers/alertProvider";
-import { formatEventData } from "../../utils/formatEventData";
 
+//TODO: Look into duplicate ID
 const AddEvent = ({
   redirect,
   duplicateId,
@@ -106,7 +103,6 @@ const AddEvent = ({
       });
     }
   });
-
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { Locations } from "@prisma/client";
 import { Controller, useFormContext } from "react-hook-form";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { AddSelection } from "../AddSelection";
@@ -13,7 +12,7 @@ export const LocationSelector = () => {
   const [open, setOpen] = useState(false);
   const [locations, _locationsQuery] =
     api.locations.getLocationsByOrg.useSuspenseQuery(undefined);
-  
+
   if (!locations) {
     return <></>;
   }

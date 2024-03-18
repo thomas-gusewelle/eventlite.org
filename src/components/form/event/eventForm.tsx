@@ -231,7 +231,7 @@ export const EventForm: React.FC<{
       </div>
 
       {/* Positions Selection */}
-      <PositionsSelector />
+      {/*<PositionsSelector />*/}
     </>
   );
 };

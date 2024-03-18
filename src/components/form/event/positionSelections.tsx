@@ -10,7 +10,11 @@ import { PositionAddModal } from "../../modal/positionAdd";
 
 export const PositionsSelector = () => {
   const [open, setOpen] = useState(false);
-  const [roles, _rolesQuery] = api.role.getRolesByOrganization.useSuspenseQuery(undefined);
+  // const [roles, _rolesQuery] = api.role.getRolesByOrganization.useSuspenseQuery(undefined);
+  const rolesQuery = api.role.getRolesByOrganization.useQuery(undefined);
+  const roles = rolesQuery.data;
+  const rolesMap = roles?.map((role) => ({ item: role, show: true }));
+  // console.log(roles)
   const { control, watch, clearErrors } = useFormContext();
   const { fields, append, remove, insert, update } = useFieldArray({
     name: "positions", // unique name for your Field Array
@@ -23,18 +27,22 @@ export const PositionsSelector = () => {
 
   const posiitonsField: positionField[] = watch("positions");
 
-  //creates first position field on load of event create
-  useEffect(() => {
-    if (posiitonsField?.length == undefined) return;
-    if (posiitonsField.length > 0) return;
-    append({
-      eventPositionId: null,
-      position: { id: "", name: "" },
-    });
-  }, [append, posiitonsField?.length]);
+  // //creates first position field on load of event create
+  // useEffect(() => {
+  //   console.log(roles)
+  // }, [roles])
+  // useEffect(() => {
+  //   console.log("here 31")
+  //   if (posiitonsField?.length == undefined) return;
+  //   if (posiitonsField.length > 0) return;
+  //   append({
+  //     eventPositionId: null,
+  //     position: { id: "", name: "" },
+  //   });
+  // }, [append, posiitonsField?.length]);
 
-  if (!roles) {
-  return <></>}
+  if ( !roles) {
+  return <div>{roles}</div>}
   return (
     <>
       {open == true &&
@@ -76,7 +84,7 @@ export const PositionsSelector = () => {
                           });
                           clearErrors(`positions.${index}`);
                         }}
-                        list={roles.map((role) => ({ item: role, show: true }))}
+                        list={rolesMap!}
                         label={(role) => role.name}
                         showAdd
                         showAddComponent={

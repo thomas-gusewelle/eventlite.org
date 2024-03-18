@@ -1,4 +1,3 @@
-import { Role } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { api } from "../../../server/utils/api";
@@ -11,17 +10,7 @@ import { PositionAddModal } from "../../modal/positionAdd";
 
 export const PositionsSelector = () => {
   const [open, setOpen] = useState(false);
-  const rolesQuery = api.role.getRolesByOrganization.useQuery(undefined);
-  useEffect(() => {
-    if (rolesQuery.data != undefined) {
-      const _data = rolesQuery.data.map((item) => {
-        return { ...item, show: true };
-      });
-      setRoles(_data);
-    }
-  }, [rolesQuery]);
-
-  const [roles, setRoles] = useState<(Role & { show: boolean })[]>([]);
+  const [roles, _rolesQuery] = api.role.getRolesByOrganization.useSuspenseQuery(undefined);
   const { control, watch, clearErrors } = useFormContext();
   const { fields, append, remove, insert, update } = useFieldArray({
     name: "positions", // unique name for your Field Array
@@ -34,16 +23,6 @@ export const PositionsSelector = () => {
 
   const posiitonsField: positionField[] = watch("positions");
 
-  useEffect(() => {
-    if (rolesQuery.data == undefined || posiitonsField == undefined) return;
-    const _roles = rolesQuery.data?.map((item) => {
-      return { ...item, show: true };
-    });
-    if (_roles == undefined) return;
-
-    setRoles(_roles);
-  }, [setRoles, posiitonsField, rolesQuery.data]);
-
   //creates first position field on load of event create
   useEffect(() => {
     if (posiitonsField?.length == undefined) return;
@@ -54,6 +33,8 @@ export const PositionsSelector = () => {
     });
   }, [append, posiitonsField?.length]);
 
+  if (!roles) {
+  return <></>}
   return (
     <>
       {open == true &&

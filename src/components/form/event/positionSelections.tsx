@@ -14,7 +14,6 @@ export const PositionsSelector = () => {
   const rolesQuery = api.role.getRolesByOrganization.useQuery(undefined);
   const roles = rolesQuery.data;
   const rolesMap = roles?.map((role) => ({ item: role, show: true }));
-  // console.log(roles)
   const { control, watch, clearErrors } = useFormContext();
   const { fields, append, remove, insert, update } = useFieldArray({
     name: "positions", // unique name for your Field Array
@@ -29,10 +28,8 @@ export const PositionsSelector = () => {
 
   //creates first position field on load of event create
   useEffect(() => {
-    console.log(roles)
   }, [roles])
   useEffect(() => {
-    console.log("here 31")
     if (posiitonsField?.length == undefined) return;
     if (posiitonsField.length > 0) return;
     append({

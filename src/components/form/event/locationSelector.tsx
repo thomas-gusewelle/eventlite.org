@@ -6,10 +6,18 @@ import { NewSingleSelect } from "../singleSelect";
 import { createPortal } from "react-dom";
 import { useState } from "react";
 import { LocationAddModel } from "../../modal/locationAdd";
+import { api } from "../../../server/utils/api";
 
-export const LocationSelector = ({ locations }: { locations: Locations[] }) => {
-  const { control, register, formState, watch } = useFormContext();
+export const LocationSelector = () => {
+  const { control } = useFormContext();
   const [open, setOpen] = useState(false);
+  const [locations, _locationsQuery] =
+    api.locations.getLocationsByOrg.useSuspenseQuery(undefined);
+  
+  if (!locations) {
+    return <></>;
+  }
+
   return (
     <>
       {open &&
@@ -17,20 +25,15 @@ export const LocationSelector = ({ locations }: { locations: Locations[] }) => {
           <LocationAddModel open={open} setOpen={setOpen} />,
           document.body
         )}
-      <div className='col-span-6 md:col-span-4 '>
-        <label className='text-gray-700'>Event Location</label>
+      <div className="col-span-6 md:col-span-4 ">
+        <label className="text-gray-700">Event Location</label>
         <Controller
-          name='eventLocation'
+          name="eventLocation"
           control={control}
           defaultValue={{ id: "", name: "", organizationId: "" }}
           rules={{ validate: { isNull: (v) => v.id != "" } }}
           render={({ field: { onChange, value }, fieldState }) => (
             <>
-              {/* <SingleSelect
-            selected={value}
-            setSelected={onChange}
-            list={locations}
-          /> */}
               <NewSingleSelect
                 selected={value}
                 setSelected={onChange}
@@ -41,7 +44,8 @@ export const LocationSelector = ({ locations }: { locations: Locations[] }) => {
                   <AddSelection
                     onClick={() => {
                       setOpen(true);
-                    }}>
+                    }}
+                  >
                     Add a Location
                   </AddSelection>
                 }

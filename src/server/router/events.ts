@@ -208,7 +208,7 @@ export const eventsRouter = createTRPCRouter({
         if (idEvent?.recurringId == undefined) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
-        return await ctx.prisma?.event.findFirst({
+        const event =  await ctx.prisma?.event.findFirst({
           where: {
             recurringId: idEvent.recurringId,
           },
@@ -222,10 +222,14 @@ export const eventsRouter = createTRPCRouter({
             datetime: "asc",
           },
         });
+      const recurranceData = await ctx.prisma.eventReccurance.findUnique({where: {recurringId: event?.recurringId ?? undefined}});
+      return {event: event, recurranceData: recurranceData};
       }
 
+
+
       if (queries == "false" || queries == null) {
-        return await ctx.prisma?.event.findFirst({
+        const event =  await ctx.prisma?.event.findFirst({
           where: { id: input },
           include: {
             Locations: true,
@@ -234,6 +238,7 @@ export const eventsRouter = createTRPCRouter({
             },
           },
         });
+      return {event: event, recurranceData: null}
       }
     }),
 

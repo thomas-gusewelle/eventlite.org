@@ -80,7 +80,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
     setSelectedPeople(_selectedPeople);
     setPoepleList(getScheduleQuery.data?.users);
-  }, [getScheduleQuery]);
+  }, [getScheduleQuery.data]);
 
   const scheduleUserMutation = api.schedule.updateUserRole.useMutation({
     onSuccess() {

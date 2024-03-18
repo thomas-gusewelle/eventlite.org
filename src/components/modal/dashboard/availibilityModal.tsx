@@ -47,7 +47,13 @@ export const DashboardAvaililityModal: React.FC<{
           .sort((a, b) => a.getTime() - b.getTime())
       );
     }
-  }, [existingDates]);
+  }, [
+    existingDates.isError,
+    existingDates.isSuccess,
+    existingDates.data,
+    alertContext,
+    existingDates.error?.message,
+  ]);
 
   const updateAvailibility = api.avalibility.updateUserAvalibility.useMutation({
     onSuccess() {

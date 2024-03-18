@@ -9,20 +9,17 @@ import {
 } from "react-icons/md";
 import { SingleSelect } from "../singleSelect";
 import { Switch } from "@headlessui/react";
-import { Locations } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { EventRepeatFrequency } from "../../../../types/eventFormValues";
 import { findWeekday } from "../../../utils/findWeekday";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { yearsFromToday } from "../../../server/utils/dateTimeModifers";
-import { useRouter } from "next/router";
 import { LocationSelector } from "./locationSelector";
 
 export const EventForm: React.FC<{
   rec?: boolean;
   alreadyRec?: boolean | null;
 }> = ({  rec = null, alreadyRec = null }) => {
-  const router = useRouter();
   const { control, register, formState, watch } = useFormContext();
   const [frequncyOptions, setFrequncyOptions] = useState<
     EventRepeatFrequency[]

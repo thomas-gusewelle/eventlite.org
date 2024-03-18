@@ -27,19 +27,19 @@ export const PositionsSelector = () => {
 
   const posiitonsField: positionField[] = watch("positions");
 
-  // //creates first position field on load of event create
-  // useEffect(() => {
-  //   console.log(roles)
-  // }, [roles])
-  // useEffect(() => {
-  //   console.log("here 31")
-  //   if (posiitonsField?.length == undefined) return;
-  //   if (posiitonsField.length > 0) return;
-  //   append({
-  //     eventPositionId: null,
-  //     position: { id: "", name: "" },
-  //   });
-  // }, [append, posiitonsField?.length]);
+  //creates first position field on load of event create
+  useEffect(() => {
+    console.log(roles)
+  }, [roles])
+  useEffect(() => {
+    console.log("here 31")
+    if (posiitonsField?.length == undefined) return;
+    if (posiitonsField.length > 0) return;
+    append({
+      eventPositionId: null,
+      position: { id: "", name: "" },
+    });
+  }, [append, posiitonsField?.length]);
 
   if ( !roles) {
   return <div>{roles}</div>}

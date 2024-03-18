@@ -38,7 +38,7 @@ export const EventForm: React.FC<{
     }
   );
   const _eventDate: Date = watch("eventDate", new Date());
-  useEffect(() => {
+   useEffect(() => {
     if (_isRepeating != undefined) {
       setIsRepeating(_isRepeating);
     }
@@ -231,7 +231,7 @@ export const EventForm: React.FC<{
       </div>
 
       {/* Positions Selection */}
-      {/*<PositionsSelector />*/}
+      <PositionsSelector />
     </>
   );
 };

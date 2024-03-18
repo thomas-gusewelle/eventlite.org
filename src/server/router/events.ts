@@ -246,7 +246,7 @@ export const eventsRouter = createTRPCRouter({
 
   getEventRecurranceData: adminProcedure.input(z.string()).query(async ({ input, ctx }) => {
 
-    return await ctx.prisma?.eventReccurance.findFirst({
+    return await ctx.prisma?.eventReccurance.findUnique({
       where: {
         recurringId: input,
       },

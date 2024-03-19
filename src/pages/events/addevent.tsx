@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import {
   EventFormValues,
   EventRecurrance,
@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { EventForm } from "../../components/form/event/eventForm";
 import { sidebar } from "../../components/layout/sidebar";
 import { AlertContext } from "../../providers/alertProvider";
+import { formatEventData } from "../../utils/formatEventData";
 
 //TODO: Look into duplicate ID
 const AddEvent = ({
@@ -25,6 +26,16 @@ const AddEvent = ({
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const methods = useForm<EventFormValues>();
+
+const [eventData,  _duplicateEventQuery ] = api.events.getEditEvent.useSuspenseQuery(duplicateId!, {
+  });
+
+  useEffect(() => {
+    if (eventData) {
+      const {event, recurranceData} = eventData;
+      methods.reset(formatEventData(event!, recurranceData!));
+    }
+  }, [eventData,  methods])
 
   const addEventRecurrance = api.events.createEventReccurance.useMutation({
     onError(error) {
@@ -103,6 +114,8 @@ const AddEvent = ({
       });
     }
   });
+
+
 
   return (
     <>

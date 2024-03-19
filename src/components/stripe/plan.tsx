@@ -1,21 +1,22 @@
 import { api } from "../../server/utils/api";
 import { useRouter } from "next/router";
 import { MdCheck } from "react-icons/md";
-import { BtnPurple } from "../btn/btnPurple";
+import { classNames } from "../../utils/classnames";
+import { FaCheckCircle, FaRegCircle } from "react-icons/fa";
 
+// This is a wrapper for the data call
 export const PlanPayment = () => {
-  const [sub, subQuery] = api.stripe.getSubscriptionPlan.useSuspenseQuery();
+  const [sub, _subQuery] = api.stripe.getSubscriptionPlan.useSuspenseQuery();
   const subPlanId = sub?.items.data[0]?.plan.id;
   return (
     <>
-      <PlanCards subId={subPlanId}/>
-      {sub?.id ?? "null"}
+      <PlanCards subPriceId={subPlanId} />
     </>
   );
 };
 
-//TODO: Finish styling and selecting the correct price ID
-const PlanCards = ({subId}: {subId: string | undefined}) => {
+//TODO: add in ability to click new plan and have that bring up confirmation of the change
+const PlanCards = ({ subPriceId }: { subPriceId: string | undefined }) => {
   const router = useRouter();
   const tiers = [
     {
@@ -58,33 +59,47 @@ const PlanCards = ({subId}: {subId: string | undefined}) => {
       priceId: "price_1OWkdyKjgiEDHq2AnKIzRjEY",
     },
   ];
-  if (subId == undefined) {
-    return <div>No price found</div>
+  if (subPriceId == undefined) {
+    return <div>No price found</div>;
   }
   return (
-    <section id="pricing" className="py-16 px-2 text-lg text-white">
+    <section id="pricing" className="py-3 px-2 text-lg text-white">
       <div className="container mx-auto">
         <div className="grid gap-6 pt-9 md:grid-cols-3">
-          {tiers.map((tier, i) => (
-            <div
-              key={i}
-              className="flex flex-col rounded-xl bg-white py-6 px-6 text-black shadow"
-            >
-              <h3 className="text-xl font-bold">{tier.name}</h3>
-              <p className="pt-3">{tier.tag}</p>
-              <p className="py-6">
-                <span className="text-2xl font-bold">${tier.price}</span>/month
-              </p>
-              <ul className="pt-6">
-                {tier.features.map((feat, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <MdCheck className="text-indigo-600" />
-                    <p>{feat}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {tiers.map((tier, i) => {
+            const selected = tier.priceId === subPriceId;
+            return (
+              <div
+                key={i}
+                className={classNames(
+                  `flex flex-col rounded-xl bg-white py-6 px-6 text-black shadow`,
+                  selected ? "border-2 border-indigo-600" : ""
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold">{tier.name}</h3>
+                  {selected ? (
+                    <FaCheckCircle className="text-indigo-700" />
+                  ) : (
+                    <FaRegCircle className="text-gray-200" />
+                  )}
+                </div>
+                <p className="pt-3">{tier.tag}</p>
+                <p className="pt-6">
+                  <span className="text-2xl font-bold">${tier.price}</span>
+                  /month
+                </p>
+                <ul className="pt-6">
+                  {tier.features.map((feat, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <MdCheck className="text-indigo-600" />
+                      <p>{feat}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

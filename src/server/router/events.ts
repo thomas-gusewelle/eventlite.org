@@ -189,13 +189,16 @@ export const eventsRouter = createTRPCRouter({
     }),
 
   getEditEvent: adminProcedure
-    .input(z.string())
+    .input(z.string().optional())
     .query(async ({ ctx, input }) => {
+      if (!input) return null;
+      //use params to find if event is recurring or not
       if (ctx.req?.headers.referer == undefined) return;
       const queries: string | null = new URL(
         ctx.req?.headers.referer
       ).searchParams.get("rec");
 
+      //Branch for recurring event
       if (queries == "true") {
         const idEvent = await ctx.prisma?.event.findFirst({
           where: {
@@ -208,7 +211,7 @@ export const eventsRouter = createTRPCRouter({
         if (idEvent?.recurringId == undefined) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
-        const event =  await ctx.prisma?.event.findFirst({
+        const event = await ctx.prisma?.event.findFirst({
           where: {
             recurringId: idEvent.recurringId,
           },
@@ -222,14 +225,15 @@ export const eventsRouter = createTRPCRouter({
             datetime: "asc",
           },
         });
-      const recurranceData = await ctx.prisma.eventReccurance.findUnique({where: {recurringId: event?.recurringId ?? undefined}});
-      return {event: event, recurranceData: recurranceData};
+        const recurranceData = await ctx.prisma.eventReccurance.findUnique({
+          where: { recurringId: event?.recurringId ?? undefined },
+        });
+        return { event: event, recurranceData: recurranceData };
       }
 
-
-
+      // Branch for non recurring event
       if (queries == "false" || queries == null) {
-        const event =  await ctx.prisma?.event.findFirst({
+        const event = await ctx.prisma?.event.findFirst({
           where: { id: input },
           include: {
             Locations: true,
@@ -238,7 +242,7 @@ export const eventsRouter = createTRPCRouter({
             },
           },
         });
-      return {event: event, recurranceData: null}
+        return { event: event, recurranceData: null };
       }
     }),
 

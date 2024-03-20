@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { CircularProgress } from "../../../components/circularProgress";
 import { Divider } from "../../../components/divider";
 import { SectionHeading } from "../../../components/headers/SectionHeading";
+import { SectionSubHeading } from "../../../components/headers/SectionSubHeading";
 import { BillingLayout } from "../../../components/layout/billing/layout";
 import { sidebar } from "../../../components/layout/sidebar";
 import { PaymentMethod } from "../../../components/stripe/paymentMethod";
@@ -21,10 +22,17 @@ const BillingSettings = () => {
           <SectionHeading>Plan Details</SectionHeading>
           <PlanPayment />
         </section>
-        <Divider/>
-        <section className="flex py-3 gap-12">
+        <Divider />
+        <section className="flex gap-12 py-3">
           <SectionHeading>Card Details</SectionHeading>
           <PaymentMethod />
+        </section>
+        <Divider />
+        <section className="flex gap-12 py-3">
+          <div>
+            <SectionHeading>Contact Details</SectionHeading>
+            <SectionSubHeading>Where should invoices be sent?</SectionSubHeading>
+          </div>
         </section>
       </Suspense>
     </BillingLayout>

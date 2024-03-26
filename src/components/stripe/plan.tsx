@@ -1,23 +1,36 @@
 import { api } from "../../server/utils/api";
-import { useRouter } from "next/router";
 import { MdCheck } from "react-icons/md";
 import { classNames } from "../../utils/classnames";
 import { FaCheckCircle, FaRegCircle } from "react-icons/fa";
+import { SectionHeading } from "../headers/SectionHeading";
+import { BtnPurple } from "../btn/btnPurple";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import { ChangePlanModal } from "../modal/billing/changePlan";
 
 // This is a wrapper for the data call
 export const PlanPayment = () => {
   const [sub, _subQuery] = api.stripe.getSubscriptionPlan.useSuspenseQuery();
+  const [open, setOpen] = useState(false);
   const subPlanId = sub?.items.data[0]?.plan.id;
   return (
     <>
-      <PlanCards subPriceId={subPlanId} />
+      {open && createPortal(<ChangePlanModal open={open} setOpen={setOpen}/>, document.body)}
+      <section>
+        <div className="md:mr-3 md:flex md:items-center md:justify-between">
+          <SectionHeading>Plan Details</SectionHeading>{" "}
+          <div className="mt-3">
+            <BtnPurple onClick={() => {setOpen(!open)}}>Edit</BtnPurple>
+          </div>
+        </div>
+        <PlanCards subPriceId={subPlanId} />
+      </section>
     </>
   );
 };
 
 //TODO: add in ability to click new plan and have that bring up confirmation of the change
 const PlanCards = ({ subPriceId }: { subPriceId: string | undefined }) => {
-  const router = useRouter();
   const tiers = [
     {
       name: "Free",
@@ -63,9 +76,9 @@ const PlanCards = ({ subPriceId }: { subPriceId: string | undefined }) => {
     return <div>No price found</div>;
   }
   return (
-    <section id="pricing" className="py-3 px-2 text-lg text-white">
+    <section id="pricing" className="py-6 px-2 text-lg text-white">
       <div className="container mx-auto">
-        <div className="grid gap-6 pt-9 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3">
           {tiers.map((tier, i) => {
             const selected = tier.priceId === subPriceId;
             return (

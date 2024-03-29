@@ -198,4 +198,14 @@ export const stripeRouter = createTRPCRouter({
 
     return { paymentMethod: paymentMethod };
   }),
+  getAllPaymentMethods: adminOrgProcedure.query(async ({ctx}) => {
+
+    if (ctx.org.stripeCustomerId == null) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No Stripe Customer on Organization.",
+      });
+    }
+    return await stripe.customers.listPaymentMethods(ctx.org.stripeCustomerId);
+  })
 });

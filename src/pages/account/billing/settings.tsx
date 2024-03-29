@@ -21,8 +21,8 @@ const BillingSettings = () => {
           <SectionHeading>Plan Details</SectionHeading>
           <PlanPayment />
         </section>
-        <Divider/>
-        <section className="flex py-3 gap-12">
+        <Divider />
+        <section className="flex flex-col gap-3 py-3 md:flex-row md:gap-12">
           <SectionHeading>Card Details</SectionHeading>
           <PaymentMethod />
         </section>

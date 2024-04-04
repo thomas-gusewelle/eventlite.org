@@ -4,7 +4,7 @@ import { TableOptionsDropdown } from "../../types/tableMenuOptions";
 import { SectionHeading } from "../components/headers/SectionHeading";
 import { sidebar } from "../components/layout/sidebar";
 
-import { api } from "../server/utils/api"
+import { api } from "../server/utils/api";
 import { Availability, Role, User } from "@prisma/client";
 import { CircularProgress } from "../components/circularProgress";
 import { useForm, Controller } from "react-hook-form";
@@ -34,7 +34,7 @@ import { BtnPurple } from "../components/btn/btnPurple";
 const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   cursor,
 }) => {
-  const utils = useQueryClient()
+  const utils = useQueryClient();
   const router = useRouter();
   const userContext = useContext(UserContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -83,8 +83,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     }
   );
 
-  useEffect(() => {
-  }, [getScheduleQuery]);
+  useEffect(() => {}, [getScheduleQuery]);
 
   const scheduleUserMutation = api.schedule.updateUserRole.useMutation({
     onSuccess() {
@@ -92,8 +91,8 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     },
   });
 
-  const removeUserFromPosition = api.schedule.removeUserfromPosition.useMutation(
-    {
+  const removeUserFromPosition =
+    api.schedule.removeUserfromPosition.useMutation({
       onMutate(variables) {
         setSelectedPeople(
           selectedPeople?.filter((people) => people.userId != variables.userId)
@@ -102,8 +101,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
       onSuccess() {
         alertContext.setSuccess({ state: true, message: "Changes Saved" });
       },
-    }
-  );
+    });
 
   const methods = useForm();
 
@@ -119,7 +117,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     onSuccess() {
       eventId.current.id = null;
       setDeleteAllRecuring(false);
-      api.useContext().schedule.getSchedule.invalidate()
+      api.useContext().schedule.getSchedule.invalidate();
       getScheduleQuery.refetch();
     },
   });
@@ -135,7 +133,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
 
   if (getScheduleQuery.isLoading) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -159,7 +157,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
   return (
     <>
       <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <ModalBody>
             <ModalTitle
               text={
@@ -183,34 +181,39 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
           </ModalBody>
         </div>
       </Modal>
-      <div className='relative'>
+      <div className="relative">
         <form onSubmit={sumbit}>
-          <div className='mb-3 flex justify-between gap-4 md:hidden'>
+          <div className="mb-3 flex justify-between gap-4 md:hidden">
             <SectionHeading>Schedule</SectionHeading>
-            <div className="flex gap-3 items-start">
+            <div className="flex items-start gap-3">
               <LimitSelect selected={limit} setSelected={setLimit} />
             </div>
           </div>
-          <div className='mb-3 hidden justify-between md:flex'>
+          <div className="mb-3 hidden justify-between md:flex">
             <SectionHeading>Schedule</SectionHeading>
-            <div className="flex gap-3 min-w-max items-start self-stretch">
+            <div className="flex min-w-max items-start gap-3 self-stretch">
               <LimitSelect selected={limit} setSelected={setLimit} />
             </div>
           </div>
 
-          <div className="flex mb-8">
-            <BtnPurple onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}>Email Schedule</BtnPurple>
+          <div className="mb-8 flex">
+            <BtnPurple
+              onClick={() => setOpenEmailScheduleModal(!openEmailScheduleModal)}
+            >
+              Email Schedule
+            </BtnPurple>
           </div>
 
           <div>
-            <div className='mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
+            <div className="mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {getScheduleQuery?.data.items?.map((event) => (
                 <div
                   key={event.id}
-                  className='flex flex-col rounded-lg border border-gray-300 shadow'>
-                  <div className=' mb-4 flex flex-col px-3 pt-4'>
-                    <div className='flex justify-between'>
-                      <h3 className='text-xl font-bold'>{event.name}</h3>
+                  className="flex flex-col rounded-lg border border-gray-300 shadow"
+                >
+                  <div className=" mb-4 flex flex-col px-3 pt-4">
+                    <div className="flex justify-between">
+                      <h3 className="text-xl font-bold">{event.name}</h3>
                       <TableDropdown
                         options={[
                           {
@@ -242,11 +245,17 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                         ]}
                       />
                     </div>
-                    <span className='text-lg font-medium'>
+                    <span className="text-lg font-medium">
                       {event.Locations?.name}
                     </span>
                     <span>{shortDate(event.datetime)}</span>
-                    <span>{shortTime(event.datetime)}</span>
+                    <span>
+                      {shortTime(
+                        event.datetime,
+                        event.timezone,
+                        event.timezoneOffset
+                      )}
+                    </span>
                   </div>
                   <div>
                     {event.positions
@@ -258,12 +267,13 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                       .map((position, index) => {
                         return (
                           <div
-                            className='grid grid-cols-3 border-t last:border-b last:pb-0'
-                            key={position.id}>
-                            <span className='flex items-center px-6 font-medium'>
+                            className="grid grid-cols-3 border-t last:border-b last:pb-0"
+                            key={position.id}
+                          >
+                            <span className="flex items-center px-6 font-medium">
                               {position.Role.name}
                             </span>
-                            <div className='col-span-2'>
+                            <div className="col-span-2">
                               <>
                                 <Controller
                                   key={index}
@@ -373,10 +383,10 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
               ))}
             </div>
           </div>
-          <div className='mx-6 flex justify-between'>
+          <div className="mx-6 flex justify-between">
             {getScheduleQuery.data.lastCursor &&
               getScheduleQuery.data.lastCursor.datetime.getTime() <
-              getScheduleQuery.data.items[0]!.datetime.getTime() && (
+                getScheduleQuery.data.items[0]!.datetime.getTime() && (
                 <button
                   onClick={() =>
                     router.push(
@@ -384,7 +394,8 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                     )
                   }
                   disabled={getScheduleQuery.data.lastCursor ? false : true}
-                  className='inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100'>
+                  className="inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+                >
                   Prev Page
                 </button>
               )}
@@ -396,7 +407,8 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                   )
                 }
                 disabled={getScheduleQuery.data.nextCursor ? false : true}
-                className='ml-auto inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100'>
+                className="ml-auto inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+              >
                 Next Page
               </button>
             )}
@@ -404,7 +416,13 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
         </form>
       </div>
       {/* Schedule Email Modal*/}
-      {createPortal(<EmailScheduleModal open={openEmailScheduleModal} setOpen={setOpenEmailScheduleModal} />, document.body)}
+      {createPortal(
+        <EmailScheduleModal
+          open={openEmailScheduleModal}
+          setOpen={setOpenEmailScheduleModal}
+        />,
+        document.body
+      )}
     </>
   );
 };

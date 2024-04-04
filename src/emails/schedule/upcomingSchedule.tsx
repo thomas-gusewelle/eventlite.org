@@ -73,7 +73,7 @@ const UpcomingScheduleEmail = ({ data, startingDate, endingDate }: { data: { use
                 <Text color={colors.black} fontSize={fontSize.lg} fontWeight={fontWeight.bold}>{event?.name}</Text>
                 <Text color={colors.black} fontSize={fontSize.md}>{event?.Locations?.name}</Text>
                 <Text color={colors.black}>{shortDate(event.datetime)}</Text>
-                <Text color={colors.black}>{shortTime(event.datetime, event.timezone)}</Text>
+                <Text color={colors.black}>{shortTime(event.datetime, event.timezone, event.timezoneOffset)}</Text>
               </MjmlColumn>
             </MjmlSection>
             {/* <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}> */}

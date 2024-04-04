@@ -92,6 +92,7 @@ const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, dup
         eventDate: data.eventDate,
         eventTime: data.eventTime,
         eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        eventTimeZoneOffset: new Date().getTimezoneOffset(),
         eventLocation: data.eventLocation,
         positions: data.positions,
       }, {
@@ -114,6 +115,7 @@ const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, dup
             eventDate: date,
             eventTime: data.eventTime,
             eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            eventTimeZoneOffset: new Date().getTimezoneOffset(),
             recurringId: recurringId,
             eventLocation: data.eventLocation,
             positions: data.positions,

@@ -146,6 +146,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           eventDate: data.eventDate,
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          eventTimeZoneOffset: new Date().getTimezoneOffset(),
           organization: eventQuery.data.organizationId,
           recurringId: eventQuery.data.recurringId || undefined,
           eventLocation: data.eventLocation,
@@ -191,6 +192,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           name: data.name,
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          eventTimeZoneOffset: new Date().getTimezoneOffset(),
           recurringId: eventQuery.data.recurringId || undefined,
           positions: data.positions.map((position) => ({
             eventPositionId: position.eventPositionId,

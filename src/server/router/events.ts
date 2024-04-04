@@ -260,6 +260,7 @@ export const eventsRouter = createTRPCRouter({
       eventDate: z.date(),
       eventTime: z.date(),
       eventTimeZone: z.string(),
+      eventTimeZoneOffset: z.number(),
       recurringId: z.string().optional(),
       eventLocation: z.object({
         id: z.string(),
@@ -289,6 +290,7 @@ export const eventsRouter = createTRPCRouter({
         recurringId: input?.recurringId,
         datetime: replaceTime(input.eventDate, input.eventTime),
         timezone: input.eventTimeZone,
+        timezoneOffset: input.eventTimeZoneOffset,
         organizationId: org?.organizationId,
         locationsId: input.eventLocation.id,
         positions: {
@@ -490,6 +492,7 @@ export const eventsRouter = createTRPCRouter({
       eventDate: z.date(),
       eventTime: z.date(),
       eventTimeZone: z.string(),
+      eventTimeZoneOffset: z.number(),
       organization: z.string(),
       recurringId: z.string().optional(),
       eventLocation: z.object({
@@ -551,6 +554,7 @@ export const eventsRouter = createTRPCRouter({
         recurringId: input?.recurringId,
         datetime: replaceTime(input.eventDate, input.eventTime),
         timezone: input.eventTimeZone,
+        timezoneOffset: input.eventTimeZoneOffset,
         organizationId: input.organization,
         locationsId: input.eventLocation.id,
         positions: {
@@ -573,6 +577,7 @@ export const eventsRouter = createTRPCRouter({
       name: z.string(),
       eventTime: z.date(),
       eventTimeZone: z.string(),
+      eventTimeZoneOffset: z.number(),
       organization: z.string(),
       recurringId: z.string().optional(),
       eventLocation: z.object({
@@ -638,6 +643,7 @@ export const eventsRouter = createTRPCRouter({
             recurringId: recurringId,
             datetime: replaceTime(startDate, input.eventTime),
             timezone: input.eventTimeZone,
+            timezoneOffset: input.eventTimeZoneOffset,
             organizationId: input.organization,
             locationsId: input.eventLocation.id,
             positions: {
@@ -657,6 +663,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -699,6 +706,7 @@ export const eventsRouter = createTRPCRouter({
             recurringId: recurringId,
             datetime: replaceTime(startDate, input.eventTime),
             timezone: input.eventTimeZone,
+            timezoneOffset: input.eventTimeZoneOffset,
             organizationId: input.organization,
             locationsId: input.eventLocation.id,
             positions: {
@@ -718,6 +726,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -788,6 +797,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: input?.recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -822,6 +832,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: input?.recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -870,6 +881,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: input?.recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -904,6 +916,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: input?.recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -931,6 +944,7 @@ export const eventsRouter = createTRPCRouter({
               name: input.name,
               datetime: replaceTime(date, input.eventTime),
               timezone: input.eventTimeZone,
+              timezoneOffset: input.eventTimeZoneOffset,
               organizationId: input.organization,
               recurringId: input.recurringId,
               locationsId: input.eventLocation.id,
@@ -986,6 +1000,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: input?.recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {
@@ -1020,6 +1035,7 @@ export const eventsRouter = createTRPCRouter({
                 recurringId: input?.recurringId,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 locationsId: input.eventLocation.id,
                 positions: {

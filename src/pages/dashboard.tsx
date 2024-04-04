@@ -198,7 +198,7 @@ const Dashboard = () => {
                         {event.Locations?.name}
                       </span>
                       <span>{shortDate(event.datetime)}</span>
-                      <span>{shortTime(event.datetime)}</span>
+                      <span>{shortTime(event.datetime, event.timezone, event.timezoneOffset)}</span>
                     </div>
                     <div className="">
                       {event.positions
@@ -313,7 +313,7 @@ const Dashboard = () => {
                         {event.Locations?.name}
                       </span>
                       <span>{shortDate(event.datetime)}</span>
-                      <span>{shortTime(event.datetime)}</span>
+                      <span>{shortTime(event.datetime, event.timezone, event.timezoneOffset)}</span>
                     </div>
                     <div className="">
                       {event.positions

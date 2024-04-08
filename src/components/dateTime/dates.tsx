@@ -8,6 +8,15 @@ export function shortDate(date: Date, timeZone?: string) {
   }).format(date);
 }
 
+export function shortUTCDate(date: Date, offset: number) {
+  const tempTime = new Date(date);
+  tempTime.setMinutes(-offset);
+  return Intl.DateTimeFormat("en-US", {
+    month: "2-digit",
+    day: "numeric",
+    year: "numeric",
+  }).format(tempTime);
+
 // Formats date in Sunday, November 6, 2022 format
 export function longDate(date: Date, timeZone?: string) {
   return Intl.DateTimeFormat("en-US", {

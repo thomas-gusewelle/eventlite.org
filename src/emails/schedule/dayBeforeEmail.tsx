@@ -6,8 +6,8 @@ import { MjmlWrapper, MjmlColumn, MjmlSection, MjmlGroup, MjmlDivider } from "mj
 import { colors, fontSize, fontWeight, screens } from "../theme";
 import Footer from "../components/Footer";
 import { EventPositions, User, Event, Locations, Role } from "@prisma/client";
-import { shortDate } from "../../components/dateTime/dates";
-import { shortTime } from "../../components/dateTime/times";
+import { shortDate, shortUTCDate } from "../../components/dateTime/dates";
+import { shortTime, shortUTCTime } from "../../components/dateTime/times";
 import { fullName } from "../../utils/fullName";
 import { ReminderEmailData } from "../../pages/api/messaging/schedule";
 
@@ -77,8 +77,8 @@ const DayBeforeEmail = ({ data }: { data: ReminderEmailData }) => {
               <MjmlColumn>
                 <Text color={colors.black} fontSize={fontSize.lg} fontWeight={fontWeight.bold}>{event?.name}</Text>
                 <Text color={colors.black} fontSize={fontSize.md}>{event?.Locations?.name}</Text>
-                <Text color={colors.black}>{shortDate(event.datetime)}</Text>
-                <Text color={colors.black}>{shortTime(event.datetime, event.timezone)}</Text>
+                <Text color={colors.black}>{shortUTCDate(event.datetime, event.timezoneOffset)}</Text>
+                <Text color={colors.black}>{shortUTCTime(event.datetime, event.timezoneOffset)}</Text>
               </MjmlColumn>
             </MjmlSection>
             <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}>

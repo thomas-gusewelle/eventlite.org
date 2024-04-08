@@ -4,7 +4,7 @@ export function shortDate(date: Date, timeZone?: string) {
     month: "2-digit",
     day: "numeric",
     year: "numeric",
-    timeZone: timeZone
+    timeZone: timeZone,
   }).format(date);
 }
 
@@ -16,7 +16,7 @@ export function shortUTCDate(date: Date, offset: number) {
     day: "numeric",
     year: "numeric",
   }).format(tempTime);
-
+}
 // Formats date in Sunday, November 6, 2022 format
 export function longDate(date: Date, timeZone?: string) {
   return Intl.DateTimeFormat("en-US", {
@@ -24,13 +24,12 @@ export function longDate(date: Date, timeZone?: string) {
     month: "long",
     day: "numeric",
     year: "numeric",
-    timeZone: timeZone
+    timeZone: timeZone,
   }).format(date);
 }
-
 
 export function oneMonthInFuture(): Date {
   const date = new Date();
   date.setMonth(date.getMonth() + 1);
-  return date
+  return date;
 }

@@ -73,6 +73,7 @@ export const stripeRouter = createTRPCRouter({
         const intent = invoice.payment_intent as Stripe.PaymentIntent;
         return { clientSecret: intent.client_secret };
       } catch (_error) {
+      console.log(sub)
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       }
     }),

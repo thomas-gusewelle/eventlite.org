@@ -11,11 +11,11 @@ import { ChangePlanModal } from "../modal/billing/changePlan";
 // This is a wrapper for the data call
 export const PlanPayment = () => {
   const [sub, _subQuery] = api.stripe.getSubscriptionPlan.useSuspenseQuery();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const subPlanId = sub?.items.data[0]?.plan.id;
   return (
     <>
-      {open && createPortal(<ChangePlanModal open={open} setOpen={setOpen}/>, document.body)}
+      {open && createPortal(<ChangePlanModal open={open} setOpen={setOpen} priceId={subPlanId} subId={sub.id}/> , document.body)}
       <section>
         <div className="md:mr-3 md:flex md:items-center md:justify-between">
           <SectionHeading>Plan Details</SectionHeading>{" "}

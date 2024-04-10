@@ -11,20 +11,34 @@ import { api } from "../../../server/utils/api";
 import { useRouter } from "next/router";
 import { AlertContext } from "../../../providers/alertProvider";
 import { BtnCancel } from "../../btn/btnCancel";
+import { BottomButtons } from "../bottomButtons";
+import { CircularProgress } from "../../circularProgress";
 
 export const ChangePlanModal = ({
   open,
   setOpen,
+  priceId,
   subId,
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  subId: string | undefined;
+  priceId: string | undefined;
+  subId: string;
 }) => {
+  const [showPaymentMethodAdd, setShowPaymentMethodAdd] = useState(false);
   return (
     <Modal open={open} setOpen={setOpen}>
       <ModalBody>
-        <PricingTiers currentSubId={subId} setOpen={setOpen}/>
+        {showPaymentMethodAdd ? (
+          <PaymentAddSection subId={subId} />
+        ) : (
+          <PricingTiers
+            currentPriceId={priceId}
+            subId={subId}
+            setOpen={setOpen}
+            setShowPaymentAdd={setShowPaymentMethodAdd}
+          />
+        )}
       </ModalBody>
     </Modal>
   );
@@ -57,13 +71,25 @@ const plans: plan[] = [
   },
 ];
 
-const PricingTiers = ({ currentSubId, setOpen }: { currentSubId: string | undefined, setOpen: Dispatch<SetStateAction<boolean>> }) => {
+const PricingTiers = ({
+  currentPriceId,
+  subId,
+  setOpen,
+  setShowPaymentAdd,
+}: {
+  currentPriceId: string | undefined;
+  subId: string;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  setShowPaymentAdd: Dispatch<SetStateAction<boolean>>;
+}) => {
   const router = useRouter();
-  const { setError } = useContext(AlertContext)!;
+  const { setError, setSuccess } = useContext(AlertContext)!;
   const updateSub = api.stripe.updateSubscriptionPrice.useMutation();
+  const defaultPaymentQuery = api.stripe.getDefaultPaymentMethod.useQuery();
 
-  const priceId =
-    currentSubId ? currentSubId : "price_1OWkdVKjgiEDHq2AesuPdTmq";
+  const priceId = currentPriceId
+    ? currentPriceId
+    : "price_1OWkdVKjgiEDHq2AesuPdTmq";
 
   const plan = plans.findIndex((p) => p.stripeId === priceId);
   const [selected, setSelected] = useState<plan>(plans[plan == -1 ? 0 : plan]!);
@@ -71,33 +97,65 @@ const PricingTiers = ({ currentSubId, setOpen }: { currentSubId: string | undefi
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    //
-    // // if tier is different then update
-    // if (priceId != selected.stripeId) {
-    //   // since the subscription has never been active
-    //   // we want to charge the change immediately
-    //   await updateSub.mutateAsync(
-    //     {
-    //       subId: state.stripeSubscriptionId,
-    //       priceId: selected.stripeId,
-    //       chargeChangeImmediately: true,
-    //     },
-    //     {
-    //       onError(error, _variables, _context) {
-    //         setError({
-    //           state: true,
-    //           message: "Error saving the selected plan. Please try again.",
-    //         });
-    //       },
-    //     }
-    //   );
-    // }
-    //
-    // if (selected.tier == "free") {
-    //   router.push(`/account/confirm-email?email=${state.email}`);
-    // } else {
-    //   setStep(5);
-    // }
+    if (
+      defaultPaymentQuery.isLoading ||
+      defaultPaymentQuery.isError ||
+      defaultPaymentQuery.data === undefined
+    ) {
+      return;
+    }
+
+    // if sub is the same then exit
+    if (selected.stripeId == priceId) {
+      setOpen(false);
+      return;
+    }
+
+    //plan is free
+    if (selected.stripeId === plans[0]?.stripeId) {
+      updateSub.mutate(
+        {
+          priceId: selected.stripeId,
+          subId,
+        },
+        {
+          onSuccess: () => window.location.reload(),
+          onError(error, _variables, _context) {
+            setError({ state: true, message: `Error: ${error.message}` });
+          },
+        }
+      );
+      return;
+    }
+
+    //if plan is a paid plan check for payment method
+    const { paymentMethod } = defaultPaymentQuery.data;
+
+    //  if payment method then udate subscription with proration
+    //  if no payment method then ask for payment method
+    if (paymentMethod) {
+      updateSub.mutate(
+        {
+          priceId: selected.stripeId,
+          subId,
+        },
+        {
+          onSuccess: () => window.location.reload(),
+          onError(error, _variables, _context) {
+            setError({ state: true, message: `Error: ${error.message}` });
+          },
+        }
+      );
+      return;
+    } else {
+      await updateSub.mutateAsync({
+        priceId: selected.stripeId,
+        subId,
+        chargeChangeImmediately: true,
+      });
+      setShowPaymentAdd(true);
+      return;
+    }
   };
   return (
     <form onSubmit={handleSubmit}>
@@ -121,7 +179,7 @@ const PricingTiers = ({ currentSubId, setOpen }: { currentSubId: string | undefi
                       <div className="text-sm">
                         <RadioGroup.Label
                           as="p"
-                          className={`font-medium  text-gray-900 text-left `}
+                          className={`text-left  font-medium text-gray-900 `}
                         >
                           {plan.name}
                         </RadioGroup.Label>
@@ -145,18 +203,34 @@ const PricingTiers = ({ currentSubId, setOpen }: { currentSubId: string | undefi
           ))}
         </div>
       </RadioGroup>
-      <div className="mt-6 flex items-center justify-center gap-6">
-        <BtnCancel onClick={() => setOpen(false)}
-          />
+      <BottomButtons>
         <BtnPurple
-          disabled={updateSub.isPending}
+          disabled={updateSub.isPending || defaultPaymentQuery.isLoading}
           isLoading={updateSub.isPending}
           type="submit"
-          fullWidth
         >
           Save
         </BtnPurple>
-      </div>
+        <BtnCancel onClick={() => setOpen(false)} />
+      </BottomButtons>
     </form>
   );
+};
+
+const PaymentAddSection = ({ subId }: { subId: string }) => {
+  const clientSecret = api.stripe.getSubscriptionSecretByID.useQuery({
+    id: subId,
+  });
+
+  let secret = clientSecret.data?.clientSecret;
+
+  if (clientSecret.isLoading || secret == null) {
+    return (
+      <div className="flex items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  return <form></form>;
 };

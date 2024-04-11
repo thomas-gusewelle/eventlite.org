@@ -13,7 +13,12 @@ import { AlertContext } from "../../../providers/alertProvider";
 import { BtnCancel } from "../../btn/btnCancel";
 import { BottomButtons } from "../bottomButtons";
 import { CircularProgress } from "../../circularProgress";
-import { Elements, PaymentElement } from "@stripe/react-stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
 import { loadedStripe } from "../../../server/stripe/client";
 import { BtnNeutral } from "../../btn/btnNeutral";
 
@@ -263,6 +268,7 @@ const PaymentAddSection = ({
   setShowPaymentAdd: Dispatch<SetStateAction<boolean>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const elements = useElements();
   const clientSecret = api.stripe.createOrRetrieveSetupIntent.useQuery({
     customerId: customerId,
   });
@@ -277,10 +283,6 @@ const PaymentAddSection = ({
     );
   }
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-  };
-
   return (
     <>
       <CardHeader>Add a Payment Method</CardHeader>
@@ -288,23 +290,67 @@ const PaymentAddSection = ({
         stripe={loadedStripe}
         options={{ clientSecret: clientSecret.data?.clientSecret ?? undefined }}
       >
-        <form className="py-3" onSubmit={handleSubmit}>
-          <PaymentElement />
-          <div className="mt-6 flex items-center justify-center gap-6">
-            <BtnNeutral
-              fullWidth
-              func={() => {
-                setShowPaymentAdd(false);
-              }}
-            >
-              Back
-            </BtnNeutral>
-            <BtnPurple type="submit" fullWidth>
-              Save
-            </BtnPurple>
-          </div>
-        </form>
+        <PaymentAddForm setShowPaymentAdd={setShowPaymentAdd} setOpen={setOpen}/>
       </Elements>
     </>
+  );
+};
+
+const PaymentAddForm = ({
+  setShowPaymentAdd,
+  setOpen
+}: {
+  setShowPaymentAdd: Dispatch<SetStateAction<boolean>>;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { setError } = useContext(AlertContext);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const { error } = await stripe.confirmSetup({
+      elements,
+      confirmParams: {
+        //make an update sub page that will take in the subId and priceId and update the sub
+        //this page will then display a thank you message and button to go back to dashboard
+        return_url: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      setError({
+        state: true,
+        message: `Error saving payment: ${error.message}`,
+      });
+      setOpen(false);
+      return;
+    }
+
+
+  };
+
+  return (
+    <form className="py-3" onSubmit={handleSubmit}>
+      <PaymentElement />
+      <div className="mt-6 flex items-center justify-center gap-6">
+        <BtnNeutral
+          fullWidth
+          func={() => {
+            setShowPaymentAdd(false);
+          }}
+        >
+          Back
+        </BtnNeutral>
+        <BtnPurple type="submit" fullWidth>
+          Save
+        </BtnPurple>
+      </div>
+    </form>
   );
 };

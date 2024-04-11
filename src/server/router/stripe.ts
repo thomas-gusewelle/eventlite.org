@@ -132,8 +132,10 @@ export const stripeRouter = createTRPCRouter({
       const existingIntents = await stripe.setupIntents.list({
         customer: input.customerId,
       });
-      if (existingIntents.data.length > 0) {
-        return { clientSecret: existingIntents.data[0]?.client_secret };
+
+    const existingIntent = existingIntents.data.find(x => x.status === "requires_payment_method");
+      if (existingIntent) {
+        return { clientSecret: existingIntent.client_secret };
       }
 
       const intent = await stripe.setupIntents.create({

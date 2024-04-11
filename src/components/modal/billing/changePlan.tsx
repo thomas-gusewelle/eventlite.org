@@ -268,7 +268,6 @@ const PaymentAddSection = ({
   setShowPaymentAdd: Dispatch<SetStateAction<boolean>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const elements = useElements();
   const clientSecret = api.stripe.createOrRetrieveSetupIntent.useQuery({
     customerId: customerId,
   });
@@ -290,16 +289,18 @@ const PaymentAddSection = ({
         stripe={loadedStripe}
         options={{ clientSecret: clientSecret.data?.clientSecret ?? undefined }}
       >
-        <PaymentAddForm setShowPaymentAdd={setShowPaymentAdd} setOpen={setOpen}/>
+        <PaymentAddForm setShowPaymentAdd={setShowPaymentAdd} setOpen={setOpen} priceId={selectedPriceId}/>
       </Elements>
     </>
   );
 };
 
 const PaymentAddForm = ({
+  priceId,
   setShowPaymentAdd,
   setOpen
 }: {
+    priceId: string | undefined,
   setShowPaymentAdd: Dispatch<SetStateAction<boolean>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -319,7 +320,7 @@ const PaymentAddForm = ({
       confirmParams: {
         //make an update sub page that will take in the subId and priceId and update the sub
         //this page will then display a thank you message and button to go back to dashboard
-        return_url: `${window.location.origin}/dashboard`,
+        return_url: `${window.location.origin}/account/billing/payment/updateSubscription?price_id=${priceId}`,
       },
     });
 
@@ -328,6 +329,7 @@ const PaymentAddForm = ({
         state: true,
         message: `Error saving payment: ${error.message}`,
       });
+      console.log(error)
       setOpen(false);
       return;
     }

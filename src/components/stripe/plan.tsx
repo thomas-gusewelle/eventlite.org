@@ -15,7 +15,7 @@ export const PlanPayment = () => {
   const subPlanId = sub?.items.data[0]?.plan.id;
   return (
     <>
-      {open && createPortal(<ChangePlanModal open={open} setOpen={setOpen} priceId={subPlanId} subId={sub.id}/> , document.body)}
+      {open && createPortal(<ChangePlanModal open={open} setOpen={setOpen} priceId={subPlanId} subId={sub.id} customerId={sub.customer as string}/> , document.body)}
       <section>
         <div className="md:mr-3 md:flex md:items-center md:justify-between">
           <SectionHeading>Plan Details</SectionHeading>{" "}

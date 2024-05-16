@@ -73,7 +73,7 @@ export const stripeRouter = createTRPCRouter({
         const intent = invoice.payment_intent as Stripe.PaymentIntent;
         return { clientSecret: intent.client_secret };
       } catch (_error) {
-      console.log(sub)
+        console.log(sub);
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       }
     }),
@@ -133,7 +133,9 @@ export const stripeRouter = createTRPCRouter({
         customer: input.customerId,
       });
 
-    const existingIntent = existingIntents.data.find(x => x.status === "requires_payment_method");
+      const existingIntent = existingIntents.data.find(
+        (x) => x.status === "requires_payment_method"
+      );
       if (existingIntent) {
         return { clientSecret: existingIntent.client_secret };
       }
@@ -201,8 +203,7 @@ export const stripeRouter = createTRPCRouter({
 
     return { paymentMethod: paymentMethod };
   }),
-  getAllPaymentMethods: adminOrgProcedure.query(async ({ctx}) => {
-
+  getAllPaymentMethods: adminOrgProcedure.query(async ({ ctx }) => {
     if (ctx.org.stripeCustomerId == null) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -210,5 +211,17 @@ export const stripeRouter = createTRPCRouter({
       });
     }
     return await stripe.customers.listPaymentMethods(ctx.org.stripeCustomerId);
-  })
+  }),
+  setPaymentMethodAsDefault: adminOrgProcedure
+    .input(z.object({ paymentMethodId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org.stripeCustomerId) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+      const customer = stripe.customers.update(ctx.org.stripeCustomerId, {
+        default_source: input.paymentMethodId,
+        invoice_settings: { default_payment_method: input.paymentMethodId },
+      });
+    return customer;
+    }),
 });

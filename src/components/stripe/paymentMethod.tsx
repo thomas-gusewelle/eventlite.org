@@ -21,6 +21,9 @@ export const PaymentMethod = () => {
 
 //TODO: get the default payment and implement selecting and saving that
 const PaymentMethodCard = ({ pm }: { pm: Stripe.PaymentMethod }) => {
+  const setDefaultPayment = api.stripe.setPaymentMethodAsDefault.useMutation();
+  const [defaultPaymentMethod, defaultPaymentMethodQuery] = api.stripe.getDefaultPaymentMethod.useSuspenseQuery();
+  console.log(pm)
   return (
     <div className="space-between flex rounded-xl p-3 shadow">
       <div className="flex gap-3">
@@ -33,9 +36,21 @@ const PaymentMethodCard = ({ pm }: { pm: Stripe.PaymentMethod }) => {
             Expires {pm.card?.exp_month}/{pm.card?.exp_year}
           </p>
           <div className="flex items-center gap-3 pt-3">
-            <button className="text-left text-neutral-600">
+            {defaultPaymentMethod.paymentMethod?.id === pm.id ? <></> : <button
+              className="text-left text-neutral-600"
+              onClick={() =>
+                setDefaultPayment.mutate(
+                  { paymentMethodId: pm.id },
+                  {
+                    onSuccess: () => {
+                      api.useUtils().stripe.getAllPaymentMethods.refetch();
+                    },
+                  }
+                )
+              }
+            >
               Set as default
-            </button>
+            </button> }
             <button className="text-indigo-600">Edit</button>
           </div>
         </div>

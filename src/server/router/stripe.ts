@@ -219,7 +219,6 @@ export const stripeRouter = createTRPCRouter({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       }
       const customer = stripe.customers.update(ctx.org.stripeCustomerId, {
-        default_source: input.paymentMethodId,
         invoice_settings: { default_payment_method: input.paymentMethodId },
       });
     return customer;

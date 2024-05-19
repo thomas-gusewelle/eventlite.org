@@ -6,6 +6,7 @@ import { MdDownload } from "react-icons/md";
 import { shortDate } from "../../../components/dateTime/dates";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { formatStripeDollar } from "../../../utils/formatDollar";
 
 // TODO: Test the forward and backwards pagination
 const BillingHistory = ({
@@ -17,7 +18,11 @@ const BillingHistory = ({
   limit: number | undefined;
   forward: boolean;
 }) => {
-  const invoicesQuery = api.stripe.getInvoices.useQuery({ cursor, limit, forward });
+  const invoicesQuery = api.stripe.getInvoices.useQuery({
+    cursor,
+    limit,
+    forward,
+  });
   const router = useRouter();
 
   if (invoicesQuery.isLoading) {
@@ -51,7 +56,7 @@ const BillingHistory = ({
                 </td>
                 <td>{person.status}</td>
                 <td>
-                  <span>${person.total}</span>
+                  <span>{formatStripeDollar(person.total/100)}</span>
                 </td>
                 <td>
                   {person.invoice_pdf && (

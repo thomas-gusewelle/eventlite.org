@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import sendMail from "../../emails";
 import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
-import { createTRPCRouter, publicProcedure, adminProcedure } from "./context";
+import { createTRPCRouter, publicProcedure} from "./context";
 
 
 export const organizationRouter = createTRPCRouter({
@@ -22,6 +22,7 @@ export const organizationRouter = createTRPCRouter({
       ]),
       orgName: z.string(),
       orgPhoneNumber: z.string().optional(),
+      orgTimeZone: z.string().default("America/Chicago")
     }),
   ).mutation(async ({ ctx, input }) => {
 
@@ -62,6 +63,7 @@ export const organizationRouter = createTRPCRouter({
       data: {
         name: input.orgName,
         phone_number: input.orgPhoneNumber,
+        timezone: input.orgTimeZone
       },
     });
 

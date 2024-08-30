@@ -83,6 +83,7 @@ model Organization {
   events           Event[]
   roles            Role[]
   stripeCustomerId String?
+  timezone         String      @default("America/Chicago")
 
   @@index([id])
 }

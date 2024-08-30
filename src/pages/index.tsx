@@ -398,7 +398,12 @@ const EventsTab = () => {
 
           <span className="text-lg font-medium">Location Name</span>
           <span>{shortDate(new Date())}</span>
-          <span>{shortTime(new Date())}</span>
+          <span>
+            {shortTime(
+              new Date(),
+              Intl.DateTimeFormat().resolvedOptions().timeZone
+            )}
+          </span>
         </div>
         <div className="">
           {[
@@ -469,8 +474,9 @@ const EventsTab = () => {
                   </span>
                   {position.User ? (
                     <div
-                      className={`flex h-full py-1 px-3 text-center ${position.userResponse == null && "bg-gray-100"
-                        }
+                      className={`flex h-full py-1 px-3 text-center ${
+                        position.userResponse == null && "bg-gray-100"
+                      }
             ${position.userResponse == true && "bg-green-200"}
             ${position.userResponse == false && "bg-red-200"}
   `}
@@ -519,8 +525,9 @@ const EventsTab = () => {
                 </span>
                 {position.User ? (
                   <div
-                    className={`flex h-full py-1 px-3 text-center ${position.userResponse == null && "bg-gray-100"
-                      }
+                    className={`flex h-full py-1 px-3 text-center ${
+                      position.userResponse == null && "bg-gray-100"
+                    }
               ${position.userResponse == true && "bg-green-200"}
               ${position.userResponse == false && "bg-red-200"}
     `}

@@ -36,7 +36,7 @@ export const EventCard = ({
         </div>
         <span className='text-lg font-medium'>{event.Locations?.name}</span>
         <span>{shortDate(event.datetime, undefined)}</span>
-        <span>{shortTime(event.datetime, undefined, event.timezoneOffset)}</span>
+        <span>{shortTime(event.datetime, event.timezone )}</span>
       </div>
       <div className=''>
         {event.positions

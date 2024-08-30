@@ -4,22 +4,21 @@ import { DateTime } from "luxon";
 
 //TODO: implement luxon to add days and months
 export function addDays(date: Date, days: number) {
-  var result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
+  var result = DateTime.fromJSDate(date);
+  const newDate = result.plus({days: days})
+  return newDate;
 }
 
 export function addWeeks(date: Date, occurance: number) {
   var result = DateTime.fromJSDate(date);
-  // result.setDate(result.getDate() + occurance * 7);
   const newDate = result.plus({days: occurance * 7})
   return newDate;
 }
 
 export function addMonths(date: Date, occurance: number) {
-  const result = new Date(date);
-  result.setMonth(date.getMonth() + occurance);
-  return result;
+  var result = DateTime.fromJSDate(date);
+  const newDate = result.plus({months: occurance})
+  return newDate;
 }
 
 export function yearsFromToday() {

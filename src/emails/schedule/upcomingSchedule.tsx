@@ -7,12 +7,12 @@ import { colors, fontSize, fontWeight, screens } from "../theme";
 import Footer from "../components/Footer";
 import { Event, Locations } from "@prisma/client";
 import { shortDate, shortUTCDate } from "../../components/dateTime/dates";
-import { shortTime, shortUTCTime } from "../../components/dateTime/times";
+import { shortUTCTime } from "../../components/dateTime/times";
 
 type events =
   | (Event & {
-    Locations: Locations | null;
-  })[]
+      Locations: Locations | null;
+    })[]
   | undefined;
 
 const styles = `
@@ -102,31 +102,9 @@ const UpcomingScheduleEmail = ({
                 <Text color={colors.black}>
                   {shortUTCDate(event.datetime, event.timezoneOffset)}
                 </Text>
-                <Text color={colors.black}>
-                  {shortUTCTime(event.datetime, event.timezoneOffset)}
-                </Text>
+                <Text color={colors.black}>{shortUTCTime(event.datetime)}</Text>
               </MjmlColumn>
             </MjmlSection>
-            {/* <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}> */}
-            {/*   <MjmlGroup> */}
-            {/*     <MjmlColumn borderRight={"1px solid rgb(209 213 219)"}> */}
-            {/*       {event.positions.map((pos, index) => ( */}
-            {/*         <> */}
-            {/*           <Text padding={"10px 10px"} color={colors.black} fontWeight={fontWeight.bold}>{pos.Role?.name}</Text> */}
-            {/*           {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />} */}
-            {/*         </> */}
-            {/*       ))} */}
-            {/*     </MjmlColumn> */}
-            {/*     <MjmlColumn> */}
-            {/*       {event.positions.map((pos, index) => ( */}
-            {/*         <> */}
-            {/*           <Text padding={"10px 10px"} color={colors.black}>{fullName(pos.User?.firstName, pos.User?.lastName)}</Text> */}
-            {/*           {index != event.positions.length - 1 && <MjmlDivider borderColor={colors.gray300} borderWidth={1} />} */}
-            {/*         </> */}
-            {/*       ))} */}
-            {/*     </MjmlColumn> */}
-            {/*   </MjmlGroup> */}
-            {/* </MjmlSection> */}
           </>
         ))}
       </MjmlWrapper>

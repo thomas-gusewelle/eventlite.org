@@ -50,7 +50,7 @@ function DailyDates(
     let recurringDates = [eventDate];
     for (let i = 1; i < endNum; i++) {
       let newDate = addDays(eventDate, i);
-      recurringDates.push(newDate);
+      recurringDates.push(newDate.toJSDate());
     }
 
     return recurringDates;
@@ -63,7 +63,7 @@ function DailyDates(
     const numberOfDays = (endDate.getTime() - eventDate.getTime()) / timeInDay;
     for (let i = 1; i <= numberOfDays; i++) {
       let newDate = addDays(eventDate, i);
-      recurringDates.push(newDate);
+      recurringDates.push(newDate.toJSDate());
     }
     return recurringDates;
   }
@@ -111,7 +111,7 @@ function monthlyDates(
     let recurringDates = [eventDate];
     for (let i = 1; i < endNum; i++) {
       let newDate = addMonths(eventDate, i);
-      recurringDates.push(newDate);
+      recurringDates.push(newDate.toJSDate());
     }
     return recurringDates;
   }
@@ -123,7 +123,7 @@ function monthlyDates(
     const numberOfMonths = monthsBetween(eventDate, endDate);
     for (let i = 1; i <= numberOfMonths; i++) {
       let newDate = addMonths(eventDate, i);
-      recurringDates.push(newDate);
+      recurringDates.push(newDate.toJSDate());
     }
     return recurringDates;
   }

@@ -81,7 +81,7 @@ function weeklyDates(
     let recurringDates = [eventDate];
     for (let i = 1; i < endNum; i++) {
       let newDate = addWeeks(eventDate, i);
-      recurringDates.push(newDate);
+      recurringDates.push(newDate.toJSDate());
     }
 
     return recurringDates;
@@ -95,7 +95,7 @@ function weeklyDates(
     const numberofWeeks = Math.floor(numberOfDays / 7);
     for (let i = 1; i <= numberofWeeks; i++) {
       let newDate = addWeeks(eventDate, i);
-      recurringDates.push(newDate);
+      recurringDates.push(newDate.toJSDate());
     }
     return recurringDates;
   }

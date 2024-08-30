@@ -78,7 +78,7 @@ const DayBeforeEmail = ({ data }: { data: ReminderEmailData }) => {
                 <Text color={colors.black} fontSize={fontSize.lg} fontWeight={fontWeight.bold}>{event?.name}</Text>
                 <Text color={colors.black} fontSize={fontSize.md}>{event?.Locations?.name}</Text>
                 <Text color={colors.black}>{shortUTCDate(event.datetime, event.timezoneOffset)}</Text>
-                <Text color={colors.black}>{shortUTCTime(event.datetime, event.timezoneOffset)}</Text>
+                <Text color={colors.black}>{shortUTCTime(event.datetime, 0)}</Text>
               </MjmlColumn>
             </MjmlSection>
             <MjmlSection border={"1px solid rgb(209 213 219)"} borderTop={"none"} borderRadius={"2rem"}>

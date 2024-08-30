@@ -249,13 +249,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                       {event.Locations?.name}
                     </span>
                     <span>{shortDate(event.datetime)}</span>
-                    <span>
-                      {shortTime(
-                        event.datetime,
-                        event.timezone,
-                        event.timezoneOffset
-                      )}
-                    </span>
+                    <span>{shortTime(event.datetime, event.timezone)}</span>
                   </div>
                   <div>
                     {event.positions

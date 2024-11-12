@@ -33,7 +33,7 @@ export const YourInfoStep = ({
 
   useEffect(() => {
     methods.reset(state);
-  }, []);
+  }, [methods, state]);
 
   return (
     <>

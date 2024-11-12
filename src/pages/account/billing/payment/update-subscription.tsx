@@ -2,7 +2,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { sidebar } from "../../../../components/layout/sidebar";
 
 export const getServerSideProps = (context: GetServerSidePropsContext) =>  {
-const {setup_intent, price_id} = context.params
+// const {setup_intent, price_id} = context.params
   //get setupIntent
 
   //set customer default to payment method

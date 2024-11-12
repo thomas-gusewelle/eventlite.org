@@ -1,3 +1,4 @@
+import router from "next/router";
 import {
   Dispatch,
   SetStateAction,
@@ -32,7 +33,7 @@ export const CreateAccountIdentifier = ({
         status: "ADMIN",
         orgName: state.orgName,
         orgPhoneNumber: state.orgPhoneNumber,
-        stripeCustomerId: state.stripeCustomerId,
+        stripeCustomerId: "",
       },
       {
         onSuccess(data, _variables, _context) {
@@ -40,7 +41,8 @@ export const CreateAccountIdentifier = ({
             // update state to include the org id.
             // This allows me to easily attach the org ID to the stripe customer object
             setState((prev) => ({ ...prev, orgId: data!.org!.id }));
-            setStep(4);
+            // setStep(4);
+            router.push(`/account/confirm-email?email=${state.email}`);
           }
         },
         onError(_error, _variables, _context) {
@@ -52,7 +54,7 @@ export const CreateAccountIdentifier = ({
         },
       }
     );
-  }, []);
+  }, [createOrg, setError, setState, state, setStep]);
   return (
     <div className="flex flex-col items-center justify-center">
       <CircularProgress />

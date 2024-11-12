@@ -353,6 +353,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              {/*
                               <Menu.Item key={3}>
                                 {({ active }) => (
                                   <button className="w-full text-left">
@@ -371,6 +372,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              */}
                               <Menu.Item key={4}>
                                 {({ active }) => (
                                   <button className="w-full text-left">
@@ -493,6 +495,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              {/*
                               <Menu.Item key={3}>
                                 {({ active }) => (
                                   <button className="w-full text-left">
@@ -511,6 +514,7 @@ export const SidebarLayout: React.FC<{ children: any }> = ({ children }) => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              */}
                               <Menu.Item key={4}>
                                 {({ active }) => (
                                   <button className="w-full text-left">

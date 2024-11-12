@@ -15,9 +15,9 @@ type CreateAccountForm = {
   phoneNumber: string;
   password: string;
   passwordConfirm: string;
-  tier: string;
-  stripeCustomerId: string;
-  stripeSubscriptionId: string;
+  // tier: string;
+  // stripeCustomerId: string;
+  // stripeSubscriptionId: string;
   orgId: string;
 };
 export const CreateOrgContext = createContext<
@@ -30,14 +30,14 @@ export const CreateOrgContext = createContext<
 
 export function CreateOrgProvider({
   children,
-  customerId,
-  subId,
-  tier,
+  // customerId,
+  // subId,
+  // tier,
 }: {
   children: any;
-  customerId: string;
-  subId: string;
-  tier: string;
+  // customerId: string;
+  // subId: string;
+  // tier: string;
 }) {
   const value: CreateAccountForm = {
     orgName: "",
@@ -48,9 +48,9 @@ export function CreateOrgProvider({
     phoneNumber: "",
     password: "",
     passwordConfirm: "",
-    tier: tier,
-    stripeCustomerId: customerId,
-    stripeSubscriptionId:subId,
+    // tier: tier,
+    // stripeCustomerId: customerId,
+    // stripeSubscriptionId:subId,
     orgId: "",
   };
   const [state, setState] = useState(value);

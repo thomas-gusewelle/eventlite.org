@@ -648,6 +648,7 @@ export const eventsRouter = createTRPCRouter({
               recurringId: recurringId,
               datetime: replaceTime(startDate, input.eventTime),
               timezone: input.eventTimeZone,
+              timezoneOffset: input.eventTimeZoneOffset,
               organizationId: input.organization,
               locationsId: input.eventLocation.id,
               positions: {
@@ -941,6 +942,7 @@ export const eventsRouter = createTRPCRouter({
                 name: input.name,
                 datetime: replaceTime(date, input.eventTime),
                 timezone: input.eventTimeZone,
+                timezoneOffset: input.eventTimeZoneOffset,
                 organizationId: input.organization,
                 recurringId: input.recurringId,
                 locationsId: input.eventLocation.id,

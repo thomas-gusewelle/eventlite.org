@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import sendMail from "../../emails";
 import ConfirmEmailNew from "../../emails/accounts/ConfirmEmailNew";
-import { createTRPCRouter, publicProcedure, adminProcedure } from "./context";
+import { createTRPCRouter, publicProcedure} from "./context";
 
 // take in tier
 export const organizationRouter = createTRPCRouter({

@@ -20,8 +20,9 @@ const event: EventsWithPositions =
       recurringId: null,
       name: "Test",
       organizationId: "3144787e-a95a-4c1d-a14f-98c8622d3987",
-      datetime: new Date(),
+      datetime: new Date("2024-08-18T17:00:00.982Z"),
       timezone: "America/Chicago",
+      timezoneOffset: 360,
       locationsId: "3146d597-83ec-405f-b880-7e33f1260b0f",
       unavailableUsers: null,
       Locations: {
@@ -144,6 +145,7 @@ const event: EventsWithPositions =
       organizationId: "3144787e-a95a-4c1d-a14f-98c8622d3987",
       datetime: new Date(),
       timezone: "America/Chicago",
+      timezoneOffset: 360,
       locationsId: "3146d597-83ec-405f-b880-7e33f1260b0f",
       unavailableUsers: null,
       Locations: {

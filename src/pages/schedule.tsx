@@ -246,7 +246,7 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
                       {event.Locations?.name}
                     </span>
                     <span>{shortDate(event.datetime)}</span>
-                    <span>{shortTime(event.datetime)}</span>
+                    <span>{shortTime(event.datetime, event.timezone)}</span>
                   </div>
                   <div>
                     {event.positions
@@ -374,10 +374,10 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
               ))}
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="mx-6 flex justify-between">
             {getScheduleQuery.data.lastCursor &&
               getScheduleQuery.data.lastCursor.datetime.getTime() <
-              getScheduleQuery.data.items[0]!.datetime.getTime() && (
+                getScheduleQuery.data.items[0]!.datetime.getTime() && (
                 <button
                   onClick={() =>
                     router.push(

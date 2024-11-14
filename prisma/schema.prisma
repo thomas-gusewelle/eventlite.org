@@ -7,8 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -80,6 +81,7 @@ model Organization {
   events           Event[]
   roles            Role[]
   stripeCustomerId String?
+  timezone         String      @default("America/Chicago")
 
   @@index([id])
 }
@@ -111,6 +113,7 @@ model Event {
   organizationId   String?
   datetime         DateTime
   timezone         String           @default("America/Chicago")
+  timezoneOffset   Int
   Locations        Locations?       @relation(fields: [locationsId], references: [id])
   locationsId      String?
   positions        EventPositions[]

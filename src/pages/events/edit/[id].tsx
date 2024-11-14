@@ -120,8 +120,9 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           eventDate: data.eventDate,
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          organization: eventData?.event?.organizationId,
-          recurringId: eventData.event.recurringId || undefined,
+          eventTimeZoneOffset: new Date().getTimezoneOffset(),
+          organization: eventQuery.data.organizationId,
+          recurringId: eventQuery.data.recurringId || undefined,
           eventLocation: data.eventLocation,
           newPositions: newPositions.map((item) => ({
             position: {
@@ -165,7 +166,8 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           name: data.name,
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          recurringId: eventData.event.recurringId || undefined,
+          eventTimeZoneOffset: new Date().getTimezoneOffset(),
+          recurringId: eventQuery.data.recurringId || undefined,
           positions: data.positions.map((position) => ({
             eventPositionId: position.eventPositionId,
             position: {

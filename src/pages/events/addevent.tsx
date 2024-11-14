@@ -52,14 +52,21 @@ const [eventData,  _duplicateEventQuery ] = api.events.getEditEvent.useSuspenseQ
   });
   const submit = methods.handleSubmit((data: EventFormValues) => {
     if (!data.isRepeating) {
-      addEvent.mutate(
-        {
-          name: data.name,
-          eventDate: data.eventDate,
-          eventTime: data.eventTime,
-          eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          eventLocation: data.eventLocation,
-          positions: data.positions,
+      addEvent.mutate({
+        name: data.name,
+        eventDate: data.eventDate,
+        eventTime: data.eventTime,
+        eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        eventTimeZoneOffset: new Date().getTimezoneOffset(),
+        eventLocation: data.eventLocation,
+        positions: data.positions,
+      }, {
+        onSuccess() {
+          if (redirect) {
+            router.push(redirect);
+          } else {
+            router.push("/events");
+          }
         },
         {
           onSuccess() {
@@ -82,6 +89,7 @@ const [eventData,  _duplicateEventQuery ] = api.events.getEditEvent.useSuspenseQ
             eventDate: date,
             eventTime: data.eventTime,
             eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            eventTimeZoneOffset: new Date().getTimezoneOffset(),
             recurringId: recurringId,
             eventLocation: data.eventLocation,
             positions: data.positions,

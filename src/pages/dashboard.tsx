@@ -14,11 +14,10 @@ import { Event, EventPositions, Locations, Role, User } from "@prisma/client";
 import { DashboardAvaililityModal } from "../components/modal/dashboard/availibilityModal";
 import { TableDropdown } from "../components/menus/tableDropdown";
 import { CircularProgress } from "../components/circularProgress";
-// import Lottie from "lottie-react";
 import scheduleLottie from "../../public/lottie/schedule.json";
 import dynamic from "next/dynamic";
 
-const Lottie = dynamic(() => import("lottie-react"), {ssr: false})
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type stateData = (Event & {
   Locations: Locations | null;
@@ -187,7 +186,7 @@ const Dashboard = () => {
                         {event.Locations?.name}
                       </span>
                       <span>{shortDate(event.datetime)}</span>
-                      <span>{shortTime(event.datetime)}</span>
+                      <span>{shortTime(event.datetime, event.timezone)}</span>
                     </div>
                     <div className="">
                       {event.positions
@@ -302,7 +301,7 @@ const Dashboard = () => {
                         {event.Locations?.name}
                       </span>
                       <span>{shortDate(event.datetime)}</span>
-                      <span>{shortTime(event.datetime)}</span>
+                      <span>{shortTime(event.datetime, event.timezone)}</span>
                     </div>
                     <div className="">
                       {event.positions

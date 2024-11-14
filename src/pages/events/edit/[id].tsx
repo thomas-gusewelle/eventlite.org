@@ -47,13 +47,19 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         methods.reset(formatEventData(eventData.event!));
       }
     }
-  }, [alertContext, eventData,  methods, eventQuery.isSuccess, eventQuery.isError, eventQuery.error?.message ]);
+  }, [
+    alertContext,
+    eventData,
+    methods,
+    eventQuery.isSuccess,
+    eventQuery.isError,
+    eventQuery.error?.message,
+  ]);
 
   const recurringId = rec
     ? eventData?.event?.recurringId || undefined
     : undefined;
   const alreadyRec = eventData?.event?.recurringId ? true : false;
-
 
   const createEventReccuranceData =
     api.events.createEventReccurance.useMutation();
@@ -121,8 +127,8 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           eventTimeZoneOffset: new Date().getTimezoneOffset(),
-          organization: eventQuery.data.organizationId,
-          recurringId: eventQuery.data.recurringId || undefined,
+          organization: eventData.event.organizationId,
+          recurringId: eventData.recurranceData?.recurringId || undefined,
           eventLocation: data.eventLocation,
           newPositions: newPositions.map((item) => ({
             position: {
@@ -167,7 +173,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           eventTimeZoneOffset: new Date().getTimezoneOffset(),
-          recurringId: eventQuery.data.recurringId || undefined,
+          recurringId: eventData.recurranceData?.recurringId || undefined,
           positions: data.positions.map((position) => ({
             eventPositionId: position.eventPositionId,
             position: {
@@ -239,8 +245,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           </ModalBody>
         </div>
       </Modal>
-      <div
-      >
+      <div>
         <div className="mb-8">
           <SectionHeading>Edit Event</SectionHeading>
         </div>

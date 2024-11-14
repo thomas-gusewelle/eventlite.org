@@ -27,15 +27,15 @@ const AddEvent = ({
   const alertContext = useContext(AlertContext);
   const methods = useForm<EventFormValues>();
 
-const [eventData,  _duplicateEventQuery ] = api.events.getEditEvent.useSuspenseQuery(duplicateId!, {
-  });
+  const [eventData, _duplicateEventQuery] =
+    api.events.getEditEvent.useSuspenseQuery(duplicateId!, {});
 
   useEffect(() => {
     if (eventData) {
-      const {event, recurranceData} = eventData;
+      const { event, recurranceData } = eventData;
       methods.reset(formatEventData(event!, recurranceData!));
     }
-  }, [eventData,  methods])
+  }, [eventData, methods]);
 
   const addEventRecurrance = api.events.createEventReccurance.useMutation({
     onError(error) {
@@ -52,21 +52,15 @@ const [eventData,  _duplicateEventQuery ] = api.events.getEditEvent.useSuspenseQ
   });
   const submit = methods.handleSubmit((data: EventFormValues) => {
     if (!data.isRepeating) {
-      addEvent.mutate({
-        name: data.name,
-        eventDate: data.eventDate,
-        eventTime: data.eventTime,
-        eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        eventTimeZoneOffset: new Date().getTimezoneOffset(),
-        eventLocation: data.eventLocation,
-        positions: data.positions,
-      }, {
-        onSuccess() {
-          if (redirect) {
-            router.push(redirect);
-          } else {
-            router.push("/events");
-          }
+      addEvent.mutate(
+        {
+          name: data.name,
+          eventDate: data.eventDate,
+          eventTime: data.eventTime,
+          eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          eventTimeZoneOffset: new Date().getTimezoneOffset(),
+          eventLocation: data.eventLocation,
+          positions: data.positions,
         },
         {
           onSuccess() {
@@ -122,8 +116,6 @@ const [eventData,  _duplicateEventQuery ] = api.events.getEditEvent.useSuspenseQ
       });
     }
   });
-
-
 
   return (
     <>

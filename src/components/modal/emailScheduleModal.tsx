@@ -1,4 +1,3 @@
-
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { MdOutlineCalendarToday } from "react-icons/md";
@@ -20,11 +19,10 @@ import { NewMultiSelect } from "../form/multiSelect";
 import { ListWithHide } from "../../../types/genericTypes";
 import { fullName } from "../../utils/fullName";
 
-// Wraps the prisma user query with the hide type to give it {item: T, hide?:boolean}[] type
-type user = ListWithHide<(User & {
+type user = User & {
   InviteLink: InviteLink | null;
   roles: Role[];
-})>
+};
 
 export const EmailScheduleModal = ({
   open,
@@ -33,65 +31,80 @@ export const EmailScheduleModal = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const methods = useForm<{ startingDate: Date, endingDate: Date, includedUsers: { id: string, email: string }[] }>();
-  const sendEmailMutatin = api.eventEmails.upcomingSchedule.useMutation()
-  const { setSuccess, setError } = useContext(AlertContext)
-  const [allUsers, setAllUsers] = useState<user>([])
+  const methods = useForm<{
+    startingDate: Date;
+    endingDate: Date;
+    includedUsers: { id: string; email: string }[];
+  }>();
+  const sendEmailMutatin = api.eventEmails.upcomingSchedule.useMutation();
+  const { setSuccess, setError } = useContext(AlertContext);
+  const [selectedUsers, setSelectedUsers] = useState<user[]>([]);
 
-  const [selectedUsers, setSelectedUsers] = useState<user>([])
-
-  api.user.getActiveUsersByOrganization.useQuery(undefined, {
-    onSuccess(data) {
-      setAllUsers(data.map(user => ({ item: user, hide: false })))
-    }
-  })
-
+  let usersQuery = api.user.getActiveUsersByOrganization.useQuery(undefined);
+  let allUsers: ListWithHide<user> =
+    usersQuery.data == undefined
+      ? []
+      : usersQuery.data.map((u) => ({ item: u, hide: false }));
 
   const submit = methods.handleSubmit((data) => {
-    sendEmailMutatin.mutate({ startingDate: data.startingDate, endingDate: data.endingDate, includedUsers: selectedUsers.map(u => ({ id: u.item.id, email: u.item.email, firstName: u.item.firstName, orgId: u.item.organizationId! })) }, {
-      onSuccess() {
-        setOpen(false),
-          setSuccess({ state: true, message: "Emails successfully sent." })
+    sendEmailMutatin.mutate(
+      {
+        startingDate: data.startingDate,
+        endingDate: data.endingDate,
+        includedUsers: selectedUsers.map((u) => ({
+          id: u.id,
+          email: u.email,
+          firstName: u.firstName,
+          orgId: u.organizationId!,
+        })),
       },
-      onError(err) {
-        setError({ state: true, message: `Error sending emails. ${err.message}` })
+      {
+        onSuccess() {
+          setOpen(false),
+            setSuccess({ state: true, message: "Emails successfully sent." });
+        },
+        onError(err) {
+          setError({
+            state: true,
+            message: `Error sending emails. ${err.message}`,
+          });
+        },
       }
-    })
-  })
+    );
+  });
   return (
     <Modal open={open} setOpen={setOpen}>
       <ModalBody>
         <ModalTitle text={"Email Schedule"} />
-        <div className='py-3'>
-          <p>
-            Please select the days for which to email the schedule.
-          </p>
+        <div className="py-3">
+          <p>Please select the days for which to email the schedule.</p>
 
           <form onSubmit={submit} className="py-3">
             <label>Starting Date</label>
-            <div >
+            <div>
               <Controller
                 control={methods.control}
-                name='startingDate'
+                name="startingDate"
                 defaultValue={new Date()}
                 rules={{ required: true }}
                 render={({ field: { onChange, value }, fieldState }) => (
                   <>
-                    <div className='flex'>
+                    <div className="flex">
                       <DatePicker
-                        id='starting-datepick'
+                        id="starting-datepick"
                         selected={value}
                         onChange={onChange}
                         minDate={new Date()}
                         maxDate={yearsFromToday()}
-                        className=' m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
+                        className=" m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
                       />
 
                       <div
                         onClick={() =>
                           document.getElementById("starting-datepick")?.focus()
                         }
-                        className='flex cursor-pointer items-center rounded-r border border-l-0 border-gray-300 bg-gray-50 px-3 hover:text-indigo-700'>
+                        className="flex cursor-pointer items-center rounded-r border border-l-0 border-gray-300 bg-gray-50 px-3 hover:text-indigo-700"
+                      >
                         <MdOutlineCalendarToday size={20} />
                       </div>
                     </div>
@@ -104,29 +117,30 @@ export const EmailScheduleModal = ({
             </div>
 
             <label>Starting Date</label>
-            <div >
+            <div>
               <Controller
                 control={methods.control}
-                name='endingDate'
+                name="endingDate"
                 defaultValue={oneMonthInFuture()}
                 rules={{ required: true }}
                 render={({ field: { onChange, value }, fieldState }) => (
                   <>
-                    <div className='flex'>
+                    <div className="flex">
                       <DatePicker
-                        id='ending-datepick'
+                        id="ending-datepick"
                         selected={value}
                         onChange={onChange}
                         minDate={new Date()}
                         maxDate={yearsFromToday()}
-                        className=' m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none'
+                        className=" m-0 block w-full rounded-l border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
                       />
 
                       <div
                         onClick={() =>
                           document.getElementById("ending-datepick")?.focus()
                         }
-                        className='flex cursor-pointer items-center rounded-r border border-l-0 border-gray-300 bg-gray-50 px-3 hover:text-indigo-700'>
+                        className="flex cursor-pointer items-center rounded-r border border-l-0 border-gray-300 bg-gray-50 px-3 hover:text-indigo-700"
+                      >
                         <MdOutlineCalendarToday size={20} />
                       </div>
                     </div>
@@ -137,10 +151,15 @@ export const EmailScheduleModal = ({
                 )}
               />
             </div>
-            <label className='block text-sm font-medium text-gray-700'>
+            <label className="block text-sm font-medium text-gray-700">
               People
             </label>
-            <NewMultiSelect selected={selectedUsers} setSelected={setSelectedUsers} list={allUsers} label={(item) => fullName(item.item.firstName, item.item.lastName)}></NewMultiSelect>
+            <NewMultiSelect
+              selected={selectedUsers}
+              setSelected={setSelectedUsers}
+              list={allUsers}
+              label={(item) => fullName(item.firstName, item.lastName)}
+            ></NewMultiSelect>
           </form>
         </div>
       </ModalBody>

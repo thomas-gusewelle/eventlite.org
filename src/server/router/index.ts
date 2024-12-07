@@ -11,6 +11,7 @@ import { AdminRouter } from "./admin";
 import { createTRPCRouter } from "./context";
 import { userSettingsRouter } from "./userSettings";
 import { eventEmailsRouter } from "./eventEmails";
+import { stripeRouter } from "./stripe";
 
 /**
  * This is the primary router for your server.
@@ -29,9 +30,9 @@ export const appRouter = createTRPCRouter({
   feedback: feedbackRouter,
   admin: AdminRouter,
   userSettings: userSettingsRouter,
-  eventEmails: eventEmailsRouter
+  eventEmails: eventEmailsRouter,
+  stripe: stripeRouter,
 });
-
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

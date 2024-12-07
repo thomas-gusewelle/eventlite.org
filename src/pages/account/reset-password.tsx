@@ -6,7 +6,6 @@ import { CardHeader } from "../../components/create-account-flow/components/card
 import { VerticalLogo } from "../../components/create-account-flow/components/VerticalLogo";
 import { PasswordField } from "../../components/form/password";
 import { loginFlowLayout } from "../../components/layout/login-flow-layout";
-import { sidebar } from "../../components/layout/sidebar";
 import { api } from "../../server/utils/api"
 
 type FormData = {
@@ -43,7 +42,7 @@ const ResetPassword = ({ code }: { code: string }) => {
           <PasswordField isConfirm={true} />
           <div className='mt-6'>
             <BtnPurple
-              isLoading={resetPassword.isLoading}
+              isLoading={resetPassword.isPending}
               fullWidth={true}
               type='submit'>
               Reset

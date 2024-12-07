@@ -33,11 +33,13 @@ const PeoplePage = () => {
       })[]
     >
   >();
-  const people = api.user.getUsersByOrganization.useQuery(undefined, {
-    onSuccess: (data) => {
-      if (data) {
+  const people = api.user.getUsersByOrganization.useQuery(undefined);
+
+  useEffect(() => {
+    if (people.isSuccess) {
+      if (people.data) {
         // sorts users by status with inactive at the end
-        data = data.sort((a, b) => {
+        let data = people.data.sort((a, b) => {
           if (
             (a.status == "ADMIN" || a.status == "USER") &&
             b.status == "INACTIVE"
@@ -54,23 +56,26 @@ const PeoplePage = () => {
         });
         setPeopleUnPageList(data);
       }
+    }
+  }, [people]);
+
+  const adminCount = api.user.getAmdminCount.useQuery();
+  const createInvite = api.createAccount.createInviteLinkWithID.useMutation({
+    onSuccess: () => {
+      setSuccess({ state: true, message: "Success! Invite link sent." });
+    },
+    onError(error) {
+      setError({
+        state: true,
+        message: `Error creating invite code. ${error.message}`,
+      });
     },
   });
-  const adminCount = api.user.getAmdminCount.useQuery();
-  const createInvite = api.createAccount.createInviteLinkWithID.useMutation(
-    {
-      onSuccess: () => { setSuccess({ state: true, message: "Success! Invite link sent." }) },
-      onError(error) {
-        setError({
-          state: true,
-          message: `Error creating invite code. ${error.message}`,
-        });
-      },
-    }
-  );
   const sendResetPassword = api.createAccount.generateResetPassword.useMutation(
     {
-      onSuccess: () => { setSuccess({ state: true, message: "Password reset sent." }) },
+      onSuccess: () => {
+        setSuccess({ state: true, message: "Password reset sent." });
+      },
       onError(error, variables, context) {
         setError({
           state: true,
@@ -87,7 +92,7 @@ const PeoplePage = () => {
       });
     },
     onSuccess: () => {
-      setSuccess({ state: true, message: "User Deleted" })
+      setSuccess({ state: true, message: "User Deleted" });
       people.refetch();
     },
   });
@@ -147,7 +152,7 @@ const PeoplePage = () => {
     paginatedData == undefined
   ) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -156,8 +161,8 @@ const PeoplePage = () => {
   if (people.data?.length == 0) {
     return (
       <NoDataLayout
-        heading='People'
-        btnText='Add User'
+        heading="People"
+        btnText="Add User"
         func={() => router.push("/people/adduser")}
       />
     );
@@ -166,32 +171,32 @@ const PeoplePage = () => {
   return (
     <>
       {/* MD Top Bar */}
-      <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
+      <div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
         <SectionHeading>People</SectionHeading>
-        <div className='flex justify-end'>
+        <div className="flex justify-end">
           {user?.status == "ADMIN" && (
             <BtnAdd onClick={() => router.push("/people/adduser")} />
           )}
         </div>
-        <div className='col-span-2'>
+        <div className="col-span-2">
           <input
             onChange={(e) => filter(e.target.value)}
-            className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-            type='text'
-            placeholder='Search'
+            className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+            type="text"
+            placeholder="Search"
           />
         </div>
       </div>
 
       {/* Desktop Top Bar */}
-      <div className='mb-8 hidden justify-between md:flex'>
+      <div className="mb-8 hidden justify-between md:flex">
         <SectionHeading>People</SectionHeading>
-        <div className='flex gap-4'>
+        <div className="flex gap-4">
           <input
             onChange={(e) => filter(e.target.value)}
-            className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-            type='text'
-            placeholder='Search'
+            className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+            type="text"
+            placeholder="Search"
           />
           {/* <SearchBar /> */}
 
@@ -201,14 +206,14 @@ const PeoplePage = () => {
         </div>
       </div>
 
-      <div className='w-full '>
-        <table className='w-full table-auto text-left'>
+      <div className="w-full ">
+        <table className="w-full table-auto text-left">
           <thead>
             <tr>
               <th>Name</th>
-              <th className='hidden md:table-cell'>Email</th>
+              <th className="hidden md:table-cell">Email</th>
               <th>Role</th>
-              <th className='hidden md:table-cell'>Status</th>
+              <th className="hidden md:table-cell">Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -253,23 +258,24 @@ const PeoplePage = () => {
               ];
 
               return (
-                <tr key={index} className='border-t last:border-b'>
-                  <td className='py-4'>
+                <tr key={index} className="border-t last:border-b">
+                  <td className="py-4">
                     <PicNameRow user={person} />
                   </td>
-                  <td className='hidden md:table-cell'>{person.email}</td>
+                  <td className="hidden md:table-cell">{person.email}</td>
                   <td>
-                    <div className='my-1 flex flex-wrap items-center justify-start gap-1'>
+                    <div className="my-1 flex flex-wrap items-center justify-start gap-1">
                       {person.roles.map((role, index) => (
                         <div
                           key={index}
-                          className='rounded-xl bg-indigo-200 px-2 text-center'>
+                          className="rounded-xl bg-indigo-200 px-2 text-center"
+                        >
                           {role.name}
                         </div>
                       ))}
                     </div>
                   </td>
-                  <td className='hidden md:table-cell'>{person.status}</td>
+                  <td className="hidden md:table-cell">{person.status}</td>
 
                   <td>
                     <TableDropdown options={options} />

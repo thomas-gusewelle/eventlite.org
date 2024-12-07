@@ -61,29 +61,26 @@ const SchedulePageComponent: React.FC<{ cursor: string | null }> = ({
     user?.UserSettings?.scheduleShowAmount ?? 4
   );
 
-  const getScheduleQuery = api.schedule.getSchedule.useQuery(
-    { limit: limit, cursor: cursor },
-    {
-      keepPreviousData: true,
-      onSuccess(data) {
-        let _selectedPeople: { userId: string | null; dateTime: Date }[] = [];
-        data.items?.map((item) =>
-          item.positions.map((pos) =>
-            _selectedPeople.push({
-              userId: pos.userId,
-              dateTime: item.datetime,
-            })
-          )
-        );
+  const getScheduleQuery = api.schedule.getSchedule.useQuery({
+    limit: limit,
+    cursor: cursor,
+  });
 
-        setSelectedPeople(_selectedPeople);
-        setPoepleList(data.users);
-      },
-      // onError: () => router.push("/events"),
-    }
-  );
+  //TODO: Look at moving away from needing this useEffect
+  useEffect(() => {
+    let _selectedPeople: { userId: string | null; dateTime: Date }[] = [];
+    getScheduleQuery.data?.items?.map((item) =>
+      item.positions.map((pos) =>
+        _selectedPeople.push({
+          userId: pos.userId,
+          dateTime: item.datetime,
+        })
+      )
+    );
 
-  useEffect(() => {}, [getScheduleQuery]);
+    setSelectedPeople(_selectedPeople);
+    setPoepleList(getScheduleQuery.data?.users);
+  }, [getScheduleQuery.data]);
 
   const scheduleUserMutation = api.schedule.updateUserRole.useMutation({
     onSuccess() {

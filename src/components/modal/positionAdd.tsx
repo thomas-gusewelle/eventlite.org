@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { api } from "../../server/utils/api"
+import { api } from "../../server/utils/api";
 import { BtnCancel } from "../btn/btnCancel";
 import { BtnPurple } from "../btn/btnPurple";
 import { BottomButtons } from "./bottomButtons";
@@ -28,7 +28,9 @@ export const PositionAddModal = ({
   const submit = handleSubmit((data) => {
     addPosition.mutate(data.name, {
       onSuccess() {
-        utils.role.getRolesByOrganization.refetch(undefined, { type: "active" });
+        utils.role.getRolesByOrganization.refetch(undefined, {
+          type: "active",
+        });
         setOpen(false);
       },
     });
@@ -45,25 +47,29 @@ export const PositionAddModal = ({
         <form onSubmit={submit}>
           <ModalBody>
             <ModalTitle text={"Add Role"} />
-            <div className='mt-3'>
+            <div className="mt-3">
               <label
-                htmlFor='name'
-                className='block text-left text-sm font-medium text-gray-700'>
+                htmlFor="name"
+                className="block text-left text-sm font-medium text-gray-700"
+              >
                 Role Name
               </label>
               <input
-                type='text'
-                id='name'
+                type="text"
+                id="name"
                 {...register("name", { required: true, minLength: 3 })}
-                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
               {errors.name && (
-                <span className='text-red-500'>Role name is required</span>
+                <span className="text-red-500">Role name is required</span>
               )}
             </div>
           </ModalBody>
           <BottomButtons>
-            <BtnPurple isLoading={addPosition.isLoading} onClick={() => submit()}>
+            <BtnPurple
+              isLoading={addPosition.isPending}
+              onClick={() => submit()}
+            >
               Save
             </BtnPurple>
             <BtnCancel

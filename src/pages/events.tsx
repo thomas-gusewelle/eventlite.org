@@ -19,7 +19,7 @@ import { AlertContext } from "../providers/alertProvider";
 import { UserContext } from "../providers/userProvider";
 import { classNames } from "../utils/classnames";
 import { paginate } from "../utils/paginate";
-import { api } from "../server/utils/api"
+import { api } from "../server/utils/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { BtnAdd } from "../components/btn/btnAdd";
 
@@ -33,47 +33,49 @@ type stateData = (Event & {
 
 const EventsPage = () => {
   const user = useContext(UserContext);
-  const router = useRouter()
+  const router = useRouter();
   const [queryString, setQueryString] = useState("");
-
 
   return (
     <>
-
       {/* MD Top Bar */}
-      <div className='mb-3 grid grid-cols-2 gap-4 md:hidden'>
+      <div className="mb-3 grid grid-cols-2 gap-4 md:hidden">
         <SectionHeading>Events</SectionHeading>
-        <div className='flex justify-end'>
-          {user?.status == "ADMIN" && <BtnAdd onClick={() => router.push("/events/addevent")} />}
+        <div className="flex justify-end">
+          {user?.status == "ADMIN" && (
+            <BtnAdd onClick={() => router.push("/events/addevent")} />
+          )}
         </div>
-        <div className='col-span-2'>
+        <div className="col-span-2">
           <input
             value={queryString}
             onChange={(e) => setQueryString(e.target.value)}
-            className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-            type='text'
-            placeholder='Search'
+            className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+            type="text"
+            placeholder="Search"
           />
         </div>
       </div>
 
       {/* Desktop Top Bar */}
-      <div className='mb-3 hidden justify-between md:flex'>
+      <div className="mb-3 hidden justify-between md:flex">
         <SectionHeading>Events</SectionHeading>
-        <div className='flex gap-4'>
+        <div className="flex gap-4">
           <input
             onChange={(e) => setQueryString(e.target.value)}
-            className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-            type='text'
-            placeholder='Search'
+            className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+            type="text"
+            placeholder="Search"
           />
           {/* <SearchBar /> */}
-          {user?.status == "ADMIN" && <BtnAdd onClick={() => router.push("/events/addevent")} />}
+          {user?.status == "ADMIN" && (
+            <BtnAdd onClick={() => router.push("/events/addevent")} />
+          )}
         </div>
       </div>
 
       <Tab.Group>
-        <Tab.List className='mb-6 flex justify-start space-x-1 rounded-xl bg-gray-100 p-1 sm:w-fit'>
+        <Tab.List className="mb-6 flex justify-start space-x-1 rounded-xl bg-gray-100 p-1 sm:w-fit">
           {[
             {
               name: "Upcoming Events",
@@ -90,9 +92,10 @@ const EventsPage = () => {
                   "ring-white ring-opacity-60 ring-offset-2 ring-offset-indigo-400 focus:outline-none focus:ring-2",
                   selected
                     ? "bg-white text-indigo-700 shadow"
-                    : " text-gray-600 hover:bg-white/[0.12] hover:text-white"
+                    : " text-gray-600 hover:bg-white/[0.9] hover:text-indigo-600"
                 )
-              }>
+              }
+            >
               {item.name}
             </Tab>
           ))}
@@ -110,20 +113,17 @@ const EventsPage = () => {
   );
 };
 
-
 EventsPage.getLayout = sidebar;
 
 export default EventsPage;
 
 const UpcomingEvents = ({ queryString }: { queryString: string }) => {
-  const utils = api.useContext();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
-  const user = useContext(UserContext);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const eventId = useRef<{ id: string | null }>({ id: null });
   const [deleteAllRecurring, setDeleteAllRecuring] = useState<boolean>(false);
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [pageNum, setPageNum] = useState(1);
   const [paginatedData, setpagiantedData] = useState<PaginateData<stateData>>();
   const [events, setEvents] = useState<stateData>([]);
@@ -137,25 +137,22 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = api.events.getUpcomingEventsByOrganization.useQuery(
-    undefined, {
-    onSuccess(data) {
-      if (data != undefined) {
-        setEvents(data);
-      }
-    },
-    onError(err) {
+  const eventsQuery =
+    api.events.getUpcomingEventsByOrganization.useQuery(undefined);
+  useEffect(() => {
+    if (eventsQuery.isSuccess && eventsQuery.data != undefined) {
+      setEvents(eventsQuery.data);
+    } else if (eventsQuery.isError) {
       alertContext.setError({
         state: true,
-        message: `There was an error fetching your events. Message: ${err.message}`,
+        message: `There was an error fetching your events. Message: ${eventsQuery.error.message}`,
       });
-    },
-  }
-  );
+    }
+  });
 
   const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      queryClient.cancelQueries()
+      queryClient.cancelQueries();
 
       if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));
@@ -226,7 +223,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
 
   if (eventsQuery.isLoading) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -235,8 +232,8 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
   if (eventsQuery.data?.length == 0) {
     return (
       <NoDataLayout
-        heading='Events'
-        btnText='Add Event'
+        heading="Events"
+        btnText="Add Event"
         func={() => router.push("/events/addevent")}
       />
     );
@@ -245,7 +242,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
   return (
     <>
       <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <ModalBody>
             <ModalTitle
               text={
@@ -269,7 +266,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
           </ModalBody>
         </div>
       </Modal>
-      <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
+      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {eventsPagianted.map((event) => (
           <EventCard
             key={event.id}
@@ -290,7 +287,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
               },
               {
                 name: "Duplicate Event",
-                href: `/events/addevent?duplicateId=${event.id}`
+                href: `/events/addevent?duplicateId=${event.id}`,
               },
               {
                 name: "Delete",
@@ -324,7 +321,7 @@ const UpcomingEvents = ({ queryString }: { queryString: string }) => {
 
 const PastEvents = ({ queryString }: { queryString: string }) => {
   const utils = api.useContext();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const user = useContext(UserContext);
@@ -344,23 +341,22 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
     }
   }, [pageNum, events]);
 
-  const eventsQuery = api.events.getPastEventsByOrganization.useQuery(undefined, {
-    onSuccess(data) {
-      if (data != undefined) {
-        setEvents(data);
-      }
-    },
-    onError(err) {
+  const eventsQuery =
+    api.events.getPastEventsByOrganization.useQuery(undefined);
+  useEffect(() => {
+    if (eventsQuery.isSuccess && eventsQuery.data != undefined) {
+      setEvents(eventsQuery.data);
+    } else if (eventsQuery.isError) {
       alertContext.setError({
         state: true,
-        message: `There was an error fetching your events. Message: ${err.message}`,
+        message: `There was an error fetching your events. Message: ${eventsQuery.error.message}`,
       });
-    },
+    }
   });
 
   const deleteEventMutation = api.events.deleteEventById.useMutation({
     onMutate(data) {
-      queryClient.cancelQueries()
+      queryClient.cancelQueries();
 
       if (deleteAllRecurring == false) {
         setEvents(events.filter((event) => event.id != data.id));
@@ -431,7 +427,7 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
 
   if (eventsQuery.isLoading) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -439,8 +435,8 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
 
   if (eventsQuery.data?.length == 0) {
     return (
-      <div className='mt-3 flex justify-center'>
-        <h3 className='text-3xl font-bold'>No Past Events Found</h3>
+      <div className="mt-3 flex justify-center">
+        <h3 className="text-3xl font-bold">No Past Events Found</h3>
       </div>
     );
   }
@@ -448,7 +444,7 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
   return (
     <>
       <Modal open={deleteConfirm} setOpen={setDeleteConfirm}>
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <ModalBody>
             <ModalTitle
               text={
@@ -472,7 +468,7 @@ const PastEvents = ({ queryString }: { queryString: string }) => {
           </ModalBody>
         </div>
       </Modal>
-      <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'>
+      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {eventsPagianted.map((event) => (
           <EventCard
             key={event.id}

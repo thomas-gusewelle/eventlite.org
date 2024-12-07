@@ -2,9 +2,9 @@ import { sidebar } from "../../components/layout/sidebar";
 import { useRouter } from "next/router";
 import { SectionHeading } from "../../components/headers/SectionHeading";
 import { FormProvider, useForm } from "react-hook-form";
-import { MultiSelect } from "../../components/form/multiSelect";
+import { NewMultiSelect } from "../../components/form/multiSelect";
 import { useContext, useEffect, useRef, useState } from "react";
-import { api } from "../../server/utils/api"
+import { api } from "../../server/utils/api";
 import { Role, UserStatus } from "@prisma/client";
 import { CircularProgress } from "../../components/circularProgress";
 import { AlertContext } from "../../providers/alertProvider";
@@ -24,20 +24,18 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
   const methods = useForm<UserFormValues>();
 
   const [roleList, setRoleList] = useState<Role[]>([]);
-  const [selectedRoles, setSelectedRoles] = useState([]);
-  const roles = api.role.getRolesByOrganization.useQuery(undefined, {
-    onSuccess(data) {
-      if (data) {
-        setRoleList(data);
-      }
-    },
-    onError(err) {
+  const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
+  const roles = api.role.getRolesByOrganization.useQuery(undefined);
+  useEffect(() => {
+    if (roles.isSuccess) {
+      setRoleList(roles.data ?? []);
+    } else if (roles.isError) {
       setError({
         state: true,
-        message: `Error fetching user roles: Message: ${err.message}`,
+        message: `Error fetching user roles. Message: ${roles.error.message}`,
       });
       roles.refetch();
-    },
+    }
   });
   const userRoles: UserStatus[] = ["USER", "INACTIVE", "ADMIN"];
   const addUser = api.user.addUser.useMutation({
@@ -90,7 +88,7 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
 
   if (roles.isLoading) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -99,40 +97,41 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className='mb-8'>
+        <div className="mb-8">
           <SectionHeading>Add User</SectionHeading>
         </div>
-        <form onSubmit={submit} className='shadow'>
-          <div className='mb-6 grid grid-cols-6 gap-6 px-6'>
-            <div className='col-span-6 sm:col-span-3'>
+        <form onSubmit={submit} className="shadow">
+          <div className="mb-6 grid grid-cols-6 gap-6 px-6">
+            <div className="col-span-6 sm:col-span-3">
               <FirstNameInput />
             </div>
 
-            <div className='col-span-6 sm:col-span-3'>
+            <div className="col-span-6 sm:col-span-3">
               <LastNameInput />
             </div>
-            <div className='col-span-6 sm:col-span-4'>
+            <div className="col-span-6 sm:col-span-4">
               <EmailInput />
             </div>
-            <div className='col-span-6 sm:col-span-4'>
+            <div className="col-span-6 sm:col-span-4">
               <PhoneInput />
             </div>
-            <div className='col-span-6 sm:col-span-3'>
-              <label className='block text-sm font-medium text-gray-700'>
+            <div className="col-span-6 sm:col-span-3">
+              <label className="block text-sm font-medium text-gray-700">
                 Positions
               </label>
-              <MultiSelect
+              <NewMultiSelect
                 selected={selectedRoles}
                 setSelected={setSelectedRoles}
-                list={roleList}
-                setList={setRoleList}></MultiSelect>
+                list={roleList.map((r) => ({ item: r, show: true }))}
+                label={(item) => item.name}
+              />
             </div>
-            <div className='hidden sm:col-span-3 sm:block'></div>
-            <div className='sm:ropw col-span-6 sm:col-span-3'>
+            <div className="hidden sm:col-span-3 sm:block"></div>
+            <div className="sm:ropw col-span-6 sm:col-span-3">
               <UserStatusInputSelector userRoles={userRoles} />
             </div>
           </div>
-          <div className='flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6'>
+          <div className="flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
             <BtnPurpleDropdown
               btnFunction={() => {
                 invite.current = true;
@@ -153,7 +152,8 @@ const AddUser = ({ redirect }: { redirect: string | undefined }) => {
                     submit();
                   },
                 },
-              ]}>
+              ]}
+            >
               Create and Invite
             </BtnPurpleDropdown>
           </div>

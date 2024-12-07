@@ -9,21 +9,17 @@ import {
 } from "react-icons/md";
 import { SingleSelect } from "../singleSelect";
 import { Switch } from "@headlessui/react";
-import { Locations } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { EventRepeatFrequency } from "../../../../types/eventFormValues";
 import { findWeekday } from "../../../utils/findWeekday";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { yearsFromToday } from "../../../server/utils/dateTimeModifers";
-import { useRouter } from "next/router";
 import { LocationSelector } from "./locationSelector";
 
 export const EventForm: React.FC<{
-  locations: Locations[];
   rec?: boolean;
   alreadyRec?: boolean | null;
-}> = ({ locations, rec = null, alreadyRec = null }) => {
-  const router = useRouter();
+}> = ({  rec = null, alreadyRec = null }) => {
   const { control, register, formState, watch } = useFormContext();
   const [frequncyOptions, setFrequncyOptions] = useState<
     EventRepeatFrequency[]
@@ -42,7 +38,7 @@ export const EventForm: React.FC<{
     }
   );
   const _eventDate: Date = watch("eventDate", new Date());
-  useEffect(() => {
+   useEffect(() => {
     if (_isRepeating != undefined) {
       setIsRepeating(_isRepeating);
     }
@@ -168,7 +164,7 @@ export const EventForm: React.FC<{
         <div className='hidden md:col-span-2 md:block lg:col-span-2'></div>
 
         {/* Event Location */}
-        <LocationSelector locations={locations} />
+        <LocationSelector />
         {/* Fill space div */}
         <div className='hidden md:col-span-2 md:block '></div>
 

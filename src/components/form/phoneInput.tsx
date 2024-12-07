@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { formatPhoneNumber } from "../../utils/formatPhoneNumber";
 
-export const PhoneInput = () => {
+export const PhoneInput = ({required = false}: {required?: boolean}) => {
   const phoneLength = useRef(0);
   const {
     register,
@@ -21,7 +21,7 @@ export const PhoneInput = () => {
         rules={{
           validate: {
             length: (value: string) => {
-              if (value == "") return true;
+              if (value == "" && !required) return true;
               return value.replace(/-/g, "").trim().length == 10;
             },
           },

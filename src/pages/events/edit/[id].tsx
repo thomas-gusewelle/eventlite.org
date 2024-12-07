@@ -1,20 +1,15 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import {
   EventFormValues,
   EventRecurrance,
 } from "../../../../types/eventFormValues";
-import {
-  CircularProgress,
-  CircularProgressSmall,
-} from "../../../components/circularProgress";
 
 import { SectionHeading } from "../../../components/headers/SectionHeading";
 import { sidebar } from "../../../components/layout/sidebar";
 
-import { Locations } from "@prisma/client";
-import { api } from "../../../server/utils/api"
+import { api } from "../../../server/utils/api";
 import { useRouter } from "next/router";
 import { formatEventData } from "../../../utils/formatEventData";
 import { EventForm } from "../../../components/form/event/eventForm";
@@ -35,68 +30,54 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
 
   const [formData, setFormData] = useState<EventFormValues | null>(null);
   const methods = useForm<EventFormValues>();
-  const [alreadyRec, setAlreadyRec] = useState<boolean | null>(null);
 
-  const eventQuery = api.events.getEditEvent.useQuery(id, {
-    cacheTime: 0,
-    onError(err) {
+  const [eventData, eventQuery] = api.events.getEditEvent.useSuspenseQuery(id);
+  useEffect(() => {
+    if (eventQuery.isError) {
       alertContext.setError({
         state: true,
-        message: `There was an issue getting your event. Message: ${err.message}`,
+        message: `There was an issue getting your event. Message: ${eventQuery.error?.message}`,
       });
-    },
-    onSuccess(data) {
-      if (!rec && data != undefined) methods.reset(formatEventData(data));
-      if (data?.recurringId) setAlreadyRec(true);
-    },
-  });
-
-
-  const recurringId = rec ? eventQuery.data?.recurringId || "" : "";
-
-  const EventRecurrance = api.events.getEventRecurranceData.useQuery(
-    recurringId,
-    {
-      enabled: recurringId != "",
-      cacheTime: 0,
-      onSuccess(data) {
-        if (data) {
-          if (eventQuery.data == undefined) return;
-          methods.reset(formatEventData(eventQuery.data, data));
-        }
-      },
-    }
-  );
-  const createEventReccuranceData = api.events.createEventReccurance.useMutation(
-  );
-  const editEventRecurranceData = api.events.EditEventReccuranceData.useMutation(
-  );
-  const editEvent = api.events.editEvent.useMutation({ onMutate() { console.log("Mutation Happening") } });
-  const editRecurringEvent = api.events.editRecurringEvent.useMutation();
-
-  const locationsQuery = api.locations.getLocationsByOrg.useQuery(undefined, {
-    onSuccess(data) {
-      if (data != undefined) {
-        setLocations(data);
+    } else if (eventQuery.isSuccess && eventData) {
+      if (eventData?.recurranceData == null) {
+        methods.reset(
+          formatEventData(eventData.event!, eventData.recurranceData!)
+        );
+      } else {
+        methods.reset(formatEventData(eventData.event!));
       }
-    },
-  });
-  const [locations, setLocations] = useState<Locations[]>([
-    { id: "", name: "", organizationId: "" },
+    }
+  }, [
+    alertContext,
+    eventData,
+    methods,
+    eventQuery.isSuccess,
+    eventQuery.isError,
+    eventQuery.error?.message,
   ]);
+
+  const recurringId = rec
+    ? eventData?.event?.recurringId || undefined
+    : undefined;
+  const alreadyRec = eventData?.event?.recurringId ? true : false;
+
+  const createEventReccuranceData =
+    api.events.createEventReccurance.useMutation();
+  const editEventRecurranceData =
+    api.events.EditEventReccuranceData.useMutation();
+  const editEvent = api.events.editEvent.useMutation();
+  const editRecurringEvent = api.events.editRecurringEvent.useMutation();
 
   const preSubmit = methods.handleSubmit((data) => {
     setFormData(data);
-    console.log(data)
     // checking for different positions
-    const differentPositionsId = eventQuery.data?.positions.filter(
+    const differentPositionsId = eventData?.event?.positions.filter(
       (item) =>
         !data.positions.map((inp) => inp.eventPositionId).includes(item.id)
     );
 
     if (differentPositionsId) {
       if (differentPositionsId.length > 0) {
-        console.log("here 99")
         setModifyPositionsConfirm(true);
       }
       if (differentPositionsId.length == 0) {
@@ -109,36 +90,35 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
   });
 
   const submit = (data: EventFormValues) => {
-    console.log("here 111: ", data)
     if (data == null) return;
 
     //submitting data
-    if (eventQuery.data?.organizationId == null) return;
-    console.log("here 117");
-
+    if (eventData?.event?.organizationId == null) return;
 
     let newPositions = data.positions.filter((item) => {
-      return eventQuery.data?.positions.every(
+      return eventData?.event?.positions.every(
         (e) => e.Role.id != item.position.id || item.eventPositionId == null
       );
     });
     newPositions = newPositions.filter((item) => item.eventPositionId == null);
 
     let updatePositions = data.positions.filter((item) => {
-      return eventQuery.data?.positions.filter(
+      return eventData?.event?.positions.filter(
         (e) => e.Role.id === item.position.id
       );
     });
     updatePositions = updatePositions.filter(
       (item) => item.eventPositionId != undefined
     );
-    const deletePositions = eventQuery.data.positions.filter((item) => {
+    const deletePositions = eventData?.event?.positions.filter((item) => {
       return data.positions.every((d) => d.eventPositionId != item.id);
     });
-    console.log("isRepeating: ", data.isRepeating, "Rec: ", rec)
-    // recurringdId and isRepeating captures both single events that are made repeating and repeating events where only one occurence is being edited. 
+    // recurringdId and isRepeating captures both single events that are made repeating and repeating events where only one occurence is being edited.
     // rec == false ensures that the event was not origianly recurring
-    if ((eventQuery.data.recurringId || data.isRepeating == false) && rec == false) {
+    if (
+      (eventData?.event?.recurringId || data.isRepeating == false) &&
+      rec == false
+    ) {
       editEvent.mutate(
         {
           id: id,
@@ -147,8 +127,8 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           eventTimeZoneOffset: new Date().getTimezoneOffset(),
-          organization: eventQuery.data.organizationId,
-          recurringId: eventQuery.data.recurringId || undefined,
+          organization: eventData.event.organizationId,
+          recurringId: eventData.recurranceData?.recurringId || undefined,
           eventLocation: data.eventLocation,
           newPositions: newPositions.map((item) => ({
             position: {
@@ -180,7 +160,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
         }
       );
     }
-    // isRepeating catures events that are now repeating and rec captures events that where origianlly recuring. 
+    // isRepeating catures events that are now repeating and rec captures events that where origianlly recuring.
     if (data.isRepeating == true || rec == true) {
       const newDates = findFutureDates(data);
 
@@ -188,12 +168,12 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
 
       editRecurringEvent.mutate(
         {
-          id: eventQuery.data.id,
+          id: eventData.event.id,
           name: data.name,
           eventTime: data.eventTime,
           eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           eventTimeZoneOffset: new Date().getTimezoneOffset(),
-          recurringId: eventQuery.data.recurringId || undefined,
+          recurringId: eventData.recurranceData?.recurringId || undefined,
           positions: data.positions.map((position) => ({
             eventPositionId: position.eventPositionId,
             position: {
@@ -203,7 +183,7 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
             },
           })),
           eventLocation: data.eventLocation,
-          organization: eventQuery.data.organizationId,
+          organization: eventData.event.organizationId,
           newDates: newDates,
         },
         {
@@ -213,13 +193,13 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
               message: `There was an error updating you event. Please try again. ${error.message}`,
             });
           },
-          // TODO: create new eventReccuranceData for event that was not already recuring
           onSuccess(returnedData) {
             let _data: any = data;
 
-            _data["recurringId"] =
-              recurringId == "" ? returnedData![0]?.recurringId : recurringId;
-            if (recurringId == "") {
+            _data["recurringId"] = !recurringId
+              ? returnedData![0]?.recurringId
+              : recurringId;
+            if (!recurringId) {
               createEventReccuranceData.mutate(_data as EventRecurrance, {
                 onSuccess() {
                   router.push("/events");
@@ -238,23 +218,10 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
     }
   };
 
-  if (locationsQuery.isLoading) {
-    return (
-      <div className='flex justify-center'>
-        <CircularProgress />
-
-      </div>
-    );
-  }
-
-  if (locations == undefined) {
-    return <div></div>;
-  }
-
   return (
     <>
       <Modal open={modifyPositionsConfirm} setOpen={setModifyPositionsConfirm}>
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <ModalBody>
             <ModalTitle
               text={
@@ -278,34 +245,25 @@ const EditEvent: React.FC<{ id: string; rec: boolean }> = ({ id, rec }) => {
           </ModalBody>
         </div>
       </Modal>
-      {/* The is loading is handled here to make the reset work correctly */}
-      {eventQuery.isLoading || (EventRecurrance.isLoading && recurringId != "") ? (
-        <div className='flex justify-center'>
-          <CircularProgress />
-        </div>
-      ) : (
-        <></>
-      )}
-      <div
-        className={`${eventQuery.isLoading || (EventRecurrance.isLoading && recurringId != "")
-          ? "hidden"
-          : "block"
-          }`}>
-        <div className='mb-8'>
+      <div>
+        <div className="mb-8">
           <SectionHeading>Edit Event</SectionHeading>
         </div>
         <FormProvider {...methods}>
-          <form onSubmit={preSubmit} className='shadow'>
-            <EventForm
-              locations={locations}
-              rec={rec}
-              alreadyRec={alreadyRec}
-            />
+          <form onSubmit={preSubmit} className="shadow">
+            <EventForm rec={rec} alreadyRec={alreadyRec} />
 
-            <div className='flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6'>
-              <BtnPurple type="submit" isLoading={editEvent.isLoading ||
-                editRecurringEvent.isLoading ||
-                editEventRecurranceData.isLoading}>Save</BtnPurple>
+            <div className="flex justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
+              <BtnPurple
+                type="submit"
+                isLoading={
+                  editEvent.isPending ||
+                  editRecurringEvent.isPending ||
+                  editEventRecurranceData.isPending
+                }
+              >
+                Save
+              </BtnPurple>
             </div>
           </form>
         </FormProvider>

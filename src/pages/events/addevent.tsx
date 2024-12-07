@@ -1,17 +1,13 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { SectionHeading } from "../../components/headers/SectionHeading";
-import { useContext, useState } from "react";
+import { useContext, useEffect } from "react";
 import {
   EventFormValues,
   EventRecurrance,
 } from "../../../types/eventFormValues";
-import { api } from "../../server/utils/api"
+import { api } from "../../server/utils/api";
 import { useRouter } from "next/router";
-import { Locations } from "@prisma/client";
-import {
-  CircularProgress,
-  CircularProgressSmall,
-} from "../../components/circularProgress";
+import { CircularProgressSmall } from "../../components/circularProgress";
 import { findFutureDates } from "../../server/utils/findFutureDates";
 import { v4 as uuidv4 } from "uuid";
 import { EventForm } from "../../components/form/event/eventForm";
@@ -19,60 +15,27 @@ import { sidebar } from "../../components/layout/sidebar";
 import { AlertContext } from "../../providers/alertProvider";
 import { formatEventData } from "../../utils/formatEventData";
 
-const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, duplicateId: string | undefined }) => {
+//TODO: Look into duplicate ID
+const AddEvent = ({
+  redirect,
+  duplicateId,
+}: {
+  redirect: string | undefined;
+  duplicateId: string | undefined;
+}) => {
   const router = useRouter();
   const alertContext = useContext(AlertContext);
   const methods = useForm<EventFormValues>();
-  const [recuringId, setRecuringId] = useState<string | null>(null);
 
+  const [eventData, _duplicateEventQuery] =
+    api.events.getEditEvent.useSuspenseQuery(duplicateId!, {});
 
-  const eventQuery = api.events.getEditEvent.useQuery(duplicateId ?? "", {
-    cacheTime: 0,
-    enabled: !!duplicateId,
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `There was an issue getting your event. Message: ${err.message}`,
-      });
-    },
-    onSuccess(data) {
-      if (data) {
-        if (data.recurringId == undefined) {
-          methods.reset(formatEventData(data))
-        } else {
-          setRecuringId(data.recurringId)
-        }
-      }
-    },
-  });
-
-  const eventRecurringInfo =
-    api.events.getEventRecurranceData.useQuery(recuringId ?? "", {
-      enabled: !!recuringId,
-      onSuccess(recdata) {
-        if (recdata && eventQuery.data) {
-          methods.reset(formatEventData(eventQuery.data, recdata))
-        }
-      }
-    })
-
-  const locationsQuery = api.locations.getLocationsByOrg.useQuery(undefined, {
-    onSuccess(data) {
-      if (data != undefined) {
-        setLocations(data);
-      }
-    },
-    onError(err) {
-      alertContext.setError({
-        state: true,
-        message: `Error fetching locations. Message; ${err.message}`,
-      });
-      locationsQuery.refetch();
-    },
-  });
-  const [locations, setLocations] = useState<Locations[]>([
-    { id: "", name: "", organizationId: "" },
-  ]);
+  useEffect(() => {
+    if (eventData) {
+      const { event, recurranceData } = eventData;
+      methods.reset(formatEventData(event!, recurranceData!));
+    }
+  }, [eventData, methods]);
 
   const addEventRecurrance = api.events.createEventReccurance.useMutation({
     onError(error) {
@@ -83,27 +46,32 @@ const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, dup
     },
   });
   const addEvent = api.events.createEvent.useMutation({
-    onError(error) { alertContext.setError({ state: true, message: error.message }) },
+    onError(error) {
+      alertContext.setError({ state: true, message: error.message });
+    },
   });
   const submit = methods.handleSubmit((data: EventFormValues) => {
     if (!data.isRepeating) {
-      addEvent.mutate({
-        name: data.name,
-        eventDate: data.eventDate,
-        eventTime: data.eventTime,
-        eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        eventTimeZoneOffset: new Date().getTimezoneOffset(),
-        eventLocation: data.eventLocation,
-        positions: data.positions,
-      }, {
-        onSuccess() {
-          if (redirect) {
-            router.push(redirect);
-          } else {
-            router.push("/events");
-          }
+      addEvent.mutate(
+        {
+          name: data.name,
+          eventDate: data.eventDate,
+          eventTime: data.eventTime,
+          eventTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          eventTimeZoneOffset: new Date().getTimezoneOffset(),
+          eventLocation: data.eventLocation,
+          positions: data.positions,
         },
-      });
+        {
+          onSuccess() {
+            if (redirect) {
+              router.push(redirect);
+            } else {
+              router.push("/events");
+            }
+          },
+        }
+      );
     }
     if (data.isRepeating) {
       const newDates = findFutureDates(data);
@@ -149,32 +117,21 @@ const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, dup
     }
   });
 
-  if (locationsQuery.isLoading || duplicateId ? (eventQuery.isLoading || recuringId ? eventRecurringInfo.isLoading : false) : false) {
-    return (
-      <div className='flex justify-center'>
-        <CircularProgress />
-      </div>
-    );
-  }
-
-  if (locations == undefined) {
-    return <div></div>;
-  }
-
   return (
     <>
-      <div className='mb-8'>
+      <div className="mb-8">
         <SectionHeading>Add Event</SectionHeading>
       </div>
       <FormProvider {...methods}>
-        <form onSubmit={submit} className='shadow'>
-          <EventForm locations={locations} />
+        <form onSubmit={submit} className="shadow">
+          <EventForm />
 
-          <div className='bg-gray-50 px-4 py-3 text-right sm:px-6'>
+          <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
             <button
-              type='submit'
-              className='inline-flex h-10 w-16 items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
-              {addEvent.isLoading ? <CircularProgressSmall /> : "Save"}
+              type="submit"
+              className="inline-flex h-10 w-16 items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              {addEvent.isPending ? <CircularProgressSmall /> : "Save"}
             </button>
           </div>
         </form>
@@ -186,7 +143,6 @@ const AddEvent = ({ redirect, duplicateId }: { redirect: string | undefined, dup
 const AddEventPage = () => {
   const router = useRouter();
 
-  //TODO: check type of new things and pass them to the page
   const { redirect, duplicateId } = router.query;
 
   if (Array.isArray(redirect) || Array.isArray(duplicateId)) {

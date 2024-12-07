@@ -1,13 +1,7 @@
-import { Role } from "@prisma/client";
 import { useEffect, useState } from "react";
-import {
-  useForm,
-  useFormContext,
-  useFieldArray,
-  Controller,
-} from "react-hook-form";
-import { api } from "../../../server/utils/api"
-import { NewSingleSelect, SingleSelect } from "../singleSelect";
+import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import { api } from "../../../server/utils/api";
+import { NewSingleSelect } from "../singleSelect";
 import { MdAddCircleOutline, MdDelete } from "react-icons/md";
 import { ErrorSpan } from "../../errors/errorSpan";
 import { AddSelection } from "../AddSelection";
@@ -16,29 +10,14 @@ import { PositionAddModal } from "../../modal/positionAdd";
 
 export const PositionsSelector = () => {
   const [open, setOpen] = useState(false);
-  const rolesQuery = api.role.getRolesByOrganization.useQuery(undefined, {
-    onSuccess(data) {
-      if (data != undefined) {
-        const _data = data.map((item) => {
-          return { ...item, show: true };
-        });
-        setRoles(_data);
-      }
-    },
+  // const [roles, _rolesQuery] = api.role.getRolesByOrganization.useSuspenseQuery(undefined);
+  const rolesQuery = api.role.getRolesByOrganization.useQuery(undefined);
+  const roles = rolesQuery.data;
+  const rolesMap = roles?.map((role) => ({ item: role, show: true }));
+  const { control, watch, clearErrors } = useFormContext();
+  const { fields, append, remove, insert, update } = useFieldArray({
+    name: "positions", // unique name for your Field Array
   });
-  const [roles, setRoles] = useState<(Role & { show: boolean })[]>([]);
-  const {
-    control,
-    register,
-    setValue,
-    watch,
-    clearErrors,
-    formState: { errors },
-  } = useFormContext();
-  const { fields, append, prepend, remove, swap, move, insert, update } =
-    useFieldArray({
-      name: "positions", // unique name for your Field Array
-    });
 
   type positionField = {
     eventPositionId: string;
@@ -47,17 +26,9 @@ export const PositionsSelector = () => {
 
   const posiitonsField: positionField[] = watch("positions");
 
-  useEffect(() => {
-    if (rolesQuery.data == undefined || posiitonsField == undefined) return;
-    const _roles = rolesQuery.data?.map((item) => {
-      return { ...item, show: true };
-    });
-    if (_roles == undefined) return;
-
-    setRoles(_roles);
-  }, [setRoles, posiitonsField, rolesQuery.data]);
-
   //creates first position field on load of event create
+  useEffect(() => {
+  }, [roles])
   useEffect(() => {
     if (posiitonsField?.length == undefined) return;
     if (posiitonsField.length > 0) return;
@@ -67,6 +38,8 @@ export const PositionsSelector = () => {
     });
   }, [append, posiitonsField?.length]);
 
+  if ( !roles) {
+  return <div>{roles}</div>}
   return (
     <>
       {open == true &&
@@ -74,20 +47,21 @@ export const PositionsSelector = () => {
           <PositionAddModal open={open} setOpen={setOpen} />,
           document.body
         )}
-      <div className='col-span-6 mb-6 px-6'>
+      <div className="col-span-6 mb-6 px-6">
         {/*  */}
-        <div className='grid grid-cols-8 gap-6'>
-          <div className='col-span-4'>
-            <label className=''>Role</label>
+        <div className="grid grid-cols-8 gap-6">
+          <div className="col-span-4">
+            <label className="">Role</label>
           </div>
         </div>
 
-        <div className='mt-1 grid gap-y-6'>
+        <div className="mt-1 grid gap-y-6">
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className='mt-1 grid grid-cols-6 gap-x-3 gap-y-6'>
-              <div className='col-span-4'>
+              className="mt-1 grid grid-cols-6 gap-x-3 gap-y-6"
+            >
+              <div className="col-span-4">
                 <Controller
                   name={`positions.${index}.position`}
                   control={control}
@@ -107,7 +81,7 @@ export const PositionsSelector = () => {
                           });
                           clearErrors(`positions.${index}`);
                         }}
-                        list={roles.map((role) => ({ item: role, show: true }))}
+                        list={rolesMap!}
                         label={(role) => role.name}
                         showAdd
                         showAddComponent={
@@ -117,18 +91,6 @@ export const PositionsSelector = () => {
                         }
                       />
 
-                      {/* <SingleSelect
-                      selected={field.value}
-                      // setSelected={field.onChange}
-                      setSelected={(value) => {
-                        update(index, {
-                          eventPositionId: null,
-                          position: value,
-                        });
-                        clearErrors(`positions.${index}`);
-                      }}
-                      list={roles}
-                    /> */}
                       {fieldState.error?.type == "isNull" && (
                         <ErrorSpan>Position Required</ErrorSpan>
                       )}
@@ -136,7 +98,7 @@ export const PositionsSelector = () => {
                   )}
                 />
               </div>
-              <div className='col-span-2 ml-3 flex gap-6'>
+              <div className="col-span-2 ml-3 flex gap-6">
                 <div
                   onClick={() =>
                     insert(index + 1, {
@@ -144,15 +106,18 @@ export const PositionsSelector = () => {
                       position: { id: "", name: "" },
                     })
                   }
-                  className={`col-span-1 flex cursor-pointer items-center justify-center`}>
+                  className={`col-span-1 flex cursor-pointer items-center justify-center`}
+                >
                   <MdAddCircleOutline size={25} className={`text-green-600`} />
                 </div>
                 <div
                   onClick={() => remove(index)}
-                  className={`col-span-1 flex cursor-pointer items-center justify-center ${index == 0 &&
+                  className={`col-span-1 flex cursor-pointer items-center justify-center ${
+                    index == 0 &&
                     posiitonsField.length < 2 &&
                     "pointer-events-none"
-                    }`}>
+                  }`}
+                >
                   <MdDelete
                     size={25}
                     className={

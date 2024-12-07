@@ -14,8 +14,6 @@ import { createApiClient } from "../../utils/supabase/server";
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-
-
   const supabaseServer = createApiClient(req, res);
   const { data } = await supabaseServer.auth.getSession();
 
@@ -26,7 +24,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 /**
  * 2. INITIALIZATION
-*
+ *
  * This is where the tRPC API is initialized, connecting the context and transformer.
  */
 
@@ -85,37 +83,67 @@ export const loggedInProcedure = t.procedure.use(enforceUserIsAuthed);
 
 const enforeIsAdmin = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user.id) {
-    throw new TRPCError({ code: "UNAUTHORIZED" })
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   const user = await prisma.user.findFirst({
     where: {
-      id: ctx?.session?.user.id
-    }
-  })
+      id: ctx?.session?.user.id,
+    },
+  });
 
-  if (user == undefined || user.status
-    != "ADMIN") {
-    throw new TRPCError({ code: "UNAUTHORIZED" })
+  if (user == undefined || user.status != "ADMIN") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
-      session: ctx.session
-    }
-  })
-})
+      session: ctx.session,
+    },
+  });
+});
 
-export const adminProcedure = t.procedure.use(enforeIsAdmin)
+export const adminProcedure = t.procedure.use(enforeIsAdmin);
 
+const enforeIsOrgAdmin = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user.id) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  const user = await prisma.user.findFirst({
+    where: {
+      id: ctx?.session?.user.id,
+    },
+  });
+
+  if (user == undefined || user.status != "ADMIN") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  const org = await prisma.organization.findUnique({
+    where: {
+      id: user.organizationId ?? undefined,
+    },
+  });
+
+  if (!org) {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+  }
+  return next({
+    ctx: {
+      session: ctx.session,
+      org: org,
+    },
+  });
+});
+
+export const adminOrgProcedure = t.procedure.use(enforeIsOrgAdmin);
 
 const enforceIsEventLiteAdmin = t.middleware(async ({ ctx, next }) => {
-
   if (!ctx.session || !ctx.session.user.id) {
-    throw new TRPCError({ code: "UNAUTHORIZED" })
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   if (ctx.session.user.email != "tgusewelle@eventlite.org") {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next();
-})
+});
 
-export const elAdminProcedure = t.procedure.use(enforceIsEventLiteAdmin)
+export const elAdminProcedure = t.procedure.use(enforceIsEventLiteAdmin);

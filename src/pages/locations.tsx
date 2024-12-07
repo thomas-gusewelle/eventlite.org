@@ -38,17 +38,18 @@ const LocationsPage = () => {
     reset,
   } = useForm();
 
-  const locations = api.locations.getLocationsByOrg.useQuery(undefined, {
-    onSuccess(data) {
-      setLocationList(data);
-    },
-    onError(err) {
+  const locations = api.locations.getLocationsByOrg.useQuery(undefined);
+
+  useEffect(() => {
+    if (locations.isSuccess) {
+      setLocationList(locations.data);
+    } else if (locations.isError) {
       alertContext.setError({
-        message: `Error fetching locations. Message: ${err.message}`,
+        message: `Error fetching locations. Message: ${locations.error.message}`,
         state: true,
       });
-    },
-  });
+    }
+  }, [locations]);
 
   const addLocation = api.locations.createLocation.useMutation({
     onSuccess(data, variables, context) {
@@ -143,7 +144,7 @@ const LocationsPage = () => {
 
   if (locations.isLoading || pagiantedData == undefined) {
     return (
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <CircularProgress />
       </div>
     );
@@ -153,8 +154,8 @@ const LocationsPage = () => {
     return (
       <>
         <NoDataLayout
-          heading='Locations'
-          btnText='Add Location'
+          heading="Locations"
+          btnText="Add Location"
           func={() => setEditOpen(true)}
         />
         <Modal open={editOpen} setOpen={setEditOpen}>
@@ -164,20 +165,21 @@ const LocationsPage = () => {
                 <ModalTitle
                   text={editId == null ? "Add Location" : "Edit Location"}
                 />
-                <div className='mt-2'>
+                <div className="mt-2">
                   <label
-                    htmlFor='name'
-                    className='block text-sm font-medium text-gray-700'>
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Location Name
                   </label>
                   <input
-                    type='text'
-                    id='name'
+                    type="text"
+                    id="name"
                     {...register("name", { required: true, minLength: 3 })}
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                   {errors.name && (
-                    <span className='text-red-500'>
+                    <span className="text-red-500">
                       Location Name is Required
                     </span>
                   )}
@@ -207,20 +209,21 @@ const LocationsPage = () => {
               <ModalTitle
                 text={editId == null ? "Add Location" : "Edit Location"}
               />
-              <div className='mt-2'>
+              <div className="mt-2">
                 <label
-                  htmlFor='name'
-                  className='block text-sm font-medium text-gray-700'>
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Location Name
                 </label>
                 <input
-                  type='text'
-                  id='name'
+                  type="text"
+                  id="name"
                   {...register("name", { required: true, minLength: 3 })}
-                  className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 {errors.name && (
-                  <span className='text-red-500'>
+                  <span className="text-red-500">
                     Location Name is Required
                   </span>
                 )}
@@ -239,9 +242,9 @@ const LocationsPage = () => {
       </Modal>
       <>
         {/* MD Top Bar */}
-        <div className='mb-8 grid grid-cols-2 gap-4 md:hidden'>
+        <div className="mb-8 grid grid-cols-2 gap-4 md:hidden">
           <SectionHeading>Locations</SectionHeading>
-          <div className='flex justify-end'>
+          <div className="flex justify-end">
             <BtnAdd
               onClick={() => {
                 reset({ name: "" });
@@ -250,25 +253,25 @@ const LocationsPage = () => {
               }}
             />
           </div>
-          <div className='col-span-2'>
+          <div className="col-span-2">
             <input
               onChange={(e) => filter(e.target.value)}
-              className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-              type='text'
-              placeholder='Search'
+              className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+              type="text"
+              placeholder="Search"
             />
           </div>
         </div>
 
         {/* Desktop Top Bar */}
-        <div className='mb-8 hidden justify-between md:flex'>
+        <div className="mb-8 hidden justify-between md:flex">
           <SectionHeading>Locations</SectionHeading>
-          <div className='flex gap-4'>
+          <div className="flex gap-4">
             <input
               onChange={(e) => filter(e.target.value)}
-              className='w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none'
-              type='text'
-              placeholder='Search'
+              className="w-full rounded-xl border border-gray-100 bg-gray-100 py-2 pl-4 text-sm text-gray-500 focus:border-indigo-700 focus:outline-none"
+              type="text"
+              placeholder="Search"
             />
             {/* <SearchBar /> */}
             <BtnAdd
@@ -281,8 +284,8 @@ const LocationsPage = () => {
           </div>
         </div>
 
-        <div className='w-full'>
-          <table className='w-full table-auto text-left'>
+        <div className="w-full">
+          <table className="w-full table-auto text-left">
             <thead>
               <tr>
                 <th>Name</th>
@@ -309,8 +312,8 @@ const LocationsPage = () => {
                 ];
 
                 return (
-                  <tr key={index} className='border-t last:border-b'>
-                    <td className='py-4 text-base leading-4 text-gray-800 md:text-xl'>
+                  <tr key={index} className="border-t last:border-b">
+                    <td className="py-4 text-base leading-4 text-gray-800 md:text-xl">
                       {loc.name}
                     </td>
                     <td>

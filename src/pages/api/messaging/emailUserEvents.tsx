@@ -27,8 +27,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   type Tevents =
     | (Event & {
-      Locations: Locations | null;
-    })[]
+        Locations: Locations | null;
+      })[]
     | undefined;
 
   type emailData = {
@@ -75,9 +75,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     },
     orderBy: [
       {
-        datetime: 'asc'
-      }
-    ]
+        datetime: "asc",
+      },
+    ],
   });
 
   if (eventQuery === undefined) {
@@ -85,6 +85,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
+    // If there are no events then don't sent email
+    if (eventQuery.length === 0) {
+      return res.status(200).send(null);
+    }
     await sendMail({
       to: body.email,
       component: (
